@@ -1,0 +1,18 @@
+{
+    "name": "salviorodrigo/bradi-nfe-api",
+    "description": "This is a module of Bradi software responsible to work with brazilian invoices (NFe and NFCe)",
+    "type": "project",
+    "autoload": {
+        "psr-4": {
+            "BradiNfeApi\\": [ "src/", "test/" ]
+        }
+    },
+    "authors": [
+        {
+            "name": "Rodrigo Salvio"
+        }
+    ],
+    "require": {
+        "php": "8.*"
+    }
+}
