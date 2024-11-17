@@ -27,7 +27,7 @@ class Result {
         return $this->data;
     }
 
-    public function getError(): Exception {
+    public function getError(): string {
         if ($this->isSuccess()) {
             throw new Exception($this->error);
         };
