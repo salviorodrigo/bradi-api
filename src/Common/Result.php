@@ -3,6 +3,8 @@ declare(strict_types=1);
 
 namespace BradiNfeApi\Common;
 
+use Exception;
+
 class Result {
     private bool $success;
     private mixed $data;
