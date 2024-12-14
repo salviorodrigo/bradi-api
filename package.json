@@ -5,5 +5,11 @@
   },
   "scripts": {
     "prepare": "husky"
+  },
+  "lint-staged": {
+    "**/*.php*": [
+      "php ./vendor/bin/duster lint --dirty",
+      "php ./vendor/bin/pest"
+    ]
   }
 }
