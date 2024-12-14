@@ -1,10 +1,14 @@
 <?php
+
 declare(strict_types=1);
 
-use BradiApi\Common\ApiError;
+namespace BradiNfeApi\Common\Exceptions;
 
-class GenericApiError extends ApiError {
-    public $status = '418';
-    public $title = 'Generic Api Error';
-    public $details = ['message' => 'I\'m a teapot'];
+use BradiNfeApi\Common\ApiError;
+
+class GenericApiError extends ApiError
+{
+    public string $status = '418';
+    public string $title = 'Generic Api Error';
+    public array $details = ['message' => "I\'m a teapot 2"];
 }

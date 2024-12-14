@@ -1,4 +1,5 @@
 <?php
+
 use BradiNfeApi\Common\Result;
 
 describe('Result', function () {
@@ -15,4 +16,4 @@ describe('Result', function () {
             $sut->getError();
         })->throws(Exception::class, 'Result is not an error.');
     });
- });
+});
