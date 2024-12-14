@@ -4,15 +4,16 @@ declare(strict_types=1);
 
 namespace BradiNfeApi\Common;
 
+use BradiNfeApi\Common\Exceptions\GenericApiError;
 use Exception;
 
 class Result
 {
     private bool $success;
     private mixed $data;
-    private string $error;
+    private ApiError $error;
 
-    private function __construct(bool $success, mixed $data = null, string $error = 'Result is not an error.')
+    private function __construct(bool $success, mixed $data = null, ApiError $error = new GenericApiError)
     {
         $this->success = $success;
         $this->data = $data;
@@ -41,7 +42,7 @@ class Result
     public function getError(): string
     {
         if ($this->isSuccess()) {
-            throw new Exception($this->error);
+            throw new Exception('Result is not an error.');
         }
 
         return $this->error;
