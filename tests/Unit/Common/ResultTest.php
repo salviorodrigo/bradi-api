@@ -31,5 +31,11 @@ describe('Result', function () {
             expect($sut->isSuccess())->toBeFalsy();
             expect($sut->getError())->toBeInstanceOf(ApiError::class);
         });
+
+        test('Should throw an error if user try get an valid value when Result is a failure', function () {
+            $sut = Result::makeFailure(new GenericApiError);
+            expect($sut->isSuccess())->toBeFalsy();
+            $sut->getData();
+        })->throws(Exception::class, 'Result is an error.');
     });
 });
