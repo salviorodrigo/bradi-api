@@ -20,7 +20,7 @@ class Result
         $this->error = $error;
     }
 
-    public static function makeSuccess(mixed $value): self
+    public static function makeSuccess(mixed $value = null): self
     {
         return new self(true, $value);
     }
