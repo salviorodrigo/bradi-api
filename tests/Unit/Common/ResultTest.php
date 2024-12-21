@@ -15,5 +15,11 @@ describe('Result', function () {
             expect($sut->isSuccess())->toBeTruthy();
             $sut->getError();
         })->throws(Exception::class, 'Result is not an error.');
+
+        test('Should be return a Result without value when nothing is provided', function () {
+            $sut = Result::makeSuccess();
+            expect($sut->isSuccess())->toBeTruthy();
+            expect($sut->getData())->toBe(null);
+        });
     });
 });
