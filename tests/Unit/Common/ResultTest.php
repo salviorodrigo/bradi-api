@@ -1,5 +1,7 @@
 <?php
 
+use BradiNfeApi\Common\ApiError;
+use BradiNfeApi\Common\Exceptions\GenericApiError;
 use BradiNfeApi\Common\Result;
 
 describe('Result', function () {
@@ -20,6 +22,14 @@ describe('Result', function () {
             $sut = Result::makeSuccess();
             expect($sut->isSuccess())->toBeTruthy();
             expect($sut->getData())->toBe(null);
+        });
+    });
+
+    describe('.makeFailure()', function () {
+        test('Should be return an ApiError on failure', function () {
+            $sut = Result::makeFailure(new GenericApiError);
+            expect($sut->isSuccess())->toBeFalsy();
+            expect($sut->getError())->toBeInstanceOf(ApiError::class);
         });
     });
 });
