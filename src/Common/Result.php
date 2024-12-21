@@ -25,6 +25,11 @@ class Result
         return new self(true, $value);
     }
 
+    public static function makeFailure(ApiError $error): self
+    {
+        return new self(false, null, $error);
+    }
+
     public function isSuccess(): bool
     {
         return $this->success;
@@ -39,7 +44,7 @@ class Result
         return $this->data;
     }
 
-    public function getError(): string
+    public function getError(): ApiError
     {
         if ($this->isSuccess()) {
             throw new Exception('Result is not an error.');
