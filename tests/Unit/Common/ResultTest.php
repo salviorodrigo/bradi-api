@@ -54,5 +54,10 @@ describe('Result', function () {
             $sut = Result::makeSuccess(null);
             expect($sut->hasValue())->toBeFalsy();
         });
+
+        test('Should be falsy if Result.getData() is an empty array', function () {
+            $sut = Result::makeSuccess([]);
+            expect($sut->hasValue())->toBeFalsy();
+        });
     });
 });
