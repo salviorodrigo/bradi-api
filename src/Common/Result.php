@@ -22,8 +22,8 @@ class Result
 
     public static function makeSuccess(mixed $value = null): self
     {
-        if (is_a($value, ApiError::class)) {
-            throw new Exception('This method doesn\'t accept ApiError\'s.');
+        if (is_a($value, Exception::class)) {
+            throw new Exception('This method doesn\'t accept Exception\'s.');
         }
 
         return new self(true, $value);
