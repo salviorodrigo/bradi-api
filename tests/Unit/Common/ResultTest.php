@@ -67,5 +67,11 @@ describe('Result', function () {
             $sut = Result::makeSuccess('0');
             expect($sut->hasValue())->toBeFalsy();
         });
+
+        test('Should throw an error if Result is a failure', function () {
+            $sut = Result::makeFailure(new GenericApiError);
+            expect($sut->isSuccess())->toBeFalsy();
+            $sut->hasValue();
+        })->throws(Exception::class, 'Result is an error.');
     });
 });
