@@ -8,7 +8,7 @@ use BradiNfeApi\Common\ApiError;
 
 class GenericApiError extends ApiError
 {
-    public string $status = '418';
+    public string $httpStatus = '418';
     public string $title = 'Generic Api Error';
     public array $details = ['message' => "I\'m a teapot 2"];
 }
