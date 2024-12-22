@@ -44,5 +44,10 @@ describe('Result', function () {
             $sut = Result::makeSuccess('validValue');
             expect($sut->hasValue())->toBeTruthy();
         });
+
+        test('Should be falsy if Result.getData() is an empty string', function () {
+            $sut = Result::makeSuccess('');
+            expect($sut->hasValue())->toBeFalsy();
+        });
     });
 });
