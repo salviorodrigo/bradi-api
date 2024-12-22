@@ -26,7 +26,7 @@ describe('Result', function () {
 
         test('Should throw an error if user try make a success with ApiError', function () {
             Result::makeSuccess(new GenericApiError);
-        })->throws(Exception::class, 'This method doesn\'t accept ApiError\'s.');
+        })->throws(Exception::class, 'This method doesn\'t accept Exception\'s.');
     });
 
     describe('.makeFailure()', function () {
