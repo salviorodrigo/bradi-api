@@ -38,4 +38,11 @@ describe('Result', function () {
             $sut->getData();
         })->throws(Exception::class, 'Result is an error.');
     });
+
+    describe('.hasValue()', function () {
+        test('Should be truthy if Result.getData() has a non empty value', function () {
+            $sut = Result::makeSuccess('validValue');
+            expect($sut->hasValue())->toBeTruthy();
+        });
+    });
 });
