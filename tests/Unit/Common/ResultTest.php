@@ -59,5 +59,13 @@ describe('Result', function () {
             $sut = Result::makeSuccess(false);
             expect($sut->hasValue())->toBeFalsy();
         });
+
+        test('Should be falsy if Result.getData() is zero', function () {
+            $sut = Result::makeSuccess(0);
+            expect($sut->hasValue())->toBeFalsy();
+
+            $sut = Result::makeSuccess('0');
+            expect($sut->hasValue())->toBeFalsy();
+        });
     });
 });
