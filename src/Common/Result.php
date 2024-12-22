@@ -44,6 +44,15 @@ class Result
         return $this->data;
     }
 
+    public function hasValue(): bool
+    {
+        if (! $this->isSuccess()) {
+            throw new Exception('Result is an error.');
+        }
+
+        return ! empty($this->data);
+    }
+
     public function getError(): ApiError
     {
         if ($this->isSuccess()) {
