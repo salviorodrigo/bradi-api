@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace BradiNfeApi\Common;
 
 use BradiNfeApi\Common\Exceptions\GenericApiError;
+use Error;
 use Exception;
 
 class Result
@@ -22,8 +23,8 @@ class Result
 
     public static function makeSuccess(mixed $value = null): self
     {
-        if (is_a($value, Exception::class)) {
-            throw new Exception('This method doesn\'t accept Exception\'s.');
+        if (is_a($value, Exception::class) || is_a($value, Error::class)) {
+            throw new Exception('This method doesn\'t accept Error\'s.');
         }
 
         return new self(true, $value);
