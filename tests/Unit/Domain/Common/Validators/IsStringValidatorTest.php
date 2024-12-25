@@ -1,5 +1,6 @@
 <?php
 
+use BradiNfeApi\Domain\Common\Validators\Exceptions\IsNotStringError;
 use BradiNfeApi\Domain\Common\Validators\IsStringValidator;
 
 describe('IsStringValidator', function () {
@@ -9,6 +10,13 @@ describe('IsStringValidator', function () {
             $sutResponse = $sut->validate('aValidValue');
             expect($sutResponse->isSuccess())->toBeTruthy();
             expect($sutResponse->hasValue())->toBeFalsy();
+        });
+
+        test('Should be return a failure Result with IsNotStringError if a number is provided', function () {
+            $sut = new IsStringValidator('testField');
+            $sutResponse = $sut->validate(99);
+            expect($sutResponse->isSuccess())->toBeFalsy();
+            expect($sutResponse->getError())->toBeInstanceOf(IsNotStringError::class);
         });
     });
 });
