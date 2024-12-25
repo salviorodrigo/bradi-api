@@ -31,6 +31,10 @@ describe('Result', function () {
         test('Should throw an error if user try make a success with a generic Error', function () {
             Result::makeSuccess(new Error('A Generic Error.'));
         })->throws(Exception::class, 'This method doesn\'t accept Error\'s.');
+
+        test('Should throw an error if user try make a success with a generic Exception', function () {
+            Result::makeSuccess(new Exception('A Generic Exception.'));
+        })->throws(Exception::class, 'This method doesn\'t accept Error\'s.');
     });
 
     describe('.makeFailure()', function () {
