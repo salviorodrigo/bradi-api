@@ -19,9 +19,9 @@ describe('IsStringValidator', function () {
             expect($sutResponse->getError())->toBeInstanceOf(IsNotStringError::class);
         });
 
-        test('Should be return a failure Result with IsNotStringError if an array is provided', function () {
+        test('Should be return a failure Result with IsNotStringError if an object is provided', function () {
             $sut = new IsStringValidator('testField');
-            $sutResponse = $sut->validate(['anArray']);
+            $sutResponse = $sut->validate(new stdClass);
             expect($sutResponse->isSuccess())->toBeFalsy();
             expect($sutResponse->getError())->toBeInstanceOf(IsNotStringError::class);
         });
