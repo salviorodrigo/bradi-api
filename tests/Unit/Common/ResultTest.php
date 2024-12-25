@@ -1,6 +1,5 @@
 <?php
 
-use BradiNfeApi\Common\ApiError;
 use BradiNfeApi\Common\Exceptions\GenericApiError;
 use BradiNfeApi\Common\Result;
 
@@ -38,10 +37,10 @@ describe('Result', function () {
     });
 
     describe('.makeFailure()', function () {
-        test('Should be return an ApiError on failure', function () {
+        test('Should be return an Exception on failure', function () {
             $sut = Result::makeFailure(new GenericApiError);
             expect($sut->isSuccess())->toBeFalsy();
-            expect($sut->getError())->toBeInstanceOf(ApiError::class);
+            expect($sut->getError())->toBeInstanceOf(Exception::class);
         });
 
         test('Should throw an error if user try get an valid value when Result is a failure', function () {
