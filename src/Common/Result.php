@@ -12,9 +12,9 @@ class Result
 {
     private bool $success;
     private mixed $data;
-    private ApiError $error;
+    private Exception $error;
 
-    private function __construct(bool $success, mixed $data = null, ApiError $error = new GenericApiError)
+    private function __construct(bool $success, mixed $data = null, Exception $error = new GenericApiError)
     {
         $this->success = $success;
         $this->data = $data;
@@ -30,7 +30,7 @@ class Result
         return new self(true, $value);
     }
 
-    public static function makeFailure(ApiError $error): self
+    public static function makeFailure(Exception $error): self
     {
         return new self(false, null, $error);
     }
@@ -58,7 +58,7 @@ class Result
         return ! empty($this->data);
     }
 
-    public function getError(): ApiError
+    public function getError(): Exception
     {
         if ($this->isSuccess()) {
             throw new Exception('Result is not an error.');
