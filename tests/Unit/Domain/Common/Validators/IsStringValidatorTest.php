@@ -12,6 +12,13 @@ describe('IsStringValidator', function () {
             expect($sutResponse->hasValue())->toBeFalsy();
         });
 
+        test('Should be return a success Result if a empty string is provided', function () {
+            $sut = new IsStringValidator('testField');
+            $sutResponse = $sut->validate('');
+            expect($sutResponse->isSuccess())->toBeTruthy();
+            expect($sutResponse->hasValue())->toBeFalsy();
+        });
+
         test('Should be return a failure Result with IsNotStringError if a number is provided', function () {
             $sut = new IsStringValidator('testField');
             $sutResponse = $sut->validate(99);
