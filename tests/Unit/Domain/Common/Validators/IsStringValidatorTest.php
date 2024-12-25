@@ -25,5 +25,12 @@ describe('IsStringValidator', function () {
             expect($sutResponse->isSuccess())->toBeFalsy();
             expect($sutResponse->getError())->toBeInstanceOf(IsNotStringError::class);
         });
+
+        test('Should be return a failure Result with IsNotStringError if null is provided', function () {
+            $sut = new IsStringValidator('testField');
+            $sutResponse = $sut->validate(null);
+            expect($sutResponse->isSuccess())->toBeFalsy();
+            expect($sutResponse->getError())->toBeInstanceOf(IsNotStringError::class);
+        });
     });
 });
