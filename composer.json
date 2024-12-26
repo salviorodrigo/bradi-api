@@ -4,7 +4,12 @@
     "type": "project",
     "autoload": {
         "psr-4": {
-            "BradiNfeApi\\": [ "src/", "test/" ]
+            "BradiNfeApi\\": [ "src/" ]
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "BradiNfeApi\\Tests\\": [ "tests/" ]
         }
     },
     "authors": [
