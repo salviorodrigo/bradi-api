@@ -16,6 +16,9 @@ class ValidationError extends ApiError
 
     public function __construct(array $validatorErrors)
     {
+        if (count($validatorErrors) <= 0) {
+            throw new InvalidArgumentException('ValidatorErrors must be provided.');
+        }
         foreach ($validatorErrors as $validatorError) {
             if (! is_a($validatorError, ValidatorError::class)) {
                 throw new InvalidArgumentException('Validation error just accepts Validator errors.');
