@@ -7,7 +7,7 @@ namespace BradiNfeApi\Tests\Doubles\Domain\Common\Validators;
 use BradiNfeApi\Common\Result;
 use BradiNfeApi\Domain\Common\Protocols\Validator;
 
-final class FakeValidator extends Validator
+class FakeValidator extends Validator
 {
     public function __construct(public readonly string $fieldName) {}
 
