@@ -20,4 +20,12 @@ describe('ValidationService', function () {
             new ValidationService([new \stdClass]);
         })->throws(InvalidArgumentException::class, 'Concrete validators must implement IValidator interface.');
     });
+
+    describe('.verify()', function () {
+        test('Should return a success if validators succeed', function () {
+            $sut = new ValidationService([new FakeValidator('fieldName')]);
+            $sutResponse = $sut->verify('aValidValue');
+            expect($sutResponse->isSuccess())->toBeTruthy();
+        });
+    });
 });
