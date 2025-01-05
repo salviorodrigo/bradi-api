@@ -40,5 +40,9 @@ describe('ValidationError', function () {
                 new \stdClass,
             ]);
         })->throws(InvalidArgumentException::class, 'Validation error just accepts Validator errors.');
+
+        test('Should throw if an empty array is provided', function () {
+            new ValidationError([]);
+        })->throws(InvalidArgumentException::class, 'ValidatorErrors must be provided.');
     });
 });
