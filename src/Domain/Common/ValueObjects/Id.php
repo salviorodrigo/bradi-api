@@ -6,6 +6,8 @@ namespace BradiNfeApi\Domain\Common\ValueObjects;
 
 use BradiNfeApi\Common\Result;
 use BradiNfeApi\Domain\Common\Protocols\ValueObject;
+use BradiNfeApi\Domain\Common\Services\ValidationService;
+use BradiNfeApi\Domain\Common\Validators\IsStringValidator;
 
 final class Id extends ValueObject
 {
@@ -13,6 +15,15 @@ final class Id extends ValueObject
 
     public static function parse(mixed $rawData): Result
     {
-        return Result::makeSuccess(new Id($rawData));
+
+        $validationService = new ValidationService([
+            new IsStringValidator('id'),
+        ]);
+        $validationServiceResponse = $validationService->verify($rawData);
+        if ($validationServiceResponse->isSuccess()) {
+            return Result::makeSuccess(new Id($rawData));
+        }
+
+        return $validationServiceResponse;
     }
 }
