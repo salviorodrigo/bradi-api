@@ -58,5 +58,12 @@ describe('NotNullValidator', function () {
             expect($sutResponse->isSuccess())->toBeFalsy();
             expect($sutResponse->getError())->toBeInstanceOf(IsNullError::class);
         });
+
+        test('Should be return a fail Result if an empty array is provided', function () {
+            $sut = new NotNullValidator('testField');
+            $sutResponse = $sut->validate([]);
+            expect($sutResponse->isSuccess())->toBeFalsy();
+            expect($sutResponse->getError())->toBeInstanceOf(IsNullError::class);
+        });
     });
 });
