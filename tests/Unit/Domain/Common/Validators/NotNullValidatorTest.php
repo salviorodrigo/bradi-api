@@ -1,5 +1,6 @@
 <?php
 
+use BradiNfeApi\Domain\Common\Validators\Exceptions\IsNullError;
 use BradiNfeApi\Domain\Common\Validators\NotNullValidator;
 
 describe('NotNullValidator', function () {
@@ -9,6 +10,13 @@ describe('NotNullValidator', function () {
             $sutResponse = $sut->validate('aValidValue');
             expect($sutResponse->isSuccess())->toBeTruthy();
             expect($sutResponse->hasValue())->toBeFalsy();
+        });
+
+        test('Should be return a fail Result if a empty string is provided', function () {
+            $sut = new NotNullValidator('testField');
+            $sutResponse = $sut->validate('');
+            expect($sutResponse->isSuccess())->toBeFalsy();
+            expect($sutResponse->getError())->toBeInstanceOf(IsNullError::class);
         });
     });
 });
