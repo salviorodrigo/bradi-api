@@ -14,7 +14,7 @@ final class NotNullValidator extends Validator
 
     public function validate(mixed $candidate): Result
     {
-        if (! isset($candidate) || $candidate == '' || $candidate == []) {
+        if ((! isset($candidate) || $candidate == '' || $candidate == []) && ! is_bool($candidate)) {
             return Result::makeFailure(new IsNullError($this->fieldName));
         }
 
