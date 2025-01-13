@@ -51,5 +51,12 @@ describe('NotNullValidator', function () {
             expect($sutResponse->isSuccess())->toBeTruthy();
             expect($sutResponse->hasValue())->toBeFalsy();
         });
+
+        test('Should be return a fail Result if a null is provided', function () {
+            $sut = new NotNullValidator('testField');
+            $sutResponse = $sut->validate(null);
+            expect($sutResponse->isSuccess())->toBeFalsy();
+            expect($sutResponse->getError())->toBeInstanceOf(IsNullError::class);
+        });
     });
 });
