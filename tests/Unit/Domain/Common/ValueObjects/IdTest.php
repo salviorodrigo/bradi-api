@@ -36,5 +36,11 @@ describe('Id', function () {
             expect($sut->isSuccess())->toBeFalsy();
             expect($sut->getError())->toBeInstanceOf(ApiError::class);
         });
+
+        test('Should be return a failure Result if an empty string is provided', function () {
+            $sut = Id::parse('');
+            expect($sut->isSuccess())->toBeFalsy();
+            expect($sut->getError())->toBeInstanceOf(ApiError::class);
+        });
     });
 });
