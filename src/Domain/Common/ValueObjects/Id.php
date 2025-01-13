@@ -8,6 +8,7 @@ use BradiNfeApi\Common\Result;
 use BradiNfeApi\Domain\Common\Protocols\ValueObject;
 use BradiNfeApi\Domain\Common\Services\ValidationService;
 use BradiNfeApi\Domain\Common\Validators\IsStringValidator;
+use BradiNfeApi\Domain\Common\Validators\NotNullValidator;
 
 final class Id extends ValueObject
 {
@@ -18,6 +19,7 @@ final class Id extends ValueObject
 
         $validationService = new ValidationService([
             new IsStringValidator('id'),
+            new NotNullValidator('id'),
         ]);
         $validationServiceResponse = $validationService->verify($rawData);
         if ($validationServiceResponse->isSuccess()) {
