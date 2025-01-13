@@ -25,5 +25,12 @@ describe('NotNullValidator', function () {
             expect($sutResponse->isSuccess())->toBeTruthy();
             expect($sutResponse->hasValue())->toBeFalsy();
         });
+
+        test('Should be return a success Result if a negative number is provided', function () {
+            $sut = new NotNullValidator('testField');
+            $sutResponse = $sut->validate(-99);
+            expect($sutResponse->isSuccess())->toBeTruthy();
+            expect($sutResponse->hasValue())->toBeFalsy();
+        });
     });
 });
