@@ -65,5 +65,12 @@ describe('NotNullValidator', function () {
             expect($sutResponse->isSuccess())->toBeFalsy();
             expect($sutResponse->getError())->toBeInstanceOf(IsNullError::class);
         });
+
+        test('Should be return a succeed Result if a valid array is provided', function () {
+            $sut = new NotNullValidator('testField');
+            $sutResponse = $sut->validate(['aValue']);
+            expect($sutResponse->isSuccess())->toBeTruthy();
+            expect($sutResponse->hasValue())->toBeFalsy();
+        });
     });
 });
