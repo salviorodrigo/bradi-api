@@ -72,5 +72,17 @@ describe('NotNullValidator', function () {
             expect($sutResponse->isSuccess())->toBeTruthy();
             expect($sutResponse->hasValue())->toBeFalsy();
         });
+
+        test('Should be return a succeed Result if a boolean is provided', function () {
+            $sut = new NotNullValidator('testField');
+            $sutResponse = $sut->validate(true);
+            expect($sutResponse->isSuccess())->toBeTruthy();
+            expect($sutResponse->hasValue())->toBeFalsy();
+
+            $sut = new NotNullValidator('testField');
+            $sutResponse = $sut->validate(false);
+            expect($sutResponse->isSuccess())->toBeTruthy();
+            expect($sutResponse->hasValue())->toBeFalsy();
+        });
     });
 });
