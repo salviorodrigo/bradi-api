@@ -87,4 +87,15 @@ describe('XmlToDFeParser', function () {
                 ->toBe('');
         });
     });
+
+    describe('.getTagValue()', function () {
+        test('Should be return value of target tag is target isn\'t xml element', function () {
+            $fakeXmlString = '<xProd>OLEO DIESEL B S10</xProd>';
+            $sut = new XmlToDFeParser;
+
+            expect($sut->getTagValue($fakeXmlString, 'xProd'))
+                ->toBeString()
+                ->toBe('OLEO DIESEL B S10');
+        });
+    });
 });
