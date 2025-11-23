@@ -25,6 +25,7 @@ use BradiNfeApi\Infra\Parses\XmlToDFeParser;
  * 		</prod>
  * 	</det>
  * </infNFe>
+ * <CanonicalizationMethod Algorithm="http://www.w3.org/TR/2001/REC-xml-c14n-20010315"/>
  */
 describe('XmlToDFeParser', function () {
     describe('.getTags()', function () {
@@ -56,6 +57,15 @@ describe('XmlToDFeParser', function () {
             expect($sut->getTags($fakeXmlString, 'invalidTag'))
                 ->toBeArray()
                 ->toBe([]);
+        });
+
+        test('Should be return target tag on success, if exists just one tag and tag is a autoclose tag', function () {
+            $fakeXmlString = '<CanonicalizationMethod Algorithm="http://www.w3.org/TR/2001/REC-xml-c14n-20010315"/>';
+            $sut = new XmlToDFeParser;
+
+            expect($sut->getTags($fakeXmlString, 'CanonicalizationMethod'))
+                ->toBeArray()
+                ->toBe(['<CanonicalizationMethod Algorithm="http://www.w3.org/TR/2001/REC-xml-c14n-20010315"/>']);
         });
     });
 
