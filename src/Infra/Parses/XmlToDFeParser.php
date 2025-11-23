@@ -34,7 +34,17 @@ final class XmlToDFeParser implements DFeParser
 
     public function getTagValue(string $xmlString, string $tagName): string
     {
-        return 'Method not implemented';
+        if (! $this->existsTag($xmlString, $tagName) || $this->isComplexTypeXmlElement($xmlString, $tagName)) {
+            return '';
+        }
+        $xmlTag = $this->getTag($xmlString, $tagName);
+        $xmlInnerStartPosition = $this->getInnerStartPositionTag($xmlTag, $tagName);
+
+        return substr(
+            $xmlTag,
+            $xmlInnerStartPosition,
+            $this->getInnerEndPositionTag($xmlTag, $tagName, $xmlInnerStartPosition) - $xmlInnerStartPosition + 1
+        );
     }
 
     public function getTagAttributes(string $xmlString, string $tagName): array
@@ -58,8 +68,40 @@ final class XmlToDFeParser implements DFeParser
 
     private function getEndPositionTag(string $xmlString, string $tagName, int $offset): int
     {
+        if ($this->isAutoClosedTag($xmlString, $tagName, $offset)) {
+            return (int) strpos($xmlString, '>', $offset);
+        }
         $xmlTag = '</' . $tagName . '>';
 
         return (int) strpos($xmlString, $xmlTag, $offset) + strlen($xmlTag);
+    }
+
+    private function isComplexTypeXmlElement($xmlString, $tagName): bool
+    {
+        $xmlTag = $this->getTags($xmlString, $tagName)[0];
+
+        return (bool) ($xmlTag[$this->getInnerStartPositionTag($xmlTag, $tagName)] == '<' || $xmlTag[$this->getInnerEndPositionTag($xmlTag, $tagName, strlen('<' . $tagName))] == '>');
+
+    }
+
+    private function isAutoClosedTag($xmlString, $tagName, int $offset = 0): bool
+    {
+        $startPosition = $this->getStartPositionTag($xmlString, $tagName, $offset);
+
+        return $xmlString[strpos($xmlString, '>', $startPosition) - 1] == '/';
+    }
+
+    private function getInnerStartPositionTag(string $xmlString, string $tagName, int $offset = 0): int
+    {
+        $xmlTag = '<' . $tagName;
+
+        return (int) strpos($xmlString, '>', strpos($xmlString, $xmlTag, $offset)) + 1;
+    }
+
+    private function getInnerEndPositionTag(string $xmlString, string $tagName, int $offset): int
+    {
+        $xmlTag = '</' . $tagName . '>';
+
+        return (int) strpos($xmlString, $xmlTag, $offset) - 1;
     }
 }
