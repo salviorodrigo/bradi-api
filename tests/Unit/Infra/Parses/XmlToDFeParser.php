@@ -106,5 +106,14 @@ describe('XmlToDFeParser', function () {
                 ->toBeString()
                 ->toBe('');
         });
+
+        test('Should be return an empty string if xml tag doesn\'t exists', function () {
+            $fakeXmlString = '<xProd>OLEO DIESEL B S10</xProd>';
+            $sut = new XmlToDFeParser;
+
+            expect($sut->getTagValue($fakeXmlString, 'uCom'))
+                ->toBeString()
+                ->toBe('');
+        });
     });
 });
