@@ -129,5 +129,14 @@ describe('XmlToDFeParser', function () {
                     'versao' => '4.00',
                 ]);
         });
+
+        test('Should be return empty array when tag haven\'t attributes', function () {
+            $fakeXmlString = '<xProd>OLEO DIESEL B S10</xProd>';
+            $sut = new XmlToDFeParser;
+
+            expect($sut->getTagAttributes($fakeXmlString, 'xProd'))
+                ->toBeArray()
+                ->toBe([]);
+        });
     });
 });
