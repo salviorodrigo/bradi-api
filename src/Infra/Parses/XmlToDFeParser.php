@@ -84,7 +84,7 @@ final class XmlToDFeParser implements DFeParser
     private function getEndPositionTag(string $xmlString, string $tagName, int $offset): int
     {
         if ($this->isAutoClosedTag($xmlString, $tagName, $offset)) {
-            return (int) strpos($xmlString, '>', $offset);
+            return (int) strpos($xmlString, '>', $offset) + 1;
         }
         $xmlTag = '</' . $tagName . '>';
 
