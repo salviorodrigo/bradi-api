@@ -49,7 +49,22 @@ final class XmlToDFeParser implements DFeParser
 
     public function getTagAttributes(string $xmlString, string $tagName): array
     {
-        return ['Method not implemented'];
+        if (! $this->existsTag($xmlString, $tagName)) {
+            return [];
+        }
+        $xmlTag = $this->getTag($xmlString, $tagName);
+        if (! $this->hasAttribute($xmlTag, $tagName)) {
+            return [];
+        }
+        $attributesString = $this->sanitizeAttributes($xmlTag, $tagName);
+        $rawAttributes = explode(' ', $attributesString);
+        $attributes = [];
+        foreach ($rawAttributes as $rawAttribute) {
+            $rawAttribute = explode('=', $rawAttribute);
+            $attributes[$rawAttribute[0]] = $rawAttribute[1];
+        }
+
+        return $attributes;
     }
 
     private function existsTag(string $xmlString, string $tagName, int $offset = 0): bool
@@ -103,5 +118,20 @@ final class XmlToDFeParser implements DFeParser
         $xmlTag = '</' . $tagName . '>';
 
         return (int) strpos($xmlString, $xmlTag, $offset) - 1;
+    }
+
+    private function hasAttribute(string $xmlString, string $tagName): bool
+    {
+        $xmlTag = $this->getTag($xmlString, $tagName);
+
+        return $xmlTag[strlen('<' . $tagName)] == ' ';
+    }
+
+    private function sanitizeAttributes(string $xmlString, string $tagName): string
+    {
+        $attributesString = substr($xmlString, strlen('<' . $tagName) + 1, strpos($xmlString, '>') - strlen('<' . $tagName) - 1);
+        $attributesString = str_replace('"', '', $attributesString);
+
+        return $attributesString;
     }
 }
