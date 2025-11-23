@@ -97,5 +97,14 @@ describe('XmlToDFeParser', function () {
                 ->toBeString()
                 ->toBe('OLEO DIESEL B S10');
         });
+
+        test('Should be return empty string of target tag is a xlm element', function () {
+            $fakeXmlString = '<prod><xProd>OLEO DIESEL B S10</xProd><uCom>L</uCom><qCom>622.0000</qCom><vUnCom>6.13000000</vUnCom><vProd>3812.86</vProd></prod>';
+            $sut = new XmlToDFeParser;
+
+            expect($sut->getTagValue($fakeXmlString, 'prod'))
+                ->toBeString()
+                ->toBe('');
+        });
     });
 });
