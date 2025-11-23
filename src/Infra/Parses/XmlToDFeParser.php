@@ -8,11 +8,6 @@ use BradiNfeApi\Domain\Invoices\Protocols\DFeParser;
 
 final class XmlToDFeParser implements DFeParser
 {
-    public function getTag(string $xmlString, string $tagName): string
-    {
-        return (string) $this->getTags($xmlString, $tagName)[0];
-    }
-
     public function getTags(string $xmlString, string $tagName): array
     {
         $thisResponse = [];
@@ -28,6 +23,13 @@ final class XmlToDFeParser implements DFeParser
         }
 
         return $thisResponse;
+    }
+
+    public function getTag(string $xmlString, string $tagName): string
+    {
+        $xmlTags = $this->getTags($xmlString, $tagName);
+
+        return (string) count($xmlTags) == 0 ? '' : $xmlTags[0];
     }
 
     public function getTagValue(string $xmlString, string $tagName): string
