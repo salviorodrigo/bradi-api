@@ -138,5 +138,14 @@ describe('XmlToDFeParser', function () {
                 ->toBeArray()
                 ->toBe([]);
         });
+
+        test('Should be return empty array when tag doesn\'t exists', function () {
+            $fakeXmlString = '<det nItem="1"><prod><xProd>OLEO DIESEL B S10</xProd><uCom>L</uCom><qCom>622.0000</qCom><vUnCom>6.13000000</vUnCom><vProd>3812.86</vProd></prod></det>';
+            $sut = new XmlToDFeParser;
+
+            expect($sut->getTagAttributes($fakeXmlString, 'invalidTag'))
+                ->toBeArray()
+                ->toBe([]);
+        });
     });
 });
