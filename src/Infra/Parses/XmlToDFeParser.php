@@ -84,7 +84,7 @@ final class XmlToDFeParser implements DFeParser
     private function getEndPositionTag(string $xmlString, string $tagName, int $offset): int
     {
         if ($this->isAutoClosedTag($xmlString, $tagName, $offset)) {
-            return (int) strpos($xmlString, '>', $offset) + 1;
+            return (int) strpos($xmlString, '/>', $offset) + strlen('/>');
         }
         $xmlTag = '</' . $tagName . '>';
 
@@ -95,7 +95,11 @@ final class XmlToDFeParser implements DFeParser
     {
         $xmlTag = $this->getTags($xmlString, $tagName)[0];
 
-        return (bool) ($xmlTag[$this->getInnerStartPositionTag($xmlTag, $tagName)] == '<' || $xmlTag[$this->getInnerEndPositionTag($xmlTag, $tagName, strlen('<' . $tagName))] == '>');
+        return (bool) (
+            $this->isAutoClosedTag($xmlString, $tagName) ||
+            $xmlTag[$this->getInnerStartPositionTag($xmlTag, $tagName)] == '<' ||
+            $xmlTag[$this->getInnerEndPositionTag($xmlTag, $tagName, strlen('<' . $tagName))] == '>'
+        );
 
     }
 
@@ -129,7 +133,9 @@ final class XmlToDFeParser implements DFeParser
 
     private function sanitizeAttributes(string $xmlString, string $tagName): string
     {
+
         $attributesString = substr($xmlString, strlen('<' . $tagName) + 1, strpos($xmlString, '>') - strlen('<' . $tagName) - 1);
+        $attributesString = substr($attributesString, 0, strrpos($attributesString, '"'));
         $attributesString = str_replace('"', '', $attributesString);
 
         return $attributesString;
