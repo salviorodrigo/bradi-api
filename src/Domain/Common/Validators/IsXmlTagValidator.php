@@ -10,24 +10,20 @@ use BradiNfeApi\Domain\Common\Validators\Exceptions\IsNotXmlTagError;
 
 final class IsXmlTagValidator extends Validator
 {
-    public function __construct(public readonly string $fieldName, private bool $isAutoClosedTag = false) {}
+    public function __construct(public readonly string $fieldName) {}
 
     public function validate(mixed $candidate): Result
     {
         if (! str_starts_with($candidate, '<' . $this->fieldName)) {
             return Result::makeFailure(new IsNotXmlTagError($this->fieldName));
         }
-
-        if ($this->isAutoClosedTag) {
-            if (! str_ends_with($candidate, '/>')) {
-                return Result::makeFailure(new IsNotXmlTagError($this->fieldName));
-            }
-        } else {
-            if (! str_ends_with($candidate, '</' . $this->fieldName . '>')) {
-                return Result::makeFailure(new IsNotXmlTagError($this->fieldName));
-            }
+        if (str_ends_with($candidate, '/>')) {
+            Result::makeSuccess();
+        }
+        if (str_ends_with($candidate, '</' . $this->fieldName . '>')) {
+            Result::makeSuccess();
         }
 
-        return Result::makeSuccess();
+        return Result::makeFailure(new IsNotXmlTagError($this->fieldName));
     }
 }
