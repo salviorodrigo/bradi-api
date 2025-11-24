@@ -11,7 +11,6 @@ abstract class DFeElement
 {
     public readonly string $value;
     public readonly string $xmlString;
-    public readonly bool $isAutoClosedTag;
 
     public static function xmlParser(): DFeParser
     {
