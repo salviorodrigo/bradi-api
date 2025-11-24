@@ -134,6 +134,15 @@ describe('XmlToDFeParser', function () {
                 ->toBeString()
                 ->toBe('');
         });
+
+        test('Should be return a empty string when tag is a autoclose tag', function () {
+            $fakeXmlString = '<CanonicalizationMethod Algorithm="http://www.w3.org/TR/2001/REC-xml-c14n-20010315"/>';
+            $sut = new XmlToDFeParser;
+
+            expect($sut->getTagValue($fakeXmlString, 'CanonicalizationMethod'))
+                ->toBeString()
+                ->toBe('');
+        });
     });
 
     describe('.getTagAttributes()', function () {
