@@ -14,7 +14,7 @@ declare(strict_types=1);
  * (Seção 8.1 do MOC – Visão Geral, Tabela de UF, Município e País).
  */
 
-namespace BradiNfeApi\Domain\Invoices\NFe\v4_00\ValueObjects\GrupoB;
+namespace BradiNfeApi\Domain\Invoices\NFe\v4_00\ValueObjects;
 
 use BradiNfeApi\Common\Result;
 use BradiNfeApi\Domain\Common\Services\ValidationService;
@@ -25,11 +25,8 @@ use BradiNfeApi\Domain\Invoices\Protocols\DFeElement;
 final class CodigoUF extends DFeElement
 {
     private function __construct(
-        public readonly string $xmlString,
-        public readonly bool $isAutoClosedTag = false)
-    {
-        $this->value = DFeElement::xmlParser()->getTagValue($xmlString, 'cUF');
-    }
+        public readonly string $value,
+        public readonly string $xmlString) {}
 
     public static function parseXmlString(mixed $rawData): Result
     {
@@ -39,7 +36,12 @@ final class CodigoUF extends DFeElement
         ]);
         $validationServiceResponse = $validationService->verify($rawData);
         if ($validationServiceResponse->isSuccess()) {
-            return Result::makeSuccess(new CodigoUF($rawData));
+            return Result::makeSuccess(
+                new CodigoUF(
+                    DFeElement::xmlParser()->getTagValue($rawData, 'cUF'),
+                    DFeElement::xmlParser()->getTag($rawData, 'cUF')
+                )
+            );
         }
 
         return $validationServiceResponse;
