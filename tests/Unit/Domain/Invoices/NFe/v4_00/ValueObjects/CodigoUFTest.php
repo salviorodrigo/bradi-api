@@ -37,9 +37,7 @@ describe('CodigoUF', function () {
             expect($sut->isSuccess())->toBeFalsy();
             expect($sut->getError())->toBeInstanceOf(ValidationError::class);
         });
-    });
 
-    describe('::parseXmlString()', function () {
         test('Should be return a failure Result if a number value is provided', function () {
             $fakeXmlString = 11;
             $sut = CodigoUF::parseXmlString($fakeXmlString);
@@ -47,9 +45,7 @@ describe('CodigoUF', function () {
             expect($sut->isSuccess())->toBeFalsy();
             expect($sut->getError())->toBeInstanceOf(ValidationError::class);
         });
-    });
 
-    describe('::parseXmlString()', function () {
         test('Should be return a failure Result if an array value is provided', function () {
             $fakeXmlString = ['<ide><cUF>11</cUF></ide>'];
             $sut = CodigoUF::parseXmlString($fakeXmlString);
@@ -57,9 +53,6 @@ describe('CodigoUF', function () {
             expect($sut->isSuccess())->toBeFalsy();
             expect($sut->getError())->toBeInstanceOf(ValidationError::class);
         });
-    });
-
-    describe('::parseXmlString()', function () {
         test('Should be return a failure Result if null given', function () {
             $fakeXmlString = null;
             $sut = CodigoUF::parseXmlString($fakeXmlString);
@@ -67,9 +60,7 @@ describe('CodigoUF', function () {
             expect($sut->isSuccess())->toBeFalsy();
             expect($sut->getError())->toBeInstanceOf(ValidationError::class);
         });
-    });
 
-    describe('::parseXmlString()', function () {
         test('Should be return a failure Result if an empty string is provided', function () {
             $fakeXmlString = '';
             $sut = CodigoUF::parseXmlString($fakeXmlString);
@@ -77,9 +68,7 @@ describe('CodigoUF', function () {
             expect($sut->isSuccess())->toBeFalsy();
             expect($sut->getError())->toBeInstanceOf(ValidationError::class);
         });
-    });
 
-    describe('::parseXmlString()', function () {
         test('Should be return a failure Result if a bool string is provided', function () {
             $fakeXmlString = true;
             $sut = CodigoUF::parseXmlString($fakeXmlString);
