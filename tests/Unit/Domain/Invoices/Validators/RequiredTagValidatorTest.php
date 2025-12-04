@@ -1,5 +1,6 @@
 <?php
 
+use BradiNfeApi\Domain\Invoices\Validators\Exceptions\NotFoundTagError;
 use BradiNfeApi\Domain\Invoices\Validators\RequiredTagValidator;
 
 describe('IsStringValidator', function () {
@@ -9,6 +10,13 @@ describe('IsStringValidator', function () {
             $sutResponse = $sut->validate('<validTag>aValue</validTag>');
             expect($sutResponse->isSuccess())->toBeTruthy();
             expect($sutResponse->hasValue())->toBeFalsy();
+        });
+
+        test('Should be fail if provided xml string doesn\'t contain a target xml tag', function () {
+            $sut = new RequiredTagValidator('missingTag');
+            $sutResponse = $sut->validate('<validTag>aValue</validTag>');
+            expect($sutResponse->isSuccess())->toBeFalsy();
+            expect($sutResponse->getError())->toBeInstanceOf(NotFoundTagError::class);
         });
     });
 });

@@ -7,6 +7,7 @@ namespace BradiNfeApi\Domain\Invoices\Validators;
 use BradiNfeApi\Common\Result;
 use BradiNfeApi\Domain\Common\Protocols\Validator;
 use BradiNfeApi\Domain\Invoices\Protocols\DFeElement;
+use BradiNfeApi\Domain\Invoices\Validators\Exceptions\NotFoundTagError;
 
 final class RequiredTagValidator extends Validator
 {
