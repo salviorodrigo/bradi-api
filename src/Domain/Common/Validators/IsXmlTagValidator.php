@@ -14,10 +14,10 @@ final class IsXmlTagValidator extends Validator
 
     public function validate(mixed $candidate): Result
     {
-        if (! simplexml_load_string($candidate)) {
-            return Result::makeFailure(new IsNotXmlTagError($this->fieldName));
+        if (is_string($candidate) && simplexml_load_string($candidate)) {
+            return Result::makeSuccess();
         }
 
-        return Result::makeSuccess();
+        return Result::makeFailure(new IsNotXmlTagError($this->fieldName));
     }
 }
