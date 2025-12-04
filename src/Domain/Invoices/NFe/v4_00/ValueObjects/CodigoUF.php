@@ -49,11 +49,12 @@ final class CodigoUF extends DFeElement
         $xmlTagString = DFeElement::xmlParser()->getTag($rawData, self::$tagName);
         $xmlTagValue = DFeElement::xmlParser()->getTagValue($xmlTagString, self::$tagName);
 
-        if (! UnidadeFederativa::from($xmlTagValue)) {
-            Result::makeFailure([
-                new ValidationError(
-                    new InvalidCodigoUFError('cUF')),
-            ]);
+        if (! UnidadeFederativa::tryFrom($xmlTagValue)) {
+            return Result::makeFailure(
+                new ValidationError([
+                    new InvalidCodigoUFError(self::$tagName)]
+                ),
+            );
         }
 
         return Result::makeSuccess(
