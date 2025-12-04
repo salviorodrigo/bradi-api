@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace BradiNfeApi\Domain\Invoices\NFe\Validators;
+namespace BradiNfeApi\Domain\Invoices\Validators;
 
 use BradiNfeApi\Common\Result;
 use BradiNfeApi\Domain\Common\Protocols\Validator;
@@ -14,7 +14,7 @@ final class RequiredTagValidator extends Validator
 
     public function validate(mixed $candidate): Result
     {
-        if (DFeElement::xmlParser()->getTag($candidate, $fieldName) == '') {
+        if (DFeElement::xmlParser()->getTag($candidate, $this->fieldName) == '') {
             return Result::makeFailure(new IsNotXmlTagError($this->fieldName));
         }
 
