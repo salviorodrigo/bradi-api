@@ -19,6 +19,7 @@ namespace BradiNfeApi\Domain\Invoices\NFe\v4_00\ValueObjects;
 use BradiNfeApi\Common\Result;
 use BradiNfeApi\Domain\Common\Services\ValidationService;
 use BradiNfeApi\Domain\Common\Validators\IsStringValidator;
+use BradiNfeApi\Domain\Common\Validators\IsXmlTagValidator;
 use BradiNfeApi\Domain\Common\Validators\NotNullValidator;
 use BradiNfeApi\Domain\Invoices\Protocols\DFeElement;
 
@@ -33,6 +34,7 @@ final class CodigoUF extends DFeElement
         $validationService = new ValidationService([
             new IsStringValidator('cUF'),
             new NotNullValidator('cUF'),
+            new IsXmlTagValidator('cUF'),
         ]);
         $validationServiceResponse = $validationService->verify($rawData);
         if ($validationServiceResponse->isSuccess()) {

@@ -27,9 +27,7 @@ describe('CodigoUF', function () {
             expect($sut->getData()->xmlString)->toBeString();
             expect($sut->getData()->xmlString)->toBe('<cUF>11</cUF>');
         });
-    });
 
-    describe('::parseXmlString()', function () {
         test('Should be return a failure Result if an object value is provided', function () {
             $fakeXmlString = new stdClass;
             $sut = CodigoUF::parseXmlString($fakeXmlString);
@@ -53,6 +51,7 @@ describe('CodigoUF', function () {
             expect($sut->isSuccess())->toBeFalsy();
             expect($sut->getError())->toBeInstanceOf(ValidationError::class);
         });
+
         test('Should be return a failure Result if null given', function () {
             $fakeXmlString = null;
             $sut = CodigoUF::parseXmlString($fakeXmlString);
