@@ -75,5 +75,13 @@ describe('CodigoUF', function () {
             expect($sut->isSuccess())->toBeFalsy();
             expect($sut->getError())->toBeInstanceOf(ValidationError::class);
         });
+
+        test('Should be fail if a non valid cUF is provided', function () {
+            $fakeXmlString = '<ide><cUF>68</cUF></ide>';
+            $sut = CodigoUF::parseXmlString($fakeXmlString);
+            expect($sut)->toBeInstanceOf(Result::class);
+            expect($sut->isSuccess())->toBeFalsy();
+            expect($sut->getError())->toBeInstanceOf(ValidationError::class);
+        });
     });
 });
