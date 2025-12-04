@@ -15,7 +15,7 @@ final class RequiredTagValidator extends Validator
     public function validate(mixed $candidate): Result
     {
         if (DFeElement::xmlParser()->getTag($candidate, $this->fieldName) == '') {
-            return Result::makeFailure(new IsNotXmlTagError($this->fieldName));
+            return Result::makeFailure(new NotFoundTagError($this->fieldName));
         }
 
         return Result::makeSuccess();
