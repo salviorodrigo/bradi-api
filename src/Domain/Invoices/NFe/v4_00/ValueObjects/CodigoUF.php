@@ -28,6 +28,8 @@ use BradiNfeApi\Domain\Invoices\Protocols\DFeElement;
 
 final class CodigoUF extends DFeElement
 {
+    public static string $tagName = 'cUF';
+
     private function __construct(
         public readonly string $value,
         public readonly string $xmlString) {}
@@ -35,17 +37,17 @@ final class CodigoUF extends DFeElement
     public static function parseXmlString(mixed $rawData): Result
     {
         $validationService = new ValidationService([
-            new IsStringValidator('cUF'),
-            new NotNullValidator('cUF'),
-            new IsXmlTagValidator('cUF'),
+            new IsStringValidator(self::$tagName),
+            new NotNullValidator(self::$tagName),
+            new IsXmlTagValidator(self::$tagName),
         ]);
         $validationServiceResponse = $validationService->verify($rawData);
         if (! $validationServiceResponse->isSuccess()) {
             return $validationServiceResponse;
         }
 
-        $xmlTagString = DFeElement::xmlParser()->getTag($rawData, 'cUF');
-        $xmlTagValue = DFeElement::xmlParser()->getTagValue($xmlTagString, 'cUF');
+        $xmlTagString = DFeElement::xmlParser()->getTag($rawData, self::$tagName);
+        $xmlTagValue = DFeElement::xmlParser()->getTagValue($xmlTagString, self::$tagName);
 
         if (! UnidadeFederativa::from($xmlTagValue)) {
             Result::makeFailure([

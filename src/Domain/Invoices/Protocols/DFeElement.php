@@ -9,6 +9,8 @@ use BradiNfeApi\Infra\Parses\XmlToDFeParser;
 
 abstract class DFeElement
 {
+    public static string $tagName;
+
     public readonly string $value;
     public readonly string $xmlString;
 
