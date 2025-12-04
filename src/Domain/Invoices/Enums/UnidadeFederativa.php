@@ -2,6 +2,12 @@
 
 declare(strict_types=1);
 
+/*
+ * Tabela de sigla de Unidade Federativa, de acordo com a tabela do IBGE de de
+ * código de unidades da federação (Seção 8.1 do MOC – Visão
+ * Geral, Tabela de UF, Município e País) de 10 de fevereiro de 2025.
+ */
+
 namespace BradiNfeApi\Domain\Invoices\Enums;
 
 enum UnidadeFederativa: string

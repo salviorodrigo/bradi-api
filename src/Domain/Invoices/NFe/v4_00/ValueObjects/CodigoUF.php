@@ -16,11 +16,14 @@ declare(strict_types=1);
 
 namespace BradiNfeApi\Domain\Invoices\NFe\v4_00\ValueObjects;
 
+use BradiNfeApi\Common\Exceptions\ValidationError;
 use BradiNfeApi\Common\Result;
 use BradiNfeApi\Domain\Common\Services\ValidationService;
 use BradiNfeApi\Domain\Common\Validators\IsStringValidator;
 use BradiNfeApi\Domain\Common\Validators\IsXmlTagValidator;
 use BradiNfeApi\Domain\Common\Validators\NotNullValidator;
+use BradiNfeApi\Domain\Invoices\Enums\UnidadeFederativa;
+use BradiNfeApi\Domain\Invoices\NFe\Exceptions\InvalidCodigoUFError;
 use BradiNfeApi\Domain\Invoices\Protocols\DFeElement;
 
 final class CodigoUF extends DFeElement
@@ -37,15 +40,25 @@ final class CodigoUF extends DFeElement
             new IsXmlTagValidator('cUF'),
         ]);
         $validationServiceResponse = $validationService->verify($rawData);
-        if ($validationServiceResponse->isSuccess()) {
-            return Result::makeSuccess(
-                new CodigoUF(
-                    DFeElement::xmlParser()->getTagValue($rawData, 'cUF'),
-                    DFeElement::xmlParser()->getTag($rawData, 'cUF')
-                )
-            );
+        if (! $validationServiceResponse->isSuccess()) {
+            return $validationServiceResponse;
         }
 
-        return $validationServiceResponse;
+        $xmlTagString = DFeElement::xmlParser()->getTag($rawData, 'cUF');
+        $xmlTagValue = DFeElement::xmlParser()->getTagValue($xmlTagString, 'cUF');
+
+        if (! UnidadeFederativa::from($xmlTagValue)) {
+            Result::makeFailure([
+                new ValidationError(
+                    new InvalidCodigoUFError('cUF')),
+            ]);
+        }
+
+        return Result::makeSuccess(
+            new CodigoUF(
+                $xmlTagValue,
+                $xmlTagString
+            )
+        );
     }
 }
