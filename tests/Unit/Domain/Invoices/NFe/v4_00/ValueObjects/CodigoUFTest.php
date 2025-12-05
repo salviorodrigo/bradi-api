@@ -114,5 +114,14 @@ describe('CodigoUF', function () {
             expect($sut->isSuccess())->toBeFalsy();
             expect($sut->getError())->toBeInstanceOf(ValidationError::class);
         });
+
+        test('Should be fail if elements is provided', function () {
+            $fakeUFCode = '11';
+            $fakeElements = ['fakeElement'];
+            $sut = CodigoUF::create(tagValue: $fakeUFCode, elements: $fakeElements);
+            expect($sut)->toBeInstanceOf(Result::class);
+            expect($sut->isSuccess())->toBeFalsy();
+            expect($sut->getError())->toBeInstanceOf(ValidationError::class);
+        });
     });
 });
