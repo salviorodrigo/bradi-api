@@ -92,5 +92,13 @@ describe('CodigoNF', function () {
             expect($sut->isSuccess())->toBeFalsy();
             expect($sut->getError())->toBeInstanceOf(ValidationError::class);
         });
+
+        test('Should be fail if a string fewer than eight letters is provided', function () {
+            $fakeXmlString = '<cNF>0000001</cNF>';
+            $sut = CodigoNF::parseXmlString($fakeXmlString);
+            expect($sut)->toBeInstanceOf(Result::class);
+            expect($sut->isSuccess())->toBeFalsy();
+            expect($sut->getError())->toBeInstanceOf(ValidationError::class);
+        });
     });
 });
