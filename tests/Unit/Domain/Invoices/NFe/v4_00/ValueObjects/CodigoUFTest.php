@@ -88,7 +88,7 @@ describe('CodigoUF', function () {
     describe('::create()', function () {
         test('Should be return a Result object with himself when a valid cUF code is provided', function () {
             $fakeUFCode = '11';
-            $sut = CodigoUF::create($fakeUFCode);
+            $sut = CodigoUF::create(tagValue: $fakeUFCode);
             expect($sut)->toBeInstanceOf(Result::class);
             expect($sut->isSuccess())->toBeTruthy();
             expect($sut->getData())->toBeInstanceOf(CodigoUF::class);
@@ -100,7 +100,16 @@ describe('CodigoUF', function () {
 
         test('Should be fail if an invalid cUF code is provided', function () {
             $fakeUFCode = '10';
-            $sut = CodigoUF::create($fakeUFCode);
+            $sut = CodigoUF::create(tagValue: $fakeUFCode);
+            expect($sut)->toBeInstanceOf(Result::class);
+            expect($sut->isSuccess())->toBeFalsy();
+            expect($sut->getError())->toBeInstanceOf(ValidationError::class);
+        });
+
+        test('Should be fail if attributes is provided', function () {
+            $fakeUFCode = '11';
+            $fakeAttributes = ['fakeAttribute' => 'fakeAttributeValue'];
+            $sut = CodigoUF::create(tagValue: $fakeUFCode, attributes: $fakeAttributes);
             expect($sut)->toBeInstanceOf(Result::class);
             expect($sut->isSuccess())->toBeFalsy();
             expect($sut->getError())->toBeInstanceOf(ValidationError::class);
