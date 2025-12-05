@@ -24,6 +24,7 @@ use BradiNfeApi\Domain\Common\Validators\IsXmlTagValidator;
 use BradiNfeApi\Domain\Common\Validators\NotNullValidator;
 use BradiNfeApi\Domain\Invoices\Enums\UnidadeFederativa;
 use BradiNfeApi\Domain\Invoices\NFe\Exceptions\InvalidCodigoUFError;
+use BradiNfeApi\Domain\Invoices\NFe\Exceptions\XmlElementWithAttributesError;
 use BradiNfeApi\Domain\Invoices\Protocols\DFeElement;
 
 final class CodigoUF extends DFeElement
@@ -71,6 +72,14 @@ final class CodigoUF extends DFeElement
             return Result::makeFailure(
                 new ValidationError([
                     new InvalidCodigoUFError(self::$tagName),
+                ])
+            );
+        }
+
+        if (count($attributes) > 0) {
+            return Result::makeFailure(
+                new ValidationError([
+                    new XmlElementWithAttributesError(self::$tagName),
                 ])
             );
         }
