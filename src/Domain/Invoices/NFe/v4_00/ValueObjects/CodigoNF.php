@@ -17,11 +17,13 @@ declare(strict_types=1);
 
 namespace BradiNfeApi\Domain\Invoices\NFe\v4_00\ValueObjects;
 
+use BradiNfeApi\Common\Exceptions\ValidationError;
 use BradiNfeApi\Common\Result;
 use BradiNfeApi\Domain\Common\Services\ValidationService;
 use BradiNfeApi\Domain\Common\Validators\IsStringValidator;
 use BradiNfeApi\Domain\Common\Validators\IsXmlTagValidator;
 use BradiNfeApi\Domain\Common\Validators\NotNullValidator;
+use BradiNfeApi\Domain\Invoices\NFe\Exceptions\InvalidCodigoNFError;
 use BradiNfeApi\Domain\Invoices\Protocols\DFeElement;
 
 final class CodigoNF extends DFeElement
@@ -46,6 +48,14 @@ final class CodigoNF extends DFeElement
 
         $xmlTagString = DFeElement::xmlParser()->getTag($rawData, self::$tagName);
         $xmlTagValue = DFeElement::xmlParser()->getTagValue($xmlTagString, self::$tagName);
+
+        if (! preg_match('/^(?!0{8})[0-9]{8}$/', $xmlTagValue)) {
+            return Result::makeFailure(
+                new ValidationError([
+                    new InvalidCodigoNFError(self::$tagName),
+                ])
+            );
+        }
 
         return Result::makeSuccess(
             new CodigoNF(
