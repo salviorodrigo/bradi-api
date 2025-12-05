@@ -84,4 +84,18 @@ describe('CodigoUF', function () {
             expect($sut->getError())->toBeInstanceOf(ValidationError::class);
         });
     });
+
+    describe('::create()', function () {
+        test('Should be return a Result object with himself when a valid cUF code is provided', function () {
+            $fakeUFCode = '11';
+            $sut = CodigoUF::create($fakeUFCode);
+            expect($sut)->toBeInstanceOf(Result::class);
+            expect($sut->isSuccess())->toBeTruthy();
+            expect($sut->getData())->toBeInstanceOf(CodigoUF::class);
+            expect($sut->getData()->value)->toBeString();
+            expect($sut->getData()->value)->toBe('11');
+            expect($sut->getData()->xmlString)->toBeString();
+            expect($sut->getData()->xmlString)->toBe('<cUF>11</cUF>');
+        });
+    });
 });
