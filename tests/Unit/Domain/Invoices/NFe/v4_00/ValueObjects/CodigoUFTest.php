@@ -97,5 +97,13 @@ describe('CodigoUF', function () {
             expect($sut->getData()->xmlString)->toBeString();
             expect($sut->getData()->xmlString)->toBe('<cUF>11</cUF>');
         });
+
+        test('Should be fail if an invalid cUF code is provided', function () {
+            $fakeUFCode = '10';
+            $sut = CodigoUF::create($fakeUFCode);
+            expect($sut)->toBeInstanceOf(Result::class);
+            expect($sut->isSuccess())->toBeFalsy();
+            expect($sut->getError())->toBeInstanceOf(ValidationError::class);
+        });
     });
 });
