@@ -54,4 +54,9 @@ final class CodigoNF extends DFeElement
             )
         );
     }
+
+    public static function create(string $tagValue, array $elements = [], array $attributes = []): Result
+    {
+        return Result::makeSuccess('Method not implement');
+    }
 }
