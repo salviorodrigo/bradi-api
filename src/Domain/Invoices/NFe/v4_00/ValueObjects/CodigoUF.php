@@ -67,6 +67,19 @@ final class CodigoUF extends DFeElement
 
     public static function create(string $tagValue, array $elements = [], array $attributes = []): Result
     {
-        return Result::makeSuccess('Method not implement');
+        if (! UnidadeFederativa::tryFrom($tagValue)) {
+            return Result::makeFailure(
+                new ValidationError([
+                    new InvalidCodigoUFError(self::$tagName),
+                ])
+            );
+        }
+
+        return Result::makeSuccess(
+            new CodigoUF(
+                $tagValue,
+                self::generateXmlString($tagValue)
+            )
+        );
     }
 }
