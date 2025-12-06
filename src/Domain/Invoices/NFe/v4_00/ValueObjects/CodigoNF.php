@@ -78,6 +78,11 @@ final class CodigoNF extends DFeElement
             );
         }
 
-        return Result::makeSuccess('Method not implement');
+        return Result::makeSuccess(
+            new CodigoNF(
+                $tagValue,
+                self::generateXmlString(tagValue: $tagValue)
+            )
+        );
     }
 }
