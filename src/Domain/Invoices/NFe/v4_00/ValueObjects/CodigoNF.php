@@ -65,8 +65,19 @@ final class CodigoNF extends DFeElement
         );
     }
 
-    public static function create(string $tagValue, array $elements = [], array $attributes = []): Result
+    public static function create(string $tagValue = '', array $elements = [], array $attributes = []): Result
     {
+        if ($tagValue == '') {
+            $xmlTagValue = str_pad((string) rand(1, 99999999), 8, '0', STR_PAD_LEFT);
+
+            return Result::makeSuccess(
+                new CodigoNF(
+                    $xmlTagValue,
+                    self::generateXmlString(tagValue: $xmlTagValue)
+                )
+            );
+        }
+
         return Result::makeSuccess('Method not implement');
     }
 }
