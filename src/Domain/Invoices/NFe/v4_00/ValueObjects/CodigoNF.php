@@ -78,6 +78,14 @@ final class CodigoNF extends DFeElement
             );
         }
 
+        if (! preg_match('/^(?!0{8})[0-9]{8}$/', $tagValue)) {
+            return Result::makeFailure(
+                new ValidationError([
+                    new InvalidCodigoNFError(self::$tagName),
+                ])
+            );
+        }
+
         return Result::makeSuccess(
             new CodigoNF(
                 $tagValue,
