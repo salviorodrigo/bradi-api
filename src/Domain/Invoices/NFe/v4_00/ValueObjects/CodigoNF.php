@@ -24,6 +24,7 @@ use BradiNfeApi\Domain\Common\Validators\IsStringValidator;
 use BradiNfeApi\Domain\Common\Validators\IsXmlTagValidator;
 use BradiNfeApi\Domain\Common\Validators\NotNullValidator;
 use BradiNfeApi\Domain\Invoices\NFe\Exceptions\InvalidCodigoNFError;
+use BradiNfeApi\Domain\Invoices\NFe\Exceptions\XmlElementWithAttributesError;
 use BradiNfeApi\Domain\Invoices\Protocols\DFeElement;
 
 final class CodigoNF extends DFeElement
@@ -67,6 +68,15 @@ final class CodigoNF extends DFeElement
 
     public static function create(string $tagValue = '', array $elements = [], array $attributes = []): Result
     {
+
+        if (count($attributes) > 0) {
+            return Result::makeFailure(
+                new ValidationError([
+                    new XmlElementWithAttributesError(self::$tagName),
+                ])
+            );
+        }
+
         if ($tagValue == '') {
             $xmlTagValue = str_pad((string) rand(1, 99999999), 8, '0', STR_PAD_LEFT);
 
