@@ -25,6 +25,7 @@ use BradiNfeApi\Domain\Common\Validators\IsXmlTagValidator;
 use BradiNfeApi\Domain\Common\Validators\NotNullValidator;
 use BradiNfeApi\Domain\Invoices\NFe\Exceptions\InvalidCodigoNFError;
 use BradiNfeApi\Domain\Invoices\NFe\Exceptions\XmlElementWithAttributesError;
+use BradiNfeApi\Domain\Invoices\NFe\Exceptions\XmlElementWithElementsError;
 use BradiNfeApi\Domain\Invoices\Protocols\DFeElement;
 
 final class CodigoNF extends DFeElement
@@ -73,6 +74,14 @@ final class CodigoNF extends DFeElement
             return Result::makeFailure(
                 new ValidationError([
                     new XmlElementWithAttributesError(self::$tagName),
+                ])
+            );
+        }
+
+        if (count($elements) > 0) {
+            return Result::makeFailure(
+                new ValidationError([
+                    new XmlElementWithElementsError(self::$tagName),
                 ])
             );
         }
