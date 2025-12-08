@@ -130,5 +130,12 @@ describe('CodigoNF', function () {
             expect(preg_match('/^(?!0{8})[0-9]{8}$/', $sut->getData()->value))->toBeTruthy();
             expect((CodigoNF::parseXmlString($sut->getData()->xmlString))->isSuccess())->toBeTruthy();
         });
+
+        test('Should be fail if an invalid cNF value is provided', function () {
+            $sut = CodigoNF::create('8342784');
+            expect($sut)->toBeInstanceOf(Result::class);
+            expect($sut->isSuccess())->toBeFalsy();
+            expect($sut->getError())->toBeInstanceOf(ValidationError::class);
+        });
     });
 });
