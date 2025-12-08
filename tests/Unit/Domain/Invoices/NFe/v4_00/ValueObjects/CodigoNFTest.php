@@ -137,5 +137,14 @@ describe('CodigoNF', function () {
             expect($sut->isSuccess())->toBeFalsy();
             expect($sut->getError())->toBeInstanceOf(ValidationError::class);
         });
+
+        test('Should be fail if attributes is provided', function () {
+            $fakeNFCode = '8342784';
+            $fakeAttributes = ['fakeAttribute' => 'fakeAttributeValue'];
+            $sut = CodigoNF::create(tagValue: $fakeNFCode, attributes: $fakeAttributes);
+            expect($sut)->toBeInstanceOf(Result::class);
+            expect($sut->isSuccess())->toBeFalsy();
+            expect($sut->getError())->toBeInstanceOf(ValidationError::class);
+        });
     });
 });
