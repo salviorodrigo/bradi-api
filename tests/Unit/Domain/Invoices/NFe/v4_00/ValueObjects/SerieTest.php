@@ -25,6 +25,54 @@ describe('Serie', function () {
             expect($sut->getData()->xmlString)->toBe('<serie>0</serie>');
         });
 
+        test('Should be return a failure Result if an object value is provided', function () {
+            $fakeXmlString = new stdClass;
+            $sut = Serie::parseXmlString($fakeXmlString);
+            expect($sut)->toBeInstanceOf(Result::class);
+            expect($sut->isSuccess())->toBeFalsy();
+            expect($sut->getError())->toBeInstanceOf(ValidationError::class);
+        });
+
+        test('Should be return a failure Result if a number value is provided', function () {
+            $fakeXmlString = 11;
+            $sut = Serie::parseXmlString($fakeXmlString);
+            expect($sut)->toBeInstanceOf(Result::class);
+            expect($sut->isSuccess())->toBeFalsy();
+            expect($sut->getError())->toBeInstanceOf(ValidationError::class);
+        });
+
+        test('Should be return a failure Result if an array value is provided', function () {
+            $fakeXmlString = ['<ide><serie>0</serie></ide>'];
+            $sut = Serie::parseXmlString($fakeXmlString);
+            expect($sut)->toBeInstanceOf(Result::class);
+            expect($sut->isSuccess())->toBeFalsy();
+            expect($sut->getError())->toBeInstanceOf(ValidationError::class);
+        });
+
+        test('Should be return a failure Result if null given', function () {
+            $fakeXmlString = null;
+            $sut = Serie::parseXmlString($fakeXmlString);
+            expect($sut)->toBeInstanceOf(Result::class);
+            expect($sut->isSuccess())->toBeFalsy();
+            expect($sut->getError())->toBeInstanceOf(ValidationError::class);
+        });
+
+        test('Should be return a failure Result if an empty string is provided', function () {
+            $fakeXmlString = '';
+            $sut = Serie::parseXmlString($fakeXmlString);
+            expect($sut)->toBeInstanceOf(Result::class);
+            expect($sut->isSuccess())->toBeFalsy();
+            expect($sut->getError())->toBeInstanceOf(ValidationError::class);
+        });
+
+        test('Should be return a failure Result if a bool string is provided', function () {
+            $fakeXmlString = true;
+            $sut = Serie::parseXmlString($fakeXmlString);
+            expect($sut)->toBeInstanceOf(Result::class);
+            expect($sut->isSuccess())->toBeFalsy();
+            expect($sut->getError())->toBeInstanceOf(ValidationError::class);
+        });
+
         test('Should be fail if an invalid serie value is provided', function () {
             $fakeXmlString = '<ide><serie>970</serie></ide>';
             $sut = Serie::parseXmlString($fakeXmlString);

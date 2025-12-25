@@ -25,6 +25,54 @@ describe('NatOp', function () {
             expect($sut->getData()->xmlString)->toBe('<natOp>VENDA DE MERCADORIAS</natOp>');
         });
 
+        test('Should be return a failure Result if an object value is provided', function () {
+            $fakeXmlString = new stdClass;
+            $sut = NatOp::parseXmlString($fakeXmlString);
+            expect($sut)->toBeInstanceOf(Result::class);
+            expect($sut->isSuccess())->toBeFalsy();
+            expect($sut->getError())->toBeInstanceOf(ValidationError::class);
+        });
+
+        test('Should be return a failure Result if a number value is provided', function () {
+            $fakeXmlString = 11;
+            $sut = NatOp::parseXmlString($fakeXmlString);
+            expect($sut)->toBeInstanceOf(Result::class);
+            expect($sut->isSuccess())->toBeFalsy();
+            expect($sut->getError())->toBeInstanceOf(ValidationError::class);
+        });
+
+        test('Should be return a failure Result if an array value is provided', function () {
+            $fakeXmlString = ['<ide><natOp>VENDA DE MERCADORIAS</natOp></ide>'];
+            $sut = NatOp::parseXmlString($fakeXmlString);
+            expect($sut)->toBeInstanceOf(Result::class);
+            expect($sut->isSuccess())->toBeFalsy();
+            expect($sut->getError())->toBeInstanceOf(ValidationError::class);
+        });
+
+        test('Should be return a failure Result if null given', function () {
+            $fakeXmlString = null;
+            $sut = NatOp::parseXmlString($fakeXmlString);
+            expect($sut)->toBeInstanceOf(Result::class);
+            expect($sut->isSuccess())->toBeFalsy();
+            expect($sut->getError())->toBeInstanceOf(ValidationError::class);
+        });
+
+        test('Should be return a failure Result if an empty string is provided', function () {
+            $fakeXmlString = '';
+            $sut = NatOp::parseXmlString($fakeXmlString);
+            expect($sut)->toBeInstanceOf(Result::class);
+            expect($sut->isSuccess())->toBeFalsy();
+            expect($sut->getError())->toBeInstanceOf(ValidationError::class);
+        });
+
+        test('Should be return a failure Result if a bool string is provided', function () {
+            $fakeXmlString = true;
+            $sut = NatOp::parseXmlString($fakeXmlString);
+            expect($sut)->toBeInstanceOf(Result::class);
+            expect($sut->isSuccess())->toBeFalsy();
+            expect($sut->getError())->toBeInstanceOf(ValidationError::class);
+        });
+
         test('Should be fail if too long natOp value is provided', function () {
             $sut = NatOp::parseXmlString('<ide><natOp>NATUREZA DE OPERACAO MUITO LONGA PARA O CAMPO COM ESTOURO DE QUANTIDADE DE CARACTERES</natOp></ide>');
             expect($sut)->toBeInstanceOf(Result::class);

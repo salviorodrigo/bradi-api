@@ -25,6 +25,54 @@ describe('NumeroNF', function () {
             expect($sut->getData()->xmlString)->toBe('<nNF>1</nNF>');
         });
 
+        test('Should be return a failure Result if an object value is provided', function () {
+            $fakeXmlString = new stdClass;
+            $sut = NumeroNF::parseXmlString($fakeXmlString);
+            expect($sut)->toBeInstanceOf(Result::class);
+            expect($sut->isSuccess())->toBeFalsy();
+            expect($sut->getError())->toBeInstanceOf(ValidationError::class);
+        });
+
+        test('Should be return a failure Result if a number value is provided', function () {
+            $fakeXmlString = 11;
+            $sut = NumeroNF::parseXmlString($fakeXmlString);
+            expect($sut)->toBeInstanceOf(Result::class);
+            expect($sut->isSuccess())->toBeFalsy();
+            expect($sut->getError())->toBeInstanceOf(ValidationError::class);
+        });
+
+        test('Should be return a failure Result if an array value is provided', function () {
+            $fakeXmlString = ['<ide><nNF>1</nNF></ide>'];
+            $sut = NumeroNF::parseXmlString($fakeXmlString);
+            expect($sut)->toBeInstanceOf(Result::class);
+            expect($sut->isSuccess())->toBeFalsy();
+            expect($sut->getError())->toBeInstanceOf(ValidationError::class);
+        });
+
+        test('Should be return a failure Result if null given', function () {
+            $fakeXmlString = null;
+            $sut = NumeroNF::parseXmlString($fakeXmlString);
+            expect($sut)->toBeInstanceOf(Result::class);
+            expect($sut->isSuccess())->toBeFalsy();
+            expect($sut->getError())->toBeInstanceOf(ValidationError::class);
+        });
+
+        test('Should be return a failure Result if an empty string is provided', function () {
+            $fakeXmlString = '';
+            $sut = NumeroNF::parseXmlString($fakeXmlString);
+            expect($sut)->toBeInstanceOf(Result::class);
+            expect($sut->isSuccess())->toBeFalsy();
+            expect($sut->getError())->toBeInstanceOf(ValidationError::class);
+        });
+
+        test('Should be return a failure Result if a bool string is provided', function () {
+            $fakeXmlString = true;
+            $sut = NumeroNF::parseXmlString($fakeXmlString);
+            expect($sut)->toBeInstanceOf(Result::class);
+            expect($sut->isSuccess())->toBeFalsy();
+            expect($sut->getError())->toBeInstanceOf(ValidationError::class);
+        });
+
         test('Should be fail if an invalid nNF value is provided', function () {
             $fakeXmlString = '<ide><nNF>0</nNF></ide>';
             $sut = NumeroNF::parseXmlString($fakeXmlString);
