@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 /**
  * MOC      7.0
- * #        6
+ * #        7
  * ID       B03
- * Campo    cUF
+ * Campo    cNF
  * Desc     Código Numérico que compõe a Chave de Acesso
  * Tam      8
  * OBS:
