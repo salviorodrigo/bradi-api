@@ -8,13 +8,8 @@ use BradiNfeApi\Domain\Invoices\NFe\v4_00\ValueObjects\Mod;
 
 /** Xml string example
  * <ide>
- *  <cUF>11</cUF>
- *  <natOp>VENDA DE MERCADORIAS</natOp>
  *  <mod>55</mod>
  * </ide>
- * <emit>
- *  <CNPJ>60968903000192</CNPJ>
- * </emit>
  */
 describe('Mod', function () {
     describe('::parseXmlString()', function () {
@@ -31,7 +26,8 @@ describe('Mod', function () {
         });
 
         test('Should be fail if an invalid mod value is provided', function () {
-            $sut = Mod::parseXmlString('<ide><mod>10</mod></ide>');
+            $fakeXmlString = '<ide><mod>10</mod></ide>';
+            $sut = Mod::parseXmlString($fakeXmlString);
             expect($sut)->toBeInstanceOf(Result::class);
             expect($sut->isSuccess())->toBeFalsy();
             expect($sut->getError())->toBeInstanceOf(ValidationError::class);
@@ -40,8 +36,8 @@ describe('Mod', function () {
 
     describe('::create()', function () {
         test('Should be succeed if a valid mod value is provided', function () {
-            $fakeXmlString = '65';
-            $sut = Mod::create(tagValue: $fakeXmlString);
+            $fakeTagValue = '65';
+            $sut = Mod::create(tagValue: $fakeTagValue);
             expect($sut)->toBeInstanceOf(Result::class);
             expect($sut->isSuccess())->toBeTruthy();
             expect($sut->getData())->toBeInstanceOf(Mod::class);
@@ -52,7 +48,8 @@ describe('Mod', function () {
         });
 
         test('Should be fail if an invalid mod value is provided', function () {
-            $sut = Mod::create('85');
+            $fakeTagValue = '85';
+            $sut = Mod::create(tagValue: $fakeTagValue);
             expect($sut)->toBeInstanceOf(Result::class);
             expect($sut->isSuccess())->toBeFalsy();
             expect($sut->getError())->toBeInstanceOf(ValidationError::class);

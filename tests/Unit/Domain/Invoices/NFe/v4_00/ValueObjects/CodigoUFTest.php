@@ -10,9 +10,6 @@ use BradiNfeApi\Domain\Invoices\NFe\v4_00\ValueObjects\CodigoUF;
  * <ide>
  *  <cUF>11</cUF>
  * </ide>
- * <emit>
- *  <CNPJ>60968903000192</CNPJ>
- * </emit>
  */
 describe('CodigoUF', function () {
     describe('::parseXmlString()', function () {
@@ -87,8 +84,8 @@ describe('CodigoUF', function () {
 
     describe('::create()', function () {
         test('Should be return a Result object with himself when a valid cUF code is provided', function () {
-            $fakeUFCode = '11';
-            $sut = CodigoUF::create(tagValue: $fakeUFCode);
+            $fakeTagValue = '11';
+            $sut = CodigoUF::create(tagValue: $fakeTagValue);
             expect($sut)->toBeInstanceOf(Result::class);
             expect($sut->isSuccess())->toBeTruthy();
             expect($sut->getData())->toBeInstanceOf(CodigoUF::class);
@@ -99,29 +96,55 @@ describe('CodigoUF', function () {
         });
 
         test('Should be fail if an invalid cUF code is provided', function () {
-            $fakeUFCode = '10';
-            $sut = CodigoUF::create(tagValue: $fakeUFCode);
+            $fakeTagValue = '10';
+            $sut = CodigoUF::create(tagValue: $fakeTagValue);
             expect($sut)->toBeInstanceOf(Result::class);
             expect($sut->isSuccess())->toBeFalsy();
             expect($sut->getError())->toBeInstanceOf(ValidationError::class);
         });
 
         test('Should be fail if attributes is provided', function () {
-            $fakeUFCode = '11';
+            $fakeTagValue = '11';
             $fakeAttributes = ['fakeAttribute' => 'fakeAttributeValue'];
-            $sut = CodigoUF::create(tagValue: $fakeUFCode, attributes: $fakeAttributes);
+            $sut = CodigoUF::create(tagValue: $fakeTagValue, attributes: $fakeAttributes);
             expect($sut)->toBeInstanceOf(Result::class);
             expect($sut->isSuccess())->toBeFalsy();
             expect($sut->getError())->toBeInstanceOf(ValidationError::class);
         });
 
         test('Should be fail if elements is provided', function () {
-            $fakeUFCode = '11';
+            $fakeTagValue = '11';
             $fakeElements = ['fakeElement'];
-            $sut = CodigoUF::create(tagValue: $fakeUFCode, elements: $fakeElements);
+            $sut = CodigoUF::create(tagValue: $fakeTagValue, elements: $fakeElements);
             expect($sut)->toBeInstanceOf(Result::class);
             expect($sut->isSuccess())->toBeFalsy();
             expect($sut->getError())->toBeInstanceOf(ValidationError::class);
+        });
+    });
+
+    describe('::validateTagValue()', function () {
+        test('Should be true if provided value is a cUF', function () {
+            $fakeTagValue = '11';
+            $sut = CodigoUF::validateTagValue($fakeTagValue);
+            expect($sut)->toBeTruthy();
+        });
+
+        test('Should be fail if a string whit letters is provided', function () {
+            $fakeTagValue = 'A0';
+            $sut = CodigoUF::validateTagValue($fakeTagValue);
+            expect($sut)->toBeFalsy();
+        });
+
+        test('Should be fail if a string fewer than two letters is provided', function () {
+            $fakeTagValue = '1';
+            $sut = CodigoUF::validateTagValue($fakeTagValue);
+            expect($sut)->toBeFalsy();
+        });
+
+        test('Should be fail if a string more than two letters is provided', function () {
+            $fakeTagValue = '111';
+            $sut = CodigoUF::validateTagValue($fakeTagValue);
+            expect($sut)->toBeFalsy();
         });
     });
 });

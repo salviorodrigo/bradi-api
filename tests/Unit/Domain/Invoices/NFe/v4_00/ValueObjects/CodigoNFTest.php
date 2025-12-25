@@ -9,11 +9,7 @@ use BradiNfeApi\Domain\Invoices\NFe\v4_00\ValueObjects\CodigoNF;
 /** Xml string example
  * <ide>
  *  <cNF>83427844</cNF>
- *  <cUF>11</cUF>
  * </ide>
- * <emit>
- *  <CNPJ>60968903000192</CNPJ>
- * </emit>
  */
 describe('CodigoNF', function () {
     describe('::parseXmlString()', function () {
@@ -77,22 +73,6 @@ describe('CodigoNF', function () {
             expect($sut->getError())->toBeInstanceOf(ValidationError::class);
         });
 
-        test('Should be fail if a zero string is provided', function () {
-            $fakeXmlString = '<cNF>00000000</cNF>';
-            $sut = CodigoNF::parseXmlString($fakeXmlString);
-            expect($sut)->toBeInstanceOf(Result::class);
-            expect($sut->isSuccess())->toBeFalsy();
-            expect($sut->getError())->toBeInstanceOf(ValidationError::class);
-        });
-
-        test('Should be fail if a string whit letters is provided', function () {
-            $fakeXmlString = '<cNF>00000000</cNF>';
-            $sut = CodigoNF::parseXmlString($fakeXmlString);
-            expect($sut)->toBeInstanceOf(Result::class);
-            expect($sut->isSuccess())->toBeFalsy();
-            expect($sut->getError())->toBeInstanceOf(ValidationError::class);
-        });
-
         test('Should be fail if a string fewer than eight letters is provided', function () {
             $fakeXmlString = '<cNF>0000001</cNF>';
             $sut = CodigoNF::parseXmlString($fakeXmlString);
@@ -101,7 +81,7 @@ describe('CodigoNF', function () {
             expect($sut->getError())->toBeInstanceOf(ValidationError::class);
         });
 
-        test('Should be fail if a string more than eight letters is provided', function () {
+        test('Should be fail if an invalid cNF is provided', function () {
             $fakeXmlString = '<cNF>000000001</cNF>';
             $sut = CodigoNF::parseXmlString($fakeXmlString);
             expect($sut)->toBeInstanceOf(Result::class);
@@ -122,7 +102,8 @@ describe('CodigoNF', function () {
         });
 
         test('Should be return a Result object with success if a valid cNF value is provided', function () {
-            $sut = CodigoNF::create('83427844');
+            $fakeTagValue = '83427844';
+            $sut = CodigoNF::create($fakeTagValue);
             expect($sut)->toBeInstanceOf(Result::class);
             expect($sut->isSuccess())->toBeTruthy();
             expect($sut->getData())->toBeInstanceOf(CodigoNF::class);
@@ -132,28 +113,61 @@ describe('CodigoNF', function () {
         });
 
         test('Should be fail if an invalid cNF value is provided', function () {
-            $sut = CodigoNF::create('8342784');
+            $fakeTagValue = '8342784';
+            $sut = CodigoNF::create($fakeTagValue);
             expect($sut)->toBeInstanceOf(Result::class);
             expect($sut->isSuccess())->toBeFalsy();
             expect($sut->getError())->toBeInstanceOf(ValidationError::class);
         });
 
         test('Should be fail if attributes is provided', function () {
-            $fakeNFCode = '8342784';
+            $fakeTagValue = '8342784';
             $fakeAttributes = ['fakeAttribute' => 'fakeAttributeValue'];
-            $sut = CodigoNF::create(tagValue: $fakeNFCode, attributes: $fakeAttributes);
+            $sut = CodigoNF::create(tagValue: $fakeTagValue, attributes: $fakeAttributes);
             expect($sut)->toBeInstanceOf(Result::class);
             expect($sut->isSuccess())->toBeFalsy();
             expect($sut->getError())->toBeInstanceOf(ValidationError::class);
         });
 
         test('Should be fail if elements is provided', function () {
-            $fakeNFCode = '8342784';
+            $fakeTagValue = '8342784';
             $fakeElements = ['fakeElement'];
-            $sut = CodigoNF::create(tagValue: $fakeNFCode, elements: $fakeElements);
+            $sut = CodigoNF::create(tagValue: $fakeTagValue, elements: $fakeElements);
             expect($sut)->toBeInstanceOf(Result::class);
             expect($sut->isSuccess())->toBeFalsy();
             expect($sut->getError())->toBeInstanceOf(ValidationError::class);
+        });
+    });
+
+    describe('::validateTagValue()', function () {
+        test('Should be true if provided value is a cNF', function () {
+            $fakeTagValue = '83427844';
+            $sut = CodigoNF::validateTagValue($fakeTagValue);
+            expect($sut)->toBeTruthy();
+        });
+
+        test('Should be fail if a string whit letters is provided', function () {
+            $fakeTagValue = 'ABC00000';
+            $sut = CodigoNF::validateTagValue($fakeTagValue);
+            expect($sut)->toBeFalsy();
+        });
+
+        test('Should be fail if a zero string is provided', function () {
+            $fakeTagValue = '00000000';
+            $sut = CodigoNF::validateTagValue($fakeTagValue);
+            expect($sut)->toBeFalsy();
+        });
+
+        test('Should be fail if a string fewer than eight letters is provided', function () {
+            $fakeTagValue = '0000001';
+            $sut = CodigoNF::validateTagValue($fakeTagValue);
+            expect($sut)->toBeFalsy();
+        });
+
+        test('Should be fail if a string more than eight letters is provided', function () {
+            $fakeTagValue = '000000001';
+            $sut = CodigoNF::validateTagValue($fakeTagValue);
+            expect($sut)->toBeFalsy();
         });
     });
 });

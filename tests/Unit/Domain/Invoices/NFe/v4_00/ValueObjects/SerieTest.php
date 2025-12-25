@@ -8,13 +8,8 @@ use BradiNfeApi\Domain\Invoices\NFe\v4_00\ValueObjects\Serie;
 
 /** Xml string example
  * <ide>
- *  <cUF>11</cUF>
  *  <serie>0</serie>
- *  <mod>55</mod>
  * </ide>
- * <emit>
- *  <CNPJ>60968903000192</CNPJ>
- * </emit>
  */
 describe('Serie', function () {
     describe('::parseXmlString()', function () {
@@ -31,7 +26,8 @@ describe('Serie', function () {
         });
 
         test('Should be fail if an invalid serie value is provided', function () {
-            $sut = Serie::parseXmlString('<ide><serie>970</serie></ide>');
+            $fakeXmlString = '<ide><serie>970</serie></ide>';
+            $sut = Serie::parseXmlString($fakeXmlString);
             expect($sut)->toBeInstanceOf(Result::class);
             expect($sut->isSuccess())->toBeFalsy();
             expect($sut->getError())->toBeInstanceOf(ValidationError::class);
@@ -40,8 +36,8 @@ describe('Serie', function () {
 
     describe('::create()', function () {
         test('Should be succeed if a valid serie value is provided', function () {
-            $fakeSerie = '0';
-            $sut = Serie::create(tagValue: $fakeSerie);
+            $tagValue = '0';
+            $sut = Serie::create(tagValue: $tagValue);
             expect($sut)->toBeInstanceOf(Result::class);
             expect($sut->isSuccess())->toBeTruthy();
             expect($sut->getData())->toBeInstanceOf(Serie::class);
@@ -52,7 +48,8 @@ describe('Serie', function () {
         });
 
         test('Should be fail if an invalid serie value is provided', function () {
-            $sut = Serie::create('970');
+            $tagValue = '970';
+            $sut = Serie::create(tagValue: $tagValue);
             expect($sut)->toBeInstanceOf(Result::class);
             expect($sut->isSuccess())->toBeFalsy();
             expect($sut->getError())->toBeInstanceOf(ValidationError::class);

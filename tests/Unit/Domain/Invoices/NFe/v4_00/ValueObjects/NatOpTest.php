@@ -8,12 +8,8 @@ use BradiNfeApi\Domain\Invoices\NFe\v4_00\ValueObjects\NatOp;
 
 /** Xml string example
  * <ide>
- *  <cUF>11</cUF>
  *  <natOp>VENDA DE MERCADORIAS</natOp>
  * </ide>
- * <emit>
- *  <CNPJ>60968903000192</CNPJ>
- * </emit>
  */
 describe('NatOp', function () {
     describe('::parseXmlString()', function () {
@@ -39,8 +35,8 @@ describe('NatOp', function () {
 
     describe('::create()', function () {
         test('Should be succeed if a not null string up to sixty chars is provided', function () {
-            $fakeXmlString = 'VENDA DE MERCADORIAS';
-            $sut = NatOp::create(tagValue: $fakeXmlString);
+            $fakeTagValue = 'VENDA DE MERCADORIAS';
+            $sut = NatOp::create(tagValue: $fakeTagValue);
             expect($sut)->toBeInstanceOf(Result::class);
             expect($sut->isSuccess())->toBeTruthy();
             expect($sut->getData())->toBeInstanceOf(NatOp::class);
@@ -51,7 +47,8 @@ describe('NatOp', function () {
         });
 
         test('Should be fail if too long natOp value is provided', function () {
-            $sut = NatOp::create('NATUREZA DE OPERACAO MUITO LONGA PARA O CAMPO COM ESTOURO DE QUANTIDADE DE CARACTERES');
+            $fakeTagValue = 'NATUREZA DE OPERACAO MUITO LONGA PARA O CAMPO COM ESTOURO DE QUANTIDADE DE CARACTERES';
+            $sut = NatOp::create(tagValue: $fakeTagValue);
             expect($sut)->toBeInstanceOf(Result::class);
             expect($sut->isSuccess())->toBeFalsy();
             expect($sut->getError())->toBeInstanceOf(ValidationError::class);

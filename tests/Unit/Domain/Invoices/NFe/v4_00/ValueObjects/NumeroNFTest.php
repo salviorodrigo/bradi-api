@@ -8,13 +8,8 @@ use BradiNfeApi\Domain\Invoices\NFe\v4_00\ValueObjects\NumeroNF;
 
 /** Xml string example
  * <ide>
- *  <cUF>11</cUF>
  *  <nNF>0</nNF>
- *  <mod>55</mod>
  * </ide>
- * <emit>
- *  <CNPJ>60968903000192</CNPJ>
- * </emit>
  */
 describe('NumeroNF', function () {
     describe('::parseXmlString()', function () {
@@ -31,7 +26,8 @@ describe('NumeroNF', function () {
         });
 
         test('Should be fail if an invalid nNF value is provided', function () {
-            $sut = NumeroNF::parseXmlString('<ide><nNF>0</nNF></ide>');
+            $fakeXmlString = '<ide><nNF>0</nNF></ide>';
+            $sut = NumeroNF::parseXmlString($fakeXmlString);
             expect($sut)->toBeInstanceOf(Result::class);
             expect($sut->isSuccess())->toBeFalsy();
             expect($sut->getError())->toBeInstanceOf(ValidationError::class);
@@ -40,8 +36,8 @@ describe('NumeroNF', function () {
 
     describe('::create()', function () {
         test('Should be succeed if a valid nNF value is provided', function () {
-            $fakeSerie = '1';
-            $sut = NumeroNF::create(tagValue: $fakeSerie);
+            $fakeTagValue = '1';
+            $sut = NumeroNF::create(tagValue: $fakeTagValue);
             expect($sut)->toBeInstanceOf(Result::class);
             expect($sut->isSuccess())->toBeTruthy();
             expect($sut->getData())->toBeInstanceOf(NumeroNF::class);
@@ -52,7 +48,8 @@ describe('NumeroNF', function () {
         });
 
         test('Should be fail if an invalid nNF value is provided', function () {
-            $sut = NumeroNF::create('0');
+            $fakeTagValue = '0';
+            $sut = NumeroNF::create(tagValue: $fakeTagValue);
             expect($sut)->toBeInstanceOf(Result::class);
             expect($sut->isSuccess())->toBeFalsy();
             expect($sut->getError())->toBeInstanceOf(ValidationError::class);
