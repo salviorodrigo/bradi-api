@@ -52,9 +52,11 @@ final class Mod extends DFeElement
         $xmlTagValue = DFeElement::xmlParser()->getTagValue($xmlTagString, self::$tagName);
 
         if (! in_array((int) $xmlTagValue, [55, 65])) {
-            Result::makeFailure([
-                new InvalidModError(self::$tagName),
-            ]);
+            return Result::makeFailure(
+                new ValidationError([
+                    new InvalidModError(self::$tagName),
+                ])
+            );
         }
 
         return Result::makeSuccess(
@@ -85,9 +87,11 @@ final class Mod extends DFeElement
         }
 
         if (! in_array((int) $tagValue, [55, 65])) {
-            Result::makeFailure([
-                new InvalidModError(self::$tagName),
-            ]);
+            return Result::makeFailure(
+                new ValidationError([
+                    new InvalidModError(self::$tagName),
+                ])
+            );
         }
 
         return Result::makeSuccess(

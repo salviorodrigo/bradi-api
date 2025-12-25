@@ -68,9 +68,11 @@ final class Serie extends DFeElement
         $xmlTagValue = DFeElement::xmlParser()->getTagValue($xmlTagString, self::$tagName);
 
         if ((int) $xmlTagValue < 0 || (int) $xmlTagValue > 969) {
-            Result::makeFailure([
-                new InvalidSerieError(self::$tagName),
-            ]);
+            return Result::makeFailure(
+                new ValidationError([
+                    new InvalidSerieError(self::$tagName),
+                ])
+            );
         }
 
         return Result::makeSuccess(
@@ -105,9 +107,11 @@ final class Serie extends DFeElement
         }
 
         if ((int) $tagValue < 0 || (int) $tagValue > 969) {
-            Result::makeFailure([
-                new InvalidSerieError(self::$tagName),
-            ]);
+            return Result::makeFailure(
+                new ValidationError([
+                    new InvalidSerieError(self::$tagName),
+                ])
+            );
         }
 
         return Result::makeSuccess(

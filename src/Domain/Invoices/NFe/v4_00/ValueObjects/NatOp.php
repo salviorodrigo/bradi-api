@@ -55,9 +55,11 @@ final class NatOp extends DFeElement
         $xmlTagValue = DFeElement::xmlParser()->getTagValue($xmlTagString, self::$tagName);
 
         if (strlen($xmlTagValue) > 60) {
-            Result::makeFailure([
-                new InvalidNatOpError(self::$tagName),
-            ]);
+            return Result::makeFailure(
+                new ValidationError([
+                    new InvalidNatOpError(self::$tagName),
+                ])
+            );
         }
 
         return Result::makeSuccess(
@@ -88,9 +90,11 @@ final class NatOp extends DFeElement
         }
 
         if (strlen($tagValue) > 60) {
-            Result::makeFailure([
-                new InvalidNatOpError(self::$tagName),
-            ]);
+            return Result::makeFailure(
+                new ValidationError([
+                    new InvalidNatOpError(self::$tagName),
+                ])
+            );
         }
 
         return Result::makeSuccess(
