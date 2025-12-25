@@ -16,7 +16,7 @@ use BradiNfeApi\Domain\Invoices\NFe\v4_00\ValueObjects\Serie;
  *  <CNPJ>60968903000192</CNPJ>
  * </emit>
  */
-describe('Mod', function () {
+describe('Serie', function () {
     describe('::parseXmlString()', function () {
         test('Should be succeed when a valid xml string is provided', function () {
             $fakeXmlString = '<ide><serie>0</serie></ide>';
