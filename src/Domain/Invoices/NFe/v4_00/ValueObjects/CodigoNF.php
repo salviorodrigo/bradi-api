@@ -51,7 +51,7 @@ final class CodigoNF extends DFeElement
         $xmlTagString = DFeElement::xmlParser()->getTag($rawData, self::$tagName);
         $xmlTagValue = DFeElement::xmlParser()->getTagValue($xmlTagString, self::$tagName);
 
-        if (self::validateTagValue($xmlTagValue)) {
+        if (! self::validateTagValue($xmlTagValue)) {
             return Result::makeFailure(
                 new ValidationError([
                     new InvalidCodigoNFError(self::$tagName),
@@ -90,7 +90,7 @@ final class CodigoNF extends DFeElement
             $tagValue = str_pad((string) rand(1, 99999999), 8, '0', STR_PAD_LEFT);
         }
 
-        if (self::validateTagValue($tagValue)) {
+        if (! self::validateTagValue($tagValue)) {
             return Result::makeFailure(
                 new ValidationError([
                     new InvalidCodigoNFError(self::$tagName),
@@ -108,6 +108,6 @@ final class CodigoNF extends DFeElement
 
     public static function validateTagValue(string $tagValue): bool
     {
-        return ! preg_match('/^(?!0{8})[0-9]{8}$/', $tagValue);
+        return (bool) preg_match('/^(?!0{8})[0-9]{8}$/', $tagValue);
     }
 }

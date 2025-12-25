@@ -49,7 +49,7 @@ final class NumeroNF extends DFeElement
         $xmlTagString = DFeElement::xmlParser()->getTag($rawData, self::$tagName);
         $xmlTagValue = DFeElement::xmlParser()->getTagValue($xmlTagString, self::$tagName);
 
-        if (NumeroNF::validateTagValue($xmlTagValue)) {
+        if (! NumeroNF::validateTagValue($xmlTagValue)) {
             return Result::makeFailure(
                 new ValidationError([
                     new InvalidNumeroNFError(self::$tagName),
@@ -88,7 +88,7 @@ final class NumeroNF extends DFeElement
             $tagValue = '1';
         }
 
-        if (NumeroNF::validateTagValue($tagValue)) {
+        if (! NumeroNF::validateTagValue($tagValue)) {
             return Result::makeFailure(
                 new ValidationError([
                     new InvalidNumeroNFError(self::$tagName),
@@ -106,6 +106,6 @@ final class NumeroNF extends DFeElement
 
     public static function validateTagValue(string $tagValue): bool
     {
-        return (int) $tagValue < 1 || (int) $tagValue > 999999999;
+        return (int) $tagValue > 0 || (int) $tagValue >= 999999999;
     }
 }
