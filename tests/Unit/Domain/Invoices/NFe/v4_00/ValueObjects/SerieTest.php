@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 
+use BradiNfeApi\Common\Exceptions\ValidationError;
 use BradiNfeApi\Common\Result;
 use BradiNfeApi\Domain\Invoices\NFe\v4_00\ValueObjects\Serie;
 
@@ -28,6 +29,13 @@ describe('Mod', function () {
             expect($sut->getData()->xmlString)->toBeString();
             expect($sut->getData()->xmlString)->toBe('<serie>0</serie>');
         });
+
+        test('Should be fail if an invalid serie value is provided', function () {
+            $sut = Serie::parseXmlString('<ide><serie>970</serie></ide>');
+            expect($sut)->toBeInstanceOf(Result::class);
+            expect($sut->isSuccess())->toBeFalsy();
+            expect($sut->getError())->toBeInstanceOf(ValidationError::class);
+        });
     });
 
     describe('::create()', function () {
@@ -41,6 +49,13 @@ describe('Mod', function () {
             expect($sut->getData()->value)->toBe('0');
             expect($sut->getData()->xmlString)->toBeString();
             expect($sut->getData()->xmlString)->toBe('<serie>0</serie>');
+        });
+
+        test('Should be fail if an invalid serie value is provided', function () {
+            $sut = Serie::create('970');
+            expect($sut)->toBeInstanceOf(Result::class);
+            expect($sut->isSuccess())->toBeFalsy();
+            expect($sut->getError())->toBeInstanceOf(ValidationError::class);
         });
     });
 });
