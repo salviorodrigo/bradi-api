@@ -51,7 +51,7 @@ final class CodigoNF extends DFeElement
         $xmlTagString = DFeElement::xmlParser()->getTag($rawData, self::$tagName);
         $xmlTagValue = DFeElement::xmlParser()->getTagValue($xmlTagString, self::$tagName);
 
-        if (! preg_match('/^(?!0{8})[0-9]{8}$/', $xmlTagValue)) {
+        if (self::validateTagValue($xmlTagValue)) {
             return Result::makeFailure(
                 new ValidationError([
                     new InvalidCodigoNFError(self::$tagName),
@@ -87,17 +87,10 @@ final class CodigoNF extends DFeElement
         }
 
         if ($tagValue == '') {
-            $xmlTagValue = str_pad((string) rand(1, 99999999), 8, '0', STR_PAD_LEFT);
-
-            return Result::makeSuccess(
-                new CodigoNF(
-                    $xmlTagValue,
-                    self::generateXmlString(tagValue: $xmlTagValue)
-                )
-            );
+            $tagValue = str_pad((string) rand(1, 99999999), 8, '0', STR_PAD_LEFT);
         }
 
-        if (! preg_match('/^(?!0{8})[0-9]{8}$/', $tagValue)) {
+        if (self::validateTagValue($tagValue)) {
             return Result::makeFailure(
                 new ValidationError([
                     new InvalidCodigoNFError(self::$tagName),
@@ -111,5 +104,10 @@ final class CodigoNF extends DFeElement
                 self::generateXmlString(tagValue: $tagValue)
             )
         );
+    }
+
+    public static function validateTagValue(string $tagValue): bool
+    {
+        return ! preg_match('/^(?!0{8})[0-9]{8}$/', $tagValue);
     }
 }

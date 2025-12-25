@@ -51,7 +51,7 @@ final class CodigoUF extends DFeElement
         $xmlTagString = DFeElement::xmlParser()->getTag($rawData, self::$tagName);
         $xmlTagValue = DFeElement::xmlParser()->getTagValue($xmlTagString, self::$tagName);
 
-        if (! UnidadeFederativa::tryFrom($xmlTagValue)) {
+        if (self::validateTagValue($xmlTagValue)) {
             return Result::makeFailure(
                 new ValidationError([
                     new InvalidCodigoUFError(self::$tagName),
@@ -69,7 +69,7 @@ final class CodigoUF extends DFeElement
 
     public static function create(string $tagValue, array $elements = [], array $attributes = []): Result
     {
-        if (! UnidadeFederativa::tryFrom($tagValue)) {
+        if (self::validateTagValue($tagValue)) {
             return Result::makeFailure(
                 new ValidationError([
                     new InvalidCodigoUFError(self::$tagName),
@@ -99,5 +99,10 @@ final class CodigoUF extends DFeElement
                 self::generateXmlString($tagValue)
             )
         );
+    }
+
+    public static function validateTagValue(string $tagValue): bool
+    {
+        return ! UnidadeFederativa::tryFrom($tagValue);
     }
 }

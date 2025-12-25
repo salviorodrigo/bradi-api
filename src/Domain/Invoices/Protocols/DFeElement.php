@@ -48,6 +48,8 @@ abstract class DFeElement
     abstract public static function parseXmlString(mixed $rawData): Result;
 
     abstract public static function create(string $tagValue, array $elements, array $attributes): Result;
+
+    abstract public static function validateTagValue(string $tagValue): bool;
 }
 
 // TODO adicional metodo estatico de criar a partir de valores fornecidos
