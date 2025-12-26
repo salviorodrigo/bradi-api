@@ -130,7 +130,7 @@ describe('CodigoUF', function () {
         });
 
         test('Should be fail if a string whit letters is provided', function () {
-            $fakeTagValue = 'A0';
+            $fakeTagValue = '11A0';
             $sut = CodigoUF::validateTagValue($fakeTagValue);
             expect($sut)->toBeFalsy();
         });

@@ -147,7 +147,7 @@ describe('CodigoNF', function () {
         });
 
         test('Should be fail if a string whit letters is provided', function () {
-            $fakeTagValue = 'ABC00000';
+            $fakeTagValue = '8342784A';
             $sut = CodigoNF::validateTagValue($fakeTagValue);
             expect($sut)->toBeFalsy();
         });
