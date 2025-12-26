@@ -124,6 +124,6 @@ final class Serie extends DFeElement
 
     public static function validateTagValue(string $tagValue): bool
     {
-        return (int) $tagValue >= 0 && (int) $tagValue < 970;
+        return is_numeric($tagValue) && (int) $tagValue >= 0 && (int) $tagValue < 970;
     }
 }

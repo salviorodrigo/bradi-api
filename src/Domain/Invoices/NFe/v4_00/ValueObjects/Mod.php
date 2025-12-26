@@ -104,6 +104,6 @@ final class Mod extends DFeElement
 
     public static function validateTagValue(string $tagValue): bool
     {
-        return in_array((int) $tagValue, [55, 65]);
+        return is_numeric($tagValue) && in_array((int) $tagValue, [55, 65]);
     }
 }
