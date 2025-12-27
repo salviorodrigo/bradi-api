@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace BradiNfeApi\Common;
 
-use BradiNfeApi\Common\Exceptions\GenericApiError;
 use Error;
 use Exception;
 
@@ -12,9 +11,9 @@ class Result
 {
     private bool $success;
     private mixed $data;
-    private Exception $error;
+    private ?Exception $error;
 
-    private function __construct(bool $success, mixed $data = null, Exception $error = new GenericApiError)
+    private function __construct(bool $success, mixed $data = null, ?Exception $error = null)
     {
         $this->success = $success;
         $this->data = $data;
