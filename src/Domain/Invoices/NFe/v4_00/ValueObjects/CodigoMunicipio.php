@@ -41,28 +41,28 @@ class CodigoMunicipio extends DFeElement
     public static function parseXmlString(mixed $rawData): Result
     {
         $validationService = new ValidationService([
-            new IsStringValidator(self::$tagName),
-            new NotNullValidator(self::$tagName),
-            new IsXmlTagValidator(self::$tagName),
+            new IsStringValidator(static::$tagName),
+            new NotNullValidator(static::$tagName),
+            new IsXmlTagValidator(static::$tagName),
         ]);
         $validationServiceResponse = $validationService->verify($rawData);
         if (! $validationServiceResponse->isSuccess()) {
             return $validationServiceResponse;
         }
 
-        $xmlTagString = DFeElement::xmlParser()->getTag($rawData, self::$tagName);
-        $xmlTagValue = DFeElement::xmlParser()->getTagValue($xmlTagString, self::$tagName);
+        $xmlTagString = DFeElement::xmlParser()->getTag($rawData, static::$tagName);
+        $xmlTagValue = DFeElement::xmlParser()->getTagValue($xmlTagString, static::$tagName);
 
         if (! self::validateTagValue($xmlTagValue)) {
             return Result::makeFailure(
                 new ValidationError([
-                    new InvalidCodigoMunicipioError(self::$tagName),
+                    new InvalidCodigoMunicipioError(static::$tagName),
                 ])
             );
         }
 
         return Result::makeSuccess(
-            new CodigoMunicipio(
+            new static(
                 $xmlTagValue,
                 $xmlTagString
             )
@@ -71,10 +71,10 @@ class CodigoMunicipio extends DFeElement
 
     public static function create(string $tagValue, array $elements = [], array $attributes = []): Result
     {
-        if (! self::validateTagValue($tagValue)) {
+        if (! static::validateTagValue($tagValue)) {
             return Result::makeFailure(
                 new ValidationError([
-                    new InvalidCodigoMunicipioError(self::$tagName),
+                    new InvalidCodigoMunicipioError(static::$tagName),
                 ])
             );
         }
@@ -82,7 +82,7 @@ class CodigoMunicipio extends DFeElement
         if (count($attributes) > 0) {
             return Result::makeFailure(
                 new ValidationError([
-                    new XmlElementWithAttributesError(self::$tagName),
+                    new XmlElementWithAttributesError(static::$tagName),
                 ])
             );
         }
@@ -90,15 +90,15 @@ class CodigoMunicipio extends DFeElement
         if (count($elements) > 0) {
             return Result::makeFailure(
                 new ValidationError([
-                    new XmlElementWithElementsError(self::$tagName),
+                    new XmlElementWithElementsError(static::$tagName),
                 ])
             );
         }
 
         return Result::makeSuccess(
-            new CodigoMunicipio(
+            new static(
                 $tagValue,
-                self::generateXmlString($tagValue)
+                static::generateXmlString($tagValue)
             )
         );
     }
