@@ -23,6 +23,7 @@ use BradiNfeApi\Domain\Common\Services\ValidationService;
 use BradiNfeApi\Domain\Common\Validators\IsStringValidator;
 use BradiNfeApi\Domain\Common\Validators\IsXmlTagValidator;
 use BradiNfeApi\Domain\Common\Validators\NotNullValidator;
+use BradiNfeApi\Domain\Invoices\Enums\ModeloDFe;
 use BradiNfeApi\Domain\Invoices\NFe\Exceptions\InvalidModError;
 use BradiNfeApi\Domain\Invoices\NFe\Exceptions\XmlElementWithAttributesError;
 use BradiNfeApi\Domain\Invoices\NFe\Exceptions\XmlElementWithElementsError;
@@ -104,6 +105,6 @@ final class Mod extends DFeElement
 
     public static function validateTagValue(string $tagValue): bool
     {
-        return is_numeric($tagValue) && in_array((int) $tagValue, [55, 65]);
+        return (bool) ModeloDFe::tryFrom($tagValue);
     }
 }
