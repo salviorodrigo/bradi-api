@@ -23,9 +23,9 @@ use BradiNfeApi\Domain\Common\Services\ValidationService;
 use BradiNfeApi\Domain\Common\Validators\IsNumericValidator;
 use BradiNfeApi\Domain\Common\Validators\IsStringValidator;
 use BradiNfeApi\Domain\Common\Validators\IsXmlTagValidator;
+use BradiNfeApi\Domain\Common\Validators\MinValueValidator;
 use BradiNfeApi\Domain\Common\Validators\NotNullValidator;
 use BradiNfeApi\Domain\Common\Validators\StringLengthValidator;
-use BradiNfeApi\Domain\Invoices\NFe\Exceptions\InvalidCodigoNFError;
 use BradiNfeApi\Domain\Invoices\NFe\Exceptions\XmlElementWithAttributesError;
 use BradiNfeApi\Domain\Invoices\NFe\Exceptions\XmlElementWithElementsError;
 use BradiNfeApi\Domain\Invoices\Protocols\DFeElement;
@@ -106,20 +106,13 @@ final class CodigoNF extends DFeElement
             new NotNullValidator(self::$tagName),
             new IsNumericValidator(self::$tagName),
             new StringLengthValidator(self::$tagName, 8),
+            new MinValueValidator(self::$tagName, 1),
         ]);
 
         $validationServiceResponse = $validationService->verify($tagValue);
 
         if (! $validationServiceResponse->isSuccess()) {
             return $validationServiceResponse;
-        }
-
-        if ((int) $tagValue == 0) {
-            return Result::makeFailure(
-                new ValidationError([
-                    new InvalidCodigoNFError(self::$tagName),
-                ])
-            );
         }
 
         return Result::makeSuccess();

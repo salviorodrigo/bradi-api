@@ -34,3 +34,5 @@ class ValidationError extends ApiError
         parent::__construct($message, 400);
     }
 }
+
+// TODO Make test file.
