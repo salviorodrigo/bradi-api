@@ -20,14 +20,15 @@ namespace BradiNfeApi\Domain\Invoices\NFe\v4_00\ValueObjects;
 use BradiNfeApi\Common\Exceptions\ValidationError;
 use BradiNfeApi\Common\Result;
 use BradiNfeApi\Domain\Common\Services\ValidationService;
+use BradiNfeApi\Domain\Common\Validators\IsNumericValidator;
 use BradiNfeApi\Domain\Common\Validators\IsStringValidator;
 use BradiNfeApi\Domain\Common\Validators\IsXmlTagValidator;
 use BradiNfeApi\Domain\Common\Validators\NotNullValidator;
-use BradiNfeApi\Domain\Invoices\Enums\TipoOperacao;
-use BradiNfeApi\Domain\Invoices\NFe\Exceptions\InvalidIdDestinoError;
+use BradiNfeApi\Domain\Common\Validators\StringLengthValidator;
 use BradiNfeApi\Domain\Invoices\NFe\Exceptions\XmlElementWithAttributesError;
 use BradiNfeApi\Domain\Invoices\NFe\Exceptions\XmlElementWithElementsError;
 use BradiNfeApi\Domain\Invoices\Protocols\DFeElement;
+use BradiNfeApi\Domain\Invoices\Validators\IsTipoOperacaoValidator;
 
 final class IdDestino extends DFeElement
 {
@@ -50,19 +51,16 @@ final class IdDestino extends DFeElement
         }
 
         $xmlTagString = DFeElement::xmlParser()->getTag($rawData, self::$tagName);
-        $xmlTagValue = DFeElement::xmlParser()->getTagValue($xmlTagString, self::$tagName);
+        $tagValue = DFeElement::xmlParser()->getTagValue($xmlTagString, self::$tagName);
+        $validationValueResponse = self::validateTagValue($tagValue);
 
-        if (! self::validateTagValue($xmlTagValue)) {
-            return Result::makeFailure(
-                new ValidationError([
-                    new InvalidIdDestinoError(self::$tagName),
-                ])
-            );
+        if (! $validationValueResponse->isSuccess()) {
+            return $validationValueResponse;
         }
 
         return Result::makeSuccess(
             new IdDestino(
-                $xmlTagValue,
+                $tagValue,
                 $xmlTagString
             )
         );
@@ -70,12 +68,10 @@ final class IdDestino extends DFeElement
 
     public static function create(string $tagValue, array $elements = [], array $attributes = []): Result
     {
-        if (! self::validateTagValue($tagValue)) {
-            return Result::makeFailure(
-                new ValidationError([
-                    new InvalidIdDestinoError(self::$tagName),
-                ])
-            );
+        $validationValueResponse = self::validateTagValue($tagValue);
+
+        if (! $validationValueResponse->isSuccess()) {
+            return $validationValueResponse;
         }
 
         if (count($attributes) > 0) {
@@ -102,8 +98,22 @@ final class IdDestino extends DFeElement
         );
     }
 
-    public static function validateTagValue(string $tagValue): bool
+    public static function validateTagValue(string $tagValue): Result
     {
-        return (bool) TipoOperacao::tryFrom($tagValue);
+        $validationService = new ValidationService([
+            new IsStringValidator(self::$tagName),
+            new NotNullValidator(self::$tagName),
+            new IsNumericValidator(self::$tagName),
+            new StringLengthValidator(self::$tagName, 1),
+            new IsTipoOperacaoValidator(self::$tagName),
+        ]);
+
+        $validationServiceResponse = $validationService->verify($tagValue);
+
+        if (! $validationServiceResponse->isSuccess()) {
+            return $validationServiceResponse;
+        }
+
+        return Result::makeSuccess($tagValue);
     }
 }

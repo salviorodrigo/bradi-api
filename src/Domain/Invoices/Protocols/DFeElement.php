@@ -49,7 +49,5 @@ abstract class DFeElement
 
     abstract public static function create(string $tagValue, array $elements, array $attributes): Result;
 
-    abstract public static function validateTagValue(string $tagValue): bool;
+    abstract public static function validateTagValue(string $tagValue): Result;
 }
-
-// TODO adicional metodo estatico de criar a partir de valores fornecidos

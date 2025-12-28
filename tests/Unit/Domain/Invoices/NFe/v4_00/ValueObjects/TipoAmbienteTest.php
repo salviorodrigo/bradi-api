@@ -108,19 +108,21 @@ describe('TipoAmbiente', function () {
         test('Should be true if provided value is valid', function () {
             $fakeTagValue = '1';
             $sut = TipoAmbiente::validateTagValue($fakeTagValue);
-            expect($sut)->toBeTruthy();
+            expect($sut->isSuccess())->toBeTruthy();
         });
 
         test('Should be fail if a string whit letters is provided', function () {
             $fakeTagValue = 'A';
             $sut = TipoAmbiente::validateTagValue($fakeTagValue);
-            expect($sut)->toBeFalsy();
+            expect($sut->isSuccess())->toBeFalsy();
+            expect($sut->getError())->toBeInstanceOf(ValidationError::class);
         });
 
         test('Should be fail if a string more than one letters is provided', function () {
             $fakeTagValue = '11';
             $sut = TipoAmbiente::validateTagValue($fakeTagValue);
-            expect($sut)->toBeFalsy();
+            expect($sut->isSuccess())->toBeFalsy();
+            expect($sut->getError())->toBeInstanceOf(ValidationError::class);
         });
     });
 });

@@ -21,12 +21,13 @@ use BradiNfeApi\Domain\Common\Services\ValidationService;
 use BradiNfeApi\Domain\Common\Validators\IsStringValidator;
 use BradiNfeApi\Domain\Common\Validators\IsXmlTagValidator;
 use BradiNfeApi\Domain\Common\Validators\NotNullValidator;
-use BradiNfeApi\Domain\Invoices\NFe\Exceptions\InvalidDateTimeFormatError;
+use BradiNfeApi\Domain\Common\Validators\StringLengthValidator;
 use BradiNfeApi\Domain\Invoices\NFe\Exceptions\XmlElementWithAttributesError;
 use BradiNfeApi\Domain\Invoices\NFe\Exceptions\XmlElementWithElementsError;
 use BradiNfeApi\Domain\Invoices\Protocols\DFeElement;
+use BradiNfeApi\Domain\Invoices\Validators\FormatDataHoraTZDValidator;
 
-final class DataHoraEmissao extends DFeElement
+class DataHoraEmissao extends DFeElement
 {
     public static string $tagName = 'dhEmi';
 
@@ -37,29 +38,26 @@ final class DataHoraEmissao extends DFeElement
     public static function parseXmlString(mixed $rawData): Result
     {
         $validationService = new ValidationService([
-            new IsStringValidator(self::$tagName),
-            new NotNullValidator(self::$tagName),
-            new IsXmlTagValidator(self::$tagName),
+            new IsStringValidator(static::$tagName),
+            new NotNullValidator(static::$tagName),
+            new IsXmlTagValidator(static::$tagName),
         ]);
         $validationServiceResponse = $validationService->verify($rawData);
         if (! $validationServiceResponse->isSuccess()) {
             return $validationServiceResponse;
         }
 
-        $xmlTagString = DFeElement::xmlParser()->getTag($rawData, self::$tagName);
-        $xmlTagValue = DFeElement::xmlParser()->getTagValue($xmlTagString, self::$tagName);
+        $xmlTagString = DFeElement::xmlParser()->getTag($rawData, static::$tagName);
+        $tagValue = DFeElement::xmlParser()->getTagValue($xmlTagString, static::$tagName);
+        $validationValueResponse = self::validateTagValue($tagValue);
 
-        if (! self::validateTagValue($xmlTagValue)) {
-            return Result::makeFailure(
-                new ValidationError([
-                    new InvalidDateTimeFormatError(self::$tagName),
-                ])
-            );
+        if (! $validationValueResponse->isSuccess()) {
+            return $validationValueResponse;
         }
 
         return Result::makeSuccess(
-            new DataHoraEmissao(
-                $xmlTagValue,
+            new static(
+                $tagValue,
                 $xmlTagString
             )
         );
@@ -71,7 +69,7 @@ final class DataHoraEmissao extends DFeElement
         if (count($attributes) > 0) {
             return Result::makeFailure(
                 new ValidationError([
-                    new XmlElementWithAttributesError(self::$tagName),
+                    new XmlElementWithAttributesError(static::$tagName),
                 ])
             );
         }
@@ -79,33 +77,40 @@ final class DataHoraEmissao extends DFeElement
         if (count($elements) > 0) {
             return Result::makeFailure(
                 new ValidationError([
-                    new XmlElementWithElementsError(self::$tagName),
+                    new XmlElementWithElementsError(static::$tagName),
                 ])
             );
         }
 
-        if ($tagValue == '') {
-            $tagValue = '0';
-        }
+        $validationValueResponse = self::validateTagValue($tagValue);
 
-        if (! self::validateTagValue(($tagValue))) {
-            return Result::makeFailure(
-                new ValidationError([
-                    new InvalidDateTimeFormatError(self::$tagName),
-                ])
-            );
+        if (! $validationValueResponse->isSuccess()) {
+            return $validationValueResponse;
         }
 
         return Result::makeSuccess(
-            new DataHoraEmissao(
+            new static(
                 $tagValue,
-                self::generateXmlString(tagValue: $tagValue)
+                static::generateXmlString(tagValue: $tagValue)
             )
         );
     }
 
-    public static function validateTagValue(string $tagValue): bool
+    public static function validateTagValue(string $tagValue): Result
     {
-        return (bool) preg_match('/^\d{4}-(0[1-9]|1[0-2])-(0[1-9]|[12]\d|3[01])T([01]\d|2[0-3]):[0-5]\d:[0-5]\d([+-]\d{2}:\d{2})$/', $tagValue);
+        $validationService = new ValidationService([
+            new IsStringValidator(static::$tagName),
+            new NotNullValidator(static::$tagName),
+            new StringLengthValidator(static::$tagName, 25),
+            new FormatDataHoraTZDValidator(static::$tagName),
+        ]);
+
+        $validationServiceResponse = $validationService->verify($tagValue);
+
+        if (! $validationServiceResponse->isSuccess()) {
+            return $validationServiceResponse;
+        }
+
+        return Result::makeSuccess($tagValue);
     }
 }

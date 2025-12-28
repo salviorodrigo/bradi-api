@@ -101,19 +101,20 @@ describe('NatOp', function () {
             expect($sut->isSuccess())->toBeFalsy();
             expect($sut->getError())->toBeInstanceOf(ValidationError::class);
         });
+    });
 
-        describe('::validateTagValue()', function () {
-            test('Should be true if provided value is a natOp', function () {
-                $fakeTagValue = 'VENDA DE MERCADORIAS';
-                $sut = NatOp::validateTagValue($fakeTagValue);
-                expect($sut)->toBeTruthy();
-            });
+    describe('::validateTagValue()', function () {
+        test('Should be true if provided value is a natOp', function () {
+            $fakeTagValue = 'VENDA DE MERCADORIAS';
+            $sut = NatOp::validateTagValue($fakeTagValue);
+            expect($sut->isSuccess())->toBeTruthy();
+        });
 
-            test('Should be fail if a string more than sixty letters is provided', function () {
-                $fakeTagValue = 'NATUREZA DE OPERACAO MUITO LONGA PARA O CAMPO COM ESTOURO DE QUANTIDADE DE CARACTERES';
-                $sut = NatOp::validateTagValue($fakeTagValue);
-                expect($sut)->toBeFalsy();
-            });
+        test('Should be fail if a string more than sixty letters is provided', function () {
+            $fakeTagValue = 'NATUREZA DE OPERACAO MUITO LONGA PARA O CAMPO COM ESTOURO DE QUANTIDADE DE CARACTERES';
+            $sut = NatOp::validateTagValue($fakeTagValue);
+            expect($sut->isSuccess())->toBeFalsy();
+            expect($sut->getError())->toBeInstanceOf(ValidationError::class);
         });
     });
 });

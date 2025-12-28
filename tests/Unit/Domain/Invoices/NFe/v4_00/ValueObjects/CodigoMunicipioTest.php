@@ -108,31 +108,35 @@ describe('CodigoMunicipio', function () {
         test('Should be true if provided value is valid', function () {
             $fakeTagValue = '1100205';
             $sut = CodigoMunicipio::validateTagValue($fakeTagValue);
-            expect($sut)->toBeTruthy();
+            expect($sut->isSuccess())->toBeTruthy();
         });
 
         test('Should be false if provided value is invalid', function () {
             $fakeTagValue = '1100204';
             $sut = CodigoMunicipio::validateTagValue($fakeTagValue);
-            expect($sut)->toBeFalsy();
+            expect($sut->isSuccess())->toBeFalsy();
+            expect($sut->getError())->toBeInstanceOf(ValidationError::class);
         });
 
         test('Should be fail if a string whit letters is provided', function () {
             $fakeTagValue = '1100205A';
             $sut = CodigoMunicipio::validateTagValue($fakeTagValue);
-            expect($sut)->toBeFalsy();
+            expect($sut->isSuccess())->toBeFalsy();
+            expect($sut->getError())->toBeInstanceOf(ValidationError::class);
         });
 
         test('Should be fail if a string more than seven letters is provided', function () {
             $fakeTagValue = '11002055';
             $sut = CodigoMunicipio::validateTagValue($fakeTagValue);
-            expect($sut)->toBeFalsy();
+            expect($sut->isSuccess())->toBeFalsy();
+            expect($sut->getError())->toBeInstanceOf(ValidationError::class);
         });
 
         test('Should be fail if a string less than seven letters is provided', function () {
             $fakeTagValue = '110020';
             $sut = CodigoMunicipio::validateTagValue($fakeTagValue);
-            expect($sut)->toBeFalsy();
+            expect($sut->isSuccess())->toBeFalsy();
+            expect($sut->getError())->toBeInstanceOf(ValidationError::class);
         });
     });
 });

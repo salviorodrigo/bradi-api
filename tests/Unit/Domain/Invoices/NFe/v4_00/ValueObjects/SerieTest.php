@@ -108,25 +108,28 @@ describe('Serie', function () {
         test('Should be true if provided value is a serie', function () {
             $fakeTagValue = '0';
             $sut = Serie::validateTagValue($fakeTagValue);
-            expect($sut)->toBeTruthy();
+            expect($sut->isSuccess())->toBeTruthy();
         });
 
         test('Should be fail if a string whit letters is provided', function () {
             $fakeTagValue = '2A11';
             $sut = Serie::validateTagValue($fakeTagValue);
-            expect($sut)->toBeFalsy();
+            expect($sut->isSuccess())->toBeFalsy();
+            expect($sut->getError())->toBeInstanceOf(ValidationError::class);
         });
 
         test('Should be fail if a negative numeric string is provided', function () {
             $fakeTagValue = '-1';
             $sut = Serie::validateTagValue($fakeTagValue);
-            expect($sut)->toBeFalsy();
+            expect($sut->isSuccess())->toBeFalsy();
+            expect($sut->getError())->toBeInstanceOf(ValidationError::class);
         });
 
         test('Should be fail if a numeric string bigger than 969 is provided', function () {
             $fakeTagValue = '970';
             $sut = Serie::validateTagValue($fakeTagValue);
-            expect($sut)->toBeFalsy();
+            expect($sut->isSuccess())->toBeFalsy();
+            expect($sut->getError())->toBeInstanceOf(ValidationError::class);
         });
     });
 });

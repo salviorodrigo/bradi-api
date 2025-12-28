@@ -36,10 +36,13 @@ namespace BradiNfeApi\Domain\Invoices\NFe\v4_00\ValueObjects;
 use BradiNfeApi\Common\Exceptions\ValidationError;
 use BradiNfeApi\Common\Result;
 use BradiNfeApi\Domain\Common\Services\ValidationService;
+use BradiNfeApi\Domain\Common\Validators\IsNumericValidator;
 use BradiNfeApi\Domain\Common\Validators\IsStringValidator;
 use BradiNfeApi\Domain\Common\Validators\IsXmlTagValidator;
+use BradiNfeApi\Domain\Common\Validators\MaxStringLengthValidator;
+use BradiNfeApi\Domain\Common\Validators\MaxValueValidator;
+use BradiNfeApi\Domain\Common\Validators\MinValueValidator;
 use BradiNfeApi\Domain\Common\Validators\NotNullValidator;
-use BradiNfeApi\Domain\Invoices\NFe\Exceptions\InvalidSerieError;
 use BradiNfeApi\Domain\Invoices\NFe\Exceptions\XmlElementWithAttributesError;
 use BradiNfeApi\Domain\Invoices\NFe\Exceptions\XmlElementWithElementsError;
 use BradiNfeApi\Domain\Invoices\Protocols\DFeElement;
@@ -65,19 +68,16 @@ final class Serie extends DFeElement
         }
 
         $xmlTagString = DFeElement::xmlParser()->getTag($rawData, self::$tagName);
-        $xmlTagValue = DFeElement::xmlParser()->getTagValue($xmlTagString, self::$tagName);
+        $tagValue = DFeElement::xmlParser()->getTagValue($xmlTagString, self::$tagName);
+        $validationValueResponse = self::validateTagValue($tagValue);
 
-        if (! self::validateTagValue($xmlTagValue)) {
-            return Result::makeFailure(
-                new ValidationError([
-                    new InvalidSerieError(self::$tagName),
-                ])
-            );
+        if (! $validationValueResponse->isSuccess()) {
+            return $validationValueResponse;
         }
 
         return Result::makeSuccess(
             new Serie(
-                $xmlTagValue,
+                $tagValue,
                 $xmlTagString
             )
         );
@@ -102,16 +102,10 @@ final class Serie extends DFeElement
             );
         }
 
-        if ($tagValue == '') {
-            $tagValue = '0';
-        }
+        $validationValueResponse = self::validateTagValue($tagValue);
 
-        if (! self::validateTagValue(($tagValue))) {
-            return Result::makeFailure(
-                new ValidationError([
-                    new InvalidSerieError(self::$tagName),
-                ])
-            );
+        if (! $validationValueResponse->isSuccess()) {
+            return $validationValueResponse;
         }
 
         return Result::makeSuccess(
@@ -122,8 +116,23 @@ final class Serie extends DFeElement
         );
     }
 
-    public static function validateTagValue(string $tagValue): bool
+    public static function validateTagValue(string $tagValue): Result
     {
-        return is_numeric($tagValue) && (int) $tagValue >= 0 && (int) $tagValue < 970;
+        $validationService = new ValidationService([
+            new IsStringValidator(self::$tagName),
+            new NotNullValidator(self::$tagName),
+            new IsNumericValidator(self::$tagName),
+            new MaxStringLengthValidator(self::$tagName, 3),
+            new MinValueValidator(self::$tagName, 0),
+            new MaxValueValidator(self::$tagName, 969),
+        ]);
+
+        $validationServiceResponse = $validationService->verify($tagValue);
+
+        if (! $validationServiceResponse->isSuccess()) {
+            return $validationServiceResponse;
+        }
+
+        return Result::makeSuccess($tagValue);
     }
 }

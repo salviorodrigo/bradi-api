@@ -25,8 +25,8 @@ use BradiNfeApi\Common\Result;
 use BradiNfeApi\Domain\Common\Services\ValidationService;
 use BradiNfeApi\Domain\Common\Validators\IsStringValidator;
 use BradiNfeApi\Domain\Common\Validators\IsXmlTagValidator;
+use BradiNfeApi\Domain\Common\Validators\MaxStringLengthValidator;
 use BradiNfeApi\Domain\Common\Validators\NotNullValidator;
-use BradiNfeApi\Domain\Invoices\NFe\Exceptions\InvalidNatOpError;
 use BradiNfeApi\Domain\Invoices\NFe\Exceptions\XmlElementWithAttributesError;
 use BradiNfeApi\Domain\Invoices\NFe\Exceptions\XmlElementWithElementsError;
 use BradiNfeApi\Domain\Invoices\Protocols\DFeElement;
@@ -52,19 +52,16 @@ final class NatOp extends DFeElement
         }
 
         $xmlTagString = DFeElement::xmlParser()->getTag($rawData, self::$tagName);
-        $xmlTagValue = DFeElement::xmlParser()->getTagValue($xmlTagString, self::$tagName);
+        $tagValue = DFeElement::xmlParser()->getTagValue($xmlTagString, self::$tagName);
+        $validationValueResponse = self::validateTagValue($tagValue);
 
-        if (! self::validateTagValue($xmlTagValue)) {
-            return Result::makeFailure(
-                new ValidationError([
-                    new InvalidNatOpError(self::$tagName),
-                ])
-            );
+        if (! $validationValueResponse->isSuccess()) {
+            return $validationValueResponse;
         }
 
         return Result::makeSuccess(
             new NatOp(
-                $xmlTagValue,
+                $tagValue,
                 $xmlTagString
             )
         );
@@ -89,12 +86,10 @@ final class NatOp extends DFeElement
             );
         }
 
-        if (! self::validateTagValue($tagValue)) {
-            return Result::makeFailure(
-                new ValidationError([
-                    new InvalidNatOpError(self::$tagName),
-                ])
-            );
+        $validationValueResponse = self::validateTagValue($tagValue);
+
+        if (! $validationValueResponse->isSuccess()) {
+            return $validationValueResponse;
         }
 
         return Result::makeSuccess(
@@ -105,8 +100,21 @@ final class NatOp extends DFeElement
         );
     }
 
-    public static function validateTagValue(string $tagValue): bool
+    public static function validateTagValue(string $tagValue): Result
     {
-        return strlen($tagValue) <= 60;
+        $validationService = new ValidationService([
+            new IsStringValidator(self::$tagName),
+            new NotNullValidator(self::$tagName),
+            new MaxStringLengthValidator(self::$tagName, 60),
+        ]);
+
+        $validationServiceResponse = $validationService->verify($tagValue);
+
+        if (! $validationServiceResponse->isSuccess()) {
+            return $validationServiceResponse;
+        }
+
+        return Result::makeSuccess($tagValue);
+
     }
 }

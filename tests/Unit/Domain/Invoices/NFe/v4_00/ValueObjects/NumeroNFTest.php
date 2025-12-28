@@ -108,25 +108,35 @@ describe('NumeroNF', function () {
         test('Should be true if provided value is a nNF', function () {
             $fakeTagValue = '1';
             $sut = NumeroNF::validateTagValue($fakeTagValue);
-            expect($sut)->toBeTruthy();
+            expect($sut->isSuccess())->toBeTruthy();
         });
 
         test('Should be fail if a string whit letters is provided', function () {
             $fakeTagValue = '1A10';
             $sut = NumeroNF::validateTagValue($fakeTagValue);
-            expect($sut)->toBeFalsy();
+            expect($sut->isSuccess())->toBeFalsy();
+            expect($sut->getError())->toBeInstanceOf(ValidationError::class);
         });
 
         test('Should be fail if a numeric string less than 1 is provided', function () {
             $fakeTagValue = '0';
             $sut = NumeroNF::validateTagValue($fakeTagValue);
-            expect($sut)->toBeFalsy();
+            expect($sut->isSuccess())->toBeFalsy();
+            expect($sut->getError())->toBeInstanceOf(ValidationError::class);
+        });
+
+        test('Should be fail if a negative numeric string is provided', function () {
+            $fakeTagValue = '-1';
+            $sut = NumeroNF::validateTagValue($fakeTagValue);
+            expect($sut->isSuccess())->toBeFalsy();
+            expect($sut->getError())->toBeInstanceOf(ValidationError::class);
         });
 
         test('Should be fail if a numeric string more than nine letters is provided', function () {
             $fakeTagValue = '1234567890';
             $sut = NumeroNF::validateTagValue($fakeTagValue);
-            expect($sut)->toBeFalsy();
+            expect($sut->isSuccess())->toBeFalsy();
+            expect($sut->getError())->toBeInstanceOf(ValidationError::class);
         });
     });
 });

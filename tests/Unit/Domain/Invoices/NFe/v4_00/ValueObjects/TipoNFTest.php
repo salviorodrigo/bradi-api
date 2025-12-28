@@ -108,19 +108,21 @@ describe('TipoNF', function () {
         test('Should be true if provided value is valid', function () {
             $fakeTagValue = '1';
             $sut = TipoNF::validateTagValue($fakeTagValue);
-            expect($sut)->toBeTruthy();
+            expect($sut->isSuccess())->toBeTruthy();
         });
 
         test('Should be fail if a string whit letters is provided', function () {
             $fakeTagValue = 'A';
             $sut = TipoNF::validateTagValue($fakeTagValue);
-            expect($sut)->toBeFalsy();
+            expect($sut->isSuccess())->toBeFalsy();
+            expect($sut->getError())->toBeInstanceOf(ValidationError::class);
         });
 
         test('Should be fail if a string more than one letters is provided', function () {
             $fakeTagValue = '55';
             $sut = TipoNF::validateTagValue($fakeTagValue);
-            expect($sut)->toBeFalsy();
+            expect($sut->isSuccess())->toBeFalsy();
+            expect($sut->getError())->toBeInstanceOf(ValidationError::class);
         });
     });
 });

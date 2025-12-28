@@ -106,25 +106,28 @@ describe('DataHoraEmissao', function () {
         test('Should be true if provided value is a Mod', function () {
             $fakeTagValue = '2025-11-14T14:02:54-04:00';
             $sut = DataHoraEmissao::validateTagValue($fakeTagValue);
-            expect($sut)->toBeTruthy();
+            expect($sut->isSuccess())->toBeTruthy();
         });
 
         test('Should be fail if a string whit letters is provided', function () {
             $fakeTagValue = '20AA-11-14T14:02:54-04:00';
             $sut = DataHoraEmissao::validateTagValue($fakeTagValue);
-            expect($sut)->toBeFalsy();
+            expect($sut->isSuccess())->toBeFalsy();
+            expect($sut->getError())->toBeInstanceOf(ValidationError::class);
         });
 
         test('Should be fail if a string fewer than twenty five letters is provided', function () {
             $fakeTagValue = '2025-11-14T14:02:54-0400';
             $sut = DataHoraEmissao::validateTagValue($fakeTagValue);
-            expect($sut)->toBeFalsy();
+            expect($sut->isSuccess())->toBeFalsy();
+            expect($sut->getError())->toBeInstanceOf(ValidationError::class);
         });
 
         test('Should be fail if a string more than twenty five letters is provided', function () {
             $fakeTagValue = '2025-11-14T14:02:54:542-04:00';
             $sut = DataHoraEmissao::validateTagValue($fakeTagValue);
-            expect($sut)->toBeFalsy();
+            expect($sut->isSuccess())->toBeFalsy();
+            expect($sut->getError())->toBeInstanceOf(ValidationError::class);
         });
     });
 });

@@ -126,25 +126,28 @@ describe('CodigoUF', function () {
         test('Should be true if provided value is a cUF', function () {
             $fakeTagValue = '11';
             $sut = CodigoUF::validateTagValue($fakeTagValue);
-            expect($sut)->toBeTruthy();
+            expect($sut->isSuccess())->toBeTruthy();
         });
 
         test('Should be fail if a string whit letters is provided', function () {
             $fakeTagValue = '11A0';
             $sut = CodigoUF::validateTagValue($fakeTagValue);
-            expect($sut)->toBeFalsy();
+            expect($sut->isSuccess())->toBeFalsy();
+            expect($sut->getError())->toBeInstanceOf(ValidationError::class);
         });
 
         test('Should be fail if a string fewer than two letters is provided', function () {
             $fakeTagValue = '1';
             $sut = CodigoUF::validateTagValue($fakeTagValue);
-            expect($sut)->toBeFalsy();
+            expect($sut->isSuccess())->toBeFalsy();
+            expect($sut->getError())->toBeInstanceOf(ValidationError::class);
         });
 
         test('Should be fail if a string more than two letters is provided', function () {
             $fakeTagValue = '111';
             $sut = CodigoUF::validateTagValue($fakeTagValue);
-            expect($sut)->toBeFalsy();
+            expect($sut->isSuccess())->toBeFalsy();
+            expect($sut->getError())->toBeInstanceOf(ValidationError::class);
         });
     });
 });

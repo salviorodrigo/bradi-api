@@ -20,9 +20,11 @@ namespace BradiNfeApi\Domain\Invoices\NFe\v4_00\ValueObjects;
 use BradiNfeApi\Common\Exceptions\ValidationError;
 use BradiNfeApi\Common\Result;
 use BradiNfeApi\Domain\Common\Services\ValidationService;
+use BradiNfeApi\Domain\Common\Validators\IsNumericValidator;
 use BradiNfeApi\Domain\Common\Validators\IsStringValidator;
 use BradiNfeApi\Domain\Common\Validators\IsXmlTagValidator;
 use BradiNfeApi\Domain\Common\Validators\NotNullValidator;
+use BradiNfeApi\Domain\Common\Validators\StringLengthValidator;
 use BradiNfeApi\Domain\Invoices\NFe\Exceptions\InvalidCodigoNFError;
 use BradiNfeApi\Domain\Invoices\NFe\Exceptions\XmlElementWithAttributesError;
 use BradiNfeApi\Domain\Invoices\NFe\Exceptions\XmlElementWithElementsError;
@@ -49,19 +51,16 @@ final class CodigoNF extends DFeElement
         }
 
         $xmlTagString = DFeElement::xmlParser()->getTag($rawData, self::$tagName);
-        $xmlTagValue = DFeElement::xmlParser()->getTagValue($xmlTagString, self::$tagName);
+        $tagValue = DFeElement::xmlParser()->getTagValue($xmlTagString, self::$tagName);
+        $validationValueResponse = self::validateTagValue($tagValue);
 
-        if (! self::validateTagValue($xmlTagValue)) {
-            return Result::makeFailure(
-                new ValidationError([
-                    new InvalidCodigoNFError(self::$tagName),
-                ])
-            );
+        if (! $validationValueResponse->isSuccess()) {
+            return $validationValueResponse;
         }
 
         return Result::makeSuccess(
             new CodigoNF(
-                $xmlTagValue,
+                $tagValue,
                 $xmlTagString
             )
         );
@@ -86,16 +85,10 @@ final class CodigoNF extends DFeElement
             );
         }
 
-        if ($tagValue == '') {
-            $tagValue = str_pad((string) rand(1, 99999999), 8, '0', STR_PAD_LEFT);
-        }
+        $validationValueResponse = self::validateTagValue($tagValue);
 
-        if (! self::validateTagValue($tagValue)) {
-            return Result::makeFailure(
-                new ValidationError([
-                    new InvalidCodigoNFError(self::$tagName),
-                ])
-            );
+        if (! $validationValueResponse->isSuccess()) {
+            return $validationValueResponse;
         }
 
         return Result::makeSuccess(
@@ -106,8 +99,29 @@ final class CodigoNF extends DFeElement
         );
     }
 
-    public static function validateTagValue(string $tagValue): bool
+    public static function validateTagValue(string $tagValue): Result
     {
-        return (bool) preg_match('/^(?!0{8})[0-9]{8}$/', $tagValue);
+        $validationService = new ValidationService([
+            new IsStringValidator(self::$tagName),
+            new NotNullValidator(self::$tagName),
+            new IsNumericValidator(self::$tagName),
+            new StringLengthValidator(self::$tagName, 8),
+        ]);
+
+        $validationServiceResponse = $validationService->verify($tagValue);
+
+        if (! $validationServiceResponse->isSuccess()) {
+            return $validationServiceResponse;
+        }
+
+        if ((int) $tagValue == 0) {
+            return Result::makeFailure(
+                new ValidationError([
+                    new InvalidCodigoNFError(self::$tagName),
+                ])
+            );
+        }
+
+        return Result::makeSuccess($tagValue);
     }
 }

@@ -21,14 +21,16 @@ namespace BradiNfeApi\Domain\Invoices\NFe\v4_00\ValueObjects;
 use BradiNfeApi\Common\Exceptions\ValidationError;
 use BradiNfeApi\Common\Result;
 use BradiNfeApi\Domain\Common\Services\ValidationService;
+use BradiNfeApi\Domain\Common\Validators\IsNumericValidator;
 use BradiNfeApi\Domain\Common\Validators\IsStringValidator;
 use BradiNfeApi\Domain\Common\Validators\IsXmlTagValidator;
+use BradiNfeApi\Domain\Common\Validators\Mod10Validator;
 use BradiNfeApi\Domain\Common\Validators\NotNullValidator;
-use BradiNfeApi\Domain\Invoices\Enums\UnidadeFederativa;
-use BradiNfeApi\Domain\Invoices\NFe\Exceptions\InvalidCodigoMunicipioError;
+use BradiNfeApi\Domain\Common\Validators\StringLengthValidator;
 use BradiNfeApi\Domain\Invoices\NFe\Exceptions\XmlElementWithAttributesError;
 use BradiNfeApi\Domain\Invoices\NFe\Exceptions\XmlElementWithElementsError;
 use BradiNfeApi\Domain\Invoices\Protocols\DFeElement;
+use BradiNfeApi\Domain\Invoices\Validators\IsUnidadeFederativaValidator;
 
 class CodigoMunicipio extends DFeElement
 {
@@ -51,19 +53,16 @@ class CodigoMunicipio extends DFeElement
         }
 
         $xmlTagString = DFeElement::xmlParser()->getTag($rawData, static::$tagName);
-        $xmlTagValue = DFeElement::xmlParser()->getTagValue($xmlTagString, static::$tagName);
+        $tagValue = DFeElement::xmlParser()->getTagValue($xmlTagString, static::$tagName);
+        $validationValueResponse = self::validateTagValue($tagValue);
 
-        if (! self::validateTagValue($xmlTagValue)) {
-            return Result::makeFailure(
-                new ValidationError([
-                    new InvalidCodigoMunicipioError(static::$tagName),
-                ])
-            );
+        if (! $validationValueResponse->isSuccess()) {
+            return $validationValueResponse;
         }
 
         return Result::makeSuccess(
             new static(
-                $xmlTagValue,
+                $tagValue,
                 $xmlTagString
             )
         );
@@ -71,12 +70,10 @@ class CodigoMunicipio extends DFeElement
 
     public static function create(string $tagValue, array $elements = [], array $attributes = []): Result
     {
-        if (! static::validateTagValue($tagValue)) {
-            return Result::makeFailure(
-                new ValidationError([
-                    new InvalidCodigoMunicipioError(static::$tagName),
-                ])
-            );
+        $validationValueResponse = self::validateTagValue($tagValue);
+
+        if (! $validationValueResponse->isSuccess()) {
+            return $validationValueResponse;
         }
 
         if (count($attributes) > 0) {
@@ -103,26 +100,30 @@ class CodigoMunicipio extends DFeElement
         );
     }
 
-    public static function validateTagValue(string $tagValue): bool
+    public static function validateTagValue(string $tagValue): Result
     {
-        if (! is_numeric($tagValue)) {
-            return false;
-        }
-        if (strlen($tagValue) != 7) {
-            return false;
-        }
-        if (! (bool) UnidadeFederativa::tryFrom(substr($tagValue, 0, 2))) {
-            return false;
+        $validationService = new ValidationService([
+            new IsStringValidator(static::$tagName),
+            new NotNullValidator(static::$tagName),
+            new IsNumericValidator(static::$tagName),
+            new StringLengthValidator(static::$tagName, 7),
+            new Mod10Validator(static::$tagName),
+        ]);
+
+        $validationServiceResponse = $validationService->verify($tagValue);
+
+        if (! $validationServiceResponse->isSuccess()) {
+            return $validationServiceResponse;
         }
 
-        $totalBase2 = 0;
-        for ($pointer = 0; $pointer < strlen($tagValue) - 1; $pointer++) {
-            $totalBase2 += (int) $tagValue[$pointer];
-            if ($pointer % 2 != 0) {
-                $totalBase2 += (int) $tagValue[$pointer];
-            }
+        $validationServiceResponse = (new ValidationService([
+            new IsUnidadeFederativaValidator(static::$tagName),
+        ]))->verify(substr($tagValue, 0, 2));
+
+        if (! $validationServiceResponse->isSuccess()) {
+            return $validationServiceResponse;
         }
 
-        return (bool) ($tagValue[-1] == (string) ($totalBase2 % 10));
+        return Result::makeSuccess($tagValue);
     }
 }
