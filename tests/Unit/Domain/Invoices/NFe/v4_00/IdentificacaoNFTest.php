@@ -118,5 +118,13 @@ describe('IdentificacaoNF', function () {
             expect($sut->isSuccess())->toBeFalsy();
             expect($sut->getError())->toBeInstanceOf(ValidationError::class);
         });
+
+        test('Should be fail if idDest tag  isn\'t provided', function () {
+            $fakeXmlString = '<infNFe Id="NFe11251102393780000293550030005188581546834922" versao="4.00"><ide><cUF>11</cUF><cNF>54683492</cNF><natOp>VENDA DE COMBUSTIVEL/ VENDA DE MERC. ADQ./ VENDA LUBRIFICANT</natOp><mod>55</mod><serie>3</serie><nNF>518858</nNF><dhEmi>2025-11-14T07:45:00-04:00</dhEmi><dhSaiEnt>2025-11-14T07:45:00-04:00</dhSaiEnt><tpNF>1</tpNF><cMunFG>1100205</cMunFG><tpImp>1</tpImp><tpEmis>1</tpEmis><cDV>2</cDV><tpAmb>1</tpAmb><finNFe>1</finNFe><indFinal>1</indFinal><indPres>1</indPres><procEmi>0</procEmi><verProc>12.1.2310</verProc></ide></infNFe>';
+            $sut = IdentificacaoNF::parseXmlString($fakeXmlString);
+            expect($sut)->toBeInstanceOf(Result::class);
+            expect($sut->isSuccess())->toBeFalsy();
+            expect($sut->getError())->toBeInstanceOf(ValidationError::class);
+        });
     });
 });
