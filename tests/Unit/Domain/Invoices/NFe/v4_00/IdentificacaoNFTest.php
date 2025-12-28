@@ -225,4 +225,19 @@ describe('IdentificacaoNF', function () {
             expect($sut->getError())->toBeInstanceOf(ValidationError::class);
         });
     });
+
+    describe('::validateTagValue()', function () {
+        test('Should be true if provided value is a empty string', function () {
+            $fakeTagValue = '';
+            $sut = IdentificacaoNF::validateTagValue($fakeTagValue);
+            expect($sut->isSuccess())->toBeTruthy();
+        });
+
+        test('Should be fail if a non empty string is provided', function () {
+            $fakeTagValue = 'A';
+            $sut = IdentificacaoNF::validateTagValue($fakeTagValue);
+            expect($sut->isSuccess())->toBeFalsy();
+            expect($sut->getError())->toBeInstanceOf(ValidationError::class);
+        });
+    });
 });
