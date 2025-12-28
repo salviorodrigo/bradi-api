@@ -114,6 +114,6 @@ final class IdDestino extends DFeElement
             return $validationServiceResponse;
         }
 
-        return Result::makeSuccess($tagValue);
+        return Result::makeSuccess();
     }
 }

@@ -113,6 +113,6 @@ final class IndFinal extends DFeElement
             return $validationServiceResponse;
         }
 
-        return Result::makeSuccess($tagValue);
+        return Result::makeSuccess();
     }
 }

@@ -114,7 +114,7 @@ final class NatOp extends DFeElement
             return $validationServiceResponse;
         }
 
-        return Result::makeSuccess($tagValue);
+        return Result::makeSuccess();
 
     }
 }

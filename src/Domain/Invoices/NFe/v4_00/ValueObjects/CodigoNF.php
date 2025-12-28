@@ -122,6 +122,6 @@ final class CodigoNF extends DFeElement
             );
         }
 
-        return Result::makeSuccess($tagValue);
+        return Result::makeSuccess();
     }
 }

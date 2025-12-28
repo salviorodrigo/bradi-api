@@ -113,6 +113,6 @@ final class TipoAmbiente extends DFeElement
             return $validationServiceResponse;
         }
 
-        return Result::makeSuccess($tagValue);
+        return Result::makeSuccess();
     }
 }
