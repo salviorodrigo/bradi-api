@@ -34,6 +34,7 @@ use BradiNfeApi\Domain\Invoices\NFe\v4_00\ValueObjects\NatOp;
 use BradiNfeApi\Domain\Invoices\NFe\v4_00\ValueObjects\NumeroNF;
 use BradiNfeApi\Domain\Invoices\NFe\v4_00\ValueObjects\Serie;
 use BradiNfeApi\Domain\Invoices\NFe\v4_00\ValueObjects\TipoAmbiente;
+use BradiNfeApi\Domain\Invoices\NFe\v4_00\ValueObjects\TipoEmissao;
 use BradiNfeApi\Domain\Invoices\NFe\v4_00\ValueObjects\TipoNF;
 use BradiNfeApi\Domain\Invoices\Protocols\DFeElement;
 use BradiNfeApi\Domain\Invoices\Validators\RequiredTagValidator;
@@ -56,6 +57,7 @@ final class IdentificacaoNF extends DFeElement
         public readonly TipoNF $tpNF,
         public readonly IdDestino $idDest,
         public readonly CodigoMunFG $cMunFG,
+        public readonly TipoEmissao $tpEmis,
         public readonly TipoAmbiente $tpAmb,
         public readonly FinalidadeNF $finNFe,
         public readonly IndFinal $indFinal
@@ -112,6 +114,7 @@ final class IdentificacaoNF extends DFeElement
             TipoNF::class,
             IdDestino::class,
             CodigoMunFG::class,
+            TipoEmissao::class,
             TipoAmbiente::class,
             FinalidadeNF::class,
             IndFinal::class,
@@ -149,9 +152,20 @@ final class IdentificacaoNF extends DFeElement
             }
         }
 
-        // TODO Validar mod para verificar obrigatoriedade de dhSaiEnt.
-        // TODO Validar tpEmis para verificar obrigatoriedade de campos de contingencia.
-        // ['dhCont', 'xJust', dhSaiEnt, indIntermed];
+        $tpEmis = array_find($xmlElementsBag, function (DFeElement $xmlElement) {
+            return is_a($xmlElement, TipoEmissao::class);
+        });
+
+        if ($tpEmis->value != '1') {
+            $validationService = new ValidationService([
+                new RequiredTagValidator('dhCont'),
+                new RequiredTagValidator('xJust'),
+            ]);
+            $validationServiceResponse = $validationService->verify($rawData);
+            if (! $validationServiceResponse->isSuccess()) {
+                return $validationServiceResponse;
+            }
+        }
 
         return Result::makeSuccess(
             new self(
