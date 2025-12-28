@@ -30,5 +30,7 @@ class ValidationError extends ApiError
                 $this->details['message'][$validatorError->fieldName] = [...$this->details['message'][$validatorError->fieldName], $validatorError->getMessage()];
             }
         }
+        $message = 'A data validation error occurs.';
+        parent::__construct($message, 400);
     }
 }
