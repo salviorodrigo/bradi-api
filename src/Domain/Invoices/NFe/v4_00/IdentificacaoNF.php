@@ -178,7 +178,8 @@ final class IdentificacaoNF extends DFeElement
 
     public static function create(string $tagValue = '', array $elements = [], array $attributes = []): Result
     {
-
+        // TODO Verificar se tagValue esta vazio
+        // TODO Verificar se attributes esta vazio
         // TODO Verificar se todas as tags obrigatorias estao presentes
 
         throw new Exception('Must be implemented');
