@@ -52,8 +52,8 @@ class CodigoMunicipio extends DFeElement
             return $validationServiceResponse;
         }
 
-        $xmlTagString = DFeElement::xmlParser()->getTag($rawData, static::$tagName);
-        $tagValue = DFeElement::xmlParser()->getTagValue($xmlTagString, static::$tagName);
+        $xmlTagString = static::xmlParser()->getTag($rawData, static::$tagName);
+        $tagValue = static::xmlParser()->getTagValue($xmlTagString, static::$tagName);
         $validationValueResponse = self::validateTagValue($tagValue);
 
         if (! $validationValueResponse->isSuccess()) {
@@ -70,7 +70,7 @@ class CodigoMunicipio extends DFeElement
 
     public static function create(string $tagValue, array $elements = [], array $attributes = []): Result
     {
-        $validationValueResponse = self::validateTagValue($tagValue);
+        $validationValueResponse = static::validateTagValue($tagValue);
 
         if (! $validationValueResponse->isSuccess()) {
             return $validationValueResponse;

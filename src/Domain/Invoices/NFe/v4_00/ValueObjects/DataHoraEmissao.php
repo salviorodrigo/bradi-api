@@ -47,9 +47,9 @@ class DataHoraEmissao extends DFeElement
             return $validationServiceResponse;
         }
 
-        $xmlTagString = DFeElement::xmlParser()->getTag($rawData, static::$tagName);
-        $tagValue = DFeElement::xmlParser()->getTagValue($xmlTagString, static::$tagName);
-        $validationValueResponse = self::validateTagValue($tagValue);
+        $xmlTagString = static::xmlParser()->getTag($rawData, static::$tagName);
+        $tagValue = static::xmlParser()->getTagValue($xmlTagString, static::$tagName);
+        $validationValueResponse = static::validateTagValue($tagValue);
 
         if (! $validationValueResponse->isSuccess()) {
             return $validationValueResponse;
@@ -82,7 +82,7 @@ class DataHoraEmissao extends DFeElement
             );
         }
 
-        $validationValueResponse = self::validateTagValue($tagValue);
+        $validationValueResponse = static::validateTagValue($tagValue);
 
         if (! $validationValueResponse->isSuccess()) {
             return $validationValueResponse;

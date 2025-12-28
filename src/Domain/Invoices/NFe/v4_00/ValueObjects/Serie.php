@@ -67,8 +67,8 @@ final class Serie extends DFeElement
             return $validationServiceResponse;
         }
 
-        $xmlTagString = DFeElement::xmlParser()->getTag($rawData, self::$tagName);
-        $tagValue = DFeElement::xmlParser()->getTagValue($xmlTagString, self::$tagName);
+        $xmlTagString = self::xmlParser()->getTag($rawData, self::$tagName);
+        $tagValue = self::xmlParser()->getTagValue($xmlTagString, self::$tagName);
         $validationValueResponse = self::validateTagValue($tagValue);
 
         if (! $validationValueResponse->isSuccess()) {
@@ -76,7 +76,7 @@ final class Serie extends DFeElement
         }
 
         return Result::makeSuccess(
-            new Serie(
+            new self(
                 $tagValue,
                 $xmlTagString
             )
@@ -109,7 +109,7 @@ final class Serie extends DFeElement
         }
 
         return Result::makeSuccess(
-            new Serie(
+            new self(
                 $tagValue,
                 self::generateXmlString(tagValue: $tagValue)
             )

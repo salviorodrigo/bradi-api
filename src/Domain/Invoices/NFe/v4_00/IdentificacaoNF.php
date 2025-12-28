@@ -93,8 +93,8 @@ final class IdentificacaoNF extends DFeElement
             return $validationServiceResponse;
         }
 
-        $xmlTagString = DFeElement::xmlParser()->getTag($rawData, self::$tagName);
-        $tagValue = DFeElement::xmlParser()->getTagValue($xmlTagString, self::$tagName);
+        $xmlTagString = self::xmlParser()->getTag($rawData, self::$tagName);
+        $tagValue = self::xmlParser()->getTagValue($xmlTagString, self::$tagName);
         $validationValueResponse = self::validateTagValue($tagValue);
 
         if (! $validationValueResponse->isSuccess()) {
@@ -140,7 +140,7 @@ final class IdentificacaoNF extends DFeElement
         // ['dhCont', 'xJust', dhSaiEnt, indIntermed];
 
         return Result::makeSuccess(
-            new IdentificacaoNF(
+            new self(
                 $tagValue,
                 $xmlTagString,
                 ...$xmlElementsBag

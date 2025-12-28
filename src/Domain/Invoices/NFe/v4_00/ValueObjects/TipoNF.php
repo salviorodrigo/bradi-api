@@ -49,8 +49,8 @@ final class TipoNF extends DFeElement
             return $validationServiceResponse;
         }
 
-        $xmlTagString = DFeElement::xmlParser()->getTag($rawData, self::$tagName);
-        $tagValue = DFeElement::xmlParser()->getTagValue($xmlTagString, self::$tagName);
+        $xmlTagString = self::xmlParser()->getTag($rawData, self::$tagName);
+        $tagValue = self::xmlParser()->getTagValue($xmlTagString, self::$tagName);
         $validationValueResponse = self::validateTagValue($tagValue);
 
         if (! $validationValueResponse->isSuccess()) {
@@ -58,7 +58,7 @@ final class TipoNF extends DFeElement
         }
 
         return Result::makeSuccess(
-            new TipoNF(
+            new self(
                 $tagValue,
                 $xmlTagString
             )
@@ -90,7 +90,7 @@ final class TipoNF extends DFeElement
         }
 
         return Result::makeSuccess(
-            new TipoNF(
+            new self(
                 $tagValue,
                 self::generateXmlString($tagValue)
             )

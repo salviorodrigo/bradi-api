@@ -49,8 +49,8 @@ final class CodigoUF extends DFeElement
             return $validationServiceResponse;
         }
 
-        $xmlTagString = DFeElement::xmlParser()->getTag($rawData, self::$tagName);
-        $tagValue = DFeElement::xmlParser()->getTagValue($xmlTagString, self::$tagName);
+        $xmlTagString = self::xmlParser()->getTag($rawData, self::$tagName);
+        $tagValue = self::xmlParser()->getTagValue($xmlTagString, self::$tagName);
         $validationValueResponse = self::validateTagValue($tagValue);
 
         if (! $validationValueResponse->isSuccess()) {
@@ -58,7 +58,7 @@ final class CodigoUF extends DFeElement
         }
 
         return Result::makeSuccess(
-            new CodigoUF(
+            new self(
                 $tagValue,
                 $xmlTagString
             )
@@ -90,7 +90,7 @@ final class CodigoUF extends DFeElement
         }
 
         return Result::makeSuccess(
-            new CodigoUF(
+            new self(
                 $tagValue,
                 self::generateXmlString($tagValue)
             )
