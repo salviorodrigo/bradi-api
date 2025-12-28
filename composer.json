@@ -2,6 +2,7 @@
     "name": "salviorodrigo/bradi-nfe-api",
     "description": "This is a module of Bradi software responsible to work with brazilian invoices (NFe and NFCe)",
     "type": "project",
+    
     "autoload": {
         "psr-4": {
             "BradiNfeApi\\": [ "src/" ]
@@ -18,11 +19,11 @@
         }
     ],
     "require": {
-        "php": "8.*",
+        "php": ">=8.4",
         "oittaa/uuid": "^1.10"
     },
     "require-dev": {
-        "pestphp/pest": "^3.4",
+        "pestphp/pest": "^4.0",
         "tightenco/duster": "^3.1",
         "mockery/mockery": "^1.6"
     },
