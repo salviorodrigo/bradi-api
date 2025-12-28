@@ -135,6 +135,20 @@ final class IdentificacaoNF extends DFeElement
             );
         }
 
+        $mod = array_find($xmlElementsBag, function (DFeElement $xmlElement) {
+            return is_a($xmlElement, Mod::class);
+        });
+
+        if ($mod->value == '55') {
+            $validationService = new ValidationService([
+                new RequiredTagValidator('dhSaiEnt'),
+            ]);
+            $validationServiceResponse = $validationService->verify($rawData);
+            if (! $validationServiceResponse->isSuccess()) {
+                return $validationServiceResponse;
+            }
+        }
+
         // TODO Validar mod para verificar obrigatoriedade de dhSaiEnt.
         // TODO Validar tpEmis para verificar obrigatoriedade de campos de contingencia.
         // ['dhCont', 'xJust', dhSaiEnt, indIntermed];
