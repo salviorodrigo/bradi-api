@@ -23,24 +23,30 @@ abstract class DFeElement
     {
         $xmlString = '';
 
+        if ($tagValue == '' && empty($elements) && empty($attributes)) {
+            return $xmlString;
+        }
+
         if ($isAutoCloseTag) {
             $xmlString .= '<' . static::$tagName;
             foreach ($attributes as $attributeName => $attributeValue) {
                 $xmlString .= ' ' . $attributeName . '="' . $attributeValue . '"';
             }
             $xmlString .= '/>';
-        } else {
-            $xmlString .= '<' . static::$tagName;
-            foreach ($attributes as $attributeName => $attributeValue) {
-                $xmlString .= ' ' . $attributeName . '="' . $attributeValue . '"';
-            }
-            $xmlString .= '>';
-            $xmlString .= $tagValue;
-            foreach ($elements as $element) {
-                $xmlString .= $element->xmlString;
-            }
-            $xmlString .= '</' . static::$tagName . '>';
+
+            return $xmlString;
         }
+
+        $xmlString .= '<' . static::$tagName;
+        foreach ($attributes as $attributeName => $attributeValue) {
+            $xmlString .= ' ' . $attributeName . '="' . $attributeValue . '"';
+        }
+        $xmlString .= '>';
+        $xmlString .= $tagValue;
+        foreach ($elements as $element) {
+            $xmlString .= $element->xmlString;
+        }
+        $xmlString .= '</' . static::$tagName . '>';
 
         return $xmlString;
     }
@@ -51,3 +57,5 @@ abstract class DFeElement
 
     abstract public static function validateTagValue(string $tagValue): Result;
 }
+
+// TODO Make test file.
