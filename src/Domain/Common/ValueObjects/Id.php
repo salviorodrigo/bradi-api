@@ -12,14 +12,15 @@ use BradiNfeApi\Domain\Common\Validators\NotNullValidator;
 
 final class Id extends ValueObject
 {
+    public static string $fieldName = 'id';
+
     private function __construct(public readonly mixed $value) {}
 
     public static function parse(mixed $rawData): Result
     {
-
         $validationService = new ValidationService([
-            new IsStringValidator('id'),
-            new NotNullValidator('id'),
+            new IsStringValidator(self::$fieldName),
+            new NotNullValidator(self::$fieldName),
         ]);
         $validationServiceResponse = $validationService->verify($rawData);
         if ($validationServiceResponse->isSuccess()) {
