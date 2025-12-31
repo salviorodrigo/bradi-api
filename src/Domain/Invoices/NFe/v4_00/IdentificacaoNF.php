@@ -14,14 +14,12 @@ declare(strict_types=1);
 
 namespace BradiNfeApi\Domain\Invoices\NFe\v4_00;
 
-use BradiNfeApi\Common\Exceptions\ValidationError;
 use BradiNfeApi\Common\Exceptions\ValidationErrorBag;
 use BradiNfeApi\Common\Result;
 use BradiNfeApi\Domain\Common\Services\ValidationService;
 use BradiNfeApi\Domain\Common\Validators\IsStringValidator;
 use BradiNfeApi\Domain\Common\Validators\IsXmlTagValidator;
 use BradiNfeApi\Domain\Common\Validators\NotNullValidator;
-use BradiNfeApi\Domain\Invoices\NFe\Exceptions\XmlElementWithValueError;
 use BradiNfeApi\Domain\Invoices\NFe\v4_00\ValueObjects\CodigoMunFG;
 use BradiNfeApi\Domain\Invoices\NFe\v4_00\ValueObjects\CodigoNF;
 use BradiNfeApi\Domain\Invoices\NFe\v4_00\ValueObjects\CodigoUF;
@@ -37,10 +35,11 @@ use BradiNfeApi\Domain\Invoices\NFe\v4_00\ValueObjects\TipoAmbiente;
 use BradiNfeApi\Domain\Invoices\NFe\v4_00\ValueObjects\TipoEmissao;
 use BradiNfeApi\Domain\Invoices\NFe\v4_00\ValueObjects\TipoNF;
 use BradiNfeApi\Domain\Invoices\Protocols\DFeElement;
+use BradiNfeApi\Domain\Invoices\Protocols\DFeElementsGroup;
 use BradiNfeApi\Domain\Invoices\Validators\RequiredTagValidator;
 use Exception;
 
-final class IdentificacaoNF extends DFeElement
+final class IdentificacaoNF extends DFeElementsGroup
 {
     public static string $tagName = 'ide';
 
@@ -183,18 +182,5 @@ final class IdentificacaoNF extends DFeElement
         // TODO Verificar se todas as tags obrigatorias estao presentes
 
         throw new Exception('Must be implemented');
-    }
-
-    public static function validateTagValue(string $tagValue): Result
-    {
-        if ($tagValue != '') {
-            return Result::makeFailure(
-                new ValidationError([
-                    new XmlElementWithValueError(self::$tagName),
-                ])
-            );
-        }
-
-        return Result::makeSuccess();
     }
 }
