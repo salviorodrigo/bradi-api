@@ -14,19 +14,26 @@ final class Mod10Validator extends Validator
 
     public function validate(mixed $candidate): Result
     {
-        $totalBase2 = 0;
-        for ($pointer = 0; $pointer < strlen($candidate) - 1; $pointer++) {
-            $totalBase2 += (int) $candidate[$pointer];
-            if ($pointer % 2 != 0) {
-                $totalBase2 += (int) $candidate[$pointer];
+        $totalMod10 = 0;
+        for ($digitPosition = 0; $digitPosition < strlen($candidate) - 1; $digitPosition++) {
+            $sum = (int) $candidate[$digitPosition];
+            if ($digitPosition % 2 != 0) {
+                $sum *= 2;
             }
+            if ($sum > 9) {
+                $sum = intdiv($sum, 10) + ($sum % 10);
+            }
+            $totalMod10 += $sum;
         }
-        if (($totalBase2 % 10) != $candidate[-1]) {
+
+        $totalMod10 = $totalMod10 % 10;
+        $totalMod10 = 10 - $totalMod10;
+
+        if (($totalMod10 % 10) != $candidate[-1]) {
             return Result::makeFailure(new InvalidVerificationDigitError($this->fieldName));
         }
 
         return Result::makeSuccess();
     }
 }
-
 // TODO Make test file.
