@@ -25,6 +25,17 @@ describe('NumeroEndereco', function () {
             expect($sut->getData()->xmlString)->toBe('<nro>443</nro>');
         });
 
+        test('Should be succeed if a non numeric value is provided', function () {
+            $sut = NumeroEndereco::parseXmlString('<ide><nro>1A</nro></ide>');
+            expect($sut)->toBeInstanceOf(Result::class);
+            expect($sut->isSuccess())->toBeTruthy();
+            expect($sut->getData())->toBeInstanceOf(NumeroEndereco::class);
+            expect($sut->getData()->value)->toBeString();
+            expect($sut->getData()->value)->toBe('1A');
+            expect($sut->getData()->xmlString)->toBeString();
+            expect($sut->getData()->xmlString)->toBe('<nro>1A</nro>');
+        });
+
         test('Should be return a failure Result if an object value is provided', function () {
             $fakeXmlString = new stdClass;
             $sut = NumeroEndereco::parseXmlString($fakeXmlString);
@@ -73,13 +84,6 @@ describe('NumeroEndereco', function () {
             expect($sut->getError())->toBeInstanceOf(ValidationError::class);
         });
 
-        test('Should be fail if a non numeric value is provided', function () {
-            $sut = NumeroEndereco::parseXmlString('<ide><nro>1A</nro></ide>');
-            expect($sut)->toBeInstanceOf(Result::class);
-            expect($sut->isSuccess())->toBeFalsy();
-            expect($sut->getError())->toBeInstanceOf(ValidationError::class);
-        });
-
         test('Should be fail if too long nro value is provided', function () {
             $sut = NumeroEndereco::parseXmlString('<ide><nro>1234567890123456798012345678901234567890123456789012345678901</nro></ide>');
             expect($sut)->toBeInstanceOf(Result::class);
@@ -117,11 +121,10 @@ describe('NumeroEndereco', function () {
             expect($sut->isSuccess())->toBeTruthy();
         });
 
-        test('Should be fail if a string with lathers is provided', function () {
+        test('Should be succeed if a string with lathers is provided', function () {
             $fakeTagValue = '1A';
             $sut = NumeroEndereco::validateTagValue($fakeTagValue);
-            expect($sut->isSuccess())->toBeFalsy();
-            expect($sut->getError())->toBeInstanceOf(ValidationError::class);
+            expect($sut->isSuccess())->toBeTruthy();
         });
 
         test('Should be fail if a string more than sixty letters is provided', function () {

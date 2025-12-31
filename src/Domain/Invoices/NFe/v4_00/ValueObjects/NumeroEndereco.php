@@ -17,7 +17,6 @@ namespace BradiNfeApi\Domain\Invoices\NFe\v4_00\ValueObjects;
 use BradiNfeApi\Common\Exceptions\ValidationError;
 use BradiNfeApi\Common\Result;
 use BradiNfeApi\Domain\Common\Services\ValidationService;
-use BradiNfeApi\Domain\Common\Validators\IsNumericValidator;
 use BradiNfeApi\Domain\Common\Validators\IsStringValidator;
 use BradiNfeApi\Domain\Common\Validators\IsXmlTagValidator;
 use BradiNfeApi\Domain\Common\Validators\MaxStringLengthValidator;
@@ -100,7 +99,6 @@ final class NumeroEndereco extends DFeElement
     {
         $validationService = new ValidationService([
             new IsStringValidator(self::$tagName),
-            new IsNumericValidator(self::$tagName),
             new NotNullValidator(self::$tagName),
             new MaxStringLengthValidator(self::$tagName, 60),
             new MinStringLengthValidator(self::$tagName, 1),
