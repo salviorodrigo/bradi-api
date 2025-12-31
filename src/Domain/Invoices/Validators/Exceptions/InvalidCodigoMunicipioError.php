@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace BradiNfeApi\Domain\Invoices\NFe\Exceptions;
+namespace BradiNfeApi\Domain\Invoices\Validators\Exceptions;
 
 use BradiNfeApi\Domain\Common\Protocols\ValidatorError;
 
-final class InvalidCodigoUFError extends ValidatorError
+final class InvalidCodigoMunicipioError extends ValidatorError
 {
     public function __construct(public readonly string $fieldName)
     {

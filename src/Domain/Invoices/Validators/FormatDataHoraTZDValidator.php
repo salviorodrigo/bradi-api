@@ -6,7 +6,7 @@ namespace BradiNfeApi\Domain\Invoices\Validators;
 
 use BradiNfeApi\Common\Result;
 use BradiNfeApi\Domain\Common\Protocols\Validator;
-use BradiNfeApi\Domain\Invoices\NFe\Exceptions\InvalidDateTimeFormatError;
+use BradiNfeApi\Domain\Invoices\Validators\Exceptions\InvalidDateTimeFormatError;
 
 final class FormatDataHoraTZDValidator extends Validator
 {

@@ -7,7 +7,7 @@ namespace BradiNfeApi\Domain\Invoices\Validators;
 use BradiNfeApi\Common\Result;
 use BradiNfeApi\Domain\Common\Protocols\Validator;
 use BradiNfeApi\Domain\Invoices\Enums\AmbienteEmissao;
-use BradiNfeApi\Domain\Invoices\NFe\Exceptions\InvalidTipoAmbienteError;
+use BradiNfeApi\Domain\Invoices\Validators\Exceptions\InvalidTipoAmbienteError;
 
 final class IsAmbienteEmissaoValidator extends Validator
 {

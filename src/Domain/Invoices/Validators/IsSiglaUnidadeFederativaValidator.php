@@ -7,7 +7,7 @@ namespace BradiNfeApi\Domain\Invoices\Validators;
 use BradiNfeApi\Common\Result;
 use BradiNfeApi\Domain\Common\Protocols\Validator;
 use BradiNfeApi\Domain\Invoices\Enums\UnidadeFederativa;
-use BradiNfeApi\Domain\Invoices\NFe\Exceptions\InvalidSiglaUFError;
+use BradiNfeApi\Domain\Invoices\Validators\Exceptions\InvalidSiglaUFError;
 
 final class IsSiglaUnidadeFederativaValidator extends Validator
 {

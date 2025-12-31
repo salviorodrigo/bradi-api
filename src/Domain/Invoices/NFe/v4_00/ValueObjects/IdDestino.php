@@ -27,8 +27,8 @@ use BradiNfeApi\Domain\Common\Validators\NotNullValidator;
 use BradiNfeApi\Domain\Common\Validators\StringLengthValidator;
 use BradiNfeApi\Domain\Invoices\NFe\Exceptions\XmlElementWithAttributesError;
 use BradiNfeApi\Domain\Invoices\NFe\Exceptions\XmlElementWithElementsError;
+use BradiNfeApi\Domain\Invoices\NFe\Validators\IsTipoOperacaoValidator;
 use BradiNfeApi\Domain\Invoices\Protocols\DFeElement;
-use BradiNfeApi\Domain\Invoices\Validators\IsTipoOperacaoValidator;
 
 final class IdDestino extends DFeElement
 {

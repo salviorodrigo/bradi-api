@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace BradiNfeApi\Domain\Invoices\Validators;
+namespace BradiNfeApi\Domain\Invoices\NFe\Validators;
 
 use BradiNfeApi\Common\Result;
 use BradiNfeApi\Domain\Common\Protocols\Validator;
 use BradiNfeApi\Domain\Invoices\Enums\TipoOperacao;
-use BradiNfeApi\Domain\Invoices\NFe\Exceptions\InvalidIdDestinoError;
+use BradiNfeApi\Domain\Invoices\NFe\Validators\Exceptions\InvalidIdDestinoError;
 
 final class IsTipoOperacaoValidator extends Validator
 {

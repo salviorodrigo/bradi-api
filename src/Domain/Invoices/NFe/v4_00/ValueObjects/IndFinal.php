@@ -26,8 +26,8 @@ use BradiNfeApi\Domain\Common\Validators\NotNullValidator;
 use BradiNfeApi\Domain\Common\Validators\StringLengthValidator;
 use BradiNfeApi\Domain\Invoices\NFe\Exceptions\XmlElementWithAttributesError;
 use BradiNfeApi\Domain\Invoices\NFe\Exceptions\XmlElementWithElementsError;
+use BradiNfeApi\Domain\Invoices\NFe\Validators\IsTipoFinalidadeNFValidator;
 use BradiNfeApi\Domain\Invoices\Protocols\DFeElement;
-use BradiNfeApi\Domain\Invoices\Validators\IsTipoFinalidadeNFValidator;
 
 final class IndFinal extends DFeElement
 {

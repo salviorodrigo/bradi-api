@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace BradiNfeApi\Domain\Invoices\NFe\Exceptions;
+namespace BradiNfeApi\Domain\Invoices\NFe\Validators\Exceptions;
 
 use BradiNfeApi\Domain\Common\Protocols\ValidatorError;
 

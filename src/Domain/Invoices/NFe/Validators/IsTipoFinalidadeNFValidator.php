@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace BradiNfeApi\Domain\Invoices\Validators;
+namespace BradiNfeApi\Domain\Invoices\NFe\Validators;
 
 use BradiNfeApi\Common\Result;
 use BradiNfeApi\Domain\Common\Protocols\Validator;
 use BradiNfeApi\Domain\Invoices\Enums\TipoFinalidadeNF;
-use BradiNfeApi\Domain\Invoices\NFe\Exceptions\InvalidIndFinalError;
+use BradiNfeApi\Domain\Invoices\NFe\Validators\Exceptions\InvalidIndFinalError;
 
 final class IsTipoFinalidadeNFValidator extends Validator
 {
