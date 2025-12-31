@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace BradiNfeApi\Domain\Common\Validators;
+namespace BradiNfeApi\Domain\Invoices\Validators;
 
 use BradiNfeApi\Common\Result;
 use BradiNfeApi\Domain\Common\Protocols\Validator;
-use BradiNfeApi\Domain\Common\Validators\Exceptions\InvalidVerificationDigitError;
+use BradiNfeApi\Domain\Invoices\Validators\Exceptions\InvalidDigitoCodigoMunicipioError;
 
-final class Mod10Validator extends Validator
+final class IsCodigoMunicipioValidator extends Validator
 {
     public function __construct(public readonly string $fieldName) {}
 
@@ -30,7 +30,7 @@ final class Mod10Validator extends Validator
         $totalMod10 = 10 - $totalMod10;
 
         if (($totalMod10 % 10) != $candidate[-1]) {
-            return Result::makeFailure(new InvalidVerificationDigitError($this->fieldName));
+            return Result::makeFailure(new InvalidDigitoCodigoMunicipioError($this->fieldName));
         }
 
         return Result::makeSuccess();

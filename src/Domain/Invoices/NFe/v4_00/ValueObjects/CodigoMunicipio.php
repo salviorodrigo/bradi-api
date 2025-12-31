@@ -24,12 +24,12 @@ use BradiNfeApi\Domain\Common\Services\ValidationService;
 use BradiNfeApi\Domain\Common\Validators\IsNumericValidator;
 use BradiNfeApi\Domain\Common\Validators\IsStringValidator;
 use BradiNfeApi\Domain\Common\Validators\IsXmlTagValidator;
-use BradiNfeApi\Domain\Common\Validators\Mod10Validator;
 use BradiNfeApi\Domain\Common\Validators\NotNullValidator;
 use BradiNfeApi\Domain\Common\Validators\StringLengthValidator;
 use BradiNfeApi\Domain\Invoices\NFe\Exceptions\XmlElementWithAttributesError;
 use BradiNfeApi\Domain\Invoices\NFe\Exceptions\XmlElementWithElementsError;
 use BradiNfeApi\Domain\Invoices\Protocols\DFeElement;
+use BradiNfeApi\Domain\Invoices\Validators\IsCodigoMunicipioValidator;
 use BradiNfeApi\Domain\Invoices\Validators\IsUnidadeFederativaValidator;
 
 class CodigoMunicipio extends DFeElement
@@ -107,7 +107,7 @@ class CodigoMunicipio extends DFeElement
             new NotNullValidator(static::$tagName),
             new IsNumericValidator(static::$tagName),
             new StringLengthValidator(static::$tagName, 7),
-            new Mod10Validator(static::$tagName),
+            new IsCodigoMunicipioValidator(static::$tagName),
         ]);
 
         $validationServiceResponse = $validationService->verify($tagValue);
