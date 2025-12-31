@@ -115,8 +115,6 @@ final class EnderecoEmitente extends DFeElementsGroup
             );
         }
 
-        // TODO Validar IR de acordo com Estado
-
         return Result::makeSuccess(
             new self(
                 $tagValue,

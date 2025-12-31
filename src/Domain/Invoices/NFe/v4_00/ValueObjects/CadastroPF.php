@@ -20,8 +20,6 @@ use BradiNfeApi\Domain\Common\Services\ValidationService;
 use BradiNfeApi\Domain\Common\Validators\IsCPFValidator;
 use BradiNfeApi\Domain\Common\Validators\IsNumericValidator;
 use BradiNfeApi\Domain\Common\Validators\IsStringValidator;
-use BradiNfeApi\Domain\Common\Validators\IsXmlTagValidator;
-use BradiNfeApi\Domain\Common\Validators\NotNullValidator;
 use BradiNfeApi\Domain\Common\Validators\StringLengthValidator;
 use BradiNfeApi\Domain\Invoices\NFe\Exceptions\XmlElementWithAttributesError;
 use BradiNfeApi\Domain\Invoices\NFe\Exceptions\XmlElementWithElementsError;
@@ -39,8 +37,6 @@ final class CadastroPF extends DFeElement
     {
         $validationService = new ValidationService([
             new IsStringValidator(self::$tagName),
-            new NotNullValidator(self::$tagName),
-            new IsXmlTagValidator(self::$tagName),
         ]);
         $validationServiceResponse = $validationService->verify($rawData);
         if (! $validationServiceResponse->isSuccess()) {
@@ -99,7 +95,6 @@ final class CadastroPF extends DFeElement
     public static function validateTagValue(string $tagValue): Result
     {
         $validationService = new ValidationService([
-            new NotNullValidator(self::$tagName),
             new IsStringValidator(self::$tagName),
             new IsNumericValidator(self::$tagName),
             new StringLengthValidator(self::$tagName, 11),
@@ -108,10 +103,10 @@ final class CadastroPF extends DFeElement
 
         $validationServiceResponse = $validationService->verify($tagValue);
 
-        if (! $validationServiceResponse->isSuccess()) {
-            return $validationServiceResponse;
+        if ($validationServiceResponse->isSuccess() || $tagValue == '') {
+            return Result::makeSuccess();
         }
 
-        return Result::makeSuccess();
+        return $validationServiceResponse;
     }
 }
