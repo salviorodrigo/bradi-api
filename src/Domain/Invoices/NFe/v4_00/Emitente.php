@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 /**
  * MOC      7.0
- * #        5
- * ID       B01
- * Campo    ide
- * Desc     Informações de identificação da NF-e
+ * #        30
+ * ID       C01
+ * Campo    emit
+ * Desc     Identificação do emitente da NF-e
  * Tam
  * OBS:
  */
