@@ -83,6 +83,9 @@ final class EnderecoEmitente extends DFeElementsGroup
             return $validationValueResponse;
         }
 
+        // TODO Validar cPais como permitido apenas 1058
+        // TODO Validar xPais como permitido apenas Brasil/BRASIL
+
         $xmlElements = [
             Logradouro::class,
             NumeroEndereco::class,
