@@ -9,9 +9,9 @@ use BradiNfeApi\Common\Result;
 use BradiNfeApi\Domain\Common\Protocols\Validator;
 use InvalidArgumentException;
 
-final class ValidationService
+class ValidationService
 {
-    private readonly array $validators;
+    protected readonly array $validators;
 
     public function __construct(array $validators)
     {
