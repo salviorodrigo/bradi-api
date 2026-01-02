@@ -21,7 +21,6 @@ use BradiNfeApi\Common\Result;
 use BradiNfeApi\Domain\Common\Services\ValidationService;
 use BradiNfeApi\Domain\Common\Validators\IsNumericValidator;
 use BradiNfeApi\Domain\Common\Validators\IsStringValidator;
-use BradiNfeApi\Domain\Common\Validators\IsXmlTagValidator;
 use BradiNfeApi\Domain\Common\Validators\MaxStringLengthValidator;
 use BradiNfeApi\Domain\Common\Validators\MinStringLengthValidator;
 use BradiNfeApi\Domain\Common\Validators\NotNullValidator;
@@ -41,8 +40,6 @@ final class InscricaoEstadual extends DFeElement
     {
         $validationService = new ValidationService([
             new IsStringValidator(self::$tagName),
-            new NotNullValidator(self::$tagName),
-            new IsXmlTagValidator(self::$tagName),
         ]);
         $validationServiceResponse = $validationService->verify($rawData);
         if (! $validationServiceResponse->isSuccess()) {
@@ -110,10 +107,10 @@ final class InscricaoEstadual extends DFeElement
 
         $validationServiceResponse = $validationService->verify($tagValue);
 
-        if (! $validationServiceResponse->isSuccess()) {
-            return $validationServiceResponse;
+        if ($validationServiceResponse->isSuccess() || $tagValue == '') {
+            return Result::makeSuccess();
         }
 
-        return Result::makeSuccess();
+        return $validationServiceResponse;
     }
 }
