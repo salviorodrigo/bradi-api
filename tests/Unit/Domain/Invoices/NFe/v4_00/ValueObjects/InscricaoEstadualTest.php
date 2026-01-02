@@ -25,6 +25,16 @@ describe('InscricaoEstadual', function () {
             expect($sut->getData()->xmlString)->toBe('<IE>294549218</IE>');
         });
 
+        test('Should be succeed if an empty string is provided', function () {
+            $fakeXmlString = '';
+            $sut = InscricaoEstadual::parseXmlString($fakeXmlString);
+            expect($sut)->toBeInstanceOf(Result::class);
+            expect($sut->isSuccess())->toBeTruthy();
+            expect($sut->getData())->toBeInstanceOf(InscricaoEstadual::class);
+            expect($sut->getData()->value)->toBeString()->toBe('');
+            expect($sut->getData()->xmlString)->toBeString()->toBe('');
+        });
+
         test('Should be return a failure Result if an object value is provided', function () {
             $fakeXmlString = new stdClass;
             $sut = InscricaoEstadual::parseXmlString($fakeXmlString);
@@ -51,14 +61,6 @@ describe('InscricaoEstadual', function () {
 
         test('Should be return a failure Result if null given', function () {
             $fakeXmlString = null;
-            $sut = InscricaoEstadual::parseXmlString($fakeXmlString);
-            expect($sut)->toBeInstanceOf(Result::class);
-            expect($sut->isSuccess())->toBeFalsy();
-            expect($sut->getError())->toBeInstanceOf(ValidationError::class);
-        });
-
-        test('Should be return a failure Result if an empty string is provided', function () {
-            $fakeXmlString = '';
             $sut = InscricaoEstadual::parseXmlString($fakeXmlString);
             expect($sut)->toBeInstanceOf(Result::class);
             expect($sut->isSuccess())->toBeFalsy();
@@ -103,11 +105,13 @@ describe('InscricaoEstadual', function () {
             expect($sut->getData()->xmlString)->toBe('<IE>294549218</IE>');
         });
 
-        test('Should be fail if a tag value isn\'t provided', function () {
+        test('Should be succeed if a tag value isn\'t provided', function () {
             $sut = InscricaoEstadual::create();
             expect($sut)->toBeInstanceOf(Result::class);
-            expect($sut->isSuccess())->toBeFalsy();
-            expect($sut->getError())->toBeInstanceOf(ValidationError::class);
+            expect($sut->isSuccess())->toBeTruthy();
+            expect($sut->getData())->toBeInstanceOf(InscricaoEstadual::class);
+            expect($sut->getData()->value)->toBeString()->toBe('');
+            expect($sut->getData()->xmlString)->toBeString()->toBe('');
         });
 
         test('Should be fail if an invalid IE value is provided', function () {
