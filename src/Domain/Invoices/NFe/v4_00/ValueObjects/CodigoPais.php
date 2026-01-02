@@ -17,9 +17,11 @@ namespace BradiNfeApi\Domain\Invoices\NFe\v4_00\ValueObjects;
 
 use BradiNfeApi\Common\Exceptions\ValidationError;
 use BradiNfeApi\Common\Result;
-use BradiNfeApi\Domain\Common\Services\ValidationService;
+use BradiNfeApi\Domain\Common\Services\OptionalOrValidationService;
 use BradiNfeApi\Domain\Common\Validators\IsNumericValidator;
 use BradiNfeApi\Domain\Common\Validators\IsStringValidator;
+use BradiNfeApi\Domain\Common\Validators\IsXmlTagValidator;
+use BradiNfeApi\Domain\Common\Validators\NotNullValidator;
 use BradiNfeApi\Domain\Common\Validators\StringLengthValidator;
 use BradiNfeApi\Domain\Invoices\NFe\Exceptions\XmlElementWithAttributesError;
 use BradiNfeApi\Domain\Invoices\NFe\Exceptions\XmlElementWithElementsError;
@@ -35,15 +37,19 @@ final class CodigoPais extends DFeElement
 
     public static function parseXmlString(mixed $rawData): Result
     {
-        $validationService = new ValidationService([
+        $validationService = new OptionalOrValidationService([
             new IsStringValidator(self::$tagName),
+            new NotNullValidator(self::$tagName),
+            new IsXmlTagValidator(self::$tagName),
         ]);
+
         $validationServiceResponse = $validationService->verify($rawData);
+
         if (! $validationServiceResponse->isSuccess()) {
             return $validationServiceResponse;
         }
 
-        $xmlTagString = self::xmlParser()->getTag($rawData, self::$tagName);
+        $xmlTagString = self::xmlParser()->getTag(strval($rawData), self::$tagName);
         $tagValue = self::xmlParser()->getTagValue($xmlTagString, self::$tagName);
         $validationValueResponse = self::validateTagValue($tagValue);
 
@@ -94,7 +100,7 @@ final class CodigoPais extends DFeElement
 
     public static function validateTagValue(string $tagValue): Result
     {
-        $validationService = new ValidationService([
+        $validationService = new OptionalOrValidationService([
             new IsStringValidator(self::$tagName),
             new IsNumericValidator(self::$tagName),
             new StringLengthValidator(self::$tagName, 4),
@@ -102,11 +108,11 @@ final class CodigoPais extends DFeElement
 
         $validationServiceResponse = $validationService->verify($tagValue);
 
-        if ($validationServiceResponse->isSuccess() || $tagValue == '') {
-            return Result::makeSuccess();
+        if (! $validationServiceResponse->isSuccess()) {
+            return $validationServiceResponse;
         }
 
-        return $validationServiceResponse;
+        return Result::makeSuccess();
 
     }
 }

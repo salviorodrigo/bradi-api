@@ -17,9 +17,11 @@ namespace BradiNfeApi\Domain\Invoices\NFe\v4_00\ValueObjects;
 
 use BradiNfeApi\Common\Exceptions\ValidationError;
 use BradiNfeApi\Common\Result;
-use BradiNfeApi\Domain\Common\Services\ValidationService;
+use BradiNfeApi\Domain\Common\Services\OptionalOrValidationService;
 use BradiNfeApi\Domain\Common\Validators\IsStringValidator;
+use BradiNfeApi\Domain\Common\Validators\IsXmlTagValidator;
 use BradiNfeApi\Domain\Common\Validators\MaxStringLengthValidator;
+use BradiNfeApi\Domain\Common\Validators\NotNullValidator;
 use BradiNfeApi\Domain\Invoices\NFe\Exceptions\XmlElementWithAttributesError;
 use BradiNfeApi\Domain\Invoices\NFe\Exceptions\XmlElementWithElementsError;
 use BradiNfeApi\Domain\Invoices\Protocols\DFeElement;
@@ -34,15 +36,19 @@ final class NomePais extends DFeElement
 
     public static function parseXmlString(mixed $rawData): Result
     {
-        $validationService = new ValidationService([
+        $validationService = new OptionalOrValidationService([
             new IsStringValidator(self::$tagName),
+            new NotNullValidator(self::$tagName),
+            new IsXmlTagValidator(self::$tagName),
         ]);
+
         $validationServiceResponse = $validationService->verify($rawData);
+
         if (! $validationServiceResponse->isSuccess()) {
             return $validationServiceResponse;
         }
 
-        $xmlTagString = self::xmlParser()->getTag($rawData, self::$tagName);
+        $xmlTagString = self::xmlParser()->getTag(strval($rawData), self::$tagName);
         $tagValue = self::xmlParser()->getTagValue($xmlTagString, self::$tagName);
         $validationValueResponse = self::validateTagValue($tagValue);
 
@@ -93,7 +99,7 @@ final class NomePais extends DFeElement
 
     public static function validateTagValue(string $tagValue): Result
     {
-        $validationService = new ValidationService([
+        $validationService = new OptionalOrValidationService([
             new IsStringValidator(self::$tagName),
             new MaxStringLengthValidator(self::$tagName, 60),
         ]);

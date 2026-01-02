@@ -25,8 +25,20 @@ describe('CadastroPJ', function () {
             expect($sut->getData()->xmlString)->toBe('<CNPJ>28214544000175</CNPJ>');
         });
 
-        test('Should be return a failure Result if an empty string is provided', function () {
+        test('Should be succeed if an empty string is provided', function () {
             $fakeXmlString = '';
+            $sut = CadastroPJ::parseXmlString($fakeXmlString);
+            expect($sut)->toBeInstanceOf(Result::class);
+            expect($sut->isSuccess())->toBeTruthy();
+            expect($sut->getData())->toBeInstanceOf(CadastroPJ::class);
+            expect($sut->getData()->value)->toBeString();
+            expect($sut->getData()->value)->toBe('');
+            expect($sut->getData()->xmlString)->toBeString();
+            expect($sut->getData()->xmlString)->toBe('');
+        });
+
+        test('Should be succeed if null given', function () {
+            $fakeXmlString = null;
             $sut = CadastroPJ::parseXmlString($fakeXmlString);
             expect($sut)->toBeInstanceOf(Result::class);
             expect($sut->isSuccess())->toBeTruthy();
@@ -55,14 +67,6 @@ describe('CadastroPJ', function () {
 
         test('Should be return a failure Result if an array value is provided', function () {
             $fakeXmlString = ['<emit><CNPJ>28214544000175</CNPJ></emit>'];
-            $sut = CadastroPJ::parseXmlString($fakeXmlString);
-            expect($sut)->toBeInstanceOf(Result::class);
-            expect($sut->isSuccess())->toBeFalsy();
-            expect($sut->getError())->toBeInstanceOf(ValidationError::class);
-        });
-
-        test('Should be return a failure Result if null given', function () {
-            $fakeXmlString = null;
             $sut = CadastroPJ::parseXmlString($fakeXmlString);
             expect($sut)->toBeInstanceOf(Result::class);
             expect($sut->isSuccess())->toBeFalsy();

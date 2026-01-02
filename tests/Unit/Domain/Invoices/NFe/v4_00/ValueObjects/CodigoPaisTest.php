@@ -37,6 +37,18 @@ describe('CodigoPais', function () {
             expect($sut->getData()->xmlString)->toBe('');
         });
 
+        test('Should be  succeed if null given', function () {
+            $fakeXmlString = null;
+            $sut = CodigoPais::parseXmlString($fakeXmlString);
+            expect($sut)->toBeInstanceOf(Result::class);
+            expect($sut->isSuccess())->toBeTruthy();
+            expect($sut->getData())->toBeInstanceOf(CodigoPais::class);
+            expect($sut->getData()->value)->toBeString();
+            expect($sut->getData()->value)->toBe('');
+            expect($sut->getData()->xmlString)->toBeString();
+            expect($sut->getData()->xmlString)->toBe('');
+        });
+
         test('Should be return a failure Result if an object value is provided', function () {
             $fakeXmlString = new stdClass;
             $sut = CodigoPais::parseXmlString($fakeXmlString);
@@ -55,14 +67,6 @@ describe('CodigoPais', function () {
 
         test('Should be return a failure Result if an array value is provided', function () {
             $fakeXmlString = ['<ide><cPais>1058</cPais></ide>'];
-            $sut = CodigoPais::parseXmlString($fakeXmlString);
-            expect($sut)->toBeInstanceOf(Result::class);
-            expect($sut->isSuccess())->toBeFalsy();
-            expect($sut->getError())->toBeInstanceOf(ValidationError::class);
-        });
-
-        test('Should be return a failure Result if null given', function () {
-            $fakeXmlString = null;
             $sut = CodigoPais::parseXmlString($fakeXmlString);
             expect($sut)->toBeInstanceOf(Result::class);
             expect($sut->isSuccess())->toBeFalsy();

@@ -35,6 +35,16 @@ describe('InscricaoEstadual', function () {
             expect($sut->getData()->xmlString)->toBeString()->toBe('');
         });
 
+        test('Should be succeed null given', function () {
+            $fakeXmlString = null;
+            $sut = InscricaoEstadual::parseXmlString($fakeXmlString);
+            expect($sut)->toBeInstanceOf(Result::class);
+            expect($sut->isSuccess())->toBeTruthy();
+            expect($sut->getData())->toBeInstanceOf(InscricaoEstadual::class);
+            expect($sut->getData()->value)->toBeString()->toBe('');
+            expect($sut->getData()->xmlString)->toBeString()->toBe('');
+        });
+
         test('Should be return a failure Result if an object value is provided', function () {
             $fakeXmlString = new stdClass;
             $sut = InscricaoEstadual::parseXmlString($fakeXmlString);
@@ -53,14 +63,6 @@ describe('InscricaoEstadual', function () {
 
         test('Should be return a failure Result if an array value is provided', function () {
             $fakeXmlString = ['<ide><IE>294549218</IE></ide>'];
-            $sut = InscricaoEstadual::parseXmlString($fakeXmlString);
-            expect($sut)->toBeInstanceOf(Result::class);
-            expect($sut->isSuccess())->toBeFalsy();
-            expect($sut->getError())->toBeInstanceOf(ValidationError::class);
-        });
-
-        test('Should be return a failure Result if null given', function () {
-            $fakeXmlString = null;
             $sut = InscricaoEstadual::parseXmlString($fakeXmlString);
             expect($sut)->toBeInstanceOf(Result::class);
             expect($sut->isSuccess())->toBeFalsy();
