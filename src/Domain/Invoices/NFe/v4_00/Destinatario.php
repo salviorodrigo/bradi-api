@@ -63,7 +63,7 @@ final class Destinatario extends DFeElementsGroup
             return $validationServiceResponse;
         }
 
-        $xmlTagString = self::xmlParser()->getTag($rawData, self::$tagName);
+        $xmlTagString = self::xmlParser()->getTag(strval($rawData), self::$tagName);
         $tagValue = self::xmlParser()->getTagValue($xmlTagString, self::$tagName);
         $validationValueResponse = self::validateTagValue($tagValue);
 

@@ -47,12 +47,14 @@ class CodigoMunicipio extends DFeElement
             new NotNullValidator(static::$tagName),
             new IsXmlTagValidator(static::$tagName),
         ]);
+
         $validationServiceResponse = $validationService->verify($rawData);
+
         if (! $validationServiceResponse->isSuccess()) {
             return $validationServiceResponse;
         }
 
-        $xmlTagString = static::xmlParser()->getTag($rawData, static::$tagName);
+        $xmlTagString = static::xmlParser()->getTag(strval($rawData), static::$tagName);
         $tagValue = static::xmlParser()->getTagValue($xmlTagString, static::$tagName);
         $validationValueResponse = self::validateTagValue($tagValue);
 

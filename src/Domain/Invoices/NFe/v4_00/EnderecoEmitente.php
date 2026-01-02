@@ -70,12 +70,14 @@ final class EnderecoEmitente extends DFeElementsGroup
             new RequiredTagValidator('UF'),
             new RequiredTagValidator('CEP'),
         ]);
+
         $validationServiceResponse = $validationService->verify($rawData);
+
         if (! $validationServiceResponse->isSuccess()) {
             return $validationServiceResponse;
         }
 
-        $xmlTagString = self::xmlParser()->getTag($rawData, self::$tagName);
+        $xmlTagString = self::xmlParser()->getTag(strval($rawData), self::$tagName);
         $tagValue = self::xmlParser()->getTagValue($xmlTagString, self::$tagName);
         $validationValueResponse = self::validateTagValue($tagValue);
 

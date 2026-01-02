@@ -55,12 +55,14 @@ final class TipoEmissao extends DFeElement
             new NotNullValidator(self::$tagName),
             new IsXmlTagValidator(self::$tagName),
         ]);
+
         $validationServiceResponse = $validationService->verify($rawData);
+
         if (! $validationServiceResponse->isSuccess()) {
             return $validationServiceResponse;
         }
 
-        $xmlTagString = self::xmlParser()->getTag($rawData, self::$tagName);
+        $xmlTagString = self::xmlParser()->getTag(strval($rawData), self::$tagName);
         $tagValue = self::xmlParser()->getTagValue($xmlTagString, self::$tagName);
         $validationValueResponse = self::validateTagValue($tagValue);
 
