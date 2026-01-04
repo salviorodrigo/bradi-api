@@ -47,22 +47,20 @@ final class IndicadorIEDestinatario extends DFeElement
 
     public static function parseXmlString(mixed $rawData): Result
     {
-        $validationService = new ValidationService([
+        $typeValidator = new ValidationService([
             new IsStringValidator(self::$tagName),
             new NotNullValidator(self::$tagName),
             new IsXmlTagValidator(self::$tagName),
         ]);
 
-        $validationServiceResponse = $validationService->verify($rawData);
-
-        if (! $validationServiceResponse->isSuccess()) {
-            return $validationServiceResponse;
+        $typeValidatorResponse = $typeValidator->verify($rawData);
+        if (! $typeValidatorResponse->isSuccess()) {
+            return $typeValidatorResponse;
         }
 
         $xmlTagString = self::xmlParser()->getTag(strval($rawData), self::$tagName);
         $tagValue = self::xmlParser()->getTagValue($xmlTagString, self::$tagName);
         $validationValueResponse = self::validateTagValue($tagValue);
-
         if (! $validationValueResponse->isSuccess()) {
             return $validationValueResponse;
         }
@@ -78,7 +76,6 @@ final class IndicadorIEDestinatario extends DFeElement
     public static function create(string $tagValue, array $elements = [], array $attributes = []): Result
     {
         $validationValueResponse = self::validateTagValue($tagValue);
-
         if (! $validationValueResponse->isSuccess()) {
             return $validationValueResponse;
         }
@@ -118,7 +115,6 @@ final class IndicadorIEDestinatario extends DFeElement
         ]);
 
         $validationServiceResponse = $validationService->verify($tagValue);
-
         if (! $validationServiceResponse->isSuccess()) {
             return $validationServiceResponse;
         }

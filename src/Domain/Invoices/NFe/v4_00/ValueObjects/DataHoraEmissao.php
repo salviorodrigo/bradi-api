@@ -37,22 +37,20 @@ class DataHoraEmissao extends DFeElement
 
     public static function parseXmlString(mixed $rawData): Result
     {
-        $validationService = new ValidationService([
+        $typeValidator = new ValidationService([
             new IsStringValidator(static::$tagName),
             new NotNullValidator(static::$tagName),
             new IsXmlTagValidator(static::$tagName),
         ]);
 
-        $validationServiceResponse = $validationService->verify($rawData);
-
-        if (! $validationServiceResponse->isSuccess()) {
-            return $validationServiceResponse;
+        $typeValidatorResponse = $typeValidator->verify($rawData);
+        if (! $typeValidatorResponse->isSuccess()) {
+            return $typeValidatorResponse;
         }
 
         $xmlTagString = static::xmlParser()->getTag(strval($rawData), static::$tagName);
         $tagValue = static::xmlParser()->getTagValue($xmlTagString, static::$tagName);
         $validationValueResponse = static::validateTagValue($tagValue);
-
         if (! $validationValueResponse->isSuccess()) {
             return $validationValueResponse;
         }
@@ -108,7 +106,6 @@ class DataHoraEmissao extends DFeElement
         ]);
 
         $validationServiceResponse = $validationService->verify($tagValue);
-
         if (! $validationServiceResponse->isSuccess()) {
             return $validationServiceResponse;
         }

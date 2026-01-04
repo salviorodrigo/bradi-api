@@ -20,7 +20,6 @@ use BradiNfeApi\Common\Result;
 use BradiNfeApi\Domain\Common\Services\OptionalOrValidationService;
 use BradiNfeApi\Domain\Common\Validators\IsStringValidator;
 use BradiNfeApi\Domain\Common\Validators\IsXmlTagValidator;
-use BradiNfeApi\Domain\Common\Validators\NotNullValidator;
 use BradiNfeApi\Domain\Invoices\NFe\v4_00\ValueObjects\CadastroPF;
 use BradiNfeApi\Domain\Invoices\NFe\v4_00\ValueObjects\CadastroPJ;
 use BradiNfeApi\Domain\Invoices\NFe\v4_00\ValueObjects\IndicadorIEDestinatario;
@@ -49,24 +48,30 @@ final class Destinatario extends DFeElementsGroup
 
     public static function parseXmlString(mixed $rawData): Result
     {
-        $validationService = new OptionalOrValidationService([
+        $typeValidator = new OptionalOrValidationService([
             new IsStringValidator(self::$tagName),
-            new NotNullValidator(self::$tagName),
             new IsXmlTagValidator(self::$tagName),
+        ]);
+
+        $typeValidatorResponse = $typeValidator->verify($rawData);
+        if (! $typeValidatorResponse->isSuccess()) {
+            return $typeValidatorResponse;
+        }
+
+        $xmlTagString = self::xmlParser()->getTag(strval($rawData), self::$tagName);
+        $xmlTagStringValidator = new OptionalOrValidationService([
+            new IsStringValidator(self::$tagName),
             new AtLeastOneTagValidator(self::$tagName, ['CNPJ', 'CPF', 'idEstrangeiro']),
             new RequiredTagValidator('indIEDest'),
         ]);
 
-        $validationServiceResponse = $validationService->verify($rawData);
-
-        if (! $validationServiceResponse->isSuccess()) {
-            return $validationServiceResponse;
+        $xmlTagStringValidatorResponse = $xmlTagStringValidator->verify($xmlTagString);
+        if (! $xmlTagStringValidatorResponse->isSuccess()) {
+            return $xmlTagStringValidatorResponse;
         }
 
-        $xmlTagString = self::xmlParser()->getTag(strval($rawData), self::$tagName);
         $tagValue = self::xmlParser()->getTagValue($xmlTagString, self::$tagName);
         $validationValueResponse = self::validateTagValue($tagValue);
-
         if (! $validationValueResponse->isSuccess()) {
             return $validationValueResponse;
         }
@@ -82,9 +87,10 @@ final class Destinatario extends DFeElementsGroup
 
         $parserErrorBag = new ValidationErrorBag;
         $xmlElementsBag = [];
-
         foreach ($xmlElements as $element) {
-            $parsingResult = $element::parseXmlString($xmlTagString);
+            $parsingResult = $element::parseXmlString(
+                self::xmlParser()->getTag($xmlTagString, $element::$tagName)
+            );
             if (! $parsingResult->isSuccess()) {
                 $parserErrorBag->add($parsingResult->getError());
             } else {

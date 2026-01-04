@@ -57,11 +57,19 @@ final class EnderecoEmitente extends DFeElementsGroup
 
     public static function parseXmlString(mixed $rawData): Result
     {
-        $validationService = new ValidationService([
+        $typeValidator = new ValidationService([
             new IsStringValidator(self::$tagName),
-            new NotNullValidator(self::$tagName),
             new IsXmlTagValidator(self::$tagName),
-            new RequiredTagValidator(self::$tagName),
+        ]);
+
+        $typeValidatorResponse = $typeValidator->verify($rawData);
+        if (! $typeValidatorResponse->isSuccess()) {
+            return $typeValidatorResponse;
+        }
+
+        $xmlTagString = self::xmlParser()->getTag(strval($rawData), self::$tagName);
+        $xmlTagStringValidator = new ValidationService([
+            new NotNullValidator(self::$tagName),
             new RequiredTagValidator('xLgr'),
             new RequiredTagValidator('nro'),
             new RequiredTagValidator('xBairro'),
@@ -71,16 +79,13 @@ final class EnderecoEmitente extends DFeElementsGroup
             new RequiredTagValidator('CEP'),
         ]);
 
-        $validationServiceResponse = $validationService->verify($rawData);
-
-        if (! $validationServiceResponse->isSuccess()) {
-            return $validationServiceResponse;
+        $xmlTagStringValidatorResponse = $xmlTagStringValidator->verify($xmlTagString);
+        if (! $xmlTagStringValidatorResponse->isSuccess()) {
+            return $xmlTagStringValidatorResponse;
         }
 
-        $xmlTagString = self::xmlParser()->getTag(strval($rawData), self::$tagName);
         $tagValue = self::xmlParser()->getTagValue($xmlTagString, self::$tagName);
         $validationValueResponse = self::validateTagValue($tagValue);
-
         if (! $validationValueResponse->isSuccess()) {
             return $validationValueResponse;
         }
@@ -104,9 +109,10 @@ final class EnderecoEmitente extends DFeElementsGroup
 
         $parserErrorBag = new ValidationErrorBag;
         $xmlElementsBag = [];
-
         foreach ($xmlElements as $element) {
-            $parsingResult = $element::parseXmlString($xmlTagString);
+            $parsingResult = $element::parseXmlString(
+                self::xmlParser()->getTag($xmlTagString, $element::$tagName)
+            );
             if (! $parsingResult->isSuccess()) {
                 $parserErrorBag->add($parsingResult->getError());
             } else {

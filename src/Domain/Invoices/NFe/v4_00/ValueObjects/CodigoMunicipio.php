@@ -42,22 +42,20 @@ class CodigoMunicipio extends DFeElement
 
     public static function parseXmlString(mixed $rawData): Result
     {
-        $validationService = new ValidationService([
+        $typeValidator = new ValidationService([
             new IsStringValidator(static::$tagName),
             new NotNullValidator(static::$tagName),
             new IsXmlTagValidator(static::$tagName),
         ]);
 
-        $validationServiceResponse = $validationService->verify($rawData);
-
-        if (! $validationServiceResponse->isSuccess()) {
-            return $validationServiceResponse;
+        $typeValidatorResponse = $typeValidator->verify($rawData);
+        if (! $typeValidatorResponse->isSuccess()) {
+            return $typeValidatorResponse;
         }
 
         $xmlTagString = static::xmlParser()->getTag(strval($rawData), static::$tagName);
         $tagValue = static::xmlParser()->getTagValue($xmlTagString, static::$tagName);
         $validationValueResponse = self::validateTagValue($tagValue);
-
         if (! $validationValueResponse->isSuccess()) {
             return $validationValueResponse;
         }
@@ -73,7 +71,6 @@ class CodigoMunicipio extends DFeElement
     public static function create(string $tagValue, array $elements = [], array $attributes = []): Result
     {
         $validationValueResponse = static::validateTagValue($tagValue);
-
         if (! $validationValueResponse->isSuccess()) {
             return $validationValueResponse;
         }
@@ -113,7 +110,6 @@ class CodigoMunicipio extends DFeElement
         ]);
 
         $validationServiceResponse = $validationService->verify($tagValue);
-
         if (! $validationServiceResponse->isSuccess()) {
             return $validationServiceResponse;
         }

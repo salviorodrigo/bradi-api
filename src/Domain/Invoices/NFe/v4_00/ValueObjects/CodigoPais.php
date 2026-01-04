@@ -21,7 +21,6 @@ use BradiNfeApi\Domain\Common\Services\OptionalOrValidationService;
 use BradiNfeApi\Domain\Common\Validators\IsNumericValidator;
 use BradiNfeApi\Domain\Common\Validators\IsStringValidator;
 use BradiNfeApi\Domain\Common\Validators\IsXmlTagValidator;
-use BradiNfeApi\Domain\Common\Validators\NotNullValidator;
 use BradiNfeApi\Domain\Common\Validators\StringLengthValidator;
 use BradiNfeApi\Domain\Invoices\NFe\Exceptions\XmlElementWithAttributesError;
 use BradiNfeApi\Domain\Invoices\NFe\Exceptions\XmlElementWithElementsError;
@@ -37,22 +36,19 @@ final class CodigoPais extends DFeElement
 
     public static function parseXmlString(mixed $rawData): Result
     {
-        $validationService = new OptionalOrValidationService([
+        $typeValidator = new OptionalOrValidationService([
             new IsStringValidator(self::$tagName),
-            new NotNullValidator(self::$tagName),
             new IsXmlTagValidator(self::$tagName),
         ]);
 
-        $validationServiceResponse = $validationService->verify($rawData);
-
-        if (! $validationServiceResponse->isSuccess()) {
-            return $validationServiceResponse;
+        $typeValidatorResponse = $typeValidator->verify($rawData);
+        if (! $typeValidatorResponse->isSuccess()) {
+            return $typeValidatorResponse;
         }
 
         $xmlTagString = self::xmlParser()->getTag(strval($rawData), self::$tagName);
         $tagValue = self::xmlParser()->getTagValue($xmlTagString, self::$tagName);
         $validationValueResponse = self::validateTagValue($tagValue);
-
         if (! $validationValueResponse->isSuccess()) {
             return $validationValueResponse;
         }
@@ -85,7 +81,6 @@ final class CodigoPais extends DFeElement
         }
 
         $validationValueResponse = self::validateTagValue($tagValue);
-
         if (! $validationValueResponse->isSuccess()) {
             return $validationValueResponse;
         }
@@ -107,7 +102,6 @@ final class CodigoPais extends DFeElement
         ]);
 
         $validationServiceResponse = $validationService->verify($tagValue);
-
         if (! $validationServiceResponse->isSuccess()) {
             return $validationServiceResponse;
         }

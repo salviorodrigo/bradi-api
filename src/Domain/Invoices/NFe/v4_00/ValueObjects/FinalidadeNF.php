@@ -41,16 +41,15 @@ final class FinalidadeNF extends DFeElement
 
     public static function parseXmlString(mixed $rawData): Result
     {
-        $validationService = new ValidationService([
+        $typeValidator = new ValidationService([
             new IsStringValidator(self::$tagName),
             new NotNullValidator(self::$tagName),
             new IsXmlTagValidator(self::$tagName),
         ]);
 
-        $validationServiceResponse = $validationService->verify($rawData);
-
-        if (! $validationServiceResponse->isSuccess()) {
-            return $validationServiceResponse;
+        $typeValidatorResponse = $typeValidator->verify($rawData);
+        if (! $typeValidatorResponse->isSuccess()) {
+            return $typeValidatorResponse;
         }
 
         $xmlTagString = self::xmlParser()->getTag(strval($rawData), self::$tagName);
