@@ -8,8 +8,8 @@ use BradiNfeApi\Domain\Common\Protocols\ValidatorError;
 
 final class InvalidStringLengthError extends ValidatorError
 {
-    public function __construct(public readonly string $fieldName, public readonly int $stringLength)
+    public function __construct(public readonly string $fieldName, public readonly array $stringLength)
     {
-        $this->message = 'chars quantity should be ' . $this->stringLength . '.';
+        $this->message = 'chars quantity should be ' . json_encode($this->stringLength) . '.';
     }
 }
