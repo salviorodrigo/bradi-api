@@ -12,7 +12,7 @@ use BradiNfeApi\Domain\Invoices\NFe\v4_00\ValueObjects\QuantidadeComercial;
  */
 describe('QuantidadeComercial', function () {
     describe('::parseXmlString()', function () {
-        test('Should be succeed when a valid xml string with a valid uCom value is provided', function () {
+        test('Should be succeed when a valid xml string with a valid qCom value is provided', function () {
             $fakeTagValue = '100.0000';
             $fakeXmlString = "<qCom>{$fakeTagValue}</qCom>";
             $sut = QuantidadeComercial::parseXmlString($fakeXmlString);

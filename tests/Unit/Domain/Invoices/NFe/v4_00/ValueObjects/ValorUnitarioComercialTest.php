@@ -12,7 +12,7 @@ use BradiNfeApi\Domain\Invoices\NFe\v4_00\ValueObjects\ValorUnitarioComercial;
  */
 describe('ValorUnitarioComercial', function () {
     describe('::parseXmlString()', function () {
-        test('Should be succeed when a valid xml string with a valid uCom value is provided', function () {
+        test('Should be succeed when a valid xml string with a valid vUnCom value is provided', function () {
             $fakeTagValue = '16.0000000000';
             $fakeXmlString = "<vUnCom>{$fakeTagValue}</vUnCom>";
             $sut = ValorUnitarioComercial::parseXmlString($fakeXmlString);
