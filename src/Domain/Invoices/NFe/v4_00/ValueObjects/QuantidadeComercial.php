@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 /**
  * MOC      7.0
- * #        108
- * ID       I09
+ * #        109
+ * ID       I10
  * Campo    qCom
  * Desc     Quantidade Comercial
  * Tam      11v0-4
