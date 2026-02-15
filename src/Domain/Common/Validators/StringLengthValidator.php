@@ -17,7 +17,7 @@ final class StringLengthValidator extends Validator
     {
         foreach ($stringLength as $item) {
             if (! is_int($item)) {
-                throw new InvalidArgumentException('stringLength attribute must be integer or an array of integers');
+                throw new InvalidArgumentException('stringLength attribute must be integer');
             }
         }
         $this->stringLengths = $stringLength;
