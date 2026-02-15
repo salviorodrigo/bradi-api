@@ -54,8 +54,6 @@ abstract class DFeElement
     abstract public static function parseXmlString(mixed $rawData): Result;
 
     abstract public static function create(string $tagValue, array $elements, array $attributes): Result;
-
-    abstract public static function validateTagValue(string $tagValue): Result;
 }
 
 // TODO Make test file.

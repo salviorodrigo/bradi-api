@@ -24,9 +24,10 @@ use BradiNfeApi\Domain\Common\Validators\StringLengthValidator;
 use BradiNfeApi\Domain\Invoices\NFe\Exceptions\XmlElementWithAttributesError;
 use BradiNfeApi\Domain\Invoices\NFe\Exceptions\XmlElementWithElementsError;
 use BradiNfeApi\Domain\Invoices\Protocols\DFeElement;
+use BradiNfeApi\Domain\Invoices\Protocols\HasValue;
 use BradiNfeApi\Domain\Invoices\Validators\IsSiglaUnidadeFederativaValidator;
 
-final class SiglaUF extends DFeElement
+final class SiglaUF extends DFeElement implements HasValue
 {
     public static string $tagName = 'UF';
 

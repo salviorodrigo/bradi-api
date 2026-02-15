@@ -25,8 +25,9 @@ use BradiNfeApi\Domain\Common\Validators\StringLengthValidator;
 use BradiNfeApi\Domain\Invoices\NFe\Exceptions\XmlElementWithAttributesError;
 use BradiNfeApi\Domain\Invoices\NFe\Exceptions\XmlElementWithElementsError;
 use BradiNfeApi\Domain\Invoices\Protocols\DFeElement;
+use BradiNfeApi\Domain\Invoices\Protocols\HasValue;
 
-final class CodigoPostal extends DFeElement
+final class CodigoPostal extends DFeElement implements HasValue
 {
     public static string $tagName = 'CEP';
 

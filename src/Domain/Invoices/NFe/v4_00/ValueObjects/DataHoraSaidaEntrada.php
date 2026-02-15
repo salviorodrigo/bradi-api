@@ -16,7 +16,9 @@ declare(strict_types=1);
 
 namespace BradiNfeApi\Domain\Invoices\NFe\v4_00\ValueObjects;
 
-final class DataHoraSaidaEntrada extends DataHoraEmissao
+use BradiNfeApi\Domain\Invoices\Protocols\HasValue;
+
+final class DataHoraSaidaEntrada extends DataHoraEmissao implements HasValue
 {
     public static string $tagName = 'dhSaiEnt';
 

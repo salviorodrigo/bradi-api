@@ -28,8 +28,9 @@ use BradiNfeApi\Domain\Invoices\NFe\Exceptions\XmlElementWithAttributesError;
 use BradiNfeApi\Domain\Invoices\NFe\Exceptions\XmlElementWithElementsError;
 use BradiNfeApi\Domain\Invoices\NFe\Validators\IsTipoFinalidadeNFValidator;
 use BradiNfeApi\Domain\Invoices\Protocols\DFeElement;
+use BradiNfeApi\Domain\Invoices\Protocols\HasValue;
 
-final class IndFinal extends DFeElement
+final class IndFinal extends DFeElement implements HasValue
 {
     public static string $tagName = 'indFinal';
 

@@ -25,8 +25,9 @@ use BradiNfeApi\Domain\Common\Validators\NotNullValidator;
 use BradiNfeApi\Domain\Invoices\NFe\Exceptions\XmlElementWithAttributesError;
 use BradiNfeApi\Domain\Invoices\NFe\Exceptions\XmlElementWithElementsError;
 use BradiNfeApi\Domain\Invoices\Protocols\DFeElement;
+use BradiNfeApi\Domain\Invoices\Protocols\HasValue;
 
-final class NomeMunicipio extends DFeElement
+final class NomeMunicipio extends DFeElement implements HasValue
 {
     public static string $tagName = 'xMun';
 

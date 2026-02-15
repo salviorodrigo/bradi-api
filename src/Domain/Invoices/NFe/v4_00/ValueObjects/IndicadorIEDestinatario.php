@@ -36,8 +36,9 @@ use BradiNfeApi\Domain\Invoices\NFe\Exceptions\XmlElementWithAttributesError;
 use BradiNfeApi\Domain\Invoices\NFe\Exceptions\XmlElementWithElementsError;
 use BradiNfeApi\Domain\Invoices\NFe\Validators\IsTipoIndIEDestinatarioValidator;
 use BradiNfeApi\Domain\Invoices\Protocols\DFeElement;
+use BradiNfeApi\Domain\Invoices\Protocols\HasValue;
 
-final class IndicadorIEDestinatario extends DFeElement
+final class IndicadorIEDestinatario extends DFeElement implements HasValue
 {
     public static string $tagName = 'indIEDest';
 

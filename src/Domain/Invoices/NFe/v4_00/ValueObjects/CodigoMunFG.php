@@ -17,7 +17,9 @@ declare(strict_types=1);
 
 namespace BradiNfeApi\Domain\Invoices\NFe\v4_00\ValueObjects;
 
-final class CodigoMunFG extends CodigoMunicipio
+use BradiNfeApi\Domain\Invoices\Protocols\HasValue;
+
+final class CodigoMunFG extends CodigoMunicipio implements HasValue
 {
     public static string $tagName = 'cMunFG';
 }

@@ -28,9 +28,10 @@ use BradiNfeApi\Domain\Common\Validators\StringLengthValidator;
 use BradiNfeApi\Domain\Invoices\NFe\Exceptions\XmlElementWithAttributesError;
 use BradiNfeApi\Domain\Invoices\NFe\Exceptions\XmlElementWithElementsError;
 use BradiNfeApi\Domain\Invoices\Protocols\DFeElement;
+use BradiNfeApi\Domain\Invoices\Protocols\HasValue;
 use BradiNfeApi\Domain\Invoices\Validators\IsModeloDFeValidator;
 
-final class Mod extends DFeElement
+final class Mod extends DFeElement implements HasValue
 {
     public static string $tagName = 'mod';
 

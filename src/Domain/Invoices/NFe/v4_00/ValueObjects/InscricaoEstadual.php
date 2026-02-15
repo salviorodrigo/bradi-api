@@ -27,8 +27,9 @@ use BradiNfeApi\Domain\Common\Validators\MinStringLengthValidator;
 use BradiNfeApi\Domain\Invoices\NFe\Exceptions\XmlElementWithAttributesError;
 use BradiNfeApi\Domain\Invoices\NFe\Exceptions\XmlElementWithElementsError;
 use BradiNfeApi\Domain\Invoices\Protocols\DFeElement;
+use BradiNfeApi\Domain\Invoices\Protocols\HasValue;
 
-final class InscricaoEstadual extends DFeElement
+final class InscricaoEstadual extends DFeElement implements HasValue
 {
     public static string $tagName = 'IE';
 

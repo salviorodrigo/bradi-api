@@ -28,8 +28,9 @@ use BradiNfeApi\Domain\Invoices\NFe\Exceptions\XmlElementWithAttributesError;
 use BradiNfeApi\Domain\Invoices\NFe\Exceptions\XmlElementWithElementsError;
 use BradiNfeApi\Domain\Invoices\NFe\Validators\IsTipoMovimentacaoValidator;
 use BradiNfeApi\Domain\Invoices\Protocols\DFeElement;
+use BradiNfeApi\Domain\Invoices\Protocols\HasValue;
 
-final class TipoNF extends DFeElement
+final class TipoNF extends DFeElement implements HasValue
 {
     public static string $tagName = 'tpNF';
 

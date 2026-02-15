@@ -27,9 +27,10 @@ use BradiNfeApi\Domain\Common\Validators\StringLengthValidator;
 use BradiNfeApi\Domain\Invoices\NFe\Exceptions\XmlElementWithAttributesError;
 use BradiNfeApi\Domain\Invoices\NFe\Exceptions\XmlElementWithElementsError;
 use BradiNfeApi\Domain\Invoices\Protocols\DFeElement;
+use BradiNfeApi\Domain\Invoices\Protocols\HasValue;
 use BradiNfeApi\Domain\Invoices\Validators\IsUnidadeFederativaValidator;
 
-final class CodigoUF extends DFeElement
+final class CodigoUF extends DFeElement implements HasValue
 {
     public static string $tagName = 'cUF';
 
