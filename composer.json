@@ -13,6 +13,13 @@
             "BradiNfeApi\\Tests\\": [ "tests/" ]
         }
     },
+    "scripts": {
+        "lint": "./vendor/bin/duster lint",
+        "lint:fix": "./vendor/bin/duster fix",
+        "test": "./vendor/bin/pest",
+        "test:dirty": "./vendor/bin/pest --dirty",
+        "test:ci": "./vendor/bin/pest --parallel"
+    },
     "authors": [
         {
             "name": "Rodrigo Salvio"
@@ -25,7 +32,8 @@
     "require-dev": {
         "pestphp/pest": "^4.0",
         "tightenco/duster": "^3.1",
-        "mockery/mockery": "^1.6"
+        "mockery/mockery": "^1.6",
+        "symfony/var-dumper": "^8.0"
     },
     "config": {
         "allow-plugins": {
