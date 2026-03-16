@@ -4,18 +4,29 @@ declare(strict_types=1);
 
 namespace BradiNfeApi\Domain\Common\Validators;
 
-use BradiNfeApi\Common\Result;
-use BradiNfeApi\Domain\Common\Protocols\Validator;
-use BradiNfeApi\Domain\Common\Validators\Exceptions\LessThanError;
+use BradiNfeApi\Common\Protocols\Validator;
+use BradiNfeApi\Common\ValueObjects\Result;
+use BradiNfeApi\Domain\Common\Exceptions\LessThanError;
 
 final class MinValueValidator extends Validator
 {
-    public function __construct(public readonly string $fieldName, public readonly float $minValue) {}
+    public function __construct(
+        public readonly string $fieldURI,
+        public readonly string $source,
+        public readonly float $minValue
+    ) {}
 
     public function validate(mixed $candidate): Result
     {
-        if (! is_numeric($candidate) || (float) $candidate < $this->minValue) {
-            return Result::makeFailure(new LessThanError($this->fieldName, $this->minValue));
+        $typeValidator = new IsNumericValidator($this->fieldURI, $this->source, true);
+        $typeValidationResult = $typeValidator->validate($candidate);
+        if ($typeValidationResult->isFailure() || (float) $candidate < $this->minValue) {
+            return Result::makeFailure(new LessThanError(
+                $this->fieldURI,
+                $this->source,
+                $candidate,
+                $this->minValue
+            ));
         }
 
         return Result::makeSuccess();

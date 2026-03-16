@@ -2,133 +2,107 @@
 
 declare(strict_types=1);
 
-use BradiNfeApi\Common\Exceptions\ValidationError;
-use BradiNfeApi\Common\Result;
+use BradiNfeApi\Common\Protocols\ApiError;
+use BradiNfeApi\Common\ValueObjects\Result;
 use BradiNfeApi\Domain\Invoices\NFe\v4_00\ValueObjects\Nome;
+use BradiNfeApi\Tests\Doubles\Domain\Invoices\NFe\FakeDFeElement;
 
-/** Xml string example
- * <ide>
- *  <xNome>R SALVIO DE FREITAS</xNome>
- * </ide>
- */
 describe('Nome', function () {
-    describe('::parseXmlString()', function () {
-        test('Should be succeed when a valid xml string is provided', function () {
-            $fakeXmlString = '<ide><xNome>R SALVIO DE FREITAS</xNome></ide>';
-            $sut = Nome::parseXmlString($fakeXmlString);
-            expect($sut)->toBeInstanceOf(Result::class);
-            expect($sut->isSuccess())->toBeTruthy();
-            expect($sut->getData())->toBeInstanceOf(Nome::class);
-            expect($sut->getData()->value)->toBeString();
-            expect($sut->getData()->value)->toBe('R SALVIO DE FREITAS');
-            expect($sut->getData()->xmlString)->toBeString();
-            expect($sut->getData()->xmlString)->toBe('<xNome>R SALVIO DE FREITAS</xNome>');
-        });
+    $sut = Nome::class;
 
-        test('Should be return a failure Result if an object value is provided', function () {
-            $fakeXmlString = new stdClass;
-            $sut = Nome::parseXmlString($fakeXmlString);
-            expect($sut)->toBeInstanceOf(Result::class);
-            expect($sut->isSuccess())->toBeFalsy();
-            expect($sut->getError())->toBeInstanceOf(ValidationError::class);
-        });
+    describe('::parse()', function () use ($sut) {
+        test('Should succeed with dataset :dataset', function ($candidate) use ($sut) {
+            $xmlString = $candidate === '' ? '' : "<{$sut::$tagName}>{$candidate}</{$sut::$tagName}>";
+            $sutResponse = $sut::parse($xmlString);
+            expect($sutResponse)->toBeInstanceOf(Result::class);
+            if ($sutResponse->isFailure()) {
+                $this->fail(json_encode($sutResponse->getError()));
+            }
+            expect($sutResponse->getData())->toBeInstanceOf($sut);
+            expect($sutResponse->getData()->value)->toBe($candidate);
+            expect($sutResponse->getData()->xmlString)->toBe($xmlString);
+        })->with(datasets("dfes.nfe.value_tags.{$sut::$tagName}.valid"));
 
-        test('Should be return a failure Result if a number value is provided', function () {
-            $fakeXmlString = 11;
-            $sut = Nome::parseXmlString($fakeXmlString);
-            expect($sut)->toBeInstanceOf(Result::class);
-            expect($sut->isSuccess())->toBeFalsy();
-            expect($sut->getError())->toBeInstanceOf(ValidationError::class);
-        });
+        test('Should fail with data set :dataset', function ($candidate) use ($sut) {
+            $xmlString = "<{$sut::$tagName}>{$candidate}</{$sut::$tagName}>";
+            $sutResponse = $sut::parse($xmlString);
+            if ($sutResponse->isSuccess()) {
+                $this->fail(json_encode($sutResponse->getData()));
+            }
+            expect($sutResponse)->toBeInstanceOf(Result::class);
+            expect($sutResponse->getError())->toBeInstanceOf(ApiError::class);
+        })->with(datasets("dfes.nfe.value_tags.{$sut::$tagName}.invalid"));
 
-        test('Should be return a failure Result if an array value is provided', function () {
-            $fakeXmlString = ['<ide><xNome>R SALVIO DE FREITAS</xNome></ide>'];
-            $sut = Nome::parseXmlString($fakeXmlString);
-            expect($sut)->toBeInstanceOf(Result::class);
-            expect($sut->isSuccess())->toBeFalsy();
-            expect($sut->getError())->toBeInstanceOf(ValidationError::class);
-        });
+        test('Should fail if attributes is provided', function ($candidate) use ($sut) {
+            $xmlString = "<{$sut::$tagName} fake=\"attribute\">{$candidate}</{$sut::$tagName}>";
+            $sutResponse = $sut::parse($xmlString);
+            expect($sutResponse)->toBeInstanceOf(Result::class);
+            if ($sutResponse->isSuccess()) {
+                $this->fail(json_encode($sutResponse->getData()));
+            }
+            expect($sutResponse->getError())->toBeInstanceOf(ApiError::class);
+        })->with(datasets("dfes.nfe.value_tags.{$sut::$tagName}.valid"));
 
-        test('Should be return a failure Result if null given', function () {
-            $fakeXmlString = null;
-            $sut = Nome::parseXmlString($fakeXmlString);
-            expect($sut)->toBeInstanceOf(Result::class);
-            expect($sut->isSuccess())->toBeFalsy();
-            expect($sut->getError())->toBeInstanceOf(ValidationError::class);
-        });
-
-        test('Should be return a failure Result if an empty string is provided', function () {
-            $fakeXmlString = '';
-            $sut = Nome::parseXmlString($fakeXmlString);
-            expect($sut)->toBeInstanceOf(Result::class);
-            expect($sut->isSuccess())->toBeFalsy();
-            expect($sut->getError())->toBeInstanceOf(ValidationError::class);
-        });
-
-        test('Should be return a failure Result if a bool string is provided', function () {
-            $fakeXmlString = true;
-            $sut = Nome::parseXmlString($fakeXmlString);
-            expect($sut)->toBeInstanceOf(Result::class);
-            expect($sut->isSuccess())->toBeFalsy();
-            expect($sut->getError())->toBeInstanceOf(ValidationError::class);
-        });
-
-        test('Should be fail if too short xNome value is provided', function () {
-            $sut = Nome::parseXmlString('<ide><xNome>A</xNome></ide>');
-            expect($sut)->toBeInstanceOf(Result::class);
-            expect($sut->isSuccess())->toBeFalsy();
-            expect($sut->getError())->toBeInstanceOf(ValidationError::class);
-        });
-
-        test('Should be fail if too long xNome value is provided', function () {
-            $sut = Nome::parseXmlString('<ide><xNome>NOME MUITO LONGO PARA O CAMPO COM ESTOURO DE QUANTIDADE DE CARACTERES</xNome></ide>');
-            expect($sut)->toBeInstanceOf(Result::class);
-            expect($sut->isSuccess())->toBeFalsy();
-            expect($sut->getError())->toBeInstanceOf(ValidationError::class);
-        });
+        test('Should fail if elements is provided', function ($candidate) use ($sut) {
+            $xmlString = "<{$sut::$tagName}>{$candidate}<fake>element</fake></{$sut::$tagName}>";
+            $sutResponse = $sut::parse($xmlString);
+            expect($sutResponse)->toBeInstanceOf(Result::class);
+            if ($sutResponse->isSuccess()) {
+                $this->fail(json_encode($sutResponse->getData()));
+            }
+            expect($sutResponse->getError())->toBeInstanceOf(ApiError::class);
+        })->with(datasets("dfes.nfe.value_tags.{$sut::$tagName}.valid"));
     });
 
-    describe('::create()', function () {
-        test('Should be succeed if a not null string up to sixty chars is provided', function () {
-            $fakeTagValue = 'R SALVIO DE FREITAS';
-            $sut = Nome::create(tagValue: $fakeTagValue);
-            expect($sut)->toBeInstanceOf(Result::class);
-            expect($sut->isSuccess())->toBeTruthy();
-            expect($sut->getData())->toBeInstanceOf(Nome::class);
-            expect($sut->getData()->value)->toBeString();
-            expect($sut->getData()->value)->toBe('R SALVIO DE FREITAS');
-            expect($sut->getData()->xmlString)->toBeString();
-            expect($sut->getData()->xmlString)->toBe('<xNome>R SALVIO DE FREITAS</xNome>');
-        });
+    describe('::create()', function () use ($sut) {
+        test('Should succeed with $tagValue dataset :dataset', function ($candidate) use ($sut) {
+            $xmlString = $candidate === '' ? '' : "<{$sut::$tagName}>{$candidate}</{$sut::$tagName}>";
+            $sutResponse = $sut::create((string) $candidate);
+            expect($sutResponse)->toBeInstanceOf(Result::class);
+            if ($sutResponse->isFailure()) {
+                $this->fail(json_encode($sutResponse->getError()));
+            }
+            expect($sutResponse->getData())->toBeInstanceOf($sut);
+            expect($sutResponse->getData()->value)->toBe($candidate);
+            expect($sutResponse->getData()->xmlString)->toBe($xmlString);
+        })->with(datasets("dfes.nfe.value_tags.{$sut::$tagName}.valid"));
 
-        test('Should be fail if too long xNome value is provided', function () {
-            $fakeTagValue = 'NOME MUITO LONGO PARA O CAMPO COM ESTOURO DE QUANTIDADE DE CARACTERES';
-            $sut = Nome::create(tagValue: $fakeTagValue);
-            expect($sut)->toBeInstanceOf(Result::class);
-            expect($sut->isSuccess())->toBeFalsy();
-            expect($sut->getError())->toBeInstanceOf(ValidationError::class);
-        });
-    });
+        test('Should fail when $tagValue is :dataset', function ($candidate) use ($sut) {
+            $sutResponse = $sut::create((string) $candidate);
+            expect($sutResponse)->toBeInstanceOf(Result::class);
+            if ($sutResponse->isSuccess()) {
+                $this->fail(json_encode($sutResponse->getData()));
+            }
+            expect($sutResponse->getError())->toBeInstanceOf(ApiError::class);
+        })->with(datasets(
+            "dfes.nfe.value_tags.{$sut::$tagName}.invalid",
+            'xmls.valid.standard.simple'
+        ));
 
-    describe('::validateTagValue()', function () {
-        test('Should be true if provided value is a xNome', function () {
-            $fakeTagValue = 'R SALVIO DE FREITAS';
-            $sut = Nome::validateTagValue($fakeTagValue);
-            expect($sut->isSuccess())->toBeTruthy();
-        });
+        test('Should fail when $tagValue is valid but elements are provided', function ($candidate) use ($sut) {
+            $fakeElement = new FakeDFeElement;
+            $sutResponse = $sut::create((string) $candidate, elements: [$fakeElement]);
+            expect($sutResponse)->toBeInstanceOf(Result::class);
+            if ($sutResponse->isSuccess()) {
+                $this->fail(json_encode(['input' => ['tagValue' => $candidate, 'elements' => [$fakeElement]], 'response' => $sutResponse->getData()]));
+            }
+            expect($sutResponse->getError())->toBeInstanceOf(ApiError::class);
+        })->with(datasets("dfes.nfe.value_tags.{$sut::$tagName}.valid"));
 
-        test('Should be fail if a string less than two chars is provided', function () {
-            $fakeTagValue = 'A';
-            $sut = Nome::validateTagValue($fakeTagValue);
-            expect($sut->isSuccess())->toBeFalsy();
-            expect($sut->getError())->toBeInstanceOf(ValidationError::class);
-        });
+        test('Should fail if attributes is provided', function ($candidate) use ($sut) {
+            $fakeAttributes = ['fakeAttribute' => 'fakeValue'];
+            $sutResponse = $sut::create((string) $candidate, attributes: $fakeAttributes);
+            expect($sutResponse)->toBeInstanceOf(Result::class);
+            if ($sutResponse->isSuccess()) {
+                $this->fail(json_encode($sutResponse->getData()));
+            }
+            expect($sutResponse->getError())->toBeInstanceOf(ApiError::class);
+        })->with(datasets("dfes.nfe.value_tags.{$sut::$tagName}.valid"));
 
-        test('Should be fail if a string more than sixty letters is provided', function () {
-            $fakeTagValue = 'NOME MUITO LONGO PARA O CAMPO COM ESTOURO DE QUANTIDADE DE CARACTERES';
-            $sut = Nome::validateTagValue($fakeTagValue);
-            expect($sut->isSuccess())->toBeFalsy();
-            expect($sut->getError())->toBeInstanceOf(ValidationError::class);
-        });
+        test('Should throw with dataset :dataset', function ($candidate) use ($sut) {
+            $sut::create($candidate);
+        })->with(datasets(
+            'non_stringable'
+        ))->throws(TypeError::class);
     });
 });

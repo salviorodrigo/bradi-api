@@ -2,171 +2,107 @@
 
 declare(strict_types=1);
 
-use BradiNfeApi\Common\Exceptions\ValidationError;
-use BradiNfeApi\Common\Result;
+use BradiNfeApi\Common\Protocols\ApiError;
+use BradiNfeApi\Common\ValueObjects\Result;
 use BradiNfeApi\Domain\Invoices\NFe\v4_00\ValueObjects\CodigoPais;
+use BradiNfeApi\Tests\Doubles\Domain\Invoices\NFe\FakeDFeElement;
 
-/** Xml string example
- * <ide>
- *  <cPais>1058</cPais>
- * </ide>
- */
 describe('CodigoPais', function () {
-    describe('::parseXmlString()', function () {
-        test('Should be return a Result object with himself when a valid xml string is provided', function () {
-            $fakeXmlString = '<ide><cPais>1058</cPais></ide>';
-            $sut = CodigoPais::parseXmlString($fakeXmlString);
-            expect($sut)->toBeInstanceOf(Result::class);
-            expect($sut->isSuccess())->toBeTruthy();
-            expect($sut->getData())->toBeInstanceOf(CodigoPais::class);
-            expect($sut->getData()->value)->toBeString();
-            expect($sut->getData()->value)->toBe('1058');
-            expect($sut->getData()->xmlString)->toBeString();
-            expect($sut->getData()->xmlString)->toBe('<cPais>1058</cPais>');
-        });
+    $sut = CodigoPais::class;
 
-        test('Should be succeed if an empty string is provided', function () {
-            $fakeXmlString = '';
-            $sut = CodigoPais::parseXmlString($fakeXmlString);
-            expect($sut)->toBeInstanceOf(Result::class);
-            expect($sut->isSuccess())->toBeTruthy();
-            expect($sut->getData())->toBeInstanceOf(CodigoPais::class);
-            expect($sut->getData()->value)->toBeString();
-            expect($sut->getData()->value)->toBe('');
-            expect($sut->getData()->xmlString)->toBeString();
-            expect($sut->getData()->xmlString)->toBe('');
-        });
+    describe('::parse()', function () use ($sut) {
+        test('Should succeed with dataset :dataset', function ($candidate) use ($sut) {
+            $xmlString = $candidate === '' ? '' : "<{$sut::$tagName}>{$candidate}</{$sut::$tagName}>";
+            $sutResponse = $sut::parse($xmlString);
+            expect($sutResponse)->toBeInstanceOf(Result::class);
+            if ($sutResponse->isFailure()) {
+                $this->fail(json_encode($sutResponse->getError()));
+            }
+            expect($sutResponse->getData())->toBeInstanceOf($sut);
+            expect($sutResponse->getData()->value)->toBe($candidate);
+            expect($sutResponse->getData()->xmlString)->toBe($xmlString);
+        })->with(datasets("dfes.nfe.value_tags.{$sut::$tagName}.valid"));
 
-        test('Should be  succeed if null given', function () {
-            $fakeXmlString = null;
-            $sut = CodigoPais::parseXmlString($fakeXmlString);
-            expect($sut)->toBeInstanceOf(Result::class);
-            expect($sut->isSuccess())->toBeTruthy();
-            expect($sut->getData())->toBeInstanceOf(CodigoPais::class);
-            expect($sut->getData()->value)->toBeString();
-            expect($sut->getData()->value)->toBe('');
-            expect($sut->getData()->xmlString)->toBeString();
-            expect($sut->getData()->xmlString)->toBe('');
-        });
+        test('Should fail with data set :dataset', function ($candidate) use ($sut) {
+            $xmlString = "<{$sut::$tagName}>{$candidate}</{$sut::$tagName}>";
+            $sutResponse = $sut::parse($xmlString);
+            if ($sutResponse->isSuccess()) {
+                $this->fail(json_encode($sutResponse->getData()));
+            }
+            expect($sutResponse)->toBeInstanceOf(Result::class);
+            expect($sutResponse->getError())->toBeInstanceOf(ApiError::class);
+        })->with(datasets("dfes.nfe.value_tags.{$sut::$tagName}.invalid"));
 
-        test('Should be return a failure Result if an object value is provided', function () {
-            $fakeXmlString = new stdClass;
-            $sut = CodigoPais::parseXmlString($fakeXmlString);
-            expect($sut)->toBeInstanceOf(Result::class);
-            expect($sut->isSuccess())->toBeFalsy();
-            expect($sut->getError())->toBeInstanceOf(ValidationError::class);
-        });
+        test('Should fail if attributes is provided', function ($candidate) use ($sut) {
+            $xmlString = "<{$sut::$tagName} fake=\"attribute\">{$candidate}</{$sut::$tagName}>";
+            $sutResponse = $sut::parse($xmlString);
+            expect($sutResponse)->toBeInstanceOf(Result::class);
+            if ($sutResponse->isSuccess()) {
+                $this->fail(json_encode($sutResponse->getData()));
+            }
+            expect($sutResponse->getError())->toBeInstanceOf(ApiError::class);
+        })->with(datasets("dfes.nfe.value_tags.{$sut::$tagName}.valid"));
 
-        test('Should be return a failure Result if a number value is provided', function () {
-            $fakeXmlString = 11;
-            $sut = CodigoPais::parseXmlString($fakeXmlString);
-            expect($sut)->toBeInstanceOf(Result::class);
-            expect($sut->isSuccess())->toBeFalsy();
-            expect($sut->getError())->toBeInstanceOf(ValidationError::class);
-        });
-
-        test('Should be return a failure Result if an array value is provided', function () {
-            $fakeXmlString = ['<ide><cPais>1058</cPais></ide>'];
-            $sut = CodigoPais::parseXmlString($fakeXmlString);
-            expect($sut)->toBeInstanceOf(Result::class);
-            expect($sut->isSuccess())->toBeFalsy();
-            expect($sut->getError())->toBeInstanceOf(ValidationError::class);
-        });
-
-        test('Should be return a failure Result if a bool string is provided', function () {
-            $fakeXmlString = true;
-            $sut = CodigoPais::parseXmlString($fakeXmlString);
-            expect($sut)->toBeInstanceOf(Result::class);
-            expect($sut->isSuccess())->toBeFalsy();
-            expect($sut->getError())->toBeInstanceOf(ValidationError::class);
-        });
-
-        test('Should be fail if a string fewer than four letters is provided', function () {
-            $fakeXmlString = '<cPais>105</cPais>';
-            $sut = CodigoPais::parseXmlString($fakeXmlString);
-            expect($sut)->toBeInstanceOf(Result::class);
-            expect($sut->isSuccess())->toBeFalsy();
-            expect($sut->getError())->toBeInstanceOf(ValidationError::class);
-        });
+        test('Should fail if elements is provided', function ($candidate) use ($sut) {
+            $xmlString = "<{$sut::$tagName}>{$candidate}<fake>element</fake></{$sut::$tagName}>";
+            $sutResponse = $sut::parse($xmlString);
+            expect($sutResponse)->toBeInstanceOf(Result::class);
+            if ($sutResponse->isSuccess()) {
+                $this->fail(json_encode($sutResponse->getData()));
+            }
+            expect($sutResponse->getError())->toBeInstanceOf(ApiError::class);
+        })->with(datasets("dfes.nfe.value_tags.{$sut::$tagName}.valid"));
     });
 
-    describe('::create()', function () {
-        test('Should be return a Result object with success if a valid cPais value is provided', function () {
-            $fakeTagValue = '1058';
-            $sut = CodigoPais::create($fakeTagValue);
-            expect($sut)->toBeInstanceOf(Result::class);
-            expect($sut->isSuccess())->toBeTruthy();
-            expect($sut->getData())->toBeInstanceOf(CodigoPais::class);
-            expect($sut->getData()->value)->toBeString();
-            expect($sut->getData()->value)->toBe('1058');
-            expect($sut->getData()->xmlString)->toBeString();
-            expect($sut->getData()->xmlString)->toBe('<cPais>1058</cPais>');
-        });
+    describe('::create()', function () use ($sut) {
+        test('Should succeed with $tagValue dataset :dataset', function ($candidate) use ($sut) {
+            $xmlString = $candidate === '' ? '' : "<{$sut::$tagName}>{$candidate}</{$sut::$tagName}>";
+            $sutResponse = $sut::create((string) $candidate);
+            expect($sutResponse)->toBeInstanceOf(Result::class);
+            if ($sutResponse->isFailure()) {
+                $this->fail(json_encode($sutResponse->getError()));
+            }
+            expect($sutResponse->getData())->toBeInstanceOf($sut);
+            expect($sutResponse->getData()->value)->toBe($candidate);
+            expect($sutResponse->getData()->xmlString)->toBe($xmlString);
+        })->with(datasets("dfes.nfe.value_tags.{$sut::$tagName}.valid"));
 
-        test('Should be succeed if a tag value isn\'t provided', function () {
-            $sut = CodigoPais::create();
-            expect($sut)->toBeInstanceOf(Result::class);
-            expect($sut->isSuccess())->toBeTruthy();
-            expect($sut->getData())->toBeInstanceOf(CodigoPais::class);
-            expect($sut->getData()->value)->toBeString();
-            expect($sut->getData()->value)->toBe('');
-            expect($sut->getData()->xmlString)->toBeString();
-            expect($sut->getData()->xmlString)->toBe('');
-        });
+        test('Should fail when $tagValue is :dataset', function ($candidate) use ($sut) {
+            $sutResponse = $sut::create((string) $candidate);
+            expect($sutResponse)->toBeInstanceOf(Result::class);
+            if ($sutResponse->isSuccess()) {
+                $this->fail(json_encode($sutResponse->getData()));
+            }
+            expect($sutResponse->getError())->toBeInstanceOf(ApiError::class);
+        })->with(datasets(
+            "dfes.nfe.value_tags.{$sut::$tagName}.invalid",
+            'xmls.valid.standard.simple'
+        ));
 
-        test('Should be fail if an invalid cPais value is provided', function () {
-            $fakeTagValue = '10589';
-            $sut = CodigoPais::create($fakeTagValue);
-            expect($sut)->toBeInstanceOf(Result::class);
-            expect($sut->isSuccess())->toBeFalsy();
-            expect($sut->getError())->toBeInstanceOf(ValidationError::class);
-        });
+        test('Should fail when $tagValue is valid but elements are provided', function ($candidate) use ($sut) {
+            $fakeElement = new FakeDFeElement;
+            $sutResponse = $sut::create((string) $candidate, elements: [$fakeElement]);
+            expect($sutResponse)->toBeInstanceOf(Result::class);
+            if ($sutResponse->isSuccess()) {
+                $this->fail(json_encode(['input' => ['tagValue' => $candidate, 'elements' => [$fakeElement]], 'response' => $sutResponse->getData()]));
+            }
+            expect($sutResponse->getError())->toBeInstanceOf(ApiError::class);
+        })->with(datasets("dfes.nfe.value_tags.{$sut::$tagName}.valid"));
 
-        test('Should be fail if attributes is provided', function () {
-            $fakeTagValue = '1058';
-            $fakeAttributes = ['fakeAttribute' => 'fakeAttributeValue'];
-            $sut = CodigoPais::create(tagValue: $fakeTagValue, attributes: $fakeAttributes);
-            expect($sut)->toBeInstanceOf(Result::class);
-            expect($sut->isSuccess())->toBeFalsy();
-            expect($sut->getError())->toBeInstanceOf(ValidationError::class);
-        });
+        test('Should fail if attributes is provided', function ($candidate) use ($sut) {
+            $fakeAttributes = ['fakeAttribute' => 'fakeValue'];
+            $sutResponse = $sut::create((string) $candidate, attributes: $fakeAttributes);
+            expect($sutResponse)->toBeInstanceOf(Result::class);
+            if ($sutResponse->isSuccess()) {
+                $this->fail(json_encode($sutResponse->getData()));
+            }
+            expect($sutResponse->getError())->toBeInstanceOf(ApiError::class);
+        })->with(datasets("dfes.nfe.value_tags.{$sut::$tagName}.valid"));
 
-        test('Should be fail if elements is provided', function () {
-            $fakeTagValue = '1058';
-            $fakeElements = ['fakeElement'];
-            $sut = CodigoPais::create(tagValue: $fakeTagValue, elements: $fakeElements);
-            expect($sut)->toBeInstanceOf(Result::class);
-            expect($sut->isSuccess())->toBeFalsy();
-            expect($sut->getError())->toBeInstanceOf(ValidationError::class);
-        });
-    });
-
-    describe('::validateTagValue()', function () {
-        test('Should be true if provided value is a cPais', function () {
-            $fakeTagValue = '1058';
-            $sut = CodigoPais::validateTagValue($fakeTagValue);
-            expect($sut->isSuccess())->toBeTruthy();
-        });
-
-        test('Should be fail if a string whit letters is provided', function () {
-            $fakeTagValue = '105A';
-            $sut = CodigoPais::validateTagValue($fakeTagValue);
-            expect($sut->isSuccess())->toBeFalsy();
-            expect($sut->getError())->toBeInstanceOf(ValidationError::class);
-        });
-
-        test('Should be fail if a string fewer than four letters is provided', function () {
-            $fakeTagValue = '108';
-            $sut = CodigoPais::validateTagValue($fakeTagValue);
-            expect($sut->isSuccess())->toBeFalsy();
-            expect($sut->getError())->toBeInstanceOf(ValidationError::class);
-        });
-
-        test('Should be fail if a string more than eight letters is provided', function () {
-            $fakeTagValue = '10544';
-            $sut = CodigoPais::validateTagValue($fakeTagValue);
-            expect($sut->isSuccess())->toBeFalsy();
-            expect($sut->getError())->toBeInstanceOf(ValidationError::class);
-        });
+        test('Should throw with dataset :dataset', function ($candidate) use ($sut) {
+            $sut::create($candidate);
+        })->with(datasets(
+            'non_stringable'
+        ))->throws(TypeError::class);
     });
 });

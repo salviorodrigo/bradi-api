@@ -4,7 +4,10 @@ declare(strict_types=1);
 
 namespace BradiNfeApi\Domain\Invoices\Protocols;
 
-use BradiNfeApi\Common\Result;
+use BradiNfeApi\Common\Protocols\ApiError;
+use BradiNfeApi\Common\Services\ValidationService;
+use BradiNfeApi\Common\ValueObjects\Result;
+use BradiNfeApi\Domain\Common\Validators\IsXmlStringValidator;
 use BradiNfeApi\Infra\Parses\XmlToDFeParser;
 
 abstract class DFeElement
@@ -14,15 +17,18 @@ abstract class DFeElement
     public readonly string $value;
     public readonly string $xmlString;
 
-    public static function xmlParser(): DFeParser
+    public static function xmlParser(string $xmlString): DFeParser
     {
-        return new XmlToDFeParser;
+        return new XmlToDFeParser($xmlString);
     }
 
+    /**
+     * @param  array<string,string>  $attributes
+     * @param  array<DFeElement>  $elements
+     **/
     protected static function generateXmlString(string $tagValue = '', array $elements = [], array $attributes = [], bool $isAutoCloseTag = false): string
     {
         $xmlString = '';
-
         if ($tagValue == '' && empty($elements) && empty($attributes)) {
             return $xmlString;
         }
@@ -32,6 +38,7 @@ abstract class DFeElement
             foreach ($attributes as $attributeName => $attributeValue) {
                 $xmlString .= ' ' . $attributeName . '="' . $attributeValue . '"';
             }
+
             $xmlString .= '/>';
 
             return $xmlString;
@@ -41,19 +48,59 @@ abstract class DFeElement
         foreach ($attributes as $attributeName => $attributeValue) {
             $xmlString .= ' ' . $attributeName . '="' . $attributeValue . '"';
         }
+
         $xmlString .= '>';
         $xmlString .= $tagValue;
         foreach ($elements as $element) {
             $xmlString .= $element->xmlString;
         }
+
         $xmlString .= '</' . static::$tagName . '>';
 
         return $xmlString;
     }
 
-    abstract public static function parseXmlString(mixed $rawData): Result;
+    /**
+     * @return Result<null|ApiError>
+     **/
+    protected static function validateDataType(mixed $rawData, string $fieldURI, string $method, bool $isOptional = false): Result
+    {
+        $typeValidator = new ValidationService(
+            [IsXmlStringValidator::class => []],
+            $fieldURI,
+            $method,
+            $isOptional
+        );
 
-    abstract public static function create(string $tagValue, array $elements, array $attributes): Result;
+        return $typeValidator->verify($rawData);
+    }
+
+    /**
+     * @return Result<DFeElement|ApiError>
+     **/
+    abstract public static function parse(mixed $rawData, string $parentFieldURI = '', string $method = __METHOD__): Result;
+
+    /**
+     * @param  array<string,string>  $attributes
+     * @param  array<DFeElement>  $elements
+     * @return Result<DFeElement|ApiError>
+     **/
+    abstract public static function create(string $tagValue, array $elements, array $attributes, string $parentFieldURI = '', string $method = __METHOD__): Result;
+
+    /**
+     * @return Result<null|ApiError>
+     **/
+    abstract protected static function validateTagValue(string $xmlString, string $fieldURI, string $method): Result;
+
+    /**
+     * @return Result<null|ApiError>
+     **/
+    abstract protected static function validateTagAttributes(string $xmlString, string $fieldURI, string $method): Result;
+
+    /**
+     * @return Result<null|ApiError>
+     **/
+    abstract protected static function validateTagElements(string $xmlString, string $fieldURI, string $method): Result;
 }
 
 // TODO Make test file.

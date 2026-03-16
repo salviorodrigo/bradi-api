@@ -39,4 +39,5 @@ enum UnidadeFederativa: string
     case MT = '51';
     case GO = '52';
     case DF = '53';
+    case EX = '99';
 }

@@ -4,13 +4,13 @@ declare(strict_types=1);
 
 namespace BradiNfeApi\Domain\Common\Protocols;
 
-use BradiNfeApi\Common\Result;
+use BradiNfeApi\Common\ValueObjects\Result;
 
 abstract class ValueObject
 {
-    public static string $fieldName;
+    public static string $fieldURI;
 
     public readonly mixed $value;
 
-    abstract public static function parse(mixed $rawData): Result;
+    abstract public static function parse(mixed $rawData, string $parentFieldURI, string $method): Result;
 }

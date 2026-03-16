@@ -39,7 +39,7 @@ expect()->extend('toBeOne', function () {
 |
 */
 
-function something()
+function datasets(string ...$keyStrings): array
 {
-    // ..
+    return \BradiNfeApi\Tests\Doubles\Factories\DatasetFactory::generateByKeyStrings(...$keyStrings);
 }

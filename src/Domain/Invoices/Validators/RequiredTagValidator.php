@@ -4,19 +4,30 @@ declare(strict_types=1);
 
 namespace BradiNfeApi\Domain\Invoices\Validators;
 
-use BradiNfeApi\Common\Result;
-use BradiNfeApi\Domain\Common\Protocols\Validator;
-use BradiNfeApi\Domain\Invoices\Protocols\DFeElement;
-use BradiNfeApi\Domain\Invoices\Validators\Exceptions\NotFoundTagError;
+use BradiNfeApi\Common\Protocols\Validator;
+use BradiNfeApi\Common\ValueObjects\Result;
+use BradiNfeApi\Domain\Invoices\Exceptions\NotFoundTagError;
 
 final class RequiredTagValidator extends Validator
 {
-    public function __construct(public readonly string $fieldName) {}
+    public function __construct(
+        public readonly string $fieldURI,
+        public readonly string $source,
+        public readonly array $requiredTagsName,
+        public readonly array $providedTagsName
+    ) {}
 
     public function validate(mixed $candidate): Result
     {
-        if (DFeElement::xmlParser()->getTag($candidate, $this->fieldName) == '') {
-            return Result::makeFailure(new NotFoundTagError($this->fieldName));
+        foreach ($this->requiredTagsName as $requiredTag) {
+            if (! in_array($requiredTag, $this->providedTagsName)) {
+                return Result::makeFailure(new NotFoundTagError(
+                    $this->fieldURI,
+                    $this->source,
+                    $candidate,
+                    $requiredTag
+                ));
+            }
         }
 
         return Result::makeSuccess();

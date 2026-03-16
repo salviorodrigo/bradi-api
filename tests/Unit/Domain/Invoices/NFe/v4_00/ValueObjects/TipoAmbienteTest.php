@@ -2,127 +2,107 @@
 
 declare(strict_types=1);
 
-use BradiNfeApi\Common\Exceptions\ValidationError;
-use BradiNfeApi\Common\Result;
+use BradiNfeApi\Common\Protocols\ApiError;
+use BradiNfeApi\Common\ValueObjects\Result;
 use BradiNfeApi\Domain\Invoices\NFe\v4_00\ValueObjects\TipoAmbiente;
+use BradiNfeApi\Tests\Doubles\Domain\Invoices\NFe\FakeDFeElement;
 
-/** Xml string example
- * <ide>
- *  <tpAmb>1</tpAmb>
- * </ide>
- */
 describe('TipoAmbiente', function () {
-    describe('::parseXmlString()', function () {
-        test('Should be succeed when a valid xml string is provided', function () {
-            $fakeXmlString = '<ide><tpAmb>1</tpAmb></ide>';
-            $sut = TipoAmbiente::parseXmlString($fakeXmlString);
-            expect($sut)->toBeInstanceOf(Result::class);
-            expect($sut->isSuccess())->toBeTruthy();
-            expect($sut->getData())->toBeInstanceOf(TipoAmbiente::class);
-            expect($sut->getData()->value)->toBeString();
-            expect($sut->getData()->value)->toBe('1');
-            expect($sut->getData()->xmlString)->toBeString();
-            expect($sut->getData()->xmlString)->toBe('<tpAmb>1</tpAmb>');
-        });
+    $sut = TipoAmbiente::class;
 
-        test('Should be return a failure Result if an object value is provided', function () {
-            $fakeXmlString = new stdClass;
-            $sut = TipoAmbiente::parseXmlString($fakeXmlString);
-            expect($sut)->toBeInstanceOf(Result::class);
-            expect($sut->isSuccess())->toBeFalsy();
-            expect($sut->getError())->toBeInstanceOf(ValidationError::class);
-        });
+    describe('::parse()', function () use ($sut) {
+        test('Should succeed with dataset :dataset', function ($candidate) use ($sut) {
+            $xmlString = $candidate === '' ? '' : "<{$sut::$tagName}>{$candidate}</{$sut::$tagName}>";
+            $sutResponse = $sut::parse($xmlString);
+            expect($sutResponse)->toBeInstanceOf(Result::class);
+            if ($sutResponse->isFailure()) {
+                $this->fail(json_encode($sutResponse->getError()));
+            }
+            expect($sutResponse->getData())->toBeInstanceOf($sut);
+            expect($sutResponse->getData()->value)->toBe($candidate);
+            expect($sutResponse->getData()->xmlString)->toBe($xmlString);
+        })->with(datasets("dfes.nfe.value_tags.{$sut::$tagName}.valid"));
 
-        test('Should be return a failure Result if a number value is provided', function () {
-            $fakeXmlString = 11;
-            $sut = TipoAmbiente::parseXmlString($fakeXmlString);
-            expect($sut)->toBeInstanceOf(Result::class);
-            expect($sut->isSuccess())->toBeFalsy();
-            expect($sut->getError())->toBeInstanceOf(ValidationError::class);
-        });
+        test('Should fail with data set :dataset', function ($candidate) use ($sut) {
+            $xmlString = "<{$sut::$tagName}>{$candidate}</{$sut::$tagName}>";
+            $sutResponse = $sut::parse($xmlString);
+            if ($sutResponse->isSuccess()) {
+                $this->fail(json_encode($sutResponse->getData()));
+            }
+            expect($sutResponse)->toBeInstanceOf(Result::class);
+            expect($sutResponse->getError())->toBeInstanceOf(ApiError::class);
+        })->with(datasets("dfes.nfe.value_tags.{$sut::$tagName}.invalid"));
 
-        test('Should be return a failure Result if an array value is provided', function () {
-            $fakeXmlString = ['<ide><tpAmb>1</tpAmb></ide>'];
-            $sut = TipoAmbiente::parseXmlString($fakeXmlString);
-            expect($sut)->toBeInstanceOf(Result::class);
-            expect($sut->isSuccess())->toBeFalsy();
-            expect($sut->getError())->toBeInstanceOf(ValidationError::class);
-        });
+        test('Should fail if attributes is provided', function ($candidate) use ($sut) {
+            $xmlString = "<{$sut::$tagName} fake=\"attribute\">{$candidate}</{$sut::$tagName}>";
+            $sutResponse = $sut::parse($xmlString);
+            expect($sutResponse)->toBeInstanceOf(Result::class);
+            if ($sutResponse->isSuccess()) {
+                $this->fail(json_encode($sutResponse->getData()));
+            }
+            expect($sutResponse->getError())->toBeInstanceOf(ApiError::class);
+        })->with(datasets("dfes.nfe.value_tags.{$sut::$tagName}.valid"));
 
-        test('Should be return a failure Result if null given', function () {
-            $fakeXmlString = null;
-            $sut = TipoAmbiente::parseXmlString($fakeXmlString);
-            expect($sut)->toBeInstanceOf(Result::class);
-            expect($sut->isSuccess())->toBeFalsy();
-            expect($sut->getError())->toBeInstanceOf(ValidationError::class);
-        });
-
-        test('Should be return a failure Result if an empty string is provided', function () {
-            $fakeXmlString = '';
-            $sut = TipoAmbiente::parseXmlString($fakeXmlString);
-            expect($sut)->toBeInstanceOf(Result::class);
-            expect($sut->isSuccess())->toBeFalsy();
-            expect($sut->getError())->toBeInstanceOf(ValidationError::class);
-        });
-
-        test('Should be return a failure Result if a bool string is provided', function () {
-            $fakeXmlString = true;
-            $sut = TipoAmbiente::parseXmlString($fakeXmlString);
-            expect($sut)->toBeInstanceOf(Result::class);
-            expect($sut->isSuccess())->toBeFalsy();
-            expect($sut->getError())->toBeInstanceOf(ValidationError::class);
-        });
-
-        test('Should be fail if an invalid value is provided', function () {
-            $fakeXmlString = '<ide><tpAmb>0</tpAmb></ide>';
-            $sut = TipoAmbiente::parseXmlString($fakeXmlString);
-            expect($sut)->toBeInstanceOf(Result::class);
-            expect($sut->isSuccess())->toBeFalsy();
-            expect($sut->getError())->toBeInstanceOf(ValidationError::class);
-        });
+        test('Should fail if elements is provided', function ($candidate) use ($sut) {
+            $xmlString = "<{$sut::$tagName}>{$candidate}<fake>element</fake></{$sut::$tagName}>";
+            $sutResponse = $sut::parse($xmlString);
+            expect($sutResponse)->toBeInstanceOf(Result::class);
+            if ($sutResponse->isSuccess()) {
+                $this->fail(json_encode($sutResponse->getData()));
+            }
+            expect($sutResponse->getError())->toBeInstanceOf(ApiError::class);
+        })->with(datasets("dfes.nfe.value_tags.{$sut::$tagName}.valid"));
     });
 
-    describe('::create()', function () {
-        test('Should be succeed if a valid value is provided', function () {
-            $fakeTagValue = '1';
-            $sut = TipoAmbiente::create(tagValue: $fakeTagValue);
-            expect($sut)->toBeInstanceOf(Result::class);
-            expect($sut->isSuccess())->toBeTruthy();
-            expect($sut->getData())->toBeInstanceOf(TipoAmbiente::class);
-            expect($sut->getData()->value)->toBeString();
-            expect($sut->getData()->value)->toBe('1');
-            expect($sut->getData()->xmlString)->toBeString();
-            expect($sut->getData()->xmlString)->toBe('<tpAmb>1</tpAmb>');
-        });
+    describe('::create()', function () use ($sut) {
+        test('Should succeed with $tagValue dataset :dataset', function ($candidate) use ($sut) {
+            $xmlString = $candidate === '' ? '' : "<{$sut::$tagName}>{$candidate}</{$sut::$tagName}>";
+            $sutResponse = $sut::create((string) $candidate);
+            expect($sutResponse)->toBeInstanceOf(Result::class);
+            if ($sutResponse->isFailure()) {
+                $this->fail(json_encode($sutResponse->getError()));
+            }
+            expect($sutResponse->getData())->toBeInstanceOf($sut);
+            expect($sutResponse->getData()->value)->toBe($candidate);
+            expect($sutResponse->getData()->xmlString)->toBe($xmlString);
+        })->with(datasets("dfes.nfe.value_tags.{$sut::$tagName}.valid"));
 
-        test('Should be fail if an invalid value is provided', function () {
-            $fakeTagValue = '0';
-            $sut = TipoAmbiente::create(tagValue: $fakeTagValue);
-            expect($sut)->toBeInstanceOf(Result::class);
-            expect($sut->isSuccess())->toBeFalsy();
-            expect($sut->getError())->toBeInstanceOf(ValidationError::class);
-        });
-    });
+        test('Should fail when $tagValue is :dataset', function ($candidate) use ($sut) {
+            $sutResponse = $sut::create((string) $candidate);
+            expect($sutResponse)->toBeInstanceOf(Result::class);
+            if ($sutResponse->isSuccess()) {
+                $this->fail(json_encode($sutResponse->getData()));
+            }
+            expect($sutResponse->getError())->toBeInstanceOf(ApiError::class);
+        })->with(datasets(
+            "dfes.nfe.value_tags.{$sut::$tagName}.invalid",
+            'xmls.valid.standard.simple'
+        ));
 
-    describe('::validateTagValue()', function () {
-        test('Should be true if provided value is valid', function () {
-            $fakeTagValue = '1';
-            $sut = TipoAmbiente::validateTagValue($fakeTagValue);
-            expect($sut->isSuccess())->toBeTruthy();
-        });
+        test('Should fail when $tagValue is valid but elements are provided', function ($candidate) use ($sut) {
+            $fakeElement = new FakeDFeElement;
+            $sutResponse = $sut::create((string) $candidate, elements: [$fakeElement]);
+            expect($sutResponse)->toBeInstanceOf(Result::class);
+            if ($sutResponse->isSuccess()) {
+                $this->fail(json_encode(['input' => ['tagValue' => $candidate, 'elements' => [$fakeElement]], 'response' => $sutResponse->getData()]));
+            }
+            expect($sutResponse->getError())->toBeInstanceOf(ApiError::class);
+        })->with(datasets("dfes.nfe.value_tags.{$sut::$tagName}.valid"));
 
-        test('Should be fail if a string whit letters is provided', function () {
-            $fakeTagValue = 'A';
-            $sut = TipoAmbiente::validateTagValue($fakeTagValue);
-            expect($sut->isSuccess())->toBeFalsy();
-            expect($sut->getError())->toBeInstanceOf(ValidationError::class);
-        });
+        test('Should fail if attributes is provided', function ($candidate) use ($sut) {
+            $fakeAttributes = ['fakeAttribute' => 'fakeValue'];
+            $sutResponse = $sut::create((string) $candidate, attributes: $fakeAttributes);
+            expect($sutResponse)->toBeInstanceOf(Result::class);
+            if ($sutResponse->isSuccess()) {
+                $this->fail(json_encode($sutResponse->getData()));
+            }
+            expect($sutResponse->getError())->toBeInstanceOf(ApiError::class);
+        })->with(datasets("dfes.nfe.value_tags.{$sut::$tagName}.valid"));
 
-        test('Should be fail if a string more than one letters is provided', function () {
-            $fakeTagValue = '11';
-            $sut = TipoAmbiente::validateTagValue($fakeTagValue);
-            expect($sut->isSuccess())->toBeFalsy();
-            expect($sut->getError())->toBeInstanceOf(ValidationError::class);
-        });
+        test('Should throw with dataset :dataset', function ($candidate) use ($sut) {
+            $sut::create($candidate);
+        })->with(datasets(
+            'non_stringable'
+        ))->throws(TypeError::class);
     });
 });

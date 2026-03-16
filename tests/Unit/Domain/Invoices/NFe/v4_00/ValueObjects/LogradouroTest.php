@@ -2,133 +2,107 @@
 
 declare(strict_types=1);
 
-use BradiNfeApi\Common\Exceptions\ValidationError;
-use BradiNfeApi\Common\Result;
+use BradiNfeApi\Common\Protocols\ApiError;
+use BradiNfeApi\Common\ValueObjects\Result;
 use BradiNfeApi\Domain\Invoices\NFe\v4_00\ValueObjects\Logradouro;
+use BradiNfeApi\Tests\Doubles\Domain\Invoices\NFe\FakeDFeElement;
 
-/** Xml string example
- * <ide>
- *  <xLgr>R ACAI</xLgr>
- * </ide>
- */
 describe('Logradouro', function () {
-    describe('::parseXmlString()', function () {
-        test('Should be succeed when a valid xml string is provided', function () {
-            $fakeXmlString = '<ide><xLgr>R ACAI</xLgr></ide>';
-            $sut = Logradouro::parseXmlString($fakeXmlString);
-            expect($sut)->toBeInstanceOf(Result::class);
-            expect($sut->isSuccess())->toBeTruthy();
-            expect($sut->getData())->toBeInstanceOf(Logradouro::class);
-            expect($sut->getData()->value)->toBeString();
-            expect($sut->getData()->value)->toBe('R ACAI');
-            expect($sut->getData()->xmlString)->toBeString();
-            expect($sut->getData()->xmlString)->toBe('<xLgr>R ACAI</xLgr>');
-        });
+    $sut = Logradouro::class;
 
-        test('Should be return a failure Result if an object value is provided', function () {
-            $fakeXmlString = new stdClass;
-            $sut = Logradouro::parseXmlString($fakeXmlString);
-            expect($sut)->toBeInstanceOf(Result::class);
-            expect($sut->isSuccess())->toBeFalsy();
-            expect($sut->getError())->toBeInstanceOf(ValidationError::class);
-        });
+    describe('::parse()', function () use ($sut) {
+        test('Should succeed with dataset :dataset', function ($candidate) use ($sut) {
+            $xmlString = $candidate === '' ? '' : "<{$sut::$tagName}>{$candidate}</{$sut::$tagName}>";
+            $sutResponse = $sut::parse($xmlString);
+            expect($sutResponse)->toBeInstanceOf(Result::class);
+            if ($sutResponse->isFailure()) {
+                $this->fail(json_encode($sutResponse->getError()));
+            }
+            expect($sutResponse->getData())->toBeInstanceOf($sut);
+            expect($sutResponse->getData()->value)->toBe($candidate);
+            expect($sutResponse->getData()->xmlString)->toBe($xmlString);
+        })->with(datasets("dfes.nfe.value_tags.{$sut::$tagName}.valid"));
 
-        test('Should be return a failure Result if a number value is provided', function () {
-            $fakeXmlString = 11;
-            $sut = Logradouro::parseXmlString($fakeXmlString);
-            expect($sut)->toBeInstanceOf(Result::class);
-            expect($sut->isSuccess())->toBeFalsy();
-            expect($sut->getError())->toBeInstanceOf(ValidationError::class);
-        });
+        test('Should fail with data set :dataset', function ($candidate) use ($sut) {
+            $xmlString = "<{$sut::$tagName}>{$candidate}</{$sut::$tagName}>";
+            $sutResponse = $sut::parse($xmlString);
+            if ($sutResponse->isSuccess()) {
+                $this->fail(json_encode($sutResponse->getData()));
+            }
+            expect($sutResponse)->toBeInstanceOf(Result::class);
+            expect($sutResponse->getError())->toBeInstanceOf(ApiError::class);
+        })->with(datasets("dfes.nfe.value_tags.{$sut::$tagName}.invalid"));
 
-        test('Should be return a failure Result if an array value is provided', function () {
-            $fakeXmlString = ['<ide><xLgr>R ACAI</xLgr></ide>'];
-            $sut = Logradouro::parseXmlString($fakeXmlString);
-            expect($sut)->toBeInstanceOf(Result::class);
-            expect($sut->isSuccess())->toBeFalsy();
-            expect($sut->getError())->toBeInstanceOf(ValidationError::class);
-        });
+        test('Should fail if attributes is provided', function ($candidate) use ($sut) {
+            $xmlString = "<{$sut::$tagName} fake=\"attribute\">{$candidate}</{$sut::$tagName}>";
+            $sutResponse = $sut::parse($xmlString);
+            expect($sutResponse)->toBeInstanceOf(Result::class);
+            if ($sutResponse->isSuccess()) {
+                $this->fail(json_encode($sutResponse->getData()));
+            }
+            expect($sutResponse->getError())->toBeInstanceOf(ApiError::class);
+        })->with(datasets("dfes.nfe.value_tags.{$sut::$tagName}.valid"));
 
-        test('Should be return a failure Result if null given', function () {
-            $fakeXmlString = null;
-            $sut = Logradouro::parseXmlString($fakeXmlString);
-            expect($sut)->toBeInstanceOf(Result::class);
-            expect($sut->isSuccess())->toBeFalsy();
-            expect($sut->getError())->toBeInstanceOf(ValidationError::class);
-        });
-
-        test('Should be return a failure Result if an empty string is provided', function () {
-            $fakeXmlString = '';
-            $sut = Logradouro::parseXmlString($fakeXmlString);
-            expect($sut)->toBeInstanceOf(Result::class);
-            expect($sut->isSuccess())->toBeFalsy();
-            expect($sut->getError())->toBeInstanceOf(ValidationError::class);
-        });
-
-        test('Should be return a failure Result if a bool string is provided', function () {
-            $fakeXmlString = true;
-            $sut = Logradouro::parseXmlString($fakeXmlString);
-            expect($sut)->toBeInstanceOf(Result::class);
-            expect($sut->isSuccess())->toBeFalsy();
-            expect($sut->getError())->toBeInstanceOf(ValidationError::class);
-        });
-
-        test('Should be fail if too short xLgr value is provided', function () {
-            $sut = Logradouro::parseXmlString('<ide><xLgr>A</xLgr></ide>');
-            expect($sut)->toBeInstanceOf(Result::class);
-            expect($sut->isSuccess())->toBeFalsy();
-            expect($sut->getError())->toBeInstanceOf(ValidationError::class);
-        });
-
-        test('Should be fail if too long xLgr value is provided', function () {
-            $sut = Logradouro::parseXmlString('<ide><xLgr>LOGRADOURO MUITO LONGO PARA O CAMPO COM ESTOURO DE QUANTIDADE DE CARACTERES</xLgr></ide>');
-            expect($sut)->toBeInstanceOf(Result::class);
-            expect($sut->isSuccess())->toBeFalsy();
-            expect($sut->getError())->toBeInstanceOf(ValidationError::class);
-        });
+        test('Should fail if elements is provided', function ($candidate) use ($sut) {
+            $xmlString = "<{$sut::$tagName}>{$candidate}<fake>element</fake></{$sut::$tagName}>";
+            $sutResponse = $sut::parse($xmlString);
+            expect($sutResponse)->toBeInstanceOf(Result::class);
+            if ($sutResponse->isSuccess()) {
+                $this->fail(json_encode($sutResponse->getData()));
+            }
+            expect($sutResponse->getError())->toBeInstanceOf(ApiError::class);
+        })->with(datasets("dfes.nfe.value_tags.{$sut::$tagName}.valid"));
     });
 
-    describe('::create()', function () {
-        test('Should be succeed if a not null string up to sixty chars is provided', function () {
-            $fakeTagValue = 'R ACAI';
-            $sut = Logradouro::create(tagValue: $fakeTagValue);
-            expect($sut)->toBeInstanceOf(Result::class);
-            expect($sut->isSuccess())->toBeTruthy();
-            expect($sut->getData())->toBeInstanceOf(Logradouro::class);
-            expect($sut->getData()->value)->toBeString();
-            expect($sut->getData()->value)->toBe('R ACAI');
-            expect($sut->getData()->xmlString)->toBeString();
-            expect($sut->getData()->xmlString)->toBe('<xLgr>R ACAI</xLgr>');
-        });
+    describe('::create()', function () use ($sut) {
+        test('Should succeed with $tagValue dataset :dataset', function ($candidate) use ($sut) {
+            $xmlString = $candidate === '' ? '' : "<{$sut::$tagName}>{$candidate}</{$sut::$tagName}>";
+            $sutResponse = $sut::create((string) $candidate);
+            expect($sutResponse)->toBeInstanceOf(Result::class);
+            if ($sutResponse->isFailure()) {
+                $this->fail(json_encode($sutResponse->getError()));
+            }
+            expect($sutResponse->getData())->toBeInstanceOf($sut);
+            expect($sutResponse->getData()->value)->toBe($candidate);
+            expect($sutResponse->getData()->xmlString)->toBe($xmlString);
+        })->with(datasets("dfes.nfe.value_tags.{$sut::$tagName}.valid"));
 
-        test('Should be fail if too long xLgr value is provided', function () {
-            $fakeTagValue = 'LOGRADOURO MUITO LONGO PARA O CAMPO COM ESTOURO DE QUANTIDADE DE CARACTERES';
-            $sut = Logradouro::create(tagValue: $fakeTagValue);
-            expect($sut)->toBeInstanceOf(Result::class);
-            expect($sut->isSuccess())->toBeFalsy();
-            expect($sut->getError())->toBeInstanceOf(ValidationError::class);
-        });
-    });
+        test('Should fail when $tagValue is :dataset', function ($candidate) use ($sut) {
+            $sutResponse = $sut::create((string) $candidate);
+            expect($sutResponse)->toBeInstanceOf(Result::class);
+            if ($sutResponse->isSuccess()) {
+                $this->fail(json_encode($sutResponse->getData()));
+            }
+            expect($sutResponse->getError())->toBeInstanceOf(ApiError::class);
+        })->with(datasets(
+            "dfes.nfe.value_tags.{$sut::$tagName}.invalid",
+            'xmls.valid.standard.simple'
+        ));
 
-    describe('::validateTagValue()', function () {
-        test('Should be true if provided value is a xLgr', function () {
-            $fakeTagValue = 'R ACAI';
-            $sut = Logradouro::validateTagValue($fakeTagValue);
-            expect($sut->isSuccess())->toBeTruthy();
-        });
+        test('Should fail when $tagValue is valid but elements are provided', function ($candidate) use ($sut) {
+            $fakeElement = new FakeDFeElement;
+            $sutResponse = $sut::create((string) $candidate, elements: [$fakeElement]);
+            expect($sutResponse)->toBeInstanceOf(Result::class);
+            if ($sutResponse->isSuccess()) {
+                $this->fail(json_encode(['input' => ['tagValue' => $candidate, 'elements' => [$fakeElement]], 'response' => $sutResponse->getData()]));
+            }
+            expect($sutResponse->getError())->toBeInstanceOf(ApiError::class);
+        })->with(datasets("dfes.nfe.value_tags.{$sut::$tagName}.valid"));
 
-        test('Should be fail if a string less than two chars is provided', function () {
-            $fakeTagValue = 'A';
-            $sut = Logradouro::validateTagValue($fakeTagValue);
-            expect($sut->isSuccess())->toBeFalsy();
-            expect($sut->getError())->toBeInstanceOf(ValidationError::class);
-        });
+        test('Should fail if attributes is provided', function ($candidate) use ($sut) {
+            $fakeAttributes = ['fakeAttribute' => 'fakeValue'];
+            $sutResponse = $sut::create((string) $candidate, attributes: $fakeAttributes);
+            expect($sutResponse)->toBeInstanceOf(Result::class);
+            if ($sutResponse->isSuccess()) {
+                $this->fail(json_encode($sutResponse->getData()));
+            }
+            expect($sutResponse->getError())->toBeInstanceOf(ApiError::class);
+        })->with(datasets("dfes.nfe.value_tags.{$sut::$tagName}.valid"));
 
-        test('Should be fail if a string more than sixty letters is provided', function () {
-            $fakeTagValue = 'LOGRADOURO MUITO LONGO PARA O CAMPO COM ESTOURO DE QUANTIDADE DE CARACTERES';
-            $sut = Logradouro::validateTagValue($fakeTagValue);
-            expect($sut->isSuccess())->toBeFalsy();
-            expect($sut->getError())->toBeInstanceOf(ValidationError::class);
-        });
+        test('Should throw with dataset :dataset', function ($candidate) use ($sut) {
+            $sut::create($candidate);
+        })->with(datasets(
+            'non_stringable'
+        ))->throws(TypeError::class);
     });
 });

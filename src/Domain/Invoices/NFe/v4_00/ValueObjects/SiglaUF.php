@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 /**
  * MOC      7.0
- * #        41
  * ID       C12
  * Campo    UF
  * Desc     Sigla da UF do emitente do Documento Fiscal
@@ -14,100 +13,86 @@ declare(strict_types=1);
 
 namespace BradiNfeApi\Domain\Invoices\NFe\v4_00\ValueObjects;
 
-use BradiNfeApi\Common\Exceptions\ValidationError;
-use BradiNfeApi\Common\Result;
-use BradiNfeApi\Domain\Common\Services\ValidationService;
-use BradiNfeApi\Domain\Common\Validators\IsStringValidator;
-use BradiNfeApi\Domain\Common\Validators\IsXmlTagValidator;
+use BradiNfeApi\Common\Services\ValidationService;
+use BradiNfeApi\Common\ValueObjects\Result;
 use BradiNfeApi\Domain\Common\Validators\NotNullValidator;
 use BradiNfeApi\Domain\Common\Validators\StringLengthValidator;
-use BradiNfeApi\Domain\Invoices\NFe\Exceptions\XmlElementWithAttributesError;
-use BradiNfeApi\Domain\Invoices\NFe\Exceptions\XmlElementWithElementsError;
 use BradiNfeApi\Domain\Invoices\Protocols\DFeElement;
-use BradiNfeApi\Domain\Invoices\Protocols\HasValue;
+use BradiNfeApi\Domain\Invoices\Protocols\DFeValueElement;
 use BradiNfeApi\Domain\Invoices\Validators\IsSiglaUnidadeFederativaValidator;
+use InvalidArgumentException;
 
-final class SiglaUF extends DFeElement implements HasValue
+final class SiglaUF extends DFeValueElement
 {
     public static string $tagName = 'UF';
 
-    private function __construct(
-        public readonly string $value,
-        public readonly string $xmlString) {}
-
-    public static function parseXmlString(mixed $rawData): Result
+    private function __construct(public readonly string $xmlString)
     {
-        $typeValidator = new ValidationService([
-            new IsStringValidator(self::$tagName),
-            new NotNullValidator(self::$tagName),
-            new IsXmlTagValidator(self::$tagName),
-        ]);
+        $this->value = self::xmlParser($xmlString)->getTextContent();
+    }
 
-        $typeValidatorResponse = $typeValidator->verify($rawData);
-        if (! $typeValidatorResponse->isSuccess()) {
+    public static function parse(mixed $rawData, string $parentFieldURI = '', string $method = __METHOD__): Result
+    {
+        $fieldURI = $parentFieldURI == '' ? self::$tagName : $parentFieldURI . '.' . self::$tagName;
+        $typeValidatorResponse = self::validateDataType($rawData, $fieldURI, $method, isOptional: true);
+        if ($typeValidatorResponse->isFailure()) {
             return $typeValidatorResponse;
         }
 
-        $xmlTagString = self::xmlParser()->getTag(strval($rawData), self::$tagName);
-        $tagValue = self::xmlParser()->getTagValue($xmlTagString, self::$tagName);
-        $validationValueResponse = self::validateTagValue($tagValue);
-        if (! $validationValueResponse->isSuccess()) {
-            return $validationValueResponse;
+        $xmlString = self::xmlParser(strval($rawData))->getFirst(self::$tagName);
+        $tagAttributesValidationResponse = self::validateTagAttributes($xmlString, $fieldURI, $method);
+        if ($tagAttributesValidationResponse->isFailure()) {
+            return $tagAttributesValidationResponse;
+        }
+
+        $tagElementsValidationResponse = self::validateTagElements($xmlString, $fieldURI, $method);
+        if ($tagElementsValidationResponse->isFailure()) {
+            return $tagElementsValidationResponse;
+        }
+
+        $tagValueValidationResponse = self::validateTagValue($xmlString, $fieldURI, $method);
+        if (! $tagValueValidationResponse->isSuccess()) {
+            return $tagValueValidationResponse;
         }
 
         return Result::makeSuccess(
             new self(
-                $tagValue,
-                $xmlTagString
+                $xmlString
             )
         );
     }
 
-    public static function create(string $tagValue, array $elements = [], array $attributes = []): Result
+    public static function create(string $tagValue = '', array $elements = [], array $attributes = [], string $parentFieldURI = '', string $method = __METHOD__): Result
     {
-        $validationValueResponse = self::validateTagValue($tagValue);
-        if (! $validationValueResponse->isSuccess()) {
-            return $validationValueResponse;
+        foreach ($attributes as $attributeName => $attributeValue) {
+            if (! is_string($attributeName)) {
+                throw new InvalidArgumentException('Attribute name must be a string. Found: ' . gettype($attributeName) . ' with value: ' . strval($attributeName));
+            }
+            if (! is_string($attributeValue)) {
+                throw new InvalidArgumentException('Attribute value must be a string. Found: ' . gettype($attributeValue) . ' with value: ' . strval($attributeValue));
+            }
         }
 
-        if (count($attributes) > 0) {
-            return Result::makeFailure(
-                new ValidationError([
-                    new XmlElementWithAttributesError(self::$tagName),
-                ])
-            );
+        foreach ($elements as $element) {
+            if (! $element instanceof DFeElement) {
+                throw new InvalidArgumentException('All elements must be instances of DFeElement. Found: ' . gettype($element) . ' with value: ' . strval($element));
+            }
         }
 
-        if (count($elements) > 0) {
-            return Result::makeFailure(
-                new ValidationError([
-                    new XmlElementWithElementsError(self::$tagName),
-                ])
-            );
-        }
-
-        return Result::makeSuccess(
-            new self(
-                $tagValue,
-                self::generateXmlString($tagValue)
-            )
-        );
+        return self::parse(self::generateXmlString($tagValue, $elements, $attributes), $parentFieldURI, $method);
     }
 
-    public static function validateTagValue(string $tagValue): Result
+    protected static function validateTagValue(string $xmlString, string $fieldURI = '', string $method = __METHOD__): Result
     {
-        $validationService = new ValidationService([
-            new IsStringValidator(self::$tagName),
-            new NotNullValidator(self::$tagName),
-            new StringLengthValidator(self::$tagName, 2),
-            new IsSiglaUnidadeFederativaValidator(self::$tagName),
-        ]);
+        $tagValue = self::xmlParser($xmlString)->getTextContent();
+        $validationService = new ValidationService(
+            [
+                NotNullValidator::class => [],
+                StringLengthValidator::class => [2],
+                IsSiglaUnidadeFederativaValidator::class => [],
+            ],
+            $fieldURI, $method, isOptional: true);
 
-        $validationServiceResponse = $validationService->verify($tagValue);
-        if (! $validationServiceResponse->isSuccess()) {
-            return $validationServiceResponse;
-        }
-
-        return Result::makeSuccess();
+        return $validationService->verify($tagValue);
     }
 }

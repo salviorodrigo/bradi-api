@@ -6,11 +6,19 @@ namespace BradiNfeApi\Domain\Invoices\Protocols;
 
 interface DFeParser
 {
-    public function getTag(string $xmlString, string $tagName): string;
+    public string $xmlString { get; }
 
-    public function getTags(string $xmlString, string $tagName): array;
+    public function getFirst(string $tagName): string;
 
-    public function getTagValue(string $xmlString, string $tagName): string;
+    public function listAll(string $tagName): array;
 
-    public function getTagAttributes(string $xmlString, string $tagName): array;
+    public function getName(): string;
+
+    public function getValue(): string;
+
+    public function getTextContent(): string;
+
+    public function listAttributes(): array;
+
+    public function listChildren(): array;
 }

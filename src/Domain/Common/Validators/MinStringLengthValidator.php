@@ -4,18 +4,29 @@ declare(strict_types=1);
 
 namespace BradiNfeApi\Domain\Common\Validators;
 
-use BradiNfeApi\Common\Result;
-use BradiNfeApi\Domain\Common\Protocols\Validator;
-use BradiNfeApi\Domain\Common\Validators\Exceptions\TooShortStringError;
+use BradiNfeApi\Common\Protocols\Validator;
+use BradiNfeApi\Common\ValueObjects\Result;
+use BradiNfeApi\Domain\Common\Exceptions\TooShortStringError;
 
 final class MinStringLengthValidator extends Validator
 {
-    public function __construct(public readonly string $fieldName, public readonly int $maxStringLength) {}
+    public function __construct(
+        public readonly string $fieldURI,
+        public readonly string $source,
+        public readonly int $minStringLength
+    ) {}
 
     public function validate(mixed $candidate): Result
     {
-        if (! is_string($candidate) || strlen($candidate) < $this->maxStringLength) {
-            return Result::makeFailure(new TooShortStringError($this->fieldName, $this->maxStringLength));
+        $typeValidator = new IsStringValidator($this->fieldURI, $this->source);
+        $typeValidationResult = $typeValidator->validate($candidate);
+        if ($typeValidationResult->isFailure() || strlen($candidate) < $this->minStringLength) {
+            return Result::makeFailure(new TooShortStringError(
+                $this->fieldURI,
+                $this->source,
+                $candidate,
+                $this->minStringLength
+            ));
         }
 
         return Result::makeSuccess();

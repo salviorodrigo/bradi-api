@@ -4,23 +4,30 @@ declare(strict_types=1);
 
 namespace BradiNfeApi\Domain\Invoices\Validators;
 
-use BradiNfeApi\Common\Result;
-use BradiNfeApi\Domain\Common\Protocols\Validator;
-use BradiNfeApi\Domain\Invoices\Protocols\DFeElement;
-use BradiNfeApi\Domain\Invoices\Validators\Exceptions\NotFoundAtLeastOneTagError;
+use BradiNfeApi\Common\Protocols\Validator;
+use BradiNfeApi\Common\ValueObjects\Result;
+use BradiNfeApi\Domain\Invoices\Exceptions\NotFoundAtLeastOneTagError;
 
 final class AtLeastOneTagValidator extends Validator
 {
-    public function __construct(public readonly string $fieldName, public readonly array $tags) {}
+    public function __construct(
+        public readonly string $fieldURI,
+        public readonly string $source,
+        public readonly array $requiredTagNames,
+        public readonly array $providedTagNames
+    ) {}
 
     public function validate(mixed $candidate): Result
     {
-        foreach ($this->tags as $tag) {
-            if (DFeElement::xmlParser()->getTag($candidate, $tag) != '') {
-                return Result::makeSuccess();
-            }
+        if (array_intersect($this->requiredTagNames, $this->providedTagNames) === []) {
+            return Result::makeFailure(new NotFoundAtLeastOneTagError(
+                $this->fieldURI,
+                $this->source,
+                $candidate,
+                $this->requiredTagNames
+            ));
         }
 
-        return Result::makeFailure(new NotFoundAtLeastOneTagError($this->fieldName, $this->tags));
+        return Result::makeSuccess();
     }
 }

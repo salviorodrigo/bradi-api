@@ -4,16 +4,39 @@ declare(strict_types=1);
 
 namespace BradiNfeApi\Domain\Invoices\Validators;
 
-use BradiNfeApi\Common\Result;
-use BradiNfeApi\Domain\Common\Protocols\Validator;
-use BradiNfeApi\Domain\Invoices\Validators\Exceptions\InvalidDigitoCodigoMunicipioError;
+use BradiNfeApi\Common\Protocols\Validator;
+use BradiNfeApi\Common\ValueObjects\Result;
+use BradiNfeApi\Domain\Common\Validators\IsNumericValidator;
+use BradiNfeApi\Domain\Invoices\Exceptions\InvalidDigitoCodigoMunicipioError;
 
 final class IsCodigoMunicipioValidator extends Validator
 {
-    public function __construct(public readonly string $fieldName) {}
+    public function __construct(
+        public readonly string $fieldURI,
+        public readonly string $source
+    ) {}
 
     public function validate(mixed $candidate): Result
     {
+        $typeValidator = new IsNumericValidator($this->fieldURI, $this->source);
+        $typeValidationResult = $typeValidator->validate($candidate);
+        if ($typeValidationResult->isFailure() || ! $this->validateCheckDigit($candidate)) {
+            return Result::makeFailure(new InvalidDigitoCodigoMunicipioError(
+                $this->fieldURI,
+                $this->source,
+                $candidate
+            ));
+        }
+
+        return Result::makeSuccess();
+    }
+
+    private function validateCheckDigit(string $candidate): bool
+    {
+        if ($candidate === '9999999') { // Exterior
+            return true;
+        }
+
         $totalMod10 = 0;
         for ($digitPosition = 0; $digitPosition < strlen($candidate) - 1; $digitPosition++) {
             $sum = (int) $candidate[$digitPosition];
@@ -29,11 +52,7 @@ final class IsCodigoMunicipioValidator extends Validator
         $totalMod10 = $totalMod10 % 10;
         $totalMod10 = 10 - $totalMod10;
 
-        if (($totalMod10 % 10) != $candidate[-1]) {
-            return Result::makeFailure(new InvalidDigitoCodigoMunicipioError($this->fieldName));
-        }
-
-        return Result::makeSuccess();
+        return ($totalMod10 % 10) == $candidate[-1];
     }
 }
 // TODO Make test file.

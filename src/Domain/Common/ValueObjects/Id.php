@@ -4,24 +4,26 @@ declare(strict_types=1);
 
 namespace BradiNfeApi\Domain\Common\ValueObjects;
 
-use BradiNfeApi\Common\Result;
+use BradiNfeApi\Common\Services\ValidationService;
+use BradiNfeApi\Common\ValueObjects\Result;
 use BradiNfeApi\Domain\Common\Protocols\ValueObject;
-use BradiNfeApi\Domain\Common\Services\ValidationService;
 use BradiNfeApi\Domain\Common\Validators\IsStringValidator;
 use BradiNfeApi\Domain\Common\Validators\NotNullValidator;
 
 final class Id extends ValueObject
 {
-    public static string $fieldName = 'id';
+    public static string $fieldURI = 'id';
 
     private function __construct(public readonly mixed $value) {}
 
-    public static function parse(mixed $rawData): Result
+    public static function parse(mixed $rawData, string $parentFieldURI = '', string $method = __METHOD__): Result
     {
+        $fieldURI = $parentFieldURI == '' ? self::$fieldURI : $parentFieldURI . '.' . self::$fieldURI;
         $validationService = new ValidationService([
-            new IsStringValidator(self::$fieldName),
-            new NotNullValidator(self::$fieldName),
-        ]);
+            IsStringValidator::class => [],
+            NotNullValidator::class => [],
+        ], $fieldURI, $method);
+
         $validationServiceResponse = $validationService->verify($rawData);
         if ($validationServiceResponse->isSuccess()) {
             return Result::makeSuccess(new Id($rawData));

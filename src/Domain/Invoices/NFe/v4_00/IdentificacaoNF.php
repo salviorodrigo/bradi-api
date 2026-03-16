@@ -14,12 +14,8 @@ declare(strict_types=1);
 
 namespace BradiNfeApi\Domain\Invoices\NFe\v4_00;
 
-use BradiNfeApi\Common\Exceptions\ValidationErrorBag;
-use BradiNfeApi\Common\Result;
-use BradiNfeApi\Domain\Common\Services\ValidationService;
-use BradiNfeApi\Domain\Common\Validators\IsStringValidator;
-use BradiNfeApi\Domain\Common\Validators\IsXmlTagValidator;
-use BradiNfeApi\Domain\Common\Validators\NotNullValidator;
+use BradiNfeApi\Common\Services\ValidationService;
+use BradiNfeApi\Common\ValueObjects\Result;
 use BradiNfeApi\Domain\Invoices\NFe\v4_00\ValueObjects\CodigoMunFG;
 use BradiNfeApi\Domain\Invoices\NFe\v4_00\ValueObjects\CodigoNF;
 use BradiNfeApi\Domain\Invoices\NFe\v4_00\ValueObjects\CodigoUF;
@@ -28,27 +24,26 @@ use BradiNfeApi\Domain\Invoices\NFe\v4_00\ValueObjects\FinalidadeNF;
 use BradiNfeApi\Domain\Invoices\NFe\v4_00\ValueObjects\IdDestino;
 use BradiNfeApi\Domain\Invoices\NFe\v4_00\ValueObjects\IndFinal;
 use BradiNfeApi\Domain\Invoices\NFe\v4_00\ValueObjects\Mod;
-use BradiNfeApi\Domain\Invoices\NFe\v4_00\ValueObjects\NatOp;
+use BradiNfeApi\Domain\Invoices\NFe\v4_00\ValueObjects\NaturezaOperacao;
 use BradiNfeApi\Domain\Invoices\NFe\v4_00\ValueObjects\NumeroNF;
 use BradiNfeApi\Domain\Invoices\NFe\v4_00\ValueObjects\Serie;
 use BradiNfeApi\Domain\Invoices\NFe\v4_00\ValueObjects\TipoAmbiente;
 use BradiNfeApi\Domain\Invoices\NFe\v4_00\ValueObjects\TipoEmissao;
 use BradiNfeApi\Domain\Invoices\NFe\v4_00\ValueObjects\TipoNF;
 use BradiNfeApi\Domain\Invoices\Protocols\DFeElement;
-use BradiNfeApi\Domain\Invoices\Protocols\DFeElementsGroup;
+use BradiNfeApi\Domain\Invoices\Protocols\DFeGroupElement;
 use BradiNfeApi\Domain\Invoices\Validators\RequiredTagValidator;
-use Exception;
+use InvalidArgumentException;
 
-final class IdentificacaoNF extends DFeElementsGroup
+final class IdentificacaoNF extends DFeGroupElement
 {
     public static string $tagName = 'ide';
 
     private function __construct(
-        public readonly string $value,
         public readonly string $xmlString,
         public readonly CodigoUF $cUF,
         public readonly CodigoNF $cNF,
-        public readonly NatOp $natOp,
+        public readonly NaturezaOperacao $natOp,
         public readonly Mod $mod,
         public readonly Serie $serie,
         public readonly NumeroNF $nNF,
@@ -60,59 +55,38 @@ final class IdentificacaoNF extends DFeElementsGroup
         public readonly TipoAmbiente $tpAmb,
         public readonly FinalidadeNF $finNFe,
         public readonly IndFinal $indFinal
-    ) {}
+    ) {
+        $this->value = self::xmlParser($xmlString)->getTextContent();
+    }
 
-    public static function parseXmlString(mixed $rawData): Result
+    public static function parse(mixed $rawData, string $parentFieldURI = '', string $method = __METHOD__): Result
     {
-        $typeValidator = new ValidationService([
-            new IsStringValidator(self::$tagName),
-            new IsXmlTagValidator(self::$tagName),
-        ]);
-
-        $typeValidatorResponse = $typeValidator->verify($rawData);
+        $fieldURI = $parentFieldURI == '' ? self::$tagName : $parentFieldURI . '.' . self::$tagName;
+        $typeValidatorResponse = self::validateDataType($rawData, $fieldURI, $method, isOptional: true);
         if (! $typeValidatorResponse->isSuccess()) {
             return $typeValidatorResponse;
         }
 
-        $xmlTagString = self::xmlParser()->getTag(strval($rawData), self::$tagName);
-        $xmlTagStringValidator = new ValidationService([
-            new NotNullValidator(self::$tagName),
-            new RequiredTagValidator('cUF'),
-            new RequiredTagValidator('cNF'),
-            new RequiredTagValidator('natOp'),
-            new RequiredTagValidator('mod'),
-            new RequiredTagValidator('serie'),
-            new RequiredTagValidator('nNF'),
-            new RequiredTagValidator('dhEmi'),
-            new RequiredTagValidator('tpNF'),
-            new RequiredTagValidator('idDest'),
-            new RequiredTagValidator('cMunFG'),
-            new RequiredTagValidator('tpImp'),
-            new RequiredTagValidator('tpEmis'),
-            new RequiredTagValidator('cDV'),
-            new RequiredTagValidator('tpAmb'),
-            new RequiredTagValidator('finNFe'),
-            new RequiredTagValidator('indFinal'),
-            new RequiredTagValidator('indPres'),
-            new RequiredTagValidator('procEmi'),
-            new RequiredTagValidator('verProc'),
-        ]);
-
-        $xmlTagStringValidatorResponse = $xmlTagStringValidator->verify($xmlTagString);
-        if (! $xmlTagStringValidatorResponse->isSuccess()) {
-            return $xmlTagStringValidatorResponse;
+        $xmlString = self::xmlParser(strval($rawData))->getFirst(self::$tagName);
+        $tagValueValidationResponse = self::validateTagValue($xmlString, $fieldURI, $method);
+        if (! $tagValueValidationResponse->isSuccess()) {
+            return $tagValueValidationResponse;
         }
 
-        $tagValue = self::xmlParser()->getTagValue($xmlTagString, self::$tagName);
-        $validationValueResponse = self::validateTagValue($tagValue);
-        if (! $validationValueResponse->isSuccess()) {
-            return $validationValueResponse;
+        $tagAttributesValidationResponse = self::validateTagAttributes($xmlString, $fieldURI, $method);
+        if ($tagAttributesValidationResponse->isFailure()) {
+            return $tagAttributesValidationResponse;
+        }
+
+        $tagElementsValidationResponse = self::validateTagElements($xmlString, $fieldURI, $method);
+        if ($tagElementsValidationResponse->isFailure()) {
+            return $tagElementsValidationResponse;
         }
 
         $xmlElements = [
             CodigoUF::class,
             CodigoNF::class,
-            NatOp::class,
+            NaturezaOperacao::class,
             Mod::class,
             Serie::class,
             NumeroNF::class,
@@ -126,69 +100,68 @@ final class IdentificacaoNF extends DFeElementsGroup
             IndFinal::class,
         ];
 
-        $parserErrorBag = new ValidationErrorBag;
+        $parserErrorBag = [];
         $xmlElementsBag = [];
         foreach ($xmlElements as $element) {
-            $parsingResult = $element::parseXmlString(
-                self::xmlParser()->getTag($xmlTagString, $element::$tagName)
+            $parsingResult = $element::parse(
+                self::xmlParser($xmlString)->getFirst($element::$tagName),
+                $fieldURI,
+                $method
             );
-            if (! $parsingResult->isSuccess()) {
-                $parserErrorBag->add($parsingResult->getError());
+
+            if ($parsingResult->isFailure()) {
+                $parserErrorBag[] = $parsingResult->getError();
             } else {
                 $xmlElementsBag[] = $parsingResult->getData();
             }
         }
 
-        if (count($parserErrorBag->validationErrors) > 0) {
-            return Result::makeFailure(
-                $parserErrorBag->resolve()
-            );
-        }
-
-        $mod = array_find($xmlElementsBag, function (DFeElement $xmlElement) {
-            return is_a($xmlElement, Mod::class);
-        });
-
-        if ($mod->value == '55') {
-            $validationService = new ValidationService([
-                new RequiredTagValidator('dhSaiEnt'),
-            ]);
-            $validationServiceResponse = $validationService->verify($xmlTagString);
-            if (! $validationServiceResponse->isSuccess()) {
-                return $validationServiceResponse;
+        if (count($parserErrorBag) > 0) {
+            $parsingError = array_shift($parserErrorBag);
+            foreach ($parserErrorBag as $error) {
+                $parsingError->merge($error);
             }
-        }
 
-        $tpEmis = array_find($xmlElementsBag, function (DFeElement $xmlElement) {
-            return is_a($xmlElement, TipoEmissao::class);
-        });
-
-        if ($tpEmis->value != '1') {
-            $validationService = new ValidationService([
-                new RequiredTagValidator('dhCont'),
-                new RequiredTagValidator('xJust'),
-            ]);
-            $validationServiceResponse = $validationService->verify($xmlTagString);
-            if (! $validationServiceResponse->isSuccess()) {
-                return $validationServiceResponse;
-            }
+            return Result::makeFailure($parsingError);
         }
 
         return Result::makeSuccess(
             new self(
-                $tagValue,
-                $xmlTagString,
+                $xmlString,
                 ...$xmlElementsBag
             )
         );
     }
 
-    public static function create(string $tagValue = '', array $elements = [], array $attributes = []): Result
+    public static function create(string $tagValue = '', array $elements = [], array $attributes = [], string $parentFieldURI = '', string $method = __METHOD__): Result
     {
-        // TODO Verificar se tagValue esta vazio
-        // TODO Verificar se attributes esta vazio
-        // TODO Verificar se todas as tags obrigatorias estao presentes
+        foreach ($attributes as $attributeName => $attributeValue) {
+            if (! is_string($attributeName)) {
+                throw new InvalidArgumentException('Attribute name must be a string. Found: ' . gettype($attributeName) . ' with value: ' . strval($attributeName));
+            }
 
-        throw new Exception('Must be implemented');
+            if (! is_string($attributeValue)) {
+                throw new InvalidArgumentException('Attribute value must be a string. Found: ' . gettype($attributeValue) . ' with value: ' . strval($attributeValue));
+            }
+        }
+
+        foreach ($elements as $element) {
+            if (! $element instanceof DFeElement) {
+                throw new InvalidArgumentException('All elements must be instances of DFeElement. Found: ' . gettype($element) . ' with value: ' . strval($element));
+            }
+        }
+
+        return self::parse(self::generateXmlString($tagValue, $elements, $attributes), $parentFieldURI, $method);
+    }
+
+    protected static function validateTagElements(string $xmlString, string $fieldURI, string $method): Result
+    {
+        $children = self::xmlParser($xmlString)->listChildren();
+        $childNames = array_keys($children);
+        $validationService = new ValidationService([
+            RequiredTagValidator::class => [['cUF', 'cNF', 'natOp', 'mod', 'serie', 'nNF', 'dhEmi', 'tpNF', 'idDest', 'cMunFG', 'tpImp', 'tpEmis', 'cDV', 'tpAmb', 'finNFe', 'indFinal', 'indPres', 'procEmi', 'verProc'], $childNames],
+        ], $fieldURI, $method);
+
+        return $validationService->verify($xmlString);
     }
 }

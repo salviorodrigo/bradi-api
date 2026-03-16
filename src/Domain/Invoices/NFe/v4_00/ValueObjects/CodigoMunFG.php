@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 /**
  * MOC      7.0
- * #        16
  * ID       B12
  * Campo    cMunFG
  * Desc     Código do Município de Ocorrência do Fato Gerador
@@ -17,9 +16,102 @@ declare(strict_types=1);
 
 namespace BradiNfeApi\Domain\Invoices\NFe\v4_00\ValueObjects;
 
-use BradiNfeApi\Domain\Invoices\Protocols\HasValue;
+use BradiNfeApi\Common\Services\ValidationService;
+use BradiNfeApi\Common\ValueObjects\Result;
+use BradiNfeApi\Domain\Common\Validators\IsNumericValidator;
+use BradiNfeApi\Domain\Common\Validators\NotNullValidator;
+use BradiNfeApi\Domain\Common\Validators\StringLengthValidator;
+use BradiNfeApi\Domain\Invoices\Protocols\DFeElement;
+use BradiNfeApi\Domain\Invoices\Protocols\DFeValueElement;
+use BradiNfeApi\Domain\Invoices\Validators\IsCodigoMunicipioValidator;
+use BradiNfeApi\Domain\Invoices\Validators\IsUnidadeFederativaValidator;
+use InvalidArgumentException;
 
-final class CodigoMunFG extends CodigoMunicipio implements HasValue
+final class CodigoMunFG extends DFeValueElement
 {
     public static string $tagName = 'cMunFG';
+
+    private function __construct(public readonly string $xmlString)
+    {
+        $this->value = self::xmlParser($xmlString)->getTextContent();
+    }
+
+    public static function parse(mixed $rawData, string $parentFieldURI = '', string $method = __METHOD__): Result
+    {
+        $fieldURI = $parentFieldURI == '' ? self::$tagName : $parentFieldURI . '.' . self::$tagName;
+        $typeValidatorResponse = self::validateDataType($rawData, $fieldURI, $method);
+        if ($typeValidatorResponse->isFailure()) {
+            return $typeValidatorResponse;
+        }
+
+        $xmlString = self::xmlParser(strval($rawData))->getFirst(self::$tagName);
+        $tagAttributesValidationResponse = self::validateTagAttributes($xmlString, $fieldURI, $method);
+        if ($tagAttributesValidationResponse->isFailure()) {
+            return $tagAttributesValidationResponse;
+        }
+
+        $tagElementsValidationResponse = self::validateTagElements($xmlString, $fieldURI, $method);
+        if ($tagElementsValidationResponse->isFailure()) {
+            return $tagElementsValidationResponse;
+        }
+
+        $validationValueResponse = self::validateTagValue($xmlString, $fieldURI, $method);
+        if (! $validationValueResponse->isSuccess()) {
+            return $validationValueResponse;
+        }
+
+        return Result::makeSuccess(
+            new self(
+                $xmlString
+            )
+        );
+    }
+
+    public static function create(string $tagValue = '', array $elements = [], array $attributes = [], string $parentFieldURI = '', string $method = __METHOD__): Result
+    {
+        foreach ($attributes as $attributeName => $attributeValue) {
+            if (! is_string($attributeName)) {
+                throw new InvalidArgumentException('Attribute name must be a string. Found: ' . gettype($attributeName) . ' with value: ' . strval($attributeName));
+            }
+
+            if (! is_string($attributeValue)) {
+                throw new InvalidArgumentException('Attribute value must be a string. Found: ' . gettype($attributeValue) . ' with value: ' . strval($attributeValue));
+            }
+        }
+
+        foreach ($elements as $element) {
+            if (! $element instanceof DFeElement) {
+                throw new InvalidArgumentException('All elements must be instances of DFeElement. Found: ' . gettype($element) . ' with value: ' . strval($element));
+            }
+        }
+
+        return self::parse(self::generateXmlString($tagValue, $elements, $attributes), $parentFieldURI, $method);
+    }
+
+    protected static function validateTagValue(string $xmlString, string $fieldURI, string $method): Result
+    {
+        $tagValue = self::xmlParser($xmlString)->getTextContent();
+        $validationService = new ValidationService([
+            NotNullValidator::class => [],
+            IsNumericValidator::class => [],
+            StringLengthValidator::class => [7],
+            IsCodigoMunicipioValidator::class => [],
+        ], $fieldURI, $method);
+
+        $tagValueValidationResponse = $validationService->verify($tagValue);
+        if (! $tagValueValidationResponse->isSuccess()) {
+            return $tagValueValidationResponse;
+        }
+
+        $validationUfResponse = (new ValidationService(
+            [IsUnidadeFederativaValidator::class => []],
+            $fieldURI, $method
+        ))->verify(substr($tagValue, 0, 2));
+
+        if (! $validationUfResponse->isSuccess()) {
+            return $validationUfResponse;
+        }
+
+        return Result::makeSuccess();
+    }
 }
