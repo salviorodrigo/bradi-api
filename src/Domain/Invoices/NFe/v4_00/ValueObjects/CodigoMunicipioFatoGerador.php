@@ -27,7 +27,7 @@ use BradiNfeApi\Domain\Invoices\Validators\IsCodigoMunicipioValidator;
 use BradiNfeApi\Domain\Invoices\Validators\IsUnidadeFederativaValidator;
 use InvalidArgumentException;
 
-final class CodigoMunFG extends DFeValueElement
+final class CodigoMunicipioFatoGerador extends DFeValueElement
 {
     public static string $tagName = 'cMunFG';
 

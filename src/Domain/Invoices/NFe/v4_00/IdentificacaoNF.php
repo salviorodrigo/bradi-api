@@ -16,7 +16,7 @@ namespace BradiNfeApi\Domain\Invoices\NFe\v4_00;
 
 use BradiNfeApi\Common\Services\ValidationService;
 use BradiNfeApi\Common\ValueObjects\Result;
-use BradiNfeApi\Domain\Invoices\NFe\v4_00\ValueObjects\CodigoMunFG;
+use BradiNfeApi\Domain\Invoices\NFe\v4_00\ValueObjects\CodigoMunicipioFatoGerador;
 use BradiNfeApi\Domain\Invoices\NFe\v4_00\ValueObjects\CodigoNF;
 use BradiNfeApi\Domain\Invoices\NFe\v4_00\ValueObjects\CodigoUF;
 use BradiNfeApi\Domain\Invoices\NFe\v4_00\ValueObjects\DataHoraEmissao;
@@ -50,7 +50,7 @@ final class IdentificacaoNF extends DFeGroupElement
         public readonly DataHoraEmissao $dhEmi,
         public readonly TipoNF $tpNF,
         public readonly IdDestino $idDest,
-        public readonly CodigoMunFG $cMunFG,
+        public readonly CodigoMunicipioFatoGerador $cMunFG,
         public readonly TipoEmissao $tpEmis,
         public readonly TipoAmbiente $tpAmb,
         public readonly FinalidadeNF $finNFe,
@@ -93,7 +93,7 @@ final class IdentificacaoNF extends DFeGroupElement
             DataHoraEmissao::class,
             TipoNF::class,
             IdDestino::class,
-            CodigoMunFG::class,
+            CodigoMunicipioFatoGerador::class,
             TipoEmissao::class,
             TipoAmbiente::class,
             FinalidadeNF::class,
