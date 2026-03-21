@@ -532,6 +532,30 @@ class DFes extends Dataset
                             'too_long' => '12',
                         ],
                     ],
+                    'orig' => [
+                        'valid' => [
+                            'nacional' => '0',
+                            'estrangeira_importacao_direta' => '1',
+                            'estrangeira_mercado_interno' => '2',
+                            'nacional_importacao_superior_40' => '3',
+                            'nacional_processo_produtivo_basico' => '4',
+                            'nacional_importacao_ate_40' => '5',
+                            'estrangeira_importacao_sem_similar' => '6',
+                            'estrangeira_mercado_sem_similar' => '7',
+                            'nacional_importacao_superior_70' => '8',
+                        ],
+                        'invalid' => [
+                            'empty' => '',
+                            'leading_space' => ' 1',
+                            'trailing_space' => '1 ',
+                            'alphabetic' => 'A',
+                            'out_of_range' => [
+                                'negative_one' => '-1',
+                                'nine' => '9',
+                            ],
+                            'too_long' => '10',
+                        ],
+                    ],
                     'indIEDest' => [
                         'valid' => [
                             'contributor' => '1',
