@@ -762,6 +762,28 @@ class DFes extends Dataset
                             'negative' => '-1',
                         ],
                     ],
+                    'pCOFINS' => [
+                        'valid' => [
+                            'standard' => '7.60',
+                            'with_decimals' => '12.3456',
+                            'min' => '0',
+                            'max' => '100',
+                        ],
+                        'invalid' => [
+                            'empty' => '',
+                            'leading_zeros' => '018',
+                            'thousands_separator' => '1,000.01',
+                            'comma_decimal' => '10,50',
+                            'too_many_decimals' => '10.12345',
+                            'too_many_digits' => '1000',
+                            'out_of_range' => '100.0001',
+                            'alphabetic_chars' => '10A',
+                            'leading_space' => ' 10',
+                            'trailing_space' => '10 ',
+                            'middle_space' => '1 0',
+                            'negative' => '-1',
+                        ],
+                    ],
                     'qCom' => [
                         'valid' => [
                             'standard' => '10',
