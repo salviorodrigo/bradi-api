@@ -626,6 +626,25 @@ class DFes extends Dataset
                             'too_short' => '5',
                         ],
                     ],
+                    'modBC' => [
+                        'valid' => [
+                            'margem_valor_agregado' => '0',
+                            'pauta' => '1',
+                            'preco_tabelado_maximo' => '2',
+                            'valor_operacao' => '3',
+                        ],
+                        'invalid' => [
+                            'empty' => '',
+                            'leading_space' => ' 1',
+                            'trailing_space' => '1 ',
+                            'alphabetic' => 'A',
+                            'out_of_range' => [
+                                'negative_one' => '-1',
+                                'four' => '4',
+                            ],
+                            'too_long' => '10',
+                        ],
+                    ],
                     'natOp' => [
                         'valid' => [
                             'min_length' => 'A',
