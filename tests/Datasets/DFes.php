@@ -960,6 +960,27 @@ class DFes extends Dataset
                             'negative' => '-10',
                         ],
                     ],
+                    'vICMS' => [
+                        'valid' => [
+                            'standard' => '10',
+                            'with_cents' => '125.45',
+                            'zero' => '0',
+                            'max' => '9999999999999.99',
+                        ],
+                        'invalid' => [
+                            'empty' => '',
+                            'leading_zeros' => '010',
+                            'thousands_separator' => '1,000.01',
+                            'comma_decimal' => '10,50',
+                            'too_many_decimals' => '10.123',
+                            'too_many_digits' => '10000000000000',
+                            'alphabetic_chars' => '10A',
+                            'leading_space' => ' 10',
+                            'trailing_space' => '10 ',
+                            'middle_space' => '1 000',
+                            'negative' => '-10',
+                        ],
+                    ],
                     'vUnCom' => [
                         'valid' => [
                             'standard' => '10',
