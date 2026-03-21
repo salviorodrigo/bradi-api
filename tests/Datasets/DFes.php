@@ -219,6 +219,35 @@ class DFes extends Dataset
                             'alphanumeric' => '51A0',
                         ],
                     ],
+                    'CST' => [
+                        'valid' => [
+                            'tributada_integralmente' => '00',
+                            'tributada_com_st' => '10',
+                            'reducao_base_calculo' => '20',
+                            'isenta_ou_nao_tributada_com_st' => '30',
+                            'isenta' => '40',
+                            'nao_tributada' => '41',
+                            'suspensao' => '50',
+                            'diferimento' => '51',
+                            'icms_st_anterior' => '60',
+                            'reducao_base_e_st' => '70',
+                            'outras' => '90',
+                        ],
+                        'invalid' => [
+                            'empty' => '',
+                            'too_short' => '0',
+                            'too_long' => '100',
+                            'leading_space' => ' 00',
+                            'trailing_space' => '00 ',
+                            'middle_space' => '0 0',
+                            'alphabetic' => 'AA',
+                            'out_of_range' => [
+                                'eleven' => '11',
+                                'forty_two' => '42',
+                                'eighty' => '80',
+                            ],
+                        ],
+                    ],
                     'cMun' => [
                         'valid' => [
                             'sao_paulo_city' => '3550308',
