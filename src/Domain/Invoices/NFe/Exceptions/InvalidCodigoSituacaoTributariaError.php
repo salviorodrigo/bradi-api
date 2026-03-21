@@ -13,7 +13,7 @@ final class InvalidCodigoSituacaoTributariaError extends UnprocessableEntityErro
 {
     public function __construct(string $field, string $source, mixed $input)
     {
-        $message = 'it must be one of 00, 10, 20, 30, 40, 41, 50, 51, 60, 70 or 90.';
+        $message = 'it must be a valid CST according to the Brazilian tax regulations.';
         $error = new Error(
             $source,
             Input::from($input)->value,
