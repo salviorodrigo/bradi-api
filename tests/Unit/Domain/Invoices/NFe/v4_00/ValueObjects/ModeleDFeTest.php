@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 use BradiNfeApi\Common\Protocols\ApiError;
 use BradiNfeApi\Common\ValueObjects\Result;
-use BradiNfeApi\Domain\Invoices\NFe\v4_00\ValueObjects\Mod;
+use BradiNfeApi\Domain\Invoices\NFe\v4_00\ValueObjects\ModeloDFe;
 use BradiNfeApi\Tests\Doubles\Domain\Invoices\NFe\FakeDFeElement;
 
-describe('Mod', function () {
-    $sut = Mod::class;
+describe('ModeloDFe', function () {
+    $sut = ModeloDFe::class;
 
     describe('::parse()', function () use ($sut) {
         test('Should succeed with dataset :dataset', function ($candidate) use ($sut) {

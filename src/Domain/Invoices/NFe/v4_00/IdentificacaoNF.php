@@ -23,7 +23,7 @@ use BradiNfeApi\Domain\Invoices\NFe\v4_00\ValueObjects\DataHoraEmissao;
 use BradiNfeApi\Domain\Invoices\NFe\v4_00\ValueObjects\FinalidadeNF;
 use BradiNfeApi\Domain\Invoices\NFe\v4_00\ValueObjects\IdDestino;
 use BradiNfeApi\Domain\Invoices\NFe\v4_00\ValueObjects\IndFinal;
-use BradiNfeApi\Domain\Invoices\NFe\v4_00\ValueObjects\Mod;
+use BradiNfeApi\Domain\Invoices\NFe\v4_00\ValueObjects\ModeloDFe;
 use BradiNfeApi\Domain\Invoices\NFe\v4_00\ValueObjects\NaturezaOperacao;
 use BradiNfeApi\Domain\Invoices\NFe\v4_00\ValueObjects\NumeroNF;
 use BradiNfeApi\Domain\Invoices\NFe\v4_00\ValueObjects\Serie;
@@ -44,7 +44,7 @@ final class IdentificacaoNF extends DFeGroupElement
         public readonly CodigoUF $cUF,
         public readonly CodigoNF $cNF,
         public readonly NaturezaOperacao $natOp,
-        public readonly Mod $mod,
+        public readonly ModeloDFe $mod,
         public readonly Serie $serie,
         public readonly NumeroNF $nNF,
         public readonly DataHoraEmissao $dhEmi,
@@ -87,7 +87,7 @@ final class IdentificacaoNF extends DFeGroupElement
             CodigoUF::class,
             CodigoNF::class,
             NaturezaOperacao::class,
-            Mod::class,
+            ModeloDFe::class,
             Serie::class,
             NumeroNF::class,
             DataHoraEmissao::class,

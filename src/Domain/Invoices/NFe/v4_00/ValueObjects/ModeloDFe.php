@@ -26,7 +26,7 @@ use BradiNfeApi\Domain\Invoices\Protocols\DFeValueElement;
 use BradiNfeApi\Domain\Invoices\Validators\IsModeloDFeValidator;
 use InvalidArgumentException;
 
-final class Mod extends DFeValueElement
+final class ModeloDFe extends DFeValueElement
 {
     public static string $tagName = 'mod';
 
