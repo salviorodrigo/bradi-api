@@ -148,6 +148,22 @@ class DFes extends Dataset
                             ],
                         ],
                     ],
+                    'ICMS00' => [
+                        'valid' => [
+                            'only_required' => '<ICMS00><orig>0</orig><CST>00</CST><modBC>3</modBC><vBC>1000.00</vBC><pICMS>18.00</pICMS><vICMS>180.00</vICMS></ICMS00>',
+                        ],
+                        'invalid' => [
+                            'empty' => '',
+                            'missing_required' => [
+                                'orig' => '<ICMS00><CST>00</CST><modBC>3</modBC><vBC>1000.00</vBC><pICMS>18.00</pICMS><vICMS>180.00</vICMS></ICMS00>',
+                                'CST' => '<ICMS00><orig>0</orig><modBC>3</modBC><vBC>1000.00</vBC><pICMS>18.00</pICMS><vICMS>180.00</vICMS></ICMS00>',
+                                'modBC' => '<ICMS00><orig>0</orig><CST>00</CST><vBC>1000.00</vBC><pICMS>18.00</pICMS><vICMS>180.00</vICMS></ICMS00>',
+                                'vBC' => '<ICMS00><orig>0</orig><CST>00</CST><modBC>3</modBC><pICMS>18.00</pICMS><vICMS>180.00</vICMS></ICMS00>',
+                                'pICMS' => '<ICMS00><orig>0</orig><CST>00</CST><modBC>3</modBC><vBC>1000.00</vBC><vICMS>180.00</vICMS></ICMS00>',
+                                'vICMS' => '<ICMS00><orig>0</orig><CST>00</CST><modBC>3</modBC><vBC>1000.00</vBC><pICMS>18.00</pICMS></ICMS00>',
+                            ],
+                        ],
+                    ],
                 ],
                 'value_tags' => [
                     'cEAN' => [
