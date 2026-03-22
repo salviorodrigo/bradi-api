@@ -47,7 +47,7 @@ class FieldURI
             return (bool) preg_match('/^[a-zA-Z_]\w*(\[(\d+|([\'\"])\w+\3)\])+$/', $segment);
         }
 
-        return (bool) preg_match('/^[a-zA-Z]+$/', $segment);
+        return (bool) preg_match('/^[a-zA-Z][a-zA-Z0-9]*$/', $segment);
     }
 
     private function hasArrayNotation(string $segment): bool
