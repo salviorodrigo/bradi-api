@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace BradiNfeApi\Common\Validators;
+namespace BradiNfeApi\Domain\Common\Validators;
 
-use BradiNfeApi\Common\Exceptions\MissingParamError;
-use BradiNfeApi\Common\Protocols\Validator;
-use BradiNfeApi\Common\ValueObjects\Result;
+use BradiNfeApi\Domain\Common\Exceptions\MissingParamError;
+use BradiNfeApi\Domain\Common\Protocols\Validator;
+use BradiNfeApi\Domain\Common\ValueObjects\Result;
 
 final class RequiredParamValidator extends Validator
 {

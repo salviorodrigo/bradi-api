@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace BradiNfeApi\Common\Protocols;
+namespace BradiNfeApi\Domain\Common\Protocols;
 
-use BradiNfeApi\Common\ValueObjects\Detail;
+use BradiNfeApi\Domain\Common\ValueObjects\Detail;
 use InvalidArgumentException;
 
 abstract class ApiError

@@ -4,13 +4,13 @@ declare(strict_types=1);
 
 namespace BradiNfeApi\Domain\Invoices\NFe\Validators;
 
-use BradiNfeApi\Common\Protocols\Validator;
-use BradiNfeApi\Common\Services\ValidationService;
-use BradiNfeApi\Common\ValueObjects\Result;
 use BradiNfeApi\Domain\Common\Exceptions\ForbiddenRepeatedCharsError;
 use BradiNfeApi\Domain\Common\Exceptions\ForbiddenSequentialNumberError;
+use BradiNfeApi\Domain\Common\Protocols\Validator;
+use BradiNfeApi\Domain\Common\Services\ValidationService;
 use BradiNfeApi\Domain\Common\Validators\IsNumericValidator;
 use BradiNfeApi\Domain\Common\Validators\StringLengthValidator;
+use BradiNfeApi\Domain\Common\ValueObjects\Result;
 
 final class IsCodigoNFValidator extends Validator
 {

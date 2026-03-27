@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace BradiNfeApi\Domain\Invoices\NFe\Exceptions;
 
-use BradiNfeApi\Common\ValueObjects\Detail;
-use BradiNfeApi\Common\ValueObjects\Error;
-use BradiNfeApi\Common\ValueObjects\Input;
 use BradiNfeApi\Domain\Common\Protocols\UnprocessableEntityError;
+use BradiNfeApi\Domain\Common\ValueObjects\Detail;
+use BradiNfeApi\Domain\Common\ValueObjects\Error;
+use BradiNfeApi\Domain\Common\ValueObjects\Input;
 
 final class InvalidTipoIndIEDestinatarioError extends UnprocessableEntityError
 {

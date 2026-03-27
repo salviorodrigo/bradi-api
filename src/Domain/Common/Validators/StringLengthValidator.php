@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace BradiNfeApi\Domain\Common\Validators;
 
-use BradiNfeApi\Common\Protocols\Validator;
-use BradiNfeApi\Common\ValueObjects\Result;
 use BradiNfeApi\Domain\Common\Exceptions\InvalidStringLengthError;
+use BradiNfeApi\Domain\Common\Protocols\Validator;
+use BradiNfeApi\Domain\Common\ValueObjects\Result;
 
 final class StringLengthValidator extends Validator
 {

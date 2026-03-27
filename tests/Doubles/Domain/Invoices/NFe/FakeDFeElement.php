@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace BradiNfeApi\Tests\Doubles\Domain\Invoices\NFe;
 
-use BradiNfeApi\Common\ValueObjects\Result;
+use BradiNfeApi\Domain\Common\ValueObjects\Result;
 use BradiNfeApi\Domain\Invoices\Protocols\DFeElement;
 
 final class FakeDFeElement extends DFeElement

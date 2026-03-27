@@ -2,8 +2,8 @@
 
 declare(strict_types=1);
 
-use BradiNfeApi\Common\Protocols\ApiError;
-use BradiNfeApi\Common\ValueObjects\Result;
+use BradiNfeApi\Domain\Common\Protocols\ApiError;
+use BradiNfeApi\Domain\Common\ValueObjects\Result;
 use BradiNfeApi\Domain\Invoices\NFe\v4_00\ValueObjects\IdDestino;
 use BradiNfeApi\Tests\Doubles\Domain\Invoices\NFe\FakeDFeElement;
 

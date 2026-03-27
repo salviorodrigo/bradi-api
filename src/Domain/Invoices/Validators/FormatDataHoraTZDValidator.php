@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace BradiNfeApi\Domain\Invoices\Validators;
 
-use BradiNfeApi\Common\Protocols\Validator;
-use BradiNfeApi\Common\ValueObjects\Result;
+use BradiNfeApi\Domain\Common\Protocols\Validator;
 use BradiNfeApi\Domain\Common\Validators\IsStringValidator;
+use BradiNfeApi\Domain\Common\ValueObjects\Result;
 use BradiNfeApi\Domain\Invoices\Exceptions\InvalidDateTimeFormatError;
 
 final class FormatDataHoraTZDValidator extends Validator

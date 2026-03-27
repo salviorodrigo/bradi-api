@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace BradiNfeApi\Domain\Common\Validators;
 
-use BradiNfeApi\Common\Protocols\Validator;
-use BradiNfeApi\Common\ValueObjects\Result;
 use BradiNfeApi\Domain\Common\Exceptions\ForbiddenCharsError;
 use BradiNfeApi\Domain\Common\Exceptions\InvalidTypeError;
 use BradiNfeApi\Domain\Common\Exceptions\LeadingZerosError;
 use BradiNfeApi\Domain\Common\Exceptions\TooManyDecimalSeparatorError;
+use BradiNfeApi\Domain\Common\Protocols\Validator;
+use BradiNfeApi\Domain\Common\ValueObjects\Result;
 
 final class IsNumericValidator extends Validator
 {

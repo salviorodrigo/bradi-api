@@ -4,8 +4,7 @@ declare(strict_types=1);
 
 namespace BradiNfeApi\Domain\Common\Protocols;
 
-use BradiNfeApi\Common\Protocols\ApiError;
-use BradiNfeApi\Common\ValueObjects\Detail;
+use BradiNfeApi\Domain\Common\ValueObjects\Detail;
 
 abstract class UnprocessableEntityError extends ApiError
 {

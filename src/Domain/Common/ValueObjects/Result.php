@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace BradiNfeApi\Common\ValueObjects;
+namespace BradiNfeApi\Domain\Common\ValueObjects;
 
-use BradiNfeApi\Common\Protocols\ApiError;
+use BradiNfeApi\Domain\Common\Protocols\ApiError;
 use Error;
 use Exception;
 

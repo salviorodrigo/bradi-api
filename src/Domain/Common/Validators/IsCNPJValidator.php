@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace BradiNfeApi\Domain\Common\Validators;
 
-use BradiNfeApi\Common\Protocols\Validator;
-use BradiNfeApi\Common\ValueObjects\Result;
 use BradiNfeApi\Domain\Common\Exceptions\InvalidCNPJCheckDigitError;
 use BradiNfeApi\Domain\Common\Exceptions\InvalidCNPJError;
 use BradiNfeApi\Domain\Common\Exceptions\InvalidCNPJStructureError;
+use BradiNfeApi\Domain\Common\Protocols\Validator;
+use BradiNfeApi\Domain\Common\ValueObjects\Result;
 
 final class IsCNPJValidator extends Validator
 {

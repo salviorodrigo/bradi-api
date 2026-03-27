@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace BradiNfeApi\Domain\Invoices\Protocols;
 
-use BradiNfeApi\Common\Protocols\ApiError;
-use BradiNfeApi\Common\Services\ValidationService;
-use BradiNfeApi\Common\ValueObjects\Result;
+use BradiNfeApi\Domain\Common\Protocols\ApiError;
+use BradiNfeApi\Domain\Common\Services\ValidationService;
 use BradiNfeApi\Domain\Common\Validators\IsXmlStringValidator;
+use BradiNfeApi\Domain\Common\ValueObjects\Result;
 use BradiNfeApi\Infra\Parses\XmlToDFeParser;
 
 abstract class DFeElement

@@ -14,12 +14,12 @@ declare(strict_types=1);
 
 namespace BradiNfeApi\Domain\Invoices\NFe\v4_00\ValueObjects;
 
-use BradiNfeApi\Common\Services\ValidationService;
-use BradiNfeApi\Common\ValueObjects\Result;
+use BradiNfeApi\Domain\Common\Services\ValidationService;
 use BradiNfeApi\Domain\Common\Validators\IsDecimalValidator;
 use BradiNfeApi\Domain\Common\Validators\MaxValueValidator;
 use BradiNfeApi\Domain\Common\Validators\MinValueValidator;
 use BradiNfeApi\Domain\Common\Validators\NotNullValidator;
+use BradiNfeApi\Domain\Common\ValueObjects\Result;
 use BradiNfeApi\Domain\Invoices\Protocols\DFeElement;
 use BradiNfeApi\Domain\Invoices\Protocols\DFeValueElement;
 use InvalidArgumentException;

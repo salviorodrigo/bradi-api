@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace BradiNfeApi\Domain\Invoices\Protocols;
 
-use BradiNfeApi\Common\ValueObjects\Result;
 use BradiNfeApi\Domain\Common\Exceptions\XmlElementWithAttributesError;
 use BradiNfeApi\Domain\Common\Exceptions\XmlElementWithChildElementsError;
+use BradiNfeApi\Domain\Common\ValueObjects\Result;
 
 abstract class DFeValueElement extends DFeElement
 {
