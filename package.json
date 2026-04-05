@@ -11,7 +11,7 @@
   },
   "lint-staged": {
     "**/*.php*": [
-      "php ./vendor/bin/duster lint --dirty",
+      "php ./vendor/bin/duster lint --using=tlint,phpcsfixer,pint",
       "php ./vendor/bin/pest"
     ]
   }

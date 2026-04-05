@@ -31,10 +31,10 @@
         "oittaa/uuid": "^1.10"
     },
     "require-dev": {
-        "pestphp/pest": "^4.0",
-        "tightenco/duster": "^3.1",
-        "mockery/mockery": "^1.6",
-        "symfony/var-dumper": "^8.0"
+        "pestphp/pest": "4.0",
+        "tightenco/duster": "3.1",
+        "mockery/mockery": "1.6",
+        "symfony/var-dumper": "8.0"
     },
     "config": {
         "allow-plugins": {
