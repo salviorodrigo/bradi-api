@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace BradiNfeApi\Domain\Xml\ValueObjects;
 
-use BradiNfeApi\Domain\Common\Services\ValidationService;
+use BradiNfeApi\Domain\Common\Protocols\ValidationService;
 use BradiNfeApi\Domain\Common\ValueObjects\Result;
-use BradiNfeApi\Domain\Invoices\Protocols\XmlIterator;
+use BradiNfeApi\Domain\Xml\Protocols\XmlIterator;
 
 class Element
 {

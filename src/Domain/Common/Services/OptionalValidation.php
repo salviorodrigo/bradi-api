@@ -4,14 +4,17 @@ declare(strict_types=1);
 
 namespace BradiNfeApi\Domain\Common\Services;
 
+use BradiNfeApi\Domain\Common\Protocols\ValidationService;
 use BradiNfeApi\Domain\Common\Protocols\Validator;
 use BradiNfeApi\Domain\Common\ValueObjects\Result;
 
-final class OptionalValidation
+final class OptionalValidation implements ValidationService
 {
-    public function __construct(private readonly ValidationService $validationService) {}
+    public function __construct(
+        private readonly ValidationService $validationService
+    ) {}
 
-    public function addValidator(Validator $validator): self
+    public function addValidator(Validator $validator): ValidationService
     {
         $this->validationService->addValidator($validator);
 
@@ -33,5 +36,10 @@ final class OptionalValidation
         }
 
         return $this->validationService->verify($candidate);
+    }
+
+    public function reset(): void
+    {
+        $this->validationService->reset();
     }
 }

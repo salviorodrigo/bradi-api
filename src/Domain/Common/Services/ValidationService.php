@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace BradiNfeApi\Domain\Common\Services;
 
 use BradiNfeApi\Domain\Common\Exceptions\UnprocessableEntityError;
+use BradiNfeApi\Domain\Common\Protocols\ValidationService as ValidationServiceProtocol;
 use BradiNfeApi\Domain\Common\Protocols\Validator;
 use BradiNfeApi\Domain\Common\ValueObjects\Detail;
 use BradiNfeApi\Domain\Common\ValueObjects\FieldURI;
@@ -13,7 +14,7 @@ use BradiNfeApi\Domain\Common\ValueObjects\Result;
 use BradiNfeApi\Domain\Common\ValueObjects\Source;
 use Exception;
 
-class ValidationService
+class ValidationService implements ValidationServiceProtocol
 {
     /** @param array<Validator> $validators   */
     private array $validators = [];

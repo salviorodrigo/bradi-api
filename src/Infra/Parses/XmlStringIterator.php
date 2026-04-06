@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace BradiNfeApi\Infra\Parses;
 
 use BradiNfeApi\Domain\Common\Protocols\ApiError;
-use BradiNfeApi\Domain\Common\Services\ValidationService;
+use BradiNfeApi\Domain\Common\Protocols\ValidationService;
 use BradiNfeApi\Domain\Common\Validators\IsXmlStringValidator;
 use BradiNfeApi\Domain\Common\ValueObjects\Result;
 use BradiNfeApi\Domain\Xml\Protocols\XmlIterator;
