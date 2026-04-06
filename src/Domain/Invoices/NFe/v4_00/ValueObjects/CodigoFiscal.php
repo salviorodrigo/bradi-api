@@ -87,11 +87,10 @@ final class CodigoFiscal extends DFeValueElement
     protected static function validateTagValue(string $xmlString, string $fieldURI = '', string $method = __METHOD__): Result
     {
         $tagValue = self::xmlParser($xmlString)->getTextContent();
-        $validationService = new ValidationService([
-            IsNumericValidator::class => [],
-            NotNullValidator::class => [],
-            StringLengthValidator::class => [4],
-        ], $fieldURI, $method);
+        $validationService = new ValidationService($fieldURI, $method)
+            ->addValidator(new IsNumericValidator)
+            ->addValidator(new NotNullValidator)
+            ->addValidator(new StringLengthValidator(4));
 
         return $validationService->verify($tagValue);
     }

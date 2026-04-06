@@ -4,23 +4,16 @@ declare(strict_types=1);
 
 namespace BradiNfeApi\Domain\Common\Validators;
 
-use BradiNfeApi\Domain\Common\Exceptions\InvalidTypeError;
 use BradiNfeApi\Domain\Common\Protocols\Validator;
 use BradiNfeApi\Domain\Common\ValueObjects\Result;
+use InvalidArgumentException;
 
-final class IsStringValidator extends Validator
+final class IsStringValidator implements Validator
 {
-    public function __construct(public readonly string $field, public readonly string $source) {}
-
-    public function validate(mixed $candidate): Result
+    public function check(mixed $candidate): Result
     {
         if (! is_string($candidate)) {
-            return Result::makeFailure(new InvalidTypeError(
-                $this->field,
-                $this->source,
-                $candidate,
-                'string'
-            ));
+            return Result::makeFailure(new InvalidArgumentException('must be a string.'));
         }
 
         return Result::makeSuccess();

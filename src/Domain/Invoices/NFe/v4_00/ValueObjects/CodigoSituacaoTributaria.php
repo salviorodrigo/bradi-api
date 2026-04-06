@@ -119,12 +119,11 @@ final class CodigoSituacaoTributaria extends DFeValueElement
     protected static function validateTagValue(string $xmlString, string $fieldURI = '', string $method = __METHOD__): Result
     {
         $tagValue = self::xmlParser($xmlString)->getTextContent();
-        $validationService = new ValidationService([
-            NotNullValidator::class => [],
-            IsNumericValidator::class => ['allowLeadingZeros' => true],
-            StringLengthValidator::class => [2],
-            IsTipoSituacaoTributariaValidator::class => [],
-        ], $fieldURI, $method);
+        $validationService = new ValidationService($fieldURI, $method)
+            ->addValidator(new NotNullValidator)
+            ->addValidator(new IsNumericValidator(allowLeadingZeros: true))
+            ->addValidator(new StringLengthValidator(stringLength: 2))
+            ->addValidator(new IsTipoSituacaoTributariaValidator);
 
         return $validationService->verify($tagValue);
     }

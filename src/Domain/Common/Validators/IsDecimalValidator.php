@@ -4,21 +4,19 @@ declare(strict_types=1);
 
 namespace BradiNfeApi\Domain\Common\Validators;
 
-use BradiNfeApi\Domain\Common\Exceptions\GreatThanError;
-use BradiNfeApi\Domain\Common\Exceptions\InvalidDecimalNumberError;
 use BradiNfeApi\Domain\Common\Protocols\Validator;
 use BradiNfeApi\Domain\Common\ValueObjects\Result;
+use InvalidArgumentException;
+use LengthException;
 
-class IsDecimalValidator extends Validator
+class IsDecimalValidator implements Validator
 {
     public function __construct(
-        public readonly string $field,
-        public readonly string $source,
         public readonly int $maxIntegerDigits,
         public readonly int $maxDecimalDigits,
     ) {}
 
-    public function validate(mixed $candidate): Result
+    public function check(mixed $candidate): Result
     {
         $typeValidationResponse = $this->validateType($candidate);
         if (! $typeValidationResponse->isSuccess()) {
@@ -48,22 +46,20 @@ class IsDecimalValidator extends Validator
 
     private function validateType(mixed $candidate): Result
     {
-        $typeValidator = new IsNumericValidator($this->field, $this->source);
+        $typeValidator = new IsNumericValidator;
 
-        return $typeValidator->validate($candidate);
+        return $typeValidator->check($candidate);
     }
 
     private function validateStructure(string $candidate): Result
     {
         // The regex allows for an optional negative sign, followed by digits, and an optional decimal part.
         if (! preg_match('/^-?\d+(\.\d+)?$/', $candidate)) {
-            return Result::makeFailure(new InvalidDecimalNumberError(
-                $this->field,
-                $this->source,
-                $candidate,
+            return Result::makeFailure(new InvalidArgumentException(sprintf(
+                'must be a decimal number with up to %d integer digits and %d decimal digits.',
                 $this->maxIntegerDigits,
                 $this->maxDecimalDigits
-            ));
+            )));
         }
 
         return Result::makeSuccess();
@@ -72,12 +68,10 @@ class IsDecimalValidator extends Validator
     private function validateIntegerPart(string $integerPart, string $candidate): Result
     {
         if (strlen($integerPart) > $this->maxIntegerDigits) {
-            return Result::makeFailure(new GreatThanError(
-                $this->field,
-                $this->source,
-                $candidate,
-                (float) str_repeat('9', $this->maxIntegerDigits),
-            ));
+            return Result::makeFailure(new LengthException(sprintf(
+                'integer part cannot contain more than %d digits.',
+                $this->maxIntegerDigits
+            )));
         }
 
         return Result::makeSuccess();
@@ -86,12 +80,10 @@ class IsDecimalValidator extends Validator
     private function validateDecimalPart(string $decimalPart, string $candidate): Result
     {
         if (strlen($decimalPart) > $this->maxDecimalDigits) {
-            return Result::makeFailure(new GreatThanError(
-                $this->field,
-                $this->source,
-                $candidate,
-                (float) ('0.' . str_repeat('9', $this->maxDecimalDigits)),
-            ));
+            return Result::makeFailure(new LengthException(sprintf(
+                'decimal part cannot contain more than %d digits.',
+                $this->maxDecimalDigits
+            )));
         }
 
         return Result::makeSuccess();
@@ -99,3 +91,5 @@ class IsDecimalValidator extends Validator
 }
 
 // TODO Make test file (with negative numbers).
+// TODO Refactor LessThanError to MinDecimalDigitsError
+// TODO Refactor GreatThanError to MaxIntegerDigitsError

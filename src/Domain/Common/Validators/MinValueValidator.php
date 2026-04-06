@@ -4,29 +4,25 @@ declare(strict_types=1);
 
 namespace BradiNfeApi\Domain\Common\Validators;
 
-use BradiNfeApi\Domain\Common\Exceptions\LessThanError;
 use BradiNfeApi\Domain\Common\Protocols\Validator;
 use BradiNfeApi\Domain\Common\ValueObjects\Result;
+use OutOfRangeException;
 
-final class MinValueValidator extends Validator
+final class MinValueValidator implements Validator
 {
     public function __construct(
-        public readonly string $fieldURI,
-        public readonly string $source,
         public readonly float $minValue
     ) {}
 
-    public function validate(mixed $candidate): Result
+    public function check(mixed $candidate): Result
     {
-        $typeValidator = new IsNumericValidator($this->fieldURI, $this->source, true);
-        $typeValidationResult = $typeValidator->validate($candidate);
+        $typeValidator = new IsNumericValidator(true);
+        $typeValidationResult = $typeValidator->check($candidate);
         if ($typeValidationResult->isFailure() || (float) $candidate < $this->minValue) {
-            return Result::makeFailure(new LessThanError(
-                $this->fieldURI,
-                $this->source,
-                $candidate,
+            return Result::makeFailure(new OutOfRangeException(sprintf(
+                'cannot be less than %s.',
                 $this->minValue
-            ));
+            )));
         }
 
         return Result::makeSuccess();

@@ -4,79 +4,63 @@ declare(strict_types=1);
 
 namespace BradiNfeApi\Domain\Common\Services;
 
-use BradiNfeApi\Domain\Common\Protocols\ApiError;
+use BradiNfeApi\Domain\Common\Exceptions\UnprocessableEntityError;
 use BradiNfeApi\Domain\Common\Protocols\Validator;
+use BradiNfeApi\Domain\Common\ValueObjects\Detail;
+use BradiNfeApi\Domain\Common\ValueObjects\FieldURI;
+use BradiNfeApi\Domain\Common\ValueObjects\Input;
 use BradiNfeApi\Domain\Common\ValueObjects\Result;
-use InvalidArgumentException;
+use BradiNfeApi\Domain\Common\ValueObjects\Source;
+use Exception;
 
 class ValidationService
 {
-    /**
-     * @param  $validators  array<Validator>
-     */
-    protected array $validators;
+    /** @param array<Validator> $validators   */
+    private array $validators = [];
+    /** @var Exception[] */
+    private array $errors = [];
 
-    /**
-     * @param  array<Validator::class,array<mixed>>  $specifications
-     */
     public function __construct(
-        array $specifications,
-        string $fieldURI,
-        string $method,
-        protected readonly bool $isOptional = false,
-        protected readonly bool $stopOnFirstFailure = false)
-    {
-        if (count($specifications) <= 0) {
-            throw new InvalidArgumentException('Validators must be provided.');
-        }
-
-        foreach ($specifications as $validator => $params) {
-            if (! is_a($validator, Validator::class, true)) {
-                throw new InvalidArgumentException('validators must be instances of Validator class.');
-            }
-
-            $this->validators[] = new $validator($fieldURI, $method, ...$params);
-        }
-    }
+        private readonly string $fieldURI,
+        private readonly string $method
+    ) {}
 
     public function verify(mixed $candidate): Result
     {
-        if ($this->isOptional && (is_null($candidate) || $candidate === '')) {
-            if (! isset($candidate)) {
-                return Result::makeSuccess();
-            }
-
-            if (empty($candidate) && ! (is_bool($candidate) || $candidate == 0)) {
-                return Result::makeSuccess();
-            }
-        }
-
-        $validationErrorBag = [];
         foreach ($this->validators as $validator) {
-            $validatorResponse = $validator->validate($candidate);
+            $validatorResponse = $validator->check($candidate);
             if ($validatorResponse->isFailure()) {
-                array_push($validationErrorBag, $validatorResponse->getError());
-                if ($this->stopOnFirstFailure) {
-                    break;
+                $error = $validatorResponse->getError();
+                if ($error instanceof Exception) {
+                    $this->errors[] = $error;
                 }
             }
         }
 
-        if (count($validationErrorBag) > 0) {
-            return Result::makeFailure($this->mergeValidationErrors($validationErrorBag));
+        if (! empty($this->errors)) {
+            $errorDetail = new Detail(
+                FieldURI::from($this->fieldURI),
+                Source::from($this->method),
+                Input::from($candidate),
+                $this->errors
+            );
+
+            return Result::makeFailure(new UnprocessableEntityError($errorDetail));
         }
 
         return Result::makeSuccess();
     }
 
-    protected function mergeValidationErrors(array $validationErrorBag): ApiError
+    public function addValidator(Validator $validator): self
     {
-        $mergedError = array_shift($validationErrorBag);
-        foreach ($validationErrorBag as $validationError) {
-            $mergedError->merge($validationError);
-        }
+        $this->validators[] = $validator;
 
-        return $mergedError;
+        return $this;
+    }
+
+    public function reset(): void
+    {
+        $this->validators = [];
     }
 }
 

@@ -83,9 +83,8 @@ final class CodigoNF extends DFeValueElement
     protected static function validateTagValue(string $xmlString, string $fieldURI = '', string $method = __METHOD__): Result
     {
         $tagValue = self::xmlParser($xmlString)->getTextContent();
-        $validationService = new ValidationService([
-            IsCodigoNFValidator::class => [],
-        ], $fieldURI, $method);
+        $validationService = new ValidationService($fieldURI, $method)
+            ->addValidator(new IsCodigoNFValidator);
 
         return $validationService->verify($tagValue);
     }

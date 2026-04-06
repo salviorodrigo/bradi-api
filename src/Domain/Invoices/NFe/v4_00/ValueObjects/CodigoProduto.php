@@ -91,12 +91,11 @@ final class CodigoProduto extends DFeValueElement
     protected static function validateTagValue(string $xmlString, string $fieldURI = '', string $method = __METHOD__): Result
     {
         $tagValue = self::xmlParser($xmlString)->getTextContent();
-        $validationService = new ValidationService([
-            NotNullValidator::class => [],
-            MaxStringLengthValidator::class => [60],
-            MinStringLengthValidator::class => [1],
-            TextFormatValidator::class => [],
-        ], $fieldURI, $method);
+        $validationService = new ValidationService($fieldURI, $method)
+            ->addValidator(new NotNullValidator)
+            ->addValidator(new MaxStringLengthValidator(60))
+            ->addValidator(new MinStringLengthValidator(1))
+            ->addValidator(new TextFormatValidator);
 
         return $validationService->verify($tagValue);
     }

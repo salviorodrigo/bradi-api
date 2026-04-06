@@ -92,12 +92,11 @@ final class CodigoMercosul extends DFeValueElement
     protected static function validateTagValue(string $xmlString, string $fieldURI = '', string $method = __METHOD__): Result
     {
         $tagValue = self::xmlParser($xmlString)->getTextContent();
-        $validationService = new ValidationService([
-            NotNullValidator::class => [],
-            StringLengthValidator::class => [2, 8],
-            IsNumericValidator::class => ['allowLeadingZeros' => true],
-            IsCodigoMercosulValidator::class => [],
-        ], $fieldURI, $method);
+        $validationService = new ValidationService($fieldURI, $method)
+            ->addValidator(new NotNullValidator)
+            ->addValidator(new StringLengthValidator(min: 2, max: 8))
+            ->addValidator(new IsNumericValidator(allowLeadingZeros: true))
+            ->addValidator(new IsCodigoMercosulValidator);
 
         return $validationService->verify($tagValue);
     }

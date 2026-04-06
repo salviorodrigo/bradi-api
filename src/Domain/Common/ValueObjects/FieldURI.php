@@ -21,6 +21,11 @@ class FieldURI
         $this->value = $data;
     }
 
+    public static function from(string $fieldURI): self
+    {
+        return new self($fieldURI);
+    }
+
     private function validate(string $data): ?Exception
     {
         if (! $this->validateStructure($data)) {

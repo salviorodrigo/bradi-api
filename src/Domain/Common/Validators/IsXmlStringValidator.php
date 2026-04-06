@@ -4,26 +4,20 @@ declare(strict_types=1);
 
 namespace BradiNfeApi\Domain\Common\Validators;
 
-use BradiNfeApi\Domain\Common\Exceptions\InvalidXmlStringError;
 use BradiNfeApi\Domain\Common\Protocols\Validator;
 use BradiNfeApi\Domain\Common\ValueObjects\Result;
+use InvalidArgumentException;
 
-final class IsXmlStringValidator extends Validator
+final class IsXmlStringValidator implements Validator
 {
-    public function __construct(public readonly string $fieldURI, public readonly string $source) {}
-
-    public function validate(mixed $candidate): Result
+    public function check(mixed $candidate): Result
     {
         $typeValidationResponse = $this->validateType($candidate);
         if (! $typeValidationResponse->isSuccess()) {
             return $typeValidationResponse;
         }
         if (simplexml_load_string($candidate, options: LIBXML_NOERROR) === false) {
-            return Result::makeFailure(new InvalidXmlStringError(
-                $this->fieldURI,
-                $this->source,
-                $candidate
-            ));
+            return Result::makeFailure(new InvalidArgumentException('must be a valid XML string.'));
         }
 
         return Result::makeSuccess();
@@ -32,11 +26,7 @@ final class IsXmlStringValidator extends Validator
     private function validateType(mixed $candidate): Result
     {
         if (! is_string($candidate)) {
-            return Result::makeFailure(new InvalidXmlStringError(
-                $this->fieldURI,
-                $this->source,
-                $candidate
-            ));
+            return Result::makeFailure(new InvalidArgumentException('must be a valid XML string.'));
         }
 
         return Result::makeSuccess();

@@ -7,23 +7,14 @@ namespace BradiNfeApi\Domain\Invoices\Validators;
 use BradiNfeApi\Domain\Common\Protocols\Validator;
 use BradiNfeApi\Domain\Common\ValueObjects\Result;
 use BradiNfeApi\Domain\Invoices\Enums\UnidadeFederativa;
-use BradiNfeApi\Domain\Invoices\Exceptions\InvalidCodigoUFError;
+use InvalidArgumentException;
 
-final class IsUnidadeFederativaValidator extends Validator
+final class IsUnidadeFederativaValidator implements Validator
 {
-    public function __construct(
-        public readonly string $fieldURI,
-        public readonly string $source
-    ) {}
-
-    public function validate(mixed $candidate): Result
+    public function check(mixed $candidate): Result
     {
         if (! (bool) UnidadeFederativa::tryFrom($candidate)) {
-            return Result::makeFailure(new InvalidCodigoUFError(
-                $this->fieldURI,
-                $this->source,
-                $candidate
-            ));
+            return Result::makeFailure(new InvalidArgumentException('must be cUF according MOC NFe e NFCe (7.0) - Anexo I.'));
         }
 
         return Result::makeSuccess();

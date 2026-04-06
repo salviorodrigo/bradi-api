@@ -4,22 +4,15 @@ declare(strict_types=1);
 
 namespace BradiNfeApi\Domain\Invoices\NFe\Validators;
 
-use BradiNfeApi\Domain\Common\Exceptions\ForbiddenRepeatedCharsError;
-use BradiNfeApi\Domain\Common\Exceptions\ForbiddenSequentialNumberError;
 use BradiNfeApi\Domain\Common\Protocols\Validator;
-use BradiNfeApi\Domain\Common\Services\ValidationService;
 use BradiNfeApi\Domain\Common\Validators\IsNumericValidator;
 use BradiNfeApi\Domain\Common\Validators\StringLengthValidator;
 use BradiNfeApi\Domain\Common\ValueObjects\Result;
+use UnexpectedValueException;
 
-final class IsCodigoNFValidator extends Validator
+final class IsCodigoNFValidator implements Validator
 {
-    public function __construct(
-        public readonly string $fieldURI,
-        public readonly string $source
-    ) {}
-
-    public function validate(mixed $candidate): Result
+    public function check(mixed $candidate): Result
     {
         $typeValidatorResponse = $this->validateType($candidate);
         if ($typeValidatorResponse->isFailure()) {
@@ -44,31 +37,26 @@ final class IsCodigoNFValidator extends Validator
         return Result::makeSuccess();
     }
 
-    private function validateType(string $candidate): Result
+    private function validateType(mixed $candidate): Result
     {
-        $typeValidator = new IsNumericValidator($this->fieldURI, $this->source);
+        $typeValidator = new IsNumericValidator;
 
-        return $typeValidator->validate($candidate);
+        return $typeValidator->check($candidate);
     }
 
     private function validateStructure(string $candidate): Result
     {
-        $lengthValidator = new ValidationService([
-            IsNumericValidator::class => ['allowLeadingZeros' => true],
-            StringLengthValidator::class => [8],
-        ], $this->fieldURI, $this->source);
-
-        return $lengthValidator->verify($candidate);
-
-        $sequentialDigitsValidationResponse = $this->validateSequentialDigits((string) $candidate);
-        if ($sequentialDigitsValidationResponse->isFailure()) {
-            return $sequentialDigitsValidationResponse;
+        $numericValidatorResponse = (new IsNumericValidator(allowLeadingZeros: true))->check($candidate);
+        if ($numericValidatorResponse->isFailure()) {
+            return $numericValidatorResponse;
         }
 
-        $repeatedDigitsValidationResponse = $this->validateRepeatedDigits((string) $candidate);
-        if ($repeatedDigitsValidationResponse->isFailure()) {
-            return $repeatedDigitsValidationResponse;
+        $lengthValidatorResponse = (new StringLengthValidator(stringLength: 8))->check($candidate);
+        if ($lengthValidatorResponse->isFailure()) {
+            return $lengthValidatorResponse;
         }
+
+        return Result::makeSuccess();
     }
 
     private function validateSequentialDigits(string $candidate): Result
@@ -84,13 +72,9 @@ final class IsCodigoNFValidator extends Validator
             }
         }
 
-        return Result::makeFailure(
-            new ForbiddenSequentialNumberError(
-                $this->fieldURI,
-                $this->source,
-                $candidate
-            )
-        );
+        return Result::makeFailure(new UnexpectedValueException(
+            'cannot be a sequential numeric series.'
+        ));
     }
 
     private function validateRepeatedDigits(string $candidate): Result
@@ -102,13 +86,9 @@ final class IsCodigoNFValidator extends Validator
             }
         }
 
-        return Result::makeFailure(
-            new ForbiddenRepeatedCharsError(
-                $this->fieldURI,
-                $this->source,
-                $candidate
-            )
-        );
+        return Result::makeFailure(new UnexpectedValueException(
+            'cannot contain all repeated digits.'
+        ));
     }
 }
 

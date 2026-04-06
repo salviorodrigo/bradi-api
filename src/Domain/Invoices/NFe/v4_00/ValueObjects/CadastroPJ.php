@@ -13,6 +13,7 @@ declare(strict_types=1);
 
 namespace BradiNfeApi\Domain\Invoices\NFe\v4_00\ValueObjects;
 
+use BradiNfeApi\Domain\Common\Services\OptionalValidation;
 use BradiNfeApi\Domain\Common\Services\ValidationService;
 use BradiNfeApi\Domain\Common\Validators\IsCNPJValidator;
 use BradiNfeApi\Domain\Common\ValueObjects\Result;
@@ -84,10 +85,9 @@ final class CadastroPJ extends DFeValueElement
     protected static function validateTagValue(string $xmlString, string $fieldURI, string $method): Result
     {
         $tagValue = self::xmlParser($xmlString)->getTextContent();
-        $validationService = new ValidationService([
-            IsCNPJValidator::class => [],
-        ], $fieldURI, $method, true);
+        $validationService = new ValidationService($fieldURI, $method)
+            ->addValidator(new IsCNPJValidator);
 
-        return $validationService->verify($tagValue);
+        return (new OptionalValidation($validationService))->verify($tagValue);
     }
 }

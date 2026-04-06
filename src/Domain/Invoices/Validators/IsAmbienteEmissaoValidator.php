@@ -7,23 +7,14 @@ namespace BradiNfeApi\Domain\Invoices\Validators;
 use BradiNfeApi\Domain\Common\Protocols\Validator;
 use BradiNfeApi\Domain\Common\ValueObjects\Result;
 use BradiNfeApi\Domain\Invoices\Enums\AmbienteEmissao;
-use BradiNfeApi\Domain\Invoices\Exceptions\InvalidTipoAmbienteError;
+use InvalidArgumentException;
 
-final class IsAmbienteEmissaoValidator extends Validator
+final class IsAmbienteEmissaoValidator implements Validator
 {
-    public function __construct(
-        public readonly string $fieldURI,
-        public readonly string $source
-    ) {}
-
-    public function validate(mixed $candidate): Result
+    public function check(mixed $candidate): Result
     {
         if (! (bool) AmbienteEmissao::tryFrom($candidate)) {
-            return Result::makeFailure(new InvalidTipoAmbienteError(
-                $this->fieldURI,
-                $this->source,
-                $candidate
-            ));
+            return Result::makeFailure(new InvalidArgumentException('must be tpAmb according MOC NFe e NFCe (7.0) - Anexo I.'));
         }
 
         return Result::makeSuccess();

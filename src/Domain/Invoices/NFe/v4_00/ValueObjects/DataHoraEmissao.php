@@ -87,11 +87,10 @@ class DataHoraEmissao extends DFeValueElement
     protected static function validateTagValue(string $xmlString, string $fieldURI = '', string $method = __METHOD__): Result
     {
         $tagValue = static::xmlParser($xmlString)->getTextContent();
-        $validationService = new ValidationService([
-            NotNullValidator::class => [],
-            StringLengthValidator::class => [25],
-            FormatDataHoraTZDValidator::class => [],
-        ], $fieldURI, $method);
+        $validationService = new ValidationService($fieldURI, $method)
+            ->addValidator(new NotNullValidator)
+            ->addValidator(new StringLengthValidator(25))
+            ->addValidator(new FormatDataHoraTZDValidator);
 
         return $validationService->verify($tagValue);
     }

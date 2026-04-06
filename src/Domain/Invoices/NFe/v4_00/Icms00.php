@@ -136,9 +136,8 @@ final class Icms00 extends DFeGroupElement
     {
         $children = self::xmlParser($xmlString)->listChildren();
         $childNames = array_keys($children);
-        $validationService = new ValidationService([
-            RequiredTagValidator::class => [['orig', 'CST', 'modBC', 'vBC', 'pICMS', 'vICMS'], $childNames],
-        ], $fieldURI, $method);
+        $validationService = new ValidationService($fieldURI, $method)
+            ->addValidator(new RequiredTagValidator(['orig', 'CST', 'modBC', 'vBC', 'pICMS', 'vICMS'], $childNames));
 
         return $validationService->verify($xmlString);
     }

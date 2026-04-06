@@ -91,11 +91,10 @@ final class CodigoBarras extends DFeValueElement
     protected static function validateTagValue(string $xmlString, string $fieldURI = '', string $method = __METHOD__): Result
     {
         $tagValue = self::xmlParser($xmlString)->getTextContent();
-        $validationService = new ValidationService([
-            NotNullValidator::class => [],
-            TextFormatValidator::class => [],
-            StringLengthValidator::class => [8, 12, 13, 14],
-        ], $fieldURI, $method);
+        $validationService = new ValidationService($fieldURI, $method)
+            ->addValidator(new NotNullValidator)
+            ->addValidator(new TextFormatValidator)
+            ->addValidator(new StringLengthValidator(8, 12, 13, 14));
 
         $validationServiceResponse = $validationService->verify($tagValue);
         if ($validationServiceResponse->isFailure()) {
@@ -106,8 +105,9 @@ final class CodigoBarras extends DFeValueElement
             return Result::makeSuccess();
         }
 
-        $numericValidator = new IsNumericValidator($fieldURI, $method);
+        $validationService->reset();
+        $validationService->addValidator(new IsNumericValidator(allowLeadingZeros: true));
 
-        return $numericValidator->validate($tagValue);
+        return $validationService->verify($tagValue);
     }
 }

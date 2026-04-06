@@ -4,22 +4,16 @@ declare(strict_types=1);
 
 namespace BradiNfeApi\Domain\Common\Validators;
 
-use BradiNfeApi\Domain\Common\Exceptions\IsNullError;
 use BradiNfeApi\Domain\Common\Protocols\Validator;
 use BradiNfeApi\Domain\Common\ValueObjects\Result;
+use InvalidArgumentException;
 
-final class NotNullValidator extends Validator
+final class NotNullValidator implements Validator
 {
-    public function __construct(public readonly string $fieldURI, public readonly string $source) {}
-
-    public function validate(mixed $candidate): Result
+    public function check(mixed $candidate): Result
     {
         if (is_null($candidate) || $this->{'isEmpty' . ucfirst(gettype($candidate))}($candidate)) {
-            return Result::makeFailure(new IsNullError(
-                $this->fieldURI,
-                $this->source,
-                $candidate
-            ));
+            return Result::makeFailure(new InvalidArgumentException('cannot be null.'));
         }
 
         return Result::makeSuccess();

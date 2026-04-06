@@ -15,6 +15,7 @@ declare(strict_types=1);
 
 namespace BradiNfeApi\Domain\Invoices\NFe\v4_00\ValueObjects;
 
+use BradiNfeApi\Domain\Common\Services\OptionalValidation;
 use BradiNfeApi\Domain\Common\Services\ValidationService;
 use BradiNfeApi\Domain\Common\Validators\MaxStringLengthValidator;
 use BradiNfeApi\Domain\Common\Validators\MinStringLengthValidator;
@@ -88,13 +89,12 @@ final class NomePais extends DFeValueElement
     protected static function validateTagValue(string $xmlString, string $fieldURI = '', string $method = __METHOD__): Result
     {
         $tagValue = self::xmlParser($xmlString)->getTextContent();
-        $validationService = new ValidationService([
-            MaxStringLengthValidator::class => [60],
-            MinStringLengthValidator::class => [2],
-            TextFormatValidator::class => [],
-        ], $fieldURI, $method, isOptional: true);
+        $validationService = new ValidationService($fieldURI, $method)
+            ->addValidator(new MaxStringLengthValidator(60))
+            ->addValidator(new MinStringLengthValidator(2))
+            ->addValidator(new TextFormatValidator);
 
-        return $validationService->verify($tagValue);
+        return (new OptionalValidation($validationService))->verify($tagValue);
 
     }
 }

@@ -4,27 +4,23 @@ declare(strict_types=1);
 
 namespace BradiNfeApi\Domain\Common\Validators;
 
-use BradiNfeApi\Domain\Common\Exceptions\ForbiddenCharsError;
-use BradiNfeApi\Domain\Common\Exceptions\InvalidTypeError;
-use BradiNfeApi\Domain\Common\Exceptions\LeadingZerosError;
-use BradiNfeApi\Domain\Common\Exceptions\TooManyDecimalSeparatorError;
 use BradiNfeApi\Domain\Common\Protocols\Validator;
 use BradiNfeApi\Domain\Common\ValueObjects\Result;
+use InvalidArgumentException;
+use UnexpectedValueException;
 
-final class IsNumericValidator extends Validator
+final class IsNumericValidator implements Validator
 {
     private string $negativeCharacter = '-';
     private string $positiveCharacter = '+';
 
     public function __construct(
-        public readonly string $field,
-        public readonly string $source,
         public readonly bool $allowLeadingZeros = false,
         public readonly string $decimalSeparator = '.',
         public readonly string $thousandsSeparator = ','
     ) {}
 
-    public function validate(mixed $candidate): Result
+    public function check(mixed $candidate): Result
     {
         $typeValidationResponse = $this->validateType($candidate);
         if ($typeValidationResponse->isFailure()) {
@@ -42,12 +38,7 @@ final class IsNumericValidator extends Validator
     private function validateType(mixed $candidate): Result
     {
         if (! is_numeric($candidate)) {
-            return Result::makeFailure(new InvalidTypeError(
-                $this->field,
-                $this->source,
-                $candidate,
-                'numeric'
-            ));
+            return Result::makeFailure(new InvalidArgumentException('must be numeric.'));
         }
 
         return Result::makeSuccess();
@@ -55,8 +46,8 @@ final class IsNumericValidator extends Validator
 
     private function validateStructure(string $candidate): Result
     {
-        $textFormatValidator = new TextFormatValidator($this->field, $this->source);
-        $textFormatValidationResponse = $textFormatValidator->validate($candidate);
+        $textFormatValidator = new TextFormatValidator;
+        $textFormatValidationResponse = $textFormatValidator->check($candidate);
         if ($textFormatValidationResponse->isFailure()) {
             return $textFormatValidationResponse;
         }
@@ -85,11 +76,7 @@ final class IsNumericValidator extends Validator
             && (isset($candidate[1]) && $candidate[1] !== '.')
             && ! $this->allowLeadingZeros
         )) {
-            return Result::makeFailure(new LeadingZerosError(
-                $this->field,
-                $this->source,
-                $candidate
-            ));
+            return Result::makeFailure(new UnexpectedValueException('cannot contain leading zeros.'));
         }
 
         return Result::makeSuccess();
@@ -98,12 +85,10 @@ final class IsNumericValidator extends Validator
     private function validateDecimalSeparator(string $candidate): Result
     {
         if (substr_count($candidate, $this->decimalSeparator) > 1) {
-            return Result::makeFailure(new TooManyDecimalSeparatorError(
-                $this->field,
-                $this->source,
-                $candidate,
+            return Result::makeFailure(new UnexpectedValueException(sprintf(
+                'cannot contain more than one decimal separator "%s".',
                 $this->decimalSeparator
-            ));
+            )));
         }
 
         return Result::makeSuccess();
@@ -118,12 +103,10 @@ final class IsNumericValidator extends Validator
 
         $forbiddenChars = array_diff(str_split($candidate), $allowedChars);
         if (count($forbiddenChars) > 0) {
-            return Result::makeFailure(new ForbiddenCharsError(
-                $this->field,
-                $this->source,
-                $candidate,
-                $forbiddenChars
-            ));
+            return Result::makeFailure(new UnexpectedValueException(sprintf(
+                'The numeric value contains forbidden characters: %s.',
+                implode(', ', $forbiddenChars)
+            )));
         }
 
         return Result::makeSuccess();

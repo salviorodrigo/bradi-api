@@ -68,7 +68,7 @@ final class XmlStringIterator implements XmlIterator
     /** @return Result<XmlIterator|ApiError> */
     public function loadFrom(mixed $candidate): Result
     {
-        $validationResponse = (new IsXmlStringValidator('xml', __METHOD__))->validate($candidate);
+        $validationResponse = (new IsXmlStringValidator)->check($candidate);
         if ($validationResponse->isFailure()) {
             return Result::makeFailure($validationResponse->getError());
         }

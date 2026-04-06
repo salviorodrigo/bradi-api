@@ -10,7 +10,6 @@ describe('FieldURI', function () {
     describe('__construct()', function () use ($sut) {
         test('Should succeed with :dataset', function (string $candidate) use ($sut) {
             $result = new $sut($candidate);
-
             expect($result->value)->toBe($candidate);
         })->with([
             'single_alpha_segment' => 'Invoice',

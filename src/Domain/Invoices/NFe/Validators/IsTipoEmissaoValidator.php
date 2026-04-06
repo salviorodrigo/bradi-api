@@ -7,23 +7,14 @@ namespace BradiNfeApi\Domain\Invoices\NFe\Validators;
 use BradiNfeApi\Domain\Common\Protocols\Validator;
 use BradiNfeApi\Domain\Common\ValueObjects\Result;
 use BradiNfeApi\Domain\Invoices\Enums\TipoEmissaoNF;
-use BradiNfeApi\Domain\Invoices\NFe\Exceptions\InvalidTipoEmissaoNFError;
+use InvalidArgumentException;
 
-final class IsTipoEmissaoValidator extends Validator
+final class IsTipoEmissaoValidator implements Validator
 {
-    public function __construct(
-        public readonly string $fieldURI,
-        public readonly string $source
-    ) {}
-
-    public function validate(mixed $candidate): Result
+    public function check(mixed $candidate): Result
     {
         if (! (bool) TipoEmissaoNF::tryFrom($candidate)) {
-            return Result::makeFailure(new InvalidTipoEmissaoNFError(
-                $this->fieldURI,
-                $this->source,
-                $candidate
-            ));
+            return Result::makeFailure(new InvalidArgumentException('it must be 1 to normal, 2 to contingency FS-IA, 3 to contingency SCAN, 4 to contingency EPEC, 5 to contingency FS-DA, 6 to contingency SVC-AN, 7 to contingency SVC-RS, or 9 to contingency off-line of NFC-e.'));
         }
 
         return Result::makeSuccess();

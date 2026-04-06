@@ -4,9 +4,13 @@ declare(strict_types=1);
 
 namespace BradiNfeApi\Domain\Invoices\Protocols;
 
-use BradiNfeApi\Domain\Common\Exceptions\XmlElementWithAttributesError;
-use BradiNfeApi\Domain\Common\Exceptions\XmlElementWithChildElementsError;
+use BradiNfeApi\Domain\Common\Exceptions\UnprocessableEntityError;
+use BradiNfeApi\Domain\Common\ValueObjects\Detail;
+use BradiNfeApi\Domain\Common\ValueObjects\FieldURI;
+use BradiNfeApi\Domain\Common\ValueObjects\Input;
 use BradiNfeApi\Domain\Common\ValueObjects\Result;
+use BradiNfeApi\Domain\Common\ValueObjects\Source;
+use UnexpectedValueException;
 
 abstract class DFeValueElement extends DFeElement
 {
@@ -14,9 +18,14 @@ abstract class DFeValueElement extends DFeElement
     {
         $children = self::xmlParser($xmlString)->listChildren();
         if (count($children) > 0) {
-            return Result::makeFailure(
-                new XmlElementWithChildElementsError($fieldURI, $method, $xmlString),
+            $detail = new Detail(
+                FieldURI::from($fieldURI),
+                Source::from($method),
+                Input::from($xmlString),
+                [new UnexpectedValueException('cannot contain child elements.')]
             );
+
+            return Result::makeFailure(new UnprocessableEntityError($detail));
         }
 
         return Result::makeSuccess();
@@ -26,9 +35,14 @@ abstract class DFeValueElement extends DFeElement
     {
         $attributes = self::xmlParser($xmlString)->listAttributes();
         if (count($attributes) > 0) {
-            return Result::makeFailure(
-                new XmlElementWithAttributesError($fieldURI, $method, $xmlString),
+            $detail = new Detail(
+                FieldURI::from($fieldURI),
+                Source::from($method),
+                Input::from($xmlString),
+                [new UnexpectedValueException('cannot contain attributes.')]
             );
+
+            return Result::makeFailure(new UnprocessableEntityError($detail));
         }
 
         return Result::makeSuccess();

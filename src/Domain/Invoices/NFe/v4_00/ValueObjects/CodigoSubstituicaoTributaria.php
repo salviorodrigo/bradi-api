@@ -92,11 +92,10 @@ final class CodigoSubstituicaoTributaria extends DFeValueElement
     protected static function validateTagValue(string $xmlString, string $fieldURI = '', string $method = __METHOD__): Result
     {
         $tagValue = self::xmlParser($xmlString)->getTextContent();
-        $validationService = new ValidationService([
-            NotNullValidator::class => [],
-            StringLengthValidator::class => [7],
-            IsNumericValidator::class => ['allowLeadingZeros' => true],
-        ], $fieldURI, $method);
+        $validationService = new ValidationService($fieldURI, $method)
+            ->addValidator(new NotNullValidator)
+            ->addValidator(new StringLengthValidator(stringLength: 7))
+            ->addValidator(new IsNumericValidator(allowLeadingZeros: true));
 
         return $validationService->verify($tagValue);
     }

@@ -4,28 +4,20 @@ declare(strict_types=1);
 
 namespace BradiNfeApi\Domain\Common\Validators;
 
-use BradiNfeApi\Domain\Common\Exceptions\InvalidCNPJCheckDigitError;
-use BradiNfeApi\Domain\Common\Exceptions\InvalidCNPJError;
-use BradiNfeApi\Domain\Common\Exceptions\InvalidCNPJStructureError;
 use BradiNfeApi\Domain\Common\Protocols\Validator;
 use BradiNfeApi\Domain\Common\ValueObjects\Result;
+use InvalidArgumentException;
 
-final class IsCNPJValidator extends Validator
+final class IsCNPJValidator implements Validator
 {
     private const WEIGHT_12 = [5, 4, 3, 2, 9, 8, 7, 6, 5, 4, 3, 2];
     private const WEIGHT_13 = [6, 5, 4, 3, 2, 9, 8, 7, 6, 5, 4, 3, 2];
 
-    public function __construct(public readonly string $field, public readonly string $source) {}
-
-    public function validate(mixed $candidate): Result
+    public function check(mixed $candidate): Result
     {
         $typeValidationResult = $this->validateType($candidate);
         if ($typeValidationResult->isFailure()) {
-            return Result::makeFailure(new InvalidCNPJError(
-                $this->field,
-                $this->source,
-                $candidate
-            ));
+            return Result::makeFailure(new InvalidArgumentException('must be a brazilian CNPJ.'));
         }
 
         $candidate = (string) $candidate;
@@ -44,19 +36,15 @@ final class IsCNPJValidator extends Validator
 
     private function validateType(mixed $candidate): Result
     {
-        $typeValidator = new IsNumericValidator($this->field, $this->source, true);
+        $typeValidator = new IsNumericValidator(true);
 
-        return $typeValidator->validate($candidate);
+        return $typeValidator->check($candidate);
     }
 
     private function validateStructure(string $candidate): Result
     {
         if (! (bool) preg_match('/^(?!([0-9])\1{13}$)\d{14}$/', $candidate)) {
-            return Result::makeFailure(new InvalidCNPJStructureError(
-                $this->field,
-                $this->source,
-                $candidate
-            ));
+            return Result::makeFailure(new InvalidArgumentException('must contain 14 digits.'));
         }
 
         return Result::makeSuccess();
@@ -69,11 +57,7 @@ final class IsCNPJValidator extends Validator
         $firstDigit = $this->calcVerificationDigit($first12CnpjChars, self::WEIGHT_12);
         $secondDigit = $this->calcVerificationDigit($first13CnpjChars, self::WEIGHT_13);
         if (substr($candidate, 12, 2) !== strval($firstDigit . $secondDigit)) {
-            return Result::makeFailure(new InvalidCNPJCheckDigitError(
-                $this->field,
-                $this->source,
-                $candidate
-            ));
+            return Result::makeFailure(new InvalidArgumentException('invalid check digits.'));
         }
 
         return Result::makeSuccess();

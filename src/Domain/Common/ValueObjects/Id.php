@@ -18,11 +18,9 @@ final class Id extends ValueObject
     public static function parse(mixed $rawData, string $parentFieldURI = '', string $method = __METHOD__): Result
     {
         $fieldURI = $parentFieldURI == '' ? self::$fieldURI : $parentFieldURI . '.' . self::$fieldURI;
-        $validationService = new ValidationService([
-            IsStringValidator::class => [],
-            NotNullValidator::class => [],
-        ], $fieldURI, $method);
-
+        $validationService = new ValidationService($fieldURI, $method)
+            ->addValidator(new IsStringValidator)
+            ->addValidator(new NotNullValidator);
         $validationServiceResponse = $validationService->verify($rawData);
         if ($validationServiceResponse->isSuccess()) {
             return Result::makeSuccess(new Id($rawData));

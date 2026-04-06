@@ -87,16 +87,11 @@ final class AliquotaICMS extends DFeValueElement
     protected static function validateTagValue(string $xmlString, string $fieldURI = '', string $method = __METHOD__): Result
     {
         $tagValue = self::xmlParser($xmlString)->getTextContent();
-        $validationService = new ValidationService(
-            [
-                NotNullValidator::class => [],
-                IsDecimalValidator::class => [3, 4],
-                MaxValueValidator::class => [100],
-                MinValueValidator::class => [0],
-            ],
-            $fieldURI,
-            $method
-        );
+        $validationService = new ValidationService($fieldURI, $method)
+            ->addValidator(new NotNullValidator)
+            ->addValidator(new IsDecimalValidator(3, 4))
+            ->addValidator(new MaxValueValidator(100))
+            ->addValidator(new MinValueValidator(0));
 
         return $validationService->verify($tagValue);
     }

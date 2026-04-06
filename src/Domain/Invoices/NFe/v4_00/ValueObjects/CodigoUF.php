@@ -90,12 +90,11 @@ final class CodigoUF extends DFeValueElement
     protected static function validateTagValue(string $xmlString, string $fieldURI = '', string $method = __METHOD__): Result
     {
         $tagValue = self::xmlParser($xmlString)->getTextContent();
-        $validationService = new ValidationService([
-            NotNullValidator::class => [],
-            IsNumericValidator::class => [],
-            StringLengthValidator::class => [2],
-            IsUnidadeFederativaValidator::class => [],
-        ], $fieldURI, $method);
+        $validationService = new ValidationService($fieldURI, $method)
+            ->addValidator(new NotNullValidator)
+            ->addValidator(new IsNumericValidator)
+            ->addValidator(new StringLengthValidator(2))
+            ->addValidator(new IsUnidadeFederativaValidator);
 
         return $validationService->verify($tagValue);
     }

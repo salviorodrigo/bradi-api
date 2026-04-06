@@ -89,12 +89,11 @@ final class IndFinal extends DFeValueElement
     protected static function validateTagValue(string $xmlString, string $fieldURI = '', string $method = __METHOD__): Result
     {
         $tagValue = self::xmlParser($xmlString)->getTextContent();
-        $validationService = new ValidationService([
-            NotNullValidator::class => [],
-            IsNumericValidator::class => [true],
-            StringLengthValidator::class => [1],
-            IsTipoFinalidadeNFValidator::class => [],
-        ], $fieldURI, $method);
+        $validationService = new ValidationService($fieldURI, $method)
+            ->addValidator(new NotNullValidator)
+            ->addValidator(new IsNumericValidator(true))
+            ->addValidator(new StringLengthValidator(1))
+            ->addValidator(new IsTipoFinalidadeNFValidator);
 
         return $validationService->verify($tagValue);
     }

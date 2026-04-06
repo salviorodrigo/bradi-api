@@ -7,19 +7,14 @@ namespace BradiNfeApi\Domain\Invoices\NFe\Validators;
 use BradiNfeApi\Domain\Common\Protocols\Validator;
 use BradiNfeApi\Domain\Common\ValueObjects\Result;
 use BradiNfeApi\Domain\Invoices\Enums\TipoMovimentacao;
-use BradiNfeApi\Domain\Invoices\NFe\Exceptions\InvalidTipoNFError;
+use InvalidArgumentException;
 
-final class IsTipoMovimentacaoValidator extends Validator
+final class IsTipoMovimentacaoValidator implements Validator
 {
-    public function __construct(
-        public readonly string $fieldURI,
-        public readonly string $source
-    ) {}
-
-    public function validate(mixed $candidate): Result
+    public function check(mixed $candidate): Result
     {
         if (! (bool) TipoMovimentacao::tryFrom($candidate)) {
-            return Result::makeFailure(new InvalidTipoNFError($this->fieldURI, $this->source, $candidate));
+            return Result::makeFailure(new InvalidArgumentException('it must be 0 to entry or 1 to outlet.'));
         }
 
         return Result::makeSuccess();

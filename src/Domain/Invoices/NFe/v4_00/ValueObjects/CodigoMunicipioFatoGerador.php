@@ -91,22 +91,19 @@ final class CodigoMunicipioFatoGerador extends DFeValueElement
     protected static function validateTagValue(string $xmlString, string $fieldURI, string $method): Result
     {
         $tagValue = self::xmlParser($xmlString)->getTextContent();
-        $validationService = new ValidationService([
-            NotNullValidator::class => [],
-            IsNumericValidator::class => [],
-            StringLengthValidator::class => [7],
-            IsCodigoMunicipioValidator::class => [],
-        ], $fieldURI, $method);
+        $validationService = new ValidationService($fieldURI, $method)
+            ->addValidator(new NotNullValidator)
+            ->addValidator(new IsNumericValidator)
+            ->addValidator(new StringLengthValidator(7))
+            ->addValidator(new IsCodigoMunicipioValidator);
 
         $tagValueValidationResponse = $validationService->verify($tagValue);
         if (! $tagValueValidationResponse->isSuccess()) {
             return $tagValueValidationResponse;
         }
 
-        $validationUfResponse = (new ValidationService(
-            [IsUnidadeFederativaValidator::class => []],
-            $fieldURI, $method
-        ))->verify(substr($tagValue, 0, 2));
+        $validationUfResponse = (new ValidationService($fieldURI, $method)
+            ->addValidator(new IsUnidadeFederativaValidator))->verify(substr($tagValue, 0, 2));
 
         if (! $validationUfResponse->isSuccess()) {
             return $validationUfResponse;

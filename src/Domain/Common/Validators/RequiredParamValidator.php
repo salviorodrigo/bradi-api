@@ -4,33 +4,17 @@ declare(strict_types=1);
 
 namespace BradiNfeApi\Domain\Common\Validators;
 
-use BradiNfeApi\Domain\Common\Exceptions\MissingParamError;
 use BradiNfeApi\Domain\Common\Protocols\Validator;
 use BradiNfeApi\Domain\Common\ValueObjects\Result;
+use InvalidArgumentException;
 
-final class RequiredParamValidator extends Validator
+final class RequiredParamValidator implements Validator
 {
-    public function __construct(
-        public readonly string $fieldURI,
-        public readonly string $source
-    ) {}
-
-    public function validate(mixed $candidate): Result
+    public function check(mixed $candidate): Result
     {
-        if (is_null($candidate)) {
-            return Result::makeFailure(new MissingParamError(
-                $this->fieldURI,
-                $this->source,
-                $candidate
-            ));
-        }
 
-        if ($this->{'isEmpty' . ucfirst(gettype($candidate))}($candidate)) {
-            return Result::makeFailure(new MissingParamError(
-                $this->fieldURI,
-                $this->source,
-                $candidate
-            ));
+        if ($this->{'isEmpty' . ucfirst(gettype($candidate))}($candidate) || is_null($candidate)) {
+            return Result::makeFailure(new InvalidArgumentException('required param.'));
         }
 
         return Result::makeSuccess();

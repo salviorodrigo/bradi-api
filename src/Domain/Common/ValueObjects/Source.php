@@ -21,6 +21,11 @@ class Source
         $this->value = $data;
     }
 
+    public static function from(string $source): self
+    {
+        return new self($source);
+    }
+
     public function validate(string $data): ?Exception
     {
         if (! $this->validateStructure($data)) {

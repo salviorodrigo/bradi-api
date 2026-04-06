@@ -7,23 +7,14 @@ namespace BradiNfeApi\Domain\Invoices\NFe\Validators;
 use BradiNfeApi\Domain\Common\Protocols\Validator;
 use BradiNfeApi\Domain\Common\ValueObjects\Result;
 use BradiNfeApi\Domain\Invoices\Enums\TipoFinalidadeNF;
-use BradiNfeApi\Domain\Invoices\NFe\Exceptions\InvalidIndFinalError;
+use InvalidArgumentException;
 
-final class IsTipoFinalidadeNFValidator extends Validator
+final class IsTipoFinalidadeNFValidator implements Validator
 {
-    public function __construct(
-        public readonly string $fieldURI,
-        public readonly string $source
-    ) {}
-
-    public function validate(mixed $candidate): Result
+    public function check(mixed $candidate): Result
     {
         if (! (bool) TipoFinalidadeNF::tryFrom($candidate)) {
-            return Result::makeFailure(new InvalidIndFinalError(
-                $this->fieldURI,
-                $this->source,
-                $candidate
-            ));
+            return Result::makeFailure(new InvalidArgumentException('it must be 1 to domestic or 0 case else.'));
         }
 
         return Result::makeSuccess();

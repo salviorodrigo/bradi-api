@@ -13,6 +13,7 @@ declare(strict_types=1);
 
 namespace BradiNfeApi\Domain\Invoices\NFe\v4_00\ValueObjects;
 
+use BradiNfeApi\Domain\Common\Services\OptionalValidation;
 use BradiNfeApi\Domain\Common\Services\ValidationService;
 use BradiNfeApi\Domain\Common\Validators\NotNullValidator;
 use BradiNfeApi\Domain\Common\Validators\StringLengthValidator;
@@ -85,14 +86,11 @@ final class SiglaUF extends DFeValueElement
     protected static function validateTagValue(string $xmlString, string $fieldURI = '', string $method = __METHOD__): Result
     {
         $tagValue = self::xmlParser($xmlString)->getTextContent();
-        $validationService = new ValidationService(
-            [
-                NotNullValidator::class => [],
-                StringLengthValidator::class => [2],
-                IsSiglaUnidadeFederativaValidator::class => [],
-            ],
-            $fieldURI, $method, isOptional: true);
+        $validationService = new ValidationService($fieldURI, $method)
+            ->addValidator(new NotNullValidator)
+            ->addValidator(new StringLengthValidator(2))
+            ->addValidator(new IsSiglaUnidadeFederativaValidator);
 
-        return $validationService->verify($tagValue);
+        return (new OptionalValidation($validationService))->verify($tagValue);
     }
 }

@@ -6,25 +6,16 @@ namespace BradiNfeApi\Domain\Invoices\NFe\Validators;
 
 use BradiNfeApi\Domain\Common\Protocols\Validator;
 use BradiNfeApi\Domain\Common\ValueObjects\Result;
-use BradiNfeApi\Domain\Invoices\NFe\Exceptions\InvalidCodigoMercosulError;
+use InvalidArgumentException;
 
-final class IsCodigoMercosulValidator extends Validator
+final class IsCodigoMercosulValidator implements Validator
 {
-    public function __construct(
-        public readonly string $fieldURI,
-        public readonly string $source
-    ) {}
-
-    public function validate(mixed $candidate): Result
+    public function check(mixed $candidate): Result
     {
         if (! (is_numeric($candidate) && strlen(strval($candidate)) === 8) && $candidate !== '00') {
-            return Result::makeFailure(
-                new InvalidCodigoMercosulError(
-                    $this->fieldURI,
-                    $this->source,
-                    $candidate
-                )
-            );
+            return Result::makeFailure(new InvalidArgumentException(
+                'must be "00" or an 8-digit numeric value.'
+            ));
         }
 
         return Result::makeSuccess();

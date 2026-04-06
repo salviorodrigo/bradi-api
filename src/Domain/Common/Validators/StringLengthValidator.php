@@ -4,45 +4,47 @@ declare(strict_types=1);
 
 namespace BradiNfeApi\Domain\Common\Validators;
 
-use BradiNfeApi\Domain\Common\Exceptions\InvalidStringLengthError;
 use BradiNfeApi\Domain\Common\Protocols\Validator;
 use BradiNfeApi\Domain\Common\ValueObjects\Result;
+use LengthException;
 
-final class StringLengthValidator extends Validator
+final class StringLengthValidator implements Validator
 {
-    public readonly array $stringLengths;
+    private array $stringLengths;
 
     public function __construct(
-        public readonly string $fieldURI,
-        public readonly string $source,
-        int ...$stringLength
+        int ...$stringLengths
     ) {
-        $this->stringLengths = (array) $stringLength;
+        foreach ($stringLengths as $stringLength) {
+            $this->stringLengths[] = $stringLength;
+        }
     }
 
-    public function validate(mixed $candidate): Result
+    public function check(mixed $candidate): Result
     {
-        $typeValidator = new IsStringValidator($this->fieldURI, $this->source);
-        $typeValidationResult = $typeValidator->validate($candidate);
+        $typeValidator = new IsStringValidator;
+        $typeValidationResult = $typeValidator->check($candidate);
         if ($typeValidationResult->isFailure()) {
-            return Result::makeFailure(new InvalidStringLengthError(
-                $this->fieldURI,
-                $this->source,
-                $candidate,
-                $this->stringLengths
-            ));
+            return Result::makeFailure(new LengthException($this->buildMessage()));
         }
 
         if (! array_find($this->stringLengths, fn ($stringLength) => strlen($candidate) === $stringLength)) {
-            return Result::makeFailure(new InvalidStringLengthError(
-                $this->fieldURI,
-                $this->source,
-                $candidate,
-                $this->stringLengths
-            ));
+            return Result::makeFailure(new LengthException($this->buildMessage()));
         }
 
         return Result::makeSuccess();
+    }
+
+    private function buildMessage(): string
+    {
+        if (count($this->stringLengths) === 1) {
+            return sprintf('must contain exactly %d characters.', $this->stringLengths[0]);
+        }
+
+        return sprintf(
+            'must contain one of the following lengths: %s.',
+            implode(', ', $this->stringLengths)
+        );
     }
 }
 

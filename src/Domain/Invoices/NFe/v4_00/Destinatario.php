@@ -15,6 +15,7 @@ declare(strict_types=1);
 
 namespace BradiNfeApi\Domain\Invoices\NFe\v4_00;
 
+use BradiNfeApi\Domain\Common\Services\OptionalValidation;
 use BradiNfeApi\Domain\Common\Services\ValidationService;
 use BradiNfeApi\Domain\Common\ValueObjects\Result;
 use BradiNfeApi\Domain\Invoices\NFe\v4_00\ValueObjects\CadastroPF;
@@ -136,11 +137,10 @@ final class Destinatario extends DFeGroupElement
     {
         $children = self::xmlParser($xmlString)->listChildren();
         $childNames = array_keys($children);
-        $validationService = new ValidationService([
-            AtLeastOneTagValidator::class => [['CNPJ', 'CPF', 'idEstrangeiro'], $childNames],
-            RequiredTagValidator::class => [['indIEDest'], $childNames],
-        ], $fieldURI, $method, isOptional: true);
+        $validationService = new ValidationService($fieldURI, $method)
+            ->addValidator(new AtLeastOneTagValidator(['CNPJ', 'CPF', 'idEstrangeiro'], $childNames))
+            ->addValidator(new RequiredTagValidator(['indIEDest'], $childNames));
 
-        return $validationService->verify($xmlString);
+        return (new OptionalValidation($validationService))->verify($xmlString);
     }
 }

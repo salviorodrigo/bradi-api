@@ -4,76 +4,60 @@ declare(strict_types=1);
 
 namespace BradiNfeApi\Domain\Common\ValueObjects;
 
+use Exception;
 use InvalidArgumentException;
-use OverflowException;
 
+/**
+ * {
+ *   "field": "xmlString.nfeProc.NFe",
+ *   "source": "ClassName::methodName"
+ *   "input": "(string) 'abc'",
+ *   "message": [
+ *       "must be numeric.",
+ *       "must be a positive number."
+ *   ]
+ * }
+ **/
 class Detail
 {
     public readonly string $field;
+    public readonly string $input;
+    public readonly string $source;
 
-    public array $errors;
+    /** @var string[] */
+    public array $messages = [];
 
-    public function __construct(string $field, Error $error)
+    /** @param Exception[] $errors */
+    public function __construct(FieldURI $field, Source $source, Input $input, array $errors)
     {
-        $this->field = (new FieldURI($field))->value;
-        $this->errors[] = $error;
-    }
-
-    public function merge(Detail $detail): void
-    {
-        if ($this->field !== $detail->field) {
-            throw new InvalidArgumentException("Cannot merge error details with different fields ('{$this->field}' and '{$detail->field}').");
-        }
-
-        foreach ($detail->errors as $error) {
-            foreach ($this->errors as $existingError) {
-                if ($existingError->source === $error->source && in_array($error->messages, $existingError->messages)) {
-                    throw new OverflowException("Error '{$error->message}' ('{$error->source}') already exists in field '{$this->field}'.");
-                }
+        $this->field = $field->value;
+        $this->source = $source->value;
+        $this->input = $input->value;
+        foreach ($errors as $error) {
+            if (! is_a($error, Exception::class)) {
+                throw new InvalidArgumentException('Errors must be instances of Exception.');
             }
 
-            $errorIndex = $this->getErrorIndexBySource($error->source);
-            $this->errors[$errorIndex]->merge($error);
+            $this->messages[] = $error->getMessage();
         }
     }
 
-    protected function getErrorIndexBySource(string $source): int
+    public function merge(Detail $detail): self
     {
-        foreach ($this->errors as $index => $error) {
-            if ($error->source === $source) {
-                return $index;
-            }
+        if ($this->field !== $detail->field
+            && $this->input !== $detail->input
+            && $this->source !== $detail->source) {
+            throw new InvalidArgumentException('Cannot merge error details with different field, input or source.');
         }
-        throw new InvalidArgumentException("Error with source '{$source}' not found in field '{$this->field}'.");
-    }
 
-    protected function alreadyExistsErrorWithSource(string $source): bool
-    {
-        foreach ($this->errors as $error) {
-            if ($error->source === $source) {
-                return true;
+        foreach ($detail->messages as $message) {
+            if (! in_array($message, $this->messages, true)) {
+                $this->messages[] = $message;
             }
         }
 
-        return false;
+        return $this;
     }
 }
 
 // TODO Make test file.
-
-/**
- * [
- * {
- *   "field": "xmlString.nfeProc.NFe",
- *   "erros": [
- *       {
- *           "source": // "ClassName::methodName"
- *           "input": "(string) 'abc'",
- *           "message": [
- *               "must be a positive number."
- *           ]
- *       }
- *   ]
- * },
- * ]
-**/

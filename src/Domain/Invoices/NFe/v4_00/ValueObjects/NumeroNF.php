@@ -87,14 +87,11 @@ final class NumeroNF extends DFeValueElement
     protected static function validateTagValue(string $xmlString, string $fieldURI = '', string $method = __METHOD__): Result
     {
         $tagValue = self::xmlParser($xmlString)->getTextContent();
-        $validationService = new ValidationService(
-            [
-                NotNullValidator::class => [],
-                IsNumericValidator::class => [],
-                MaxStringLengthValidator::class => [9],
-                MinValueValidator::class => [1],
-            ],
-            $fieldURI, $method);
+        $validationService = new ValidationService($fieldURI, $method)
+            ->addValidator(new NotNullValidator)
+            ->addValidator(new IsNumericValidator)
+            ->addValidator(new MaxStringLengthValidator(9))
+            ->addValidator(new MinValueValidator(1));
 
         return $validationService->verify($tagValue);
     }

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace BradiNfeApi\Domain\Invoices\Protocols;
 
 use BradiNfeApi\Domain\Common\Protocols\ApiError;
+use BradiNfeApi\Domain\Common\Services\OptionalValidation;
 use BradiNfeApi\Domain\Common\Services\ValidationService;
 use BradiNfeApi\Domain\Common\Validators\IsXmlStringValidator;
 use BradiNfeApi\Domain\Common\ValueObjects\Result;
@@ -65,12 +66,12 @@ abstract class DFeElement
      **/
     protected static function validateDataType(mixed $rawData, string $fieldURI, string $method, bool $isOptional = false): Result
     {
-        $typeValidator = new ValidationService(
-            [IsXmlStringValidator::class => []],
-            $fieldURI,
-            $method,
-            $isOptional
-        );
+        $typeValidator = new ValidationService($fieldURI, $method)
+            ->addValidator(new IsXmlStringValidator);
+
+        if ($isOptional) {
+            return (new OptionalValidation($typeValidator))->verify($rawData);
+        }
 
         return $typeValidator->verify($rawData);
     }

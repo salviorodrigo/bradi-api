@@ -7,9 +7,14 @@ namespace BradiNfeApi\Tests\Doubles\Domain\Common\Validators;
 use BradiNfeApi\Domain\Common\Protocols\Validator;
 use BradiNfeApi\Domain\Common\ValueObjects\Result;
 
-class FakeValidator extends Validator
+class FakeValidator implements Validator
 {
-    public function __construct(public readonly string $fieldURI) {}
+    public function __construct() {}
+
+    public function check(mixed $candidate): Result
+    {
+        return $this->validate($candidate);
+    }
 
     public function validate(mixed $candidate): Result
     {

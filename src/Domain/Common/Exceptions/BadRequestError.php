@@ -2,11 +2,12 @@
 
 declare(strict_types=1);
 
-namespace BradiNfeApi\Domain\Common\Protocols;
+namespace BradiNfeApi\Domain\Common\Exceptions;
 
+use BradiNfeApi\Domain\Common\Protocols\ApiError;
 use BradiNfeApi\Domain\Common\ValueObjects\Detail;
 
-abstract class BadRequestError extends ApiError
+final class BadRequestError extends ApiError
 {
     public string $type = 'https://httpstatuses.com/400';
     public string $status = '400';

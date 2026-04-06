@@ -4,46 +4,30 @@ declare(strict_types=1);
 
 namespace BradiNfeApi\Domain\Common\Validators;
 
-use BradiNfeApi\Domain\Common\Exceptions\LeadingSpacesError;
-use BradiNfeApi\Domain\Common\Exceptions\NestedSpacesError;
-use BradiNfeApi\Domain\Common\Exceptions\TrailingSpacesError;
 use BradiNfeApi\Domain\Common\Protocols\Validator;
 use BradiNfeApi\Domain\Common\ValueObjects\Result;
+use UnexpectedValueException;
 
-final class TextFormatValidator extends Validator
+final class TextFormatValidator implements Validator
 {
-    public function __construct(public readonly string $fieldURI, public readonly string $source) {}
-
-    public function validate(mixed $candidate): Result
+    public function check(mixed $candidate): Result
     {
-        $typeValidator = new IsStringValidator($this->fieldURI, $this->source);
-        $typeValidatorResponse = $typeValidator->validate($candidate);
+        $typeValidator = new IsStringValidator;
+        $typeValidatorResponse = $typeValidator->check($candidate);
         if ($typeValidatorResponse->isFailure()) {
             return $typeValidatorResponse;
         }
 
         if ($this->hasLeadingSpaces($candidate)) {
-            return Result::makeFailure(new LeadingSpacesError(
-                $this->fieldURI,
-                $this->source,
-                $candidate
-            ));
+            return Result::makeFailure(new UnexpectedValueException('cannot start with spaces.'));
         }
 
         if ($this->hasTrailingSpaces($candidate)) {
-            return Result::makeFailure(new TrailingSpacesError(
-                $this->fieldURI,
-                $this->source,
-                $candidate
-            ));
+            return Result::makeFailure(new UnexpectedValueException('cannot end with spaces.'));
         }
 
         if ($this->hasNestedSpaces($candidate)) {
-            return Result::makeFailure(new NestedSpacesError(
-                $this->fieldURI,
-                $this->source,
-                $candidate
-            ));
+            return Result::makeFailure(new UnexpectedValueException('cannot contain consecutive spaces.'));
         }
 
         return Result::makeSuccess();

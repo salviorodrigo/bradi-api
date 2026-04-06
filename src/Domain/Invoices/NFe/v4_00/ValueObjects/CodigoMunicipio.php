@@ -17,6 +17,7 @@ declare(strict_types=1);
 
 namespace BradiNfeApi\Domain\Invoices\NFe\v4_00\ValueObjects;
 
+use BradiNfeApi\Domain\Common\Services\OptionalValidation;
 use BradiNfeApi\Domain\Common\Services\ValidationService;
 use BradiNfeApi\Domain\Common\Validators\IsNumericValidator;
 use BradiNfeApi\Domain\Common\Validators\NotNullValidator;
@@ -92,23 +93,24 @@ class CodigoMunicipio extends DFeValueElement
     protected static function validateTagValue(string $xmlString, string $fieldURI, string $method): Result
     {
         $tagValue = static::xmlParser($xmlString)->getTextContent();
-        $validationService = new ValidationService([
-            NotNullValidator::class => [],
-            IsNumericValidator::class => [],
-            StringLengthValidator::class => [7],
-            IsCodigoMunicipioValidator::class => [],
-        ], $fieldURI, $method, isOptional: true);
+        $validationService = new ValidationService($fieldURI, $method)
+            ->addValidator(new NotNullValidator)
+            ->addValidator(new IsNumericValidator)
+            ->addValidator(new StringLengthValidator(7))
+            ->addValidator(new IsCodigoMunicipioValidator);
 
-        $tagValueValidationResponse = $validationService->verify($tagValue);
+        $tagValueValidationResponse = (new OptionalValidation($validationService))->verify($tagValue);
         if (! $tagValueValidationResponse->isSuccess()) {
             return $tagValueValidationResponse;
         }
 
-        $validationUfResponse = (new ValidationService(
-            [IsUnidadeFederativaValidator::class => []],
-            $fieldURI, $method, isOptional: true
-        ))->verify(substr($tagValue, 0, 2));
+        if ($tagValue === '' || $tagValue === '9999999') {
+            return Result::makeSuccess();
+        }
 
+        $validationService->reset();
+        $validationService->addValidator(new IsUnidadeFederativaValidator);
+        $validationUfResponse = $validationService->verify(substr($tagValue, 0, 2));
         if (! $validationUfResponse->isSuccess()) {
             return $validationUfResponse;
         }

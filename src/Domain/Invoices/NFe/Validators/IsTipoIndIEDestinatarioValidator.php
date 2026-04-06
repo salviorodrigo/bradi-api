@@ -7,23 +7,14 @@ namespace BradiNfeApi\Domain\Invoices\NFe\Validators;
 use BradiNfeApi\Domain\Common\Protocols\Validator;
 use BradiNfeApi\Domain\Common\ValueObjects\Result;
 use BradiNfeApi\Domain\Invoices\Enums\TipoIndIEDestinatario;
-use BradiNfeApi\Domain\Invoices\NFe\Exceptions\InvalidTipoIndIEDestinatarioError;
+use InvalidArgumentException;
 
-final class IsTipoIndIEDestinatarioValidator extends Validator
+final class IsTipoIndIEDestinatarioValidator implements Validator
 {
-    public function __construct(
-        public readonly string $fieldURI,
-        public readonly string $source
-    ) {}
-
-    public function validate(mixed $candidate): Result
+    public function check(mixed $candidate): Result
     {
         if (! (bool) TipoIndIEDestinatario::tryFrom($candidate)) {
-            return Result::makeFailure(new InvalidTipoIndIEDestinatarioError(
-                $this->fieldURI,
-                $this->source,
-                $candidate
-            ));
+            return Result::makeFailure(new InvalidArgumentException('must be 1, 2 or 9 according field indIEDest of MOC NFe e NFCe (7.0) - Anexo I.'));
         }
 
         return Result::makeSuccess();

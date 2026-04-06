@@ -105,14 +105,11 @@ final class Serie extends DFeValueElement
     protected static function validateTagValue(string $xmlString, string $fieldURI = '', string $method = __METHOD__): Result
     {
         $tagValue = self::xmlParser($xmlString)->getTextContent();
-        $validationService = new ValidationService(
-            [
-                NotNullValidator::class => [],
-                MaxStringLengthValidator::class => [3],
-                MinValueValidator::class => [0],
-                MaxValueValidator::class => [969],
-            ],
-            $fieldURI, $method);
+        $validationService = new ValidationService($fieldURI, $method)
+            ->addValidator(new NotNullValidator)
+            ->addValidator(new MaxStringLengthValidator(3))
+            ->addValidator(new MinValueValidator(0))
+            ->addValidator(new MaxValueValidator(969));
 
         return $validationService->verify($tagValue);
     }

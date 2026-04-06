@@ -149,9 +149,8 @@ final class EnderecoEmitente extends DFeGroupElement
     {
         $children = self::xmlParser($xmlString)->listChildren();
         $childNames = array_keys($children);
-        $validationService = new ValidationService([
-            RequiredTagValidator::class => [['xLgr', 'nro', 'xBairro', 'cMun', 'xMun', 'UF', 'CEP'], $childNames],
-        ], $fieldURI, $method);
+        $validationService = new ValidationService($fieldURI, $method)
+            ->addValidator(new RequiredTagValidator(['xLgr', 'nro', 'xBairro', 'cMun', 'xMun', 'UF', 'CEP'], $childNames));
 
         return $validationService->verify($xmlString);
     }

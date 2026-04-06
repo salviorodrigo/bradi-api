@@ -7,25 +7,16 @@ namespace BradiNfeApi\Domain\Invoices\Validators;
 use BradiNfeApi\Domain\Common\Protocols\Validator;
 use BradiNfeApi\Domain\Common\Validators\IsNumericValidator;
 use BradiNfeApi\Domain\Common\ValueObjects\Result;
-use BradiNfeApi\Domain\Invoices\Exceptions\InvalidDigitoCodigoMunicipioError;
+use InvalidArgumentException;
 
-final class IsCodigoMunicipioValidator extends Validator
+final class IsCodigoMunicipioValidator implements Validator
 {
-    public function __construct(
-        public readonly string $fieldURI,
-        public readonly string $source
-    ) {}
-
-    public function validate(mixed $candidate): Result
+    public function check(mixed $candidate): Result
     {
-        $typeValidator = new IsNumericValidator($this->fieldURI, $this->source);
-        $typeValidationResult = $typeValidator->validate($candidate);
+        $typeValidator = new IsNumericValidator;
+        $typeValidationResult = $typeValidator->check($candidate);
         if ($typeValidationResult->isFailure() || ! $this->validateCheckDigit($candidate)) {
-            return Result::makeFailure(new InvalidDigitoCodigoMunicipioError(
-                $this->fieldURI,
-                $this->source,
-                $candidate
-            ));
+            return Result::makeFailure(new InvalidArgumentException('city code is invalid.'));
         }
 
         return Result::makeSuccess();

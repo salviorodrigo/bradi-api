@@ -23,6 +23,7 @@ declare(strict_types=1);
 
 namespace BradiNfeApi\Domain\Invoices\NFe\v4_00\ValueObjects;
 
+use BradiNfeApi\Domain\Common\Services\OptionalValidation;
 use BradiNfeApi\Domain\Common\Services\ValidationService;
 use BradiNfeApi\Domain\Common\Validators\IsNumericValidator;
 use BradiNfeApi\Domain\Common\Validators\NotNullValidator;
@@ -97,13 +98,12 @@ final class IndicadorIEDestinatario extends DFeValueElement
     protected static function validateTagValue(string $xmlString, string $fieldURI = '', string $method = __METHOD__): Result
     {
         $tagValue = self::xmlParser($xmlString)->getTextContent();
-        $validationService = new ValidationService([
-            NotNullValidator::class => [],
-            IsNumericValidator::class => [],
-            StringLengthValidator::class => [1],
-            IsTipoIndIEDestinatarioValidator::class => [],
-        ], $fieldURI, $method, isOptional: true);
+        $validationService = new ValidationService($fieldURI, $method)
+            ->addValidator(new NotNullValidator)
+            ->addValidator(new IsNumericValidator)
+            ->addValidator(new StringLengthValidator(1))
+            ->addValidator(new IsTipoIndIEDestinatarioValidator);
 
-        return $validationService->verify($tagValue);
+        return (new OptionalValidation($validationService))->verify($tagValue);
     }
 }

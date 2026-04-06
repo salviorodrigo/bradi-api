@@ -92,12 +92,11 @@ final class FinalidadeNF extends DFeValueElement
     protected static function validateTagValue(string $xmlString, string $fieldURI = '', string $method = __METHOD__): Result
     {
         $tagValue = self::xmlParser($xmlString)->getTextContent();
-        $validationService = new ValidationService([
-            NotNullValidator::class => [],
-            IsNumericValidator::class => [],
-            StringLengthValidator::class => [1],
-            IsFinalidadeEmissaoValidator::class => [],
-        ], $fieldURI, $method);
+        $validationService = new ValidationService($fieldURI, $method)
+            ->addValidator(new NotNullValidator)
+            ->addValidator(new IsNumericValidator)
+            ->addValidator(new StringLengthValidator(1))
+            ->addValidator(new IsFinalidadeEmissaoValidator);
 
         return $validationService->verify($tagValue);
     }

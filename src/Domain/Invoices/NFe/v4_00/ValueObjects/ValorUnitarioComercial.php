@@ -92,16 +92,11 @@ final class ValorUnitarioComercial extends DFeValueElement
     protected static function validateTagValue(string $xmlString, string $fieldURI = '', string $method = __METHOD__): Result
     {
         $tagValue = self::xmlParser($xmlString)->getTextContent();
-        $validationService = new ValidationService(
-            [
-                NotNullValidator::class => [],
-                IsDecimalValidator::class => [11, 10],
-                MaxValueValidator::class => [99999999999.9999999999],
-                MinValueValidator::class => [0.0000000001],
-            ],
-            $fieldURI,
-            $method
-        );
+        $validationService = new ValidationService($fieldURI, $method)
+            ->addValidator(new NotNullValidator)
+            ->addValidator(new IsDecimalValidator(11, 10))
+            ->addValidator(new MaxValueValidator(99999999999.9999999999))
+            ->addValidator(new MinValueValidator(0.0000000001));
 
         return $validationService->verify($tagValue);
     }

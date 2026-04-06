@@ -5,11 +5,10 @@ declare(strict_types=1);
 namespace BradiNfeApi\Domain\Common\Protocols;
 
 use BradiNfeApi\Domain\Common\ValueObjects\Result;
+use Exception;
 
-abstract class Validator
+interface Validator
 {
-    public readonly string $fieldURI;
-    public readonly string $source;
-
-    abstract public function validate(mixed $candidate): Result;
+    /** @return Result<null|Exception> */
+    public function check(mixed $candidate): Result;
 }

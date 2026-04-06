@@ -6,26 +6,22 @@ namespace BradiNfeApi\Domain\Invoices\Validators;
 
 use BradiNfeApi\Domain\Common\Protocols\Validator;
 use BradiNfeApi\Domain\Common\ValueObjects\Result;
-use BradiNfeApi\Domain\Invoices\Exceptions\NotFoundAtLeastOneTagError;
+use InvalidArgumentException;
 
-final class AtLeastOneTagValidator extends Validator
+final class AtLeastOneTagValidator implements Validator
 {
     public function __construct(
-        public readonly string $fieldURI,
-        public readonly string $source,
         public readonly array $requiredTagNames,
         public readonly array $providedTagNames
     ) {}
 
-    public function validate(mixed $candidate): Result
+    public function check(mixed $candidate): Result
     {
         if (array_intersect($this->requiredTagNames, $this->providedTagNames) === []) {
-            return Result::makeFailure(new NotFoundAtLeastOneTagError(
-                $this->fieldURI,
-                $this->source,
-                $candidate,
-                $this->requiredTagNames
-            ));
+            return Result::makeFailure(new InvalidArgumentException(sprintf(
+                'At least one of the following tags must be informed: %s.',
+                implode(', ', $this->requiredTagNames)
+            )));
         }
 
         return Result::makeSuccess();

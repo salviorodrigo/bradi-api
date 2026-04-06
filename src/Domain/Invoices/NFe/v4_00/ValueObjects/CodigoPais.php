@@ -15,6 +15,7 @@ declare(strict_types=1);
 
 namespace BradiNfeApi\Domain\Invoices\NFe\v4_00\ValueObjects;
 
+use BradiNfeApi\Domain\Common\Services\OptionalValidation;
 use BradiNfeApi\Domain\Common\Services\ValidationService;
 use BradiNfeApi\Domain\Common\Validators\IsNumericValidator;
 use BradiNfeApi\Domain\Common\Validators\StringLengthValidator;
@@ -87,11 +88,10 @@ final class CodigoPais extends DFeValueElement
     protected static function validateTagValue(string $xmlString, string $fieldURI = '', string $method = __METHOD__): Result
     {
         $tagValue = self::xmlParser($xmlString)->getTextContent();
-        $validationService = new ValidationService([
-            IsNumericValidator::class => [],
-            StringLengthValidator::class => [4],
-        ], $fieldURI, $method, isOptional: true);
+        $validationService = new ValidationService($fieldURI, $method)
+            ->addValidator(new IsNumericValidator)
+            ->addValidator(new StringLengthValidator(4));
 
-        return $validationService->verify($tagValue);
+        return (new OptionalValidation($validationService))->verify($tagValue);
     }
 }

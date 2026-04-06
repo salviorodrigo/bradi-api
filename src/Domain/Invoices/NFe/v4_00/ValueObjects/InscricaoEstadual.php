@@ -15,6 +15,7 @@ declare(strict_types=1);
 
 namespace BradiNfeApi\Domain\Invoices\NFe\v4_00\ValueObjects;
 
+use BradiNfeApi\Domain\Common\Services\OptionalValidation;
 use BradiNfeApi\Domain\Common\Services\ValidationService;
 use BradiNfeApi\Domain\Common\Validators\IsNumericValidator;
 use BradiNfeApi\Domain\Common\Validators\MaxStringLengthValidator;
@@ -88,12 +89,11 @@ final class InscricaoEstadual extends DFeValueElement
     protected static function validateTagValue(string $xmlString, string $fieldURI = '', string $method = __METHOD__): Result
     {
         $tagValue = self::xmlParser($xmlString)->getTextContent();
-        $validationService = new ValidationService([
-            IsNumericValidator::class => ['allowLeadingZeros' => true],
-            MaxStringLengthValidator::class => [14],
-            MinStringLengthValidator::class => [2],
-        ], $fieldURI, $method, true);
+        $validationService = new ValidationService($fieldURI, $method)
+            ->addValidator(new IsNumericValidator(allowLeadingZeros: true))
+            ->addValidator(new MaxStringLengthValidator(maxStringLength: 14))
+            ->addValidator(new MinStringLengthValidator(minStringLength: 2));
 
-        return $validationService->verify($tagValue);
+        return (new OptionalValidation($validationService))->verify($tagValue);
     }
 }

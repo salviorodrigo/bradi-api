@@ -6,27 +6,23 @@ namespace BradiNfeApi\Domain\Invoices\Validators;
 
 use BradiNfeApi\Domain\Common\Protocols\Validator;
 use BradiNfeApi\Domain\Common\ValueObjects\Result;
-use BradiNfeApi\Domain\Invoices\Exceptions\NotFoundTagError;
+use InvalidArgumentException;
 
-final class RequiredTagValidator extends Validator
+final class RequiredTagValidator implements Validator
 {
     public function __construct(
-        public readonly string $fieldURI,
-        public readonly string $source,
         public readonly array $requiredTagsName,
         public readonly array $providedTagsName
     ) {}
 
-    public function validate(mixed $candidate): Result
+    public function check(mixed $candidate): Result
     {
         foreach ($this->requiredTagsName as $requiredTag) {
             if (! in_array($requiredTag, $this->providedTagsName)) {
-                return Result::makeFailure(new NotFoundTagError(
-                    $this->fieldURI,
-                    $this->source,
-                    $candidate,
+                return Result::makeFailure(new InvalidArgumentException(sprintf(
+                    'tag "%s" must be informed.',
                     $requiredTag
-                ));
+                )));
             }
         }
 
