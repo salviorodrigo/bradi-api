@@ -11,7 +11,7 @@ require __DIR__ . '/../vendor/autoload.php';
 |
 */
 
-// pest()->extend(Tests\TestCase::class)->in('Feature');
+pest()->extend(\BradiNfeApi\Tests\TestCase::class)->in('Feature', 'Unit');
 
 /*
 |--------------------------------------------------------------------------
@@ -22,13 +22,13 @@ require __DIR__ . '/../vendor/autoload.php';
 | "expect()" function gives you access to a set of "expectations" methods that you can use
 | to assert different things. Of course, you may extend the Expectation API at any time.
 |
-*/
-
-expect()->extend('toBeOne', function () {
-    return $this->toBe(1);
-});
-
-/*
+|
+|
+|expect()->extend('toBeOne', function () {
+|    return $this->toBe(1);
+|});
+|
+|
 |--------------------------------------------------------------------------
 | Functions
 |--------------------------------------------------------------------------
