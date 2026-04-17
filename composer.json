@@ -15,6 +15,7 @@
     },
     "scripts": {
         "lint": "./vendor/bin/duster lint",
+        "lint:dirty": "./vendor/bin/duster lint --dirty",
         "lint:fix": "./vendor/bin/duster fix",
         "test": "./vendor/bin/pest",
         "test:ci": "./vendor/bin/pest --parallel",

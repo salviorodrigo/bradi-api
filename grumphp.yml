@@ -7,7 +7,7 @@ grumphp:
     tasks:
         shell:
             scripts:
-                - ['php', './vendor/bin/duster', 'lint', '--using=tlint,phpcsfixer,pint']
+                - ['-c', 'composer', 'lint:dirty']
             triggered_by: ['php']
 
         pest:
