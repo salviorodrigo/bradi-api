@@ -16,7 +16,7 @@
 
 	// Use 'postCreateCommand' to run commands after the container is created.
 	// "postCreateCommand": "sudo chmod a+x \"$(pwd)\" && sudo rm -rf /var/www/html && sudo ln -s \"$(pwd)\" /var/www/html"
-	"postCreateCommand": "sudo chown -R $(whoami) /workspaces/bradi-nfe-api"
+	"postCreateCommand": "sudo chown -R $(whoami) /workspaces/bradi-nfe-api && sudo sed -i 's/xdebug.start_with_request = yes/xdebug.start_with_request = trigger/' /usr/local/etc/php/conf.d/xdebug.ini"
 	// Uncomment to connect as root instead. More info: https://aka.ms/dev-containers-non-root.
 	// "remoteUser": "root"
 }
