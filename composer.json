@@ -17,10 +17,10 @@
         "lint": "./vendor/bin/duster lint",
         "lint:dirty": "./vendor/bin/duster lint --dirty",
         "lint:fix": "./vendor/bin/duster fix",
-        "test": "./vendor/bin/pest",
-        "test:ci": "./vendor/bin/pest --parallel",
+        "test": "XDEBUG_MODE=off ./vendor/bin/pest",
+        "test:ci": "XDEBUG_MODE=off ./vendor/bin/pest --parallel",
         "test:debug": "XDEBUG_MODE=debug ./vendor/bin/pest",
-        "test:dirty": "./vendor/bin/pest --dirty"
+        "test:dirty": "XDEBUG_MODE=off ./vendor/bin/pest --dirty"
     },
     "authors": [
         {
