@@ -61,38 +61,29 @@ class Element
     {
         return $this->children->$name;
     }
-}
 
-/** To string method
- *
- *       $xmlString = '';
- *       if ($tagValue == '' && empty($elements) && empty($attributes)) {
- *           return $xmlString;
- *       }
- *
- *       if ($isAutoCloseTag) {
- *           $xmlString .= '<' . static::$tagName;
- *           foreach ($attributes as $attributeName => $attributeValue) {
- *               $xmlString .= ' ' . $attributeName . '="' . $attributeValue . '"';
- *           }
- *
- *           $xmlString .= '/>';
- *
- *           return $xmlString;
- *       }
- *
- *       $xmlString .= '<' . static::$tagName;
- *       foreach ($attributes as $attributeName => $attributeValue) {
- *           $xmlString .= ' ' . $attributeName . '="' . $attributeValue . '"';
- *       }
- *
- *       $xmlString .= '>';
- *       $xmlString .= $tagValue;
- *       foreach ($elements as $element) {
- *           $xmlString .= $element->xmlString;
- *       }
- *
- *       $xmlString .= '</' . static::$tagName . '>';
- *       return $xmlString;
- *   }
- **/
+    public function __toString(): string
+    {
+        $hasValue = $this->value !== null && $this->value !== '';
+        $hasChildren = ! empty($this->children->records);
+
+        $xmlString = '<' . $this->name;
+        foreach ($this->attributes->records as $attribute) {
+            $xmlString .= ' ' . (string) $attribute;
+        }
+
+        if (! $hasValue && ! $hasChildren) {
+            return $xmlString . '/>';
+        }
+
+        $xmlString .= '>';
+        $xmlString .= htmlspecialchars($this->value ?? '', ENT_XML1, 'UTF-8');
+        foreach ($this->children->records as $child) {
+            $xmlString .= (string) $child;
+        }
+
+        $xmlString .= '</' . $this->name . '>';
+
+        return $xmlString;
+    }
+}
