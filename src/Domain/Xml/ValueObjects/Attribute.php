@@ -10,4 +10,9 @@ class Attribute
         public readonly string $name,
         public readonly string $value
     ) {}
+
+    public function __toString(): string
+    {
+        return $this->name . '="' . htmlspecialchars($this->value, ENT_QUOTES | ENT_XML1, 'UTF-8') . '"';
+    }
 }
