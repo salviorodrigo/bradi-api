@@ -1,25 +1,11 @@
-// For format details, see https://aka.ms/devcontainer.json. For config options, see the
-// README at: https://github.com/devcontainers/templates/tree/main/src/php
 {
 	"name": "PHP",
-	// Or use a Dockerfile or Docker Compose file. More info: https://containers.dev/guide/dockerfile
 	"image": "mcr.microsoft.com/devcontainers/php:3-8.5-bookworm",
-
-	// Features to add to the dev container. More info: https://containers.dev/features.
-	// "features": {},
-
-	// Configure tool-specific properties.
-	// "customizations": {},
-
-	// Use 'forwardPorts' to make a list of ports inside the container available locally.
 	"forwardPorts": [8080],
-
 	"mounts": [
-		"source=bradi-nfe-api-vendor,target=/workspaces/bradi-nfe-api/vendor,type=volume"
+    	"source=/home/salviorodrigo/projects/source.git,target=/home/salviorodrigo/projects/source.git,type=bind"
 	],
-
-	// Use 'postCreateCommand' to run commands after the container is created.
-	"postCreateCommand": "sudo chown -R $(whoami) /workspaces/bradi-nfe-api && sudo sed -i 's/xdebug.mode = debug/xdebug.mode = off/' /usr/local/etc/php/conf.d/xdebug.ini && sudo sed -i 's/xdebug.start_with_request = yes/xdebug.start_with_request = trigger/' /usr/local/etc/php/conf.d/xdebug.ini && composer install --no-interaction"
-	// Uncomment to connect as root instead. More info: https://aka.ms/dev-containers-non-root.
-	// "remoteUser": "root"
+	"postCreateCommand": 
+		"sudo chown -R $(whoami) . && sudo sed -i \"s/xdebug.mode = debug/xdebug.mode = off/\" /usr/local/etc/php/conf.d/xdebug.ini && sudo sed -i \"s/xdebug.start_with_request = yes/xdebug.start_with_request = trigger/\" /usr/local/etc/php/conf.d/xdebug.ini && composer install --no-interaction"
+	
 }
