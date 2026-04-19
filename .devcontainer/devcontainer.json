@@ -1,10 +1,21 @@
 {
+	"$schema": "https://json-schema.org/draft/2019-09/schema",
 	"name": "PHP",
 	"image": "mcr.microsoft.com/devcontainers/php:3-8.5-bookworm",
 	"forwardPorts": [8080],
 	"mounts": [
     	"source=/home/salviorodrigo/projects/source.git,target=/home/salviorodrigo/projects/source.git,type=bind"
 	],
+	"customizations": {
+		"vscode": {
+		"extensions": [
+			"devsense.composer-php-vscode",
+			"xdebug.php-debug",
+			"bmewburn.vscode-intelephense-client",
+			"mehedidracula.php-namespace-resolver"
+			]
+		}
+	},
 	"postCreateCommand": 
 		"sudo chown -R $(whoami) . && sudo sed -i \"s/xdebug.mode = debug/xdebug.mode = off/\" /usr/local/etc/php/conf.d/xdebug.ini && sudo sed -i \"s/xdebug.start_with_request = yes/xdebug.start_with_request = trigger/\" /usr/local/etc/php/conf.d/xdebug.ini && composer install --no-interaction"
 	
