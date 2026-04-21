@@ -12,7 +12,7 @@ use BradiNfeApi\Domain\Common\ValueObjects\Result;
 use BradiNfeApi\Domain\Common\ValueObjects\Source;
 use UnexpectedValueException;
 
-abstract class DFeValueElement extends DFeElement
+trait ValidatesDFeValueElement
 {
     protected static function validateTagElements(string $xmlString, string $fieldURI, string $method): Result
     {
@@ -48,5 +48,3 @@ abstract class DFeValueElement extends DFeElement
         return Result::makeSuccess();
     }
 }
-
-// TODO Make test file.

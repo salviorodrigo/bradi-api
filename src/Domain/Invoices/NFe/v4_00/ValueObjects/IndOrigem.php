@@ -29,11 +29,13 @@ use BradiNfeApi\Domain\Common\Validators\StringLengthValidator;
 use BradiNfeApi\Domain\Common\ValueObjects\Result;
 use BradiNfeApi\Domain\Invoices\NFe\Validators\IsTipoOrigemMercadoriaValidator;
 use BradiNfeApi\Domain\Invoices\Protocols\DFeElement;
-use BradiNfeApi\Domain\Invoices\Protocols\DFeValueElement;
+use BradiNfeApi\Domain\Invoices\Protocols\ValidatesDFeValueElement;
 use InvalidArgumentException;
 
-final class IndOrigem extends DFeValueElement
+final class IndOrigem extends DFeElement
 {
+    use ValidatesDFeValueElement;
+
     public static string $tagName = 'orig';
 
     private function __construct(public readonly string $xmlString)

@@ -24,11 +24,13 @@ use BradiNfeApi\Domain\Common\Validators\StringLengthValidator;
 use BradiNfeApi\Domain\Common\ValueObjects\Result;
 use BradiNfeApi\Domain\Invoices\NFe\Validators\IsFinalidadeEmissaoValidator;
 use BradiNfeApi\Domain\Invoices\Protocols\DFeElement;
-use BradiNfeApi\Domain\Invoices\Protocols\DFeValueElement;
+use BradiNfeApi\Domain\Invoices\Protocols\ValidatesDFeValueElement;
 use InvalidArgumentException;
 
-final class FinalidadeNF extends DFeValueElement
+final class FinalidadeNF extends DFeElement
 {
+    use ValidatesDFeValueElement;
+
     public static string $tagName = 'finNFe';
 
     private function __construct(public readonly string $xmlString)

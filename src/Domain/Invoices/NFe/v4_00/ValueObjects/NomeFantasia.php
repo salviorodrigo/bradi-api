@@ -20,11 +20,13 @@ use BradiNfeApi\Domain\Common\Validators\MaxStringLengthValidator;
 use BradiNfeApi\Domain\Common\Validators\TextFormatValidator;
 use BradiNfeApi\Domain\Common\ValueObjects\Result;
 use BradiNfeApi\Domain\Invoices\Protocols\DFeElement;
-use BradiNfeApi\Domain\Invoices\Protocols\DFeValueElement;
+use BradiNfeApi\Domain\Invoices\Protocols\ValidatesDFeValueElement;
 use InvalidArgumentException;
 
-final class NomeFantasia extends DFeValueElement
+final class NomeFantasia extends DFeElement
 {
+    use ValidatesDFeValueElement;
+
     public static string $tagName = 'xFant';
 
     private function __construct(public readonly string $xmlString)

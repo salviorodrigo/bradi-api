@@ -20,11 +20,13 @@ use BradiNfeApi\Domain\Common\Validators\NotNullValidator;
 use BradiNfeApi\Domain\Common\Validators\StringLengthValidator;
 use BradiNfeApi\Domain\Common\ValueObjects\Result;
 use BradiNfeApi\Domain\Invoices\Protocols\DFeElement;
-use BradiNfeApi\Domain\Invoices\Protocols\DFeValueElement;
+use BradiNfeApi\Domain\Invoices\Protocols\ValidatesDFeValueElement;
 use InvalidArgumentException;
 
-final class CodigoFiscal extends DFeValueElement
+final class CodigoFiscal extends DFeElement
 {
+    use ValidatesDFeValueElement;
+
     public static string $tagName = 'CFOP';
 
     private function __construct(public readonly string $xmlString)

@@ -21,11 +21,13 @@ use BradiNfeApi\Domain\Common\Validators\NotNullValidator;
 use BradiNfeApi\Domain\Common\Validators\StringLengthValidator;
 use BradiNfeApi\Domain\Common\ValueObjects\Result;
 use BradiNfeApi\Domain\Invoices\Protocols\DFeElement;
-use BradiNfeApi\Domain\Invoices\Protocols\DFeValueElement;
+use BradiNfeApi\Domain\Invoices\Protocols\ValidatesDFeValueElement;
 use InvalidArgumentException;
 
-final class CodigoPostal extends DFeValueElement
+final class CodigoPostal extends DFeElement
 {
+    use ValidatesDFeValueElement;
+
     public static string $tagName = 'CEP';
 
     private function __construct(public readonly string $xmlString)

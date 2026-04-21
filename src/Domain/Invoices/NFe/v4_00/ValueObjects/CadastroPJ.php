@@ -18,11 +18,13 @@ use BradiNfeApi\Domain\Common\Services\ValidationService;
 use BradiNfeApi\Domain\Common\Validators\IsCNPJValidator;
 use BradiNfeApi\Domain\Common\ValueObjects\Result;
 use BradiNfeApi\Domain\Invoices\Protocols\DFeElement;
-use BradiNfeApi\Domain\Invoices\Protocols\DFeValueElement;
+use BradiNfeApi\Domain\Invoices\Protocols\ValidatesDFeValueElement;
 use InvalidArgumentException;
 
-final class CadastroPJ extends DFeValueElement
+final class CadastroPJ extends DFeElement
 {
+    use ValidatesDFeValueElement;
+
     public static string $tagName = 'CNPJ';
 
     private function __construct(public readonly string $xmlString)

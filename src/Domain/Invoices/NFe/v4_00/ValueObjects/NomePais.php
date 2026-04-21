@@ -22,11 +22,13 @@ use BradiNfeApi\Domain\Common\Validators\MinStringLengthValidator;
 use BradiNfeApi\Domain\Common\Validators\TextFormatValidator;
 use BradiNfeApi\Domain\Common\ValueObjects\Result;
 use BradiNfeApi\Domain\Invoices\Protocols\DFeElement;
-use BradiNfeApi\Domain\Invoices\Protocols\DFeValueElement;
+use BradiNfeApi\Domain\Invoices\Protocols\ValidatesDFeValueElement;
 use InvalidArgumentException;
 
-final class NomePais extends DFeValueElement
+final class NomePais extends DFeElement
 {
+    use ValidatesDFeValueElement;
+
     public static string $tagName = 'xPais';
 
     private function __construct(public readonly string $xmlString)

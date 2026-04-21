@@ -24,11 +24,13 @@ use BradiNfeApi\Domain\Common\Validators\StringLengthValidator;
 use BradiNfeApi\Domain\Common\ValueObjects\Result;
 use BradiNfeApi\Domain\Invoices\NFe\Validators\IsTipoModalidadeBCValidator;
 use BradiNfeApi\Domain\Invoices\Protocols\DFeElement;
-use BradiNfeApi\Domain\Invoices\Protocols\DFeValueElement;
+use BradiNfeApi\Domain\Invoices\Protocols\ValidatesDFeValueElement;
 use InvalidArgumentException;
 
-final class ModalidadeBC extends DFeValueElement
+final class ModalidadeBC extends DFeElement
 {
+    use ValidatesDFeValueElement;
+
     public static string $tagName = 'modBC';
 
     private function __construct(public readonly string $xmlString)

@@ -22,12 +22,14 @@ use BradiNfeApi\Domain\Common\Validators\NotNullValidator;
 use BradiNfeApi\Domain\Common\Validators\StringLengthValidator;
 use BradiNfeApi\Domain\Common\ValueObjects\Result;
 use BradiNfeApi\Domain\Invoices\Protocols\DFeElement;
-use BradiNfeApi\Domain\Invoices\Protocols\DFeValueElement;
+use BradiNfeApi\Domain\Invoices\Protocols\ValidatesDFeValueElement;
 use BradiNfeApi\Domain\Invoices\Validators\IsUnidadeFederativaValidator;
 use InvalidArgumentException;
 
-final class CodigoUF extends DFeValueElement
+final class CodigoUF extends DFeElement
 {
+    use ValidatesDFeValueElement;
+
     public static string $tagName = 'cUF';
 
     private function __construct(public readonly string $xmlString)

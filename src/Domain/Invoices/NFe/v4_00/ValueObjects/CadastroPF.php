@@ -18,11 +18,13 @@ use BradiNfeApi\Domain\Common\Services\ValidationService;
 use BradiNfeApi\Domain\Common\Validators\IsCPFValidator;
 use BradiNfeApi\Domain\Common\ValueObjects\Result;
 use BradiNfeApi\Domain\Invoices\Protocols\DFeElement;
-use BradiNfeApi\Domain\Invoices\Protocols\DFeValueElement;
+use BradiNfeApi\Domain\Invoices\Protocols\ValidatesDFeValueElement;
 use InvalidArgumentException;
 
-final class CadastroPF extends DFeValueElement
+final class CadastroPF extends DFeElement
 {
+    use ValidatesDFeValueElement;
+
     public static string $tagName = 'CPF';
 
     private function __construct(public readonly string $xmlString)

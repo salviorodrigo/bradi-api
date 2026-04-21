@@ -19,12 +19,14 @@ use BradiNfeApi\Domain\Common\Validators\NotNullValidator;
 use BradiNfeApi\Domain\Common\Validators\StringLengthValidator;
 use BradiNfeApi\Domain\Common\ValueObjects\Result;
 use BradiNfeApi\Domain\Invoices\Protocols\DFeElement;
-use BradiNfeApi\Domain\Invoices\Protocols\DFeValueElement;
+use BradiNfeApi\Domain\Invoices\Protocols\ValidatesDFeValueElement;
 use BradiNfeApi\Domain\Invoices\Validators\FormatDataHoraTZDValidator;
 use InvalidArgumentException;
 
-class DataHoraEmissao extends DFeValueElement
+class DataHoraEmissao extends DFeElement
 {
+    use ValidatesDFeValueElement;
+
     public static string $tagName = 'dhEmi';
 
     private function __construct(public readonly string $xmlString)

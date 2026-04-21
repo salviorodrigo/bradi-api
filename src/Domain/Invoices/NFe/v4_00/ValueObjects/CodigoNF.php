@@ -20,11 +20,13 @@ use BradiNfeApi\Domain\Common\Services\ValidationService;
 use BradiNfeApi\Domain\Common\ValueObjects\Result;
 use BradiNfeApi\Domain\Invoices\NFe\Validators\IsCodigoNFValidator;
 use BradiNfeApi\Domain\Invoices\Protocols\DFeElement;
-use BradiNfeApi\Domain\Invoices\Protocols\DFeValueElement;
+use BradiNfeApi\Domain\Invoices\Protocols\ValidatesDFeValueElement;
 use InvalidArgumentException;
 
-final class CodigoNF extends DFeValueElement
+final class CodigoNF extends DFeElement
 {
+    use ValidatesDFeValueElement;
+
     public static string $tagName = 'cNF';
 
     private function __construct(public readonly string $xmlString)

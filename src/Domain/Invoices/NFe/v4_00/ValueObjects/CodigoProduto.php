@@ -24,11 +24,13 @@ use BradiNfeApi\Domain\Common\Validators\NotNullValidator;
 use BradiNfeApi\Domain\Common\Validators\TextFormatValidator;
 use BradiNfeApi\Domain\Common\ValueObjects\Result;
 use BradiNfeApi\Domain\Invoices\Protocols\DFeElement;
-use BradiNfeApi\Domain\Invoices\Protocols\DFeValueElement;
+use BradiNfeApi\Domain\Invoices\Protocols\ValidatesDFeValueElement;
 use InvalidArgumentException;
 
-final class CodigoProduto extends DFeValueElement
+final class CodigoProduto extends DFeElement
 {
+    use ValidatesDFeValueElement;
+
     public static string $tagName = 'cProd';
 
     private function __construct(public readonly string $xmlString)

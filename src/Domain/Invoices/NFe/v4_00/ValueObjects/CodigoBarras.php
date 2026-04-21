@@ -24,11 +24,13 @@ use BradiNfeApi\Domain\Common\Validators\StringLengthValidator;
 use BradiNfeApi\Domain\Common\Validators\TextFormatValidator;
 use BradiNfeApi\Domain\Common\ValueObjects\Result;
 use BradiNfeApi\Domain\Invoices\Protocols\DFeElement;
-use BradiNfeApi\Domain\Invoices\Protocols\DFeValueElement;
+use BradiNfeApi\Domain\Invoices\Protocols\ValidatesDFeValueElement;
 use InvalidArgumentException;
 
-final class CodigoBarras extends DFeValueElement
+final class CodigoBarras extends DFeElement
 {
+    use ValidatesDFeValueElement;
+
     public static string $tagName = 'cEAN';
 
     private function __construct(public readonly string $xmlString)

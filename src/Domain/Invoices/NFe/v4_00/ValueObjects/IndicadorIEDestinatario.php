@@ -31,11 +31,13 @@ use BradiNfeApi\Domain\Common\Validators\StringLengthValidator;
 use BradiNfeApi\Domain\Common\ValueObjects\Result;
 use BradiNfeApi\Domain\Invoices\NFe\Validators\IsTipoIndIEDestinatarioValidator;
 use BradiNfeApi\Domain\Invoices\Protocols\DFeElement;
-use BradiNfeApi\Domain\Invoices\Protocols\DFeValueElement;
+use BradiNfeApi\Domain\Invoices\Protocols\ValidatesDFeValueElement;
 use InvalidArgumentException;
 
-final class IndicadorIEDestinatario extends DFeValueElement
+final class IndicadorIEDestinatario extends DFeElement
 {
+    use ValidatesDFeValueElement;
+
     public static string $tagName = 'indIEDest';
 
     private function __construct(public readonly string $xmlString)
