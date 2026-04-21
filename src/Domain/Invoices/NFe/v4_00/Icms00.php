@@ -25,12 +25,14 @@ use BradiNfeApi\Domain\Invoices\NFe\v4_00\ValueObjects\ModalidadeBC;
 use BradiNfeApi\Domain\Invoices\NFe\v4_00\ValueObjects\ValorBC;
 use BradiNfeApi\Domain\Invoices\NFe\v4_00\ValueObjects\ValorICMS;
 use BradiNfeApi\Domain\Invoices\Protocols\DFeElement;
-use BradiNfeApi\Domain\Invoices\Protocols\DFeGroupElement;
+use BradiNfeApi\Domain\Invoices\Protocols\ValidatesDFeGroupElement;
 use BradiNfeApi\Domain\Invoices\Validators\RequiredTagValidator;
 use InvalidArgumentException;
 
-final class Icms00 extends DFeGroupElement
+final class Icms00 extends DFeElement
 {
+    use ValidatesDFeGroupElement;
+
     public static string $tagName = 'ICMS00';
 
     private function __construct(

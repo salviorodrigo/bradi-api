@@ -29,12 +29,14 @@ use BradiNfeApi\Domain\Invoices\NFe\v4_00\ValueObjects\NumeroEndereco;
 use BradiNfeApi\Domain\Invoices\NFe\v4_00\ValueObjects\SiglaUF;
 use BradiNfeApi\Domain\Invoices\NFe\v4_00\ValueObjects\Telefone;
 use BradiNfeApi\Domain\Invoices\Protocols\DFeElement;
-use BradiNfeApi\Domain\Invoices\Protocols\DFeGroupElement;
+use BradiNfeApi\Domain\Invoices\Protocols\ValidatesDFeGroupElement;
 use BradiNfeApi\Domain\Invoices\Validators\RequiredTagValidator;
 use InvalidArgumentException;
 
-final class EnderecoDestinatario extends DFeGroupElement
+final class EnderecoDestinatario extends DFeElement
 {
+    use ValidatesDFeGroupElement;
+
     public static string $tagName = 'enderDest';
 
     private function __construct(

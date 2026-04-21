@@ -23,13 +23,15 @@ use BradiNfeApi\Domain\Invoices\NFe\v4_00\ValueObjects\InscricaoEstadual;
 use BradiNfeApi\Domain\Invoices\NFe\v4_00\ValueObjects\Nome;
 use BradiNfeApi\Domain\Invoices\NFe\v4_00\ValueObjects\NomeFantasia;
 use BradiNfeApi\Domain\Invoices\Protocols\DFeElement;
-use BradiNfeApi\Domain\Invoices\Protocols\DFeGroupElement;
+use BradiNfeApi\Domain\Invoices\Protocols\ValidatesDFeGroupElement;
 use BradiNfeApi\Domain\Invoices\Validators\AtLeastOneTagValidator;
 use BradiNfeApi\Domain\Invoices\Validators\RequiredTagValidator;
 use InvalidArgumentException;
 
-final class Emitente extends DFeGroupElement
+final class Emitente extends DFeElement
 {
+    use ValidatesDFeGroupElement;
+
     public static string $tagName = 'emit';
 
     private function __construct(
