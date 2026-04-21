@@ -19,7 +19,7 @@ use BradiNfeApi\Domain\Common\Validators\NotNullValidator;
 use BradiNfeApi\Domain\Common\Validators\StringLengthValidator;
 use BradiNfeApi\Domain\Common\ValueObjects\Result;
 use BradiNfeApi\Domain\Invoices\Protocols\DFeElement;
-use BradiNfeApi\Domain\Invoices\Protocols\ValidatesDFeValueElement;
+use BradiNfeApi\Domain\Invoices\Traits\ValidatesDFeValueElement;
 use BradiNfeApi\Domain\Invoices\Validators\IsSiglaUnidadeFederativaValidator;
 use InvalidArgumentException;
 

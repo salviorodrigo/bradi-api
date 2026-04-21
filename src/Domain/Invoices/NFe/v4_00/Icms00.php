@@ -25,7 +25,7 @@ use BradiNfeApi\Domain\Invoices\NFe\v4_00\ValueObjects\ModalidadeBC;
 use BradiNfeApi\Domain\Invoices\NFe\v4_00\ValueObjects\ValorBC;
 use BradiNfeApi\Domain\Invoices\NFe\v4_00\ValueObjects\ValorICMS;
 use BradiNfeApi\Domain\Invoices\Protocols\DFeElement;
-use BradiNfeApi\Domain\Invoices\Protocols\ValidatesDFeGroupElement;
+use BradiNfeApi\Domain\Invoices\Traits\ValidatesDFeGroupElement;
 use BradiNfeApi\Domain\Invoices\Validators\RequiredTagValidator;
 use InvalidArgumentException;
 

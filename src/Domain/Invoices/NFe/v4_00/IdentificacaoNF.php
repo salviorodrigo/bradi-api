@@ -32,7 +32,7 @@ use BradiNfeApi\Domain\Invoices\NFe\v4_00\ValueObjects\TipoAmbiente;
 use BradiNfeApi\Domain\Invoices\NFe\v4_00\ValueObjects\TipoEmissao;
 use BradiNfeApi\Domain\Invoices\NFe\v4_00\ValueObjects\TipoNF;
 use BradiNfeApi\Domain\Invoices\Protocols\DFeElement;
-use BradiNfeApi\Domain\Invoices\Protocols\ValidatesDFeGroupElement;
+use BradiNfeApi\Domain\Invoices\Traits\ValidatesDFeGroupElement;
 use BradiNfeApi\Domain\Invoices\Validators\RequiredTagValidator;
 use InvalidArgumentException;
 

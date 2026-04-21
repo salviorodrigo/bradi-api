@@ -18,7 +18,7 @@ use BradiNfeApi\Domain\Common\Services\ValidationService;
 use BradiNfeApi\Domain\Common\Validators\IsCPFValidator;
 use BradiNfeApi\Domain\Common\ValueObjects\Result;
 use BradiNfeApi\Domain\Invoices\Protocols\DFeElement;
-use BradiNfeApi\Domain\Invoices\Protocols\ValidatesDFeValueElement;
+use BradiNfeApi\Domain\Invoices\Traits\ValidatesDFeValueElement;
 use InvalidArgumentException;
 
 final class CadastroPF extends DFeElement

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace BradiNfeApi\Domain\Invoices\Protocols;
+namespace BradiNfeApi\Domain\Invoices\Traits;
 
 use BradiNfeApi\Domain\Common\Exceptions\UnprocessableEntityError;
 use BradiNfeApi\Domain\Common\ValueObjects\Detail;
@@ -12,17 +12,17 @@ use BradiNfeApi\Domain\Common\ValueObjects\Result;
 use BradiNfeApi\Domain\Common\ValueObjects\Source;
 use UnexpectedValueException;
 
-trait ValidatesDFeValueElement
+trait ValidatesDFeGroupElement
 {
-    protected static function validateTagElements(string $xmlString, string $fieldURI, string $method): Result
+    protected static function validateTagValue(string $xmlString, string $fieldURI, string $method): Result
     {
-        $children = self::xmlParser($xmlString)->listChildren();
-        if (count($children) > 0) {
+        $textContent = self::xmlParser($xmlString)->getTextContent();
+        if ($textContent != '') {
             $detail = new Detail(
                 FieldURI::from($fieldURI),
                 Source::from($method),
-                Input::from($xmlString),
-                [new UnexpectedValueException('cannot contain child elements.')]
+                Input::from($textContent),
+                [new UnexpectedValueException('cannot contain text content.')]
             );
 
             return Result::makeFailure(new UnprocessableEntityError($detail));

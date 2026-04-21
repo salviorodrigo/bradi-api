@@ -24,7 +24,7 @@ use BradiNfeApi\Domain\Common\Validators\StringLengthValidator;
 use BradiNfeApi\Domain\Common\Validators\TextFormatValidator;
 use BradiNfeApi\Domain\Common\ValueObjects\Result;
 use BradiNfeApi\Domain\Invoices\Protocols\DFeElement;
-use BradiNfeApi\Domain\Invoices\Protocols\ValidatesDFeValueElement;
+use BradiNfeApi\Domain\Invoices\Traits\ValidatesDFeValueElement;
 use InvalidArgumentException;
 
 final class CodigoBarras extends DFeElement
