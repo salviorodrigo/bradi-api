@@ -13,8 +13,6 @@ declare(strict_types=1);
 
 namespace BradiNfeApi\Domain\Invoices\NFe\v4_00\ValueObjects;
 
-use BradiNfeApi\Domain\Common\Services\OptionalValidation;
-use BradiNfeApi\Domain\Common\Services\ValidationService;
 use BradiNfeApi\Domain\Common\Validators\MaxStringLengthValidator;
 use BradiNfeApi\Domain\Common\Validators\MinStringLengthValidator;
 use BradiNfeApi\Domain\Common\Validators\NotNullValidator;
@@ -44,17 +42,17 @@ final class Bairro extends DFeElement
         }
 
         $xmlString = self::xmlParser(strval($rawData))->getFirst(self::$tagName);
-        $tagAttributesValidationResponse = self::validateTagAttributes($xmlString, $fieldURI, $method);
+        $tagAttributesValidationResponse = self::validateTagAttributes($xmlString, $fieldURI, $method, isOptional: true);
         if ($tagAttributesValidationResponse->isFailure()) {
             return $tagAttributesValidationResponse;
         }
 
-        $tagElementsValidationResponse = self::validateTagElements($xmlString, $fieldURI, $method);
+        $tagElementsValidationResponse = self::validateTagElements($xmlString, $fieldURI, $method, isOptional: true);
         if ($tagElementsValidationResponse->isFailure()) {
             return $tagElementsValidationResponse;
         }
 
-        $validationValueResponse = self::validateTagValue($xmlString, $fieldURI, $method);
+        $validationValueResponse = self::validateTagValue($xmlString, $fieldURI, $method, isOptional: true);
         if (! $validationValueResponse->isSuccess()) {
             return $validationValueResponse;
         }
@@ -87,15 +85,13 @@ final class Bairro extends DFeElement
         return self::parse(self::generateXmlString($tagValue, $elements, $attributes), $parentFieldURI, $method);
     }
 
-    protected static function validateTagValue(string $xmlString, string $fieldURI, string $method): Result
+    protected static function tagValueValidators(): array
     {
-        $tagValue = self::xmlParser($xmlString)->getTextContent();
-        $validationService = new ValidationService($fieldURI, $method)
-            ->addValidator(new NotNullValidator)
-            ->addValidator(new TextFormatValidator)
-            ->addValidator(new MaxStringLengthValidator(60))
-            ->addValidator(new MinStringLengthValidator(2));
-
-        return (new OptionalValidation($validationService))->verify($tagValue);
+        return [
+            new NotNullValidator,
+            new TextFormatValidator,
+            new MaxStringLengthValidator(60),
+            new MinStringLengthValidator(2),
+        ];
     }
 }

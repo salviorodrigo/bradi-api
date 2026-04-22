@@ -12,13 +12,13 @@ final class RequiredTagValidator implements Validator
 {
     public function __construct(
         public readonly array $requiredTagsName,
-        public readonly array $providedTagsName
     ) {}
 
     public function check(mixed $candidate): Result
     {
+        $providedTagsName = is_array($candidate) ? array_keys($candidate) : [];
         foreach ($this->requiredTagsName as $requiredTag) {
-            if (! in_array($requiredTag, $this->providedTagsName)) {
+            if (! in_array($requiredTag, $providedTagsName)) {
                 return Result::makeFailure(new InvalidArgumentException(sprintf(
                     'tag "%s" must be informed.',
                     $requiredTag

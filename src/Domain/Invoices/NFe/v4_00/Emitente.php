@@ -14,8 +14,6 @@ declare(strict_types=1);
 
 namespace BradiNfeApi\Domain\Invoices\NFe\v4_00;
 
-use BradiNfeApi\Domain\Common\Services\OptionalValidation;
-use BradiNfeApi\Domain\Common\Services\ValidationService;
 use BradiNfeApi\Domain\Common\ValueObjects\Result;
 use BradiNfeApi\Domain\Invoices\NFe\v4_00\ValueObjects\CadastroPF;
 use BradiNfeApi\Domain\Invoices\NFe\v4_00\ValueObjects\CadastroPJ;
@@ -56,7 +54,7 @@ final class Emitente extends DFeElement
         }
 
         $xmlString = self::xmlParser(strval($rawData))->getFirst(self::$tagName);
-        $tagValueValidationResponse = self::validateTagValue($xmlString, $fieldURI, $method);
+        $tagValueValidationResponse = self::validateTagValue($xmlString, $fieldURI, $method, isOptional: true);
         if (! $tagValueValidationResponse->isSuccess()) {
             return $tagValueValidationResponse;
         }
@@ -134,14 +132,11 @@ final class Emitente extends DFeElement
         return self::parse(self::generateXmlString($tagValue, $elements, $attributes), $parentFieldURI, $method);
     }
 
-    protected static function validateTagElements(string $xmlString, string $fieldURI, string $method): Result
+    protected static function tagElementsValidators(): array
     {
-        $children = self::xmlParser($xmlString)->listChildren();
-        $childNames = array_keys($children);
-        $validationService = new ValidationService($fieldURI, $method)
-            ->addValidator(new AtLeastOneTagValidator(['CNPJ', 'CPF'], $childNames))
-            ->addValidator(new RequiredTagValidator(['xNome', 'enderEmit', 'IE', 'CRT'], $childNames));
-
-        return (new OptionalValidation($validationService))->verify($xmlString);
+        return [
+            new AtLeastOneTagValidator(['CNPJ', 'CPF']),
+            new RequiredTagValidator(['xNome', 'enderEmit', 'IE', 'CRT']),
+        ];
     }
 }

@@ -6,11 +6,12 @@ use BradiNfeApi\Domain\Xml\ValueObjects\Attribute;
 use BradiNfeApi\Domain\Xml\ValueObjects\Element;
 use BradiNfeApi\Tests\Doubles\Domain\Common\FakeValidationService;
 use BradiNfeApi\Tests\Doubles\Domain\Xml\FakeXmlIterator;
+use BradiNfeApi\Tests\TestCase;
 
 describe('Element', function () {
     describe('::__toString()', function () {
         beforeEach(function () {
-            /** @var \BradiNfeApi\Tests\TestCase $this */
+            /** @var TestCase $this */
             $this->sut = new Element(new FakeXmlIterator, new FakeValidationService);
             $this->sut->name = 'tag';
         });

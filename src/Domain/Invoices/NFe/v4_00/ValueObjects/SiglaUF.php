@@ -13,8 +13,6 @@ declare(strict_types=1);
 
 namespace BradiNfeApi\Domain\Invoices\NFe\v4_00\ValueObjects;
 
-use BradiNfeApi\Domain\Common\Services\OptionalValidation;
-use BradiNfeApi\Domain\Common\Services\ValidationService;
 use BradiNfeApi\Domain\Common\Validators\NotNullValidator;
 use BradiNfeApi\Domain\Common\Validators\StringLengthValidator;
 use BradiNfeApi\Domain\Common\ValueObjects\Result;
@@ -53,7 +51,7 @@ final class SiglaUF extends DFeElement
             return $tagElementsValidationResponse;
         }
 
-        $tagValueValidationResponse = self::validateTagValue($xmlString, $fieldURI, $method);
+        $tagValueValidationResponse = self::validateTagValue($xmlString, $fieldURI, $method, isOptional: true);
         if (! $tagValueValidationResponse->isSuccess()) {
             return $tagValueValidationResponse;
         }
@@ -85,14 +83,12 @@ final class SiglaUF extends DFeElement
         return self::parse(self::generateXmlString($tagValue, $elements, $attributes), $parentFieldURI, $method);
     }
 
-    protected static function validateTagValue(string $xmlString, string $fieldURI = '', string $method = __METHOD__): Result
+    protected static function tagValueValidators(): array
     {
-        $tagValue = self::xmlParser($xmlString)->getTextContent();
-        $validationService = new ValidationService($fieldURI, $method)
-            ->addValidator(new NotNullValidator)
-            ->addValidator(new StringLengthValidator(2))
-            ->addValidator(new IsSiglaUnidadeFederativaValidator);
-
-        return (new OptionalValidation($validationService))->verify($tagValue);
+        return [
+            new NotNullValidator,
+            new StringLengthValidator(2),
+            new IsSiglaUnidadeFederativaValidator,
+        ];
     }
 }

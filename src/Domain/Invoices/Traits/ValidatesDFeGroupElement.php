@@ -4,47 +4,21 @@ declare(strict_types=1);
 
 namespace BradiNfeApi\Domain\Invoices\Traits;
 
-use BradiNfeApi\Domain\Common\Exceptions\UnprocessableEntityError;
-use BradiNfeApi\Domain\Common\ValueObjects\Detail;
-use BradiNfeApi\Domain\Common\ValueObjects\FieldURI;
-use BradiNfeApi\Domain\Common\ValueObjects\Input;
-use BradiNfeApi\Domain\Common\ValueObjects\Result;
-use BradiNfeApi\Domain\Common\ValueObjects\Source;
-use UnexpectedValueException;
+use BradiNfeApi\Domain\Common\Protocols\Validator;
+use BradiNfeApi\Domain\Invoices\Validators\HasNoAttributesValidator;
+use BradiNfeApi\Domain\Invoices\Validators\HasNoTextContentValidator;
 
 trait ValidatesDFeGroupElement
 {
-    protected static function validateTagValue(string $xmlString, string $fieldURI, string $method): Result
+    /** @return array<Validator> */
+    protected static function tagValueValidators(): array
     {
-        $textContent = self::xmlParser($xmlString)->getTextContent();
-        if ($textContent != '') {
-            $detail = new Detail(
-                FieldURI::from($fieldURI),
-                Source::from($method),
-                Input::from($textContent),
-                [new UnexpectedValueException('cannot contain text content.')]
-            );
-
-            return Result::makeFailure(new UnprocessableEntityError($detail));
-        }
-
-        return Result::makeSuccess();
+        return [new HasNoTextContentValidator];
     }
 
-    protected static function validateTagAttributes(string $xmlString, string $fieldURI, string $method): Result
+    /** @return array<Validator> */
+    protected static function tagAttributesValidators(): array
     {
-        $attributes = self::xmlParser($xmlString)->listAttributes();
-        if (count($attributes) > 0) {
-            $detail = new Detail(
-                FieldURI::from($fieldURI),
-                Source::from($method),
-                Input::from($xmlString),
-                [new UnexpectedValueException('cannot contain attributes.')]
-            );
-
-            return Result::makeFailure(new UnprocessableEntityError($detail));
-        }
-
-        return Result::makeSuccess();
+        return [new HasNoAttributesValidator];
     }
 }

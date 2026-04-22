@@ -14,8 +14,6 @@ declare(strict_types=1);
 
 namespace BradiNfeApi\Domain\Invoices\NFe\v4_00;
 
-use BradiNfeApi\Domain\Common\Services\OptionalValidation;
-use BradiNfeApi\Domain\Common\Services\ValidationService;
 use BradiNfeApi\Domain\Common\ValueObjects\Result;
 use BradiNfeApi\Domain\Invoices\NFe\v4_00\ValueObjects\CodigoMunicipioFatoGerador;
 use BradiNfeApi\Domain\Invoices\NFe\v4_00\ValueObjects\CodigoNF;
@@ -71,7 +69,7 @@ final class IdentificacaoNF extends DFeElement
         }
 
         $xmlString = self::xmlParser(strval($rawData))->getFirst(self::$tagName);
-        $tagValueValidationResponse = self::validateTagValue($xmlString, $fieldURI, $method);
+        $tagValueValidationResponse = self::validateTagValue($xmlString, $fieldURI, $method, isOptional: true);
         if (! $tagValueValidationResponse->isSuccess()) {
             return $tagValueValidationResponse;
         }
@@ -157,13 +155,10 @@ final class IdentificacaoNF extends DFeElement
         return self::parse(self::generateXmlString($tagValue, $elements, $attributes), $parentFieldURI, $method);
     }
 
-    protected static function validateTagElements(string $xmlString, string $fieldURI, string $method): Result
+    protected static function tagElementsValidators(): array
     {
-        $children = self::xmlParser($xmlString)->listChildren();
-        $childNames = array_keys($children);
-        $validationService = new ValidationService($fieldURI, $method)
-            ->addValidator(new RequiredTagValidator(['cUF', 'cNF', 'natOp', 'mod', 'serie', 'nNF', 'dhEmi', 'tpNF', 'idDest', 'cMunFG', 'tpImp', 'tpEmis', 'cDV', 'tpAmb', 'finNFe', 'indFinal', 'indPres', 'procEmi', 'verProc'], $childNames));
-
-        return (new OptionalValidation($validationService))->verify($xmlString);
+        return [
+            new RequiredTagValidator(['cUF', 'cNF', 'natOp', 'mod', 'serie', 'nNF', 'dhEmi', 'tpNF', 'idDest', 'cMunFG', 'tpImp', 'tpEmis', 'cDV', 'tpAmb', 'finNFe', 'indFinal', 'indPres', 'procEmi', 'verProc']),
+        ];
     }
 }

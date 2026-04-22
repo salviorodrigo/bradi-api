@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace BradiNfeApi\Domain\Invoices\Protocols;
 
 use BradiNfeApi\Domain\Common\Protocols\ApiError;
+use BradiNfeApi\Domain\Common\Protocols\Validator;
 use BradiNfeApi\Domain\Common\Services\OptionalValidation;
 use BradiNfeApi\Domain\Common\Services\ValidationService;
 use BradiNfeApi\Domain\Common\Validators\IsXmlStringValidator;
@@ -64,7 +65,7 @@ abstract class DFeElement
     /**
      * @return Result<null|ApiError>
      **/
-    protected static function validateDataType(mixed $rawData, string $fieldURI, string $method, bool $isOptional = false): Result
+    final protected static function validateDataType(mixed $rawData, string $fieldURI, string $method, bool $isOptional = false): Result
     {
         $typeValidator = new ValidationService($fieldURI, $method)
             ->addValidator(new IsXmlStringValidator);
@@ -74,6 +75,64 @@ abstract class DFeElement
         }
 
         return $typeValidator->verify($rawData);
+    }
+
+    /**
+     * @return Result<null|ApiError>
+     **/
+    final protected static function validateTagValue(string $xmlString, string $fieldURI, string $method, bool $isOptional = false): Result
+    {
+        $candidate = static::xmlParser($xmlString)->getTextContent();
+        $service = new ValidationService($fieldURI, $method);
+        foreach (static::tagValueValidators() as $validator) {
+            $service->addValidator($validator);
+        }
+
+        if ($isOptional) {
+            return (new OptionalValidation($service))->verify($candidate);
+        }
+
+        return $service->verify($candidate);
+    }
+
+    /**
+     * @return Result<null|ApiError>
+     **/
+    final protected static function validateTagAttributes(string $xmlString, string $fieldURI, string $method, bool $isOptional = false): Result
+    {
+        $candidate = static::xmlParser($xmlString)->listAttributes();
+        $service = new ValidationService($fieldURI, $method);
+        foreach (static::tagAttributesValidators() as $validator) {
+            $service->addValidator($validator);
+        }
+
+        if ($isOptional) {
+            return (new OptionalValidation($service))->verify($candidate);
+        }
+
+        return $service->verify($candidate);
+    }
+
+    /**
+     * @return Result<null|ApiError>
+     **/
+    final protected static function validateTagElements(string $xmlString, string $fieldURI, string $method, bool $isOptional = false): Result
+    {
+        if ($xmlString === '') {
+            return Result::makeSuccess();
+        }
+
+        $candidate = static::xmlParser($xmlString)->listChildren();
+        $service = new ValidationService($fieldURI, $method);
+        foreach (static::tagElementsValidators() as $validator) {
+            $service->addValidator($validator);
+        }
+
+        if ($isOptional) {
+            return (new OptionalValidation($service))->verify($candidate);
+        }
+
+        return $service->verify($candidate);
     }
 
     /**
@@ -88,20 +147,14 @@ abstract class DFeElement
      **/
     abstract public static function create(string $tagValue, array $elements, array $attributes, string $parentFieldURI = '', string $method = __METHOD__): Result;
 
-    /**
-     * @return Result<null|ApiError>
-     **/
-    abstract protected static function validateTagValue(string $xmlString, string $fieldURI, string $method): Result;
+    /** @return array<Validator> */
+    abstract protected static function tagValueValidators(): array;
 
-    /**
-     * @return Result<null|ApiError>
-     **/
-    abstract protected static function validateTagAttributes(string $xmlString, string $fieldURI, string $method): Result;
+    /** @return array<Validator> */
+    abstract protected static function tagAttributesValidators(): array;
 
-    /**
-     * @return Result<null|ApiError>
-     **/
-    abstract protected static function validateTagElements(string $xmlString, string $fieldURI, string $method): Result;
+    /** @return array<Validator> */
+    abstract protected static function tagElementsValidators(): array;
 }
 
 // TODO Make test file.

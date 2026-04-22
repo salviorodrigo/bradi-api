@@ -16,15 +16,14 @@ declare(strict_types=1);
 
 namespace BradiNfeApi\Domain\Invoices\NFe\v4_00\ValueObjects;
 
-use BradiNfeApi\Domain\Common\Services\ValidationService;
 use BradiNfeApi\Domain\Common\Validators\IsNumericValidator;
 use BradiNfeApi\Domain\Common\Validators\NotNullValidator;
 use BradiNfeApi\Domain\Common\Validators\StringLengthValidator;
 use BradiNfeApi\Domain\Common\ValueObjects\Result;
 use BradiNfeApi\Domain\Invoices\Protocols\DFeElement;
 use BradiNfeApi\Domain\Invoices\Traits\ValidatesDFeValueElement;
+use BradiNfeApi\Domain\Invoices\Validators\IsCodigoMunicipioUFPrefixValidator;
 use BradiNfeApi\Domain\Invoices\Validators\IsCodigoMunicipioValidator;
-use BradiNfeApi\Domain\Invoices\Validators\IsUnidadeFederativaValidator;
 use InvalidArgumentException;
 
 final class CodigoMunicipioFatoGerador extends DFeElement
@@ -90,27 +89,14 @@ final class CodigoMunicipioFatoGerador extends DFeElement
         return self::parse(self::generateXmlString($tagValue, $elements, $attributes), $parentFieldURI, $method);
     }
 
-    protected static function validateTagValue(string $xmlString, string $fieldURI, string $method): Result
+    protected static function tagValueValidators(): array
     {
-        $tagValue = self::xmlParser($xmlString)->getTextContent();
-        $validationService = new ValidationService($fieldURI, $method)
-            ->addValidator(new NotNullValidator)
-            ->addValidator(new IsNumericValidator)
-            ->addValidator(new StringLengthValidator(7))
-            ->addValidator(new IsCodigoMunicipioValidator);
-
-        $tagValueValidationResponse = $validationService->verify($tagValue);
-        if (! $tagValueValidationResponse->isSuccess()) {
-            return $tagValueValidationResponse;
-        }
-
-        $validationUfResponse = (new ValidationService($fieldURI, $method)
-            ->addValidator(new IsUnidadeFederativaValidator))->verify(substr($tagValue, 0, 2));
-
-        if (! $validationUfResponse->isSuccess()) {
-            return $validationUfResponse;
-        }
-
-        return Result::makeSuccess();
+        return [
+            new NotNullValidator,
+            new IsNumericValidator,
+            new StringLengthValidator(7),
+            new IsCodigoMunicipioValidator,
+            new IsCodigoMunicipioUFPrefixValidator,
+        ];
     }
 }

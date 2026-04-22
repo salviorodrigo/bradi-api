@@ -14,7 +14,6 @@ declare(strict_types=1);
 
 namespace BradiNfeApi\Domain\Invoices\NFe\v4_00;
 
-use BradiNfeApi\Domain\Common\Services\ValidationService;
 use BradiNfeApi\Domain\Common\ValueObjects\Result;
 use BradiNfeApi\Domain\Invoices\NFe\v4_00\ValueObjects\Bairro;
 use BradiNfeApi\Domain\Invoices\NFe\v4_00\ValueObjects\CodigoMunicipio;
@@ -147,13 +146,10 @@ final class EnderecoEmitente extends DFeElement
         return self::parse(self::generateXmlString($tagValue, $elements, $attributes), $parentFieldURI, $method);
     }
 
-    protected static function validateTagElements(string $xmlString, string $fieldURI, string $method): Result
+    protected static function tagElementsValidators(): array
     {
-        $children = self::xmlParser($xmlString)->listChildren();
-        $childNames = array_keys($children);
-        $validationService = new ValidationService($fieldURI, $method)
-            ->addValidator(new RequiredTagValidator(['xLgr', 'nro', 'xBairro', 'cMun', 'xMun', 'UF', 'CEP'], $childNames));
-
-        return $validationService->verify($xmlString);
+        return [
+            new RequiredTagValidator(['xLgr', 'nro', 'xBairro', 'cMun', 'xMun', 'UF', 'CEP']),
+        ];
     }
 }

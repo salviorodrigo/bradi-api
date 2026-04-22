@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace BradiNfeApi\Tests\Doubles\Domain\Invoices\NFe;
 
+use BradiNfeApi\Domain\Common\Protocols\Validator;
 use BradiNfeApi\Domain\Common\ValueObjects\Result;
 use BradiNfeApi\Domain\Invoices\Protocols\DFeElement;
 
@@ -11,10 +12,7 @@ final class FakeDFeElement extends DFeElement
 {
     public static string $tagName = 'FakeTag';
 
-    public readonly string $value;
-    public readonly string $xmlString;
-
-    public function __construct($tagName = 'FakeTag', $value = 'fakeValue')
+    public function __construct(string $tagName = 'FakeTag', string $value = 'fakeValue')
     {
         self::$tagName = $tagName;
         $this->value = $value;
@@ -26,23 +24,26 @@ final class FakeDFeElement extends DFeElement
         return Result::makeSuccess(new self);
     }
 
-    public static function create(string $value, array $elements = [], array $attributes = [], string $parentFieldURI = '', string $method = __METHOD__): Result
+    public static function create(string $tagValue, array $elements, array $attributes, string $parentFieldURI = '', string $method = __METHOD__): Result
     {
         return Result::makeSuccess(new self);
     }
 
-    protected static function validateTagValue(string $value, string $parentFieldURI = '', string $method = __METHOD__): Result
+    /** @return array<Validator> */
+    protected static function tagValueValidators(): array
     {
-        return Result::makeSuccess(null);
+        return [];
     }
 
-    protected static function validateTagAttributes(string $xmlString, string $parentFieldURI = '', string $method = __METHOD__): Result
+    /** @return array<Validator> */
+    protected static function tagAttributesValidators(): array
     {
-        return Result::makeSuccess(null);
+        return [];
     }
 
-    protected static function validateTagElements(string $xmlString, string $parentFieldURI = '', string $method = __METHOD__): Result
+    /** @return array<Validator> */
+    protected static function tagElementsValidators(): array
     {
-        return Result::makeSuccess(null);
+        return [];
     }
 }

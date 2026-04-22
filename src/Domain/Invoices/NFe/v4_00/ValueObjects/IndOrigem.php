@@ -22,7 +22,6 @@ declare(strict_types=1);
 
 namespace BradiNfeApi\Domain\Invoices\NFe\v4_00\ValueObjects;
 
-use BradiNfeApi\Domain\Common\Services\ValidationService;
 use BradiNfeApi\Domain\Common\Validators\IsNumericValidator;
 use BradiNfeApi\Domain\Common\Validators\NotNullValidator;
 use BradiNfeApi\Domain\Common\Validators\StringLengthValidator;
@@ -95,15 +94,13 @@ final class IndOrigem extends DFeElement
         return self::parse(self::generateXmlString($tagValue, $elements, $attributes), $parentFieldURI, $method);
     }
 
-    protected static function validateTagValue(string $xmlString, string $fieldURI = '', string $method = __METHOD__): Result
+    protected static function tagValueValidators(): array
     {
-        $tagValue = self::xmlParser($xmlString)->getTextContent();
-        $validationService = new ValidationService($fieldURI, $method)
-            ->addValidator(new NotNullValidator)
-            ->addValidator(new IsNumericValidator(true))
-            ->addValidator(new StringLengthValidator(1))
-            ->addValidator(new IsTipoOrigemMercadoriaValidator);
-
-        return $validationService->verify($tagValue);
+        return [
+            new NotNullValidator,
+            new IsNumericValidator(true),
+            new StringLengthValidator(1),
+            new IsTipoOrigemMercadoriaValidator,
+        ];
     }
 }

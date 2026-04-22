@@ -17,14 +17,13 @@ declare(strict_types=1);
 
 namespace BradiNfeApi\Domain\Invoices\NFe\v4_00\ValueObjects;
 
-use BradiNfeApi\Domain\Common\Services\ValidationService;
-use BradiNfeApi\Domain\Common\Validators\IsNumericValidator;
 use BradiNfeApi\Domain\Common\Validators\NotNullValidator;
 use BradiNfeApi\Domain\Common\Validators\StringLengthValidator;
 use BradiNfeApi\Domain\Common\Validators\TextFormatValidator;
 use BradiNfeApi\Domain\Common\ValueObjects\Result;
 use BradiNfeApi\Domain\Invoices\Protocols\DFeElement;
 use BradiNfeApi\Domain\Invoices\Traits\ValidatesDFeValueElement;
+use BradiNfeApi\Domain\Invoices\Validators\IsValidCodigoBarrasValidator;
 use InvalidArgumentException;
 
 final class CodigoBarras extends DFeElement
@@ -90,26 +89,13 @@ final class CodigoBarras extends DFeElement
         return self::parse(self::generateXmlString($tagValue, $elements, $attributes), $parentFieldURI, $method);
     }
 
-    protected static function validateTagValue(string $xmlString, string $fieldURI = '', string $method = __METHOD__): Result
+    protected static function tagValueValidators(): array
     {
-        $tagValue = self::xmlParser($xmlString)->getTextContent();
-        $validationService = new ValidationService($fieldURI, $method)
-            ->addValidator(new NotNullValidator)
-            ->addValidator(new TextFormatValidator)
-            ->addValidator(new StringLengthValidator(8, 12, 13, 14));
-
-        $validationServiceResponse = $validationService->verify($tagValue);
-        if ($validationServiceResponse->isFailure()) {
-            return $validationServiceResponse;
-        }
-
-        if ($tagValue === 'SEM GTIN') {
-            return Result::makeSuccess();
-        }
-
-        $validationService->reset();
-        $validationService->addValidator(new IsNumericValidator(allowLeadingZeros: true));
-
-        return $validationService->verify($tagValue);
+        return [
+            new NotNullValidator,
+            new TextFormatValidator,
+            new StringLengthValidator(8, 12, 13, 14),
+            new IsValidCodigoBarrasValidator,
+        ];
     }
 }

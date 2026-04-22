@@ -12,12 +12,12 @@ final class AtLeastOneTagValidator implements Validator
 {
     public function __construct(
         public readonly array $requiredTagNames,
-        public readonly array $providedTagNames
     ) {}
 
     public function check(mixed $candidate): Result
     {
-        if (array_intersect($this->requiredTagNames, $this->providedTagNames) === []) {
+        $providedTagNames = is_array($candidate) ? array_keys($candidate) : [];
+        if (array_intersect($this->requiredTagNames, $providedTagNames) === []) {
             return Result::makeFailure(new InvalidArgumentException(sprintf(
                 'At least one of the following tags must be informed: %s.',
                 implode(', ', $this->requiredTagNames)

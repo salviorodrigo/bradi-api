@@ -14,8 +14,6 @@ declare(strict_types=1);
 
 namespace BradiNfeApi\Domain\Invoices\NFe\v4_00\ValueObjects;
 
-use BradiNfeApi\Domain\Common\Services\OptionalValidation;
-use BradiNfeApi\Domain\Common\Services\ValidationService;
 use BradiNfeApi\Domain\Common\Validators\IsNumericValidator;
 use BradiNfeApi\Domain\Common\Validators\MaxStringLengthValidator;
 use BradiNfeApi\Domain\Common\Validators\MinStringLengthValidator;
@@ -54,7 +52,7 @@ final class Telefone extends DFeElement
             return $tagElementsValidationResponse;
         }
 
-        $tagValueValidationResponse = self::validateTagValue($xmlString, $fieldURI, $method);
+        $tagValueValidationResponse = self::validateTagValue($xmlString, $fieldURI, $method, isOptional: true);
         if (! $tagValueValidationResponse->isSuccess()) {
             return $tagValueValidationResponse;
         }
@@ -86,14 +84,12 @@ final class Telefone extends DFeElement
         return self::parse(self::generateXmlString($tagValue, $elements, $attributes), $parentFieldURI, $method);
     }
 
-    protected static function validateTagValue(string $xmlString, string $fieldURI = '', string $method = __METHOD__): Result
+    protected static function tagValueValidators(): array
     {
-        $tagValue = self::xmlParser($xmlString)->getTextContent();
-        $validationService = new ValidationService($fieldURI, $method)
-            ->addValidator(new IsNumericValidator)
-            ->addValidator(new MaxStringLengthValidator(14))
-            ->addValidator(new MinStringLengthValidator(6));
-
-        return (new OptionalValidation($validationService))->verify($tagValue);
+        return [
+            new IsNumericValidator,
+            new MaxStringLengthValidator(14),
+            new MinStringLengthValidator(6),
+        ];
     }
 }

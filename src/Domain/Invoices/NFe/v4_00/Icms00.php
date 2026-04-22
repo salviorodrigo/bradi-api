@@ -16,7 +16,6 @@ declare(strict_types=1);
 
 namespace BradiNfeApi\Domain\Invoices\NFe\v4_00;
 
-use BradiNfeApi\Domain\Common\Services\ValidationService;
 use BradiNfeApi\Domain\Common\ValueObjects\Result;
 use BradiNfeApi\Domain\Invoices\NFe\v4_00\ValueObjects\AliquotaICMS;
 use BradiNfeApi\Domain\Invoices\NFe\v4_00\ValueObjects\CodigoSituacaoTributaria;
@@ -134,13 +133,10 @@ final class Icms00 extends DFeElement
         return self::parse(self::generateXmlString($tagValue, $elements, $attributes), $parentFieldURI, $method);
     }
 
-    protected static function validateTagElements(string $xmlString, string $fieldURI, string $method): Result
+    protected static function tagElementsValidators(): array
     {
-        $children = self::xmlParser($xmlString)->listChildren();
-        $childNames = array_keys($children);
-        $validationService = new ValidationService($fieldURI, $method)
-            ->addValidator(new RequiredTagValidator(['orig', 'CST', 'modBC', 'vBC', 'pICMS', 'vICMS'], $childNames));
-
-        return $validationService->verify($xmlString);
+        return [
+            new RequiredTagValidator(['orig', 'CST', 'modBC', 'vBC', 'pICMS', 'vICMS']),
+        ];
     }
 }
