@@ -10,34 +10,29 @@ use BradiNfeApi\Domain\Invoices\Protocols\DFeElement;
 
 final class FakeDFeElement extends DFeElement
 {
-    public static string $tagName = 'FakeTag';
+    public const string TAG_NAME = 'FakeTag';
 
-    public function __construct(string $tagName = 'FakeTag', string $value = 'fakeValue')
+    public function __construct(string $value = 'fakeValue')
     {
-        self::$tagName = $tagName;
         $this->value = $value;
-        $this->xmlString = "<{$tagName}>{$value}</{$tagName}>";
-    }
-
-    public static function parse(mixed $rawData, string $parentFieldURI = '', string $method = __METHOD__): Result
-    {
-        return Result::makeSuccess(new self);
+        $this->xmlString = '<' . static::TAG_NAME . '>' . $value . '</' . static::TAG_NAME . '>';
+        $this->fieldURI = static::TAG_NAME;
     }
 
     /** @return array<Validator> */
-    protected static function tagValueValidators(): array
+    protected function tagValueValidators(): array
     {
         return [];
     }
 
     /** @return array<Validator> */
-    protected static function tagAttributesValidators(): array
+    protected function tagAttributesValidators(): array
     {
         return [];
     }
 
     /** @return array<Validator> */
-    protected static function tagElementsValidators(): array
+    protected function tagElementsValidators(): array
     {
         return [];
     }

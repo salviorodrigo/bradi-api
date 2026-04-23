@@ -30,35 +30,14 @@ class CodigoMunicipio extends DFeElement
 {
     use ValidatesDFeValueElement;
 
-    public static string $tagName = 'cMun';
+    public const string TAG_NAME = 'cMun';
 
-    private function __construct(public readonly string $xmlString)
+    public function __construct(string $parentFieldURI = '')
     {
-        $this->value = static::xmlParser($xmlString)->getTextContent();
+        $this->fieldURI = $parentFieldURI === '' ? static::TAG_NAME : $parentFieldURI . '.' . static::TAG_NAME;
     }
 
-    public static function parse(mixed $rawData, string $parentFieldURI = '', string $method = __METHOD__): Result
-    {
-        $parserResponse = static::parser(
-            $rawData,
-            $parentFieldURI
-        );
-        if ($parserResponse->isFailure()) {
-            return $parserResponse;
-        }
-
-        $parserData = $parserResponse->getData();
-        $fieldURI = $parserData['fieldURI'];
-        $xmlString = $parserData['xmlString'];
-
-        return Result::makeSuccess(
-            new static(
-                $xmlString
-            )
-        );
-    }
-
-    protected static function tagValueValidators(): array
+    protected function tagValueValidators(): array
     {
         return [
             new NotNullValidator,

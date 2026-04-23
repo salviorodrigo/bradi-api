@@ -11,13 +11,13 @@ use BradiNfeApi\Domain\Invoices\Validators\HasNoTextContentValidator;
 trait ValidatesDFeGroupElement
 {
     /** @return array<Validator> */
-    protected static function tagValueValidators(): array
+    protected function tagValueValidators(): array
     {
         return [new HasNoTextContentValidator];
     }
 
     /** @return array<Validator> */
-    protected static function tagAttributesValidators(): array
+    protected function tagAttributesValidators(): array
     {
         return [new HasNoAttributesValidator];
     }

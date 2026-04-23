@@ -26,35 +26,14 @@ final class ValorPIS extends DFeElement
 {
     use ValidatesDFeValueElement;
 
-    public static string $tagName = 'vPIS';
+    public const string TAG_NAME = 'vPIS';
 
-    private function __construct(public readonly string $xmlString)
+    public function __construct(string $parentFieldURI = '')
     {
-        $this->value = self::xmlParser($xmlString)->getTextContent();
+        $this->fieldURI = $parentFieldURI === '' ? static::TAG_NAME : $parentFieldURI . '.' . static::TAG_NAME;
     }
 
-    public static function parse(mixed $rawData, string $parentFieldURI = '', string $method = __METHOD__): Result
-    {
-        $parserResponse = self::parser(
-            $rawData,
-            $parentFieldURI
-        );
-        if ($parserResponse->isFailure()) {
-            return $parserResponse;
-        }
-
-        $parserData = $parserResponse->getData();
-        $fieldURI = $parserData['fieldURI'];
-        $xmlString = $parserData['xmlString'];
-
-        return Result::makeSuccess(
-            new self(
-                $xmlString
-            )
-        );
-    }
-
-    protected static function tagValueValidators(): array
+    protected function tagValueValidators(): array
     {
         return [
             new NotNullValidator,

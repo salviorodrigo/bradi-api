@@ -34,94 +34,26 @@ final class EnderecoEmitente extends DFeElement
 {
     use ValidatesDFeGroupElement;
 
-    public static string $tagName = 'enderEmit';
+    public const string TAG_NAME = 'enderEmit';
 
-    private function __construct(
-        public readonly string $xmlString,
-        public readonly Logradouro $xLgr,
-        public readonly NumeroEndereco $nro,
-        public readonly ?ComplementoEndereco $Cpl,
-        public readonly Bairro $xBairro,
-        public readonly CodigoMunicipio $cMun,
-        public readonly NomeMunicipio $xMun,
-        public readonly SiglaUF $UF,
-        public readonly CodigoPostal $CEP,
-        public readonly ?CodigoPais $cPais,
-        public readonly ?NomePais $xPais,
-        public readonly ?Telefone $fone,
-    ) {
-        $this->value = self::xmlParser($xmlString)->getTextContent();
-    }
+    public Logradouro $xLgr;
+    public NumeroEndereco $nro;
+    public ?ComplementoEndereco $Cpl;
+    public Bairro $xBairro;
+    public CodigoMunicipio $cMun;
+    public NomeMunicipio $xMun;
+    public SiglaUF $UF;
+    public CodigoPostal $CEP;
+    public ?CodigoPais $cPais;
+    public ?NomePais $xPais;
+    public ?Telefone $fone;
 
-    public static function parse(mixed $rawData, string $parentFieldURI = '', string $method = __METHOD__): Result
+    public function __construct(string $parentFieldURI = '')
     {
-        $parserResponse = self::parser(
-            $rawData,
-            $parentFieldURI
-        );
-        if ($parserResponse->isFailure()) {
-            return $parserResponse;
-        }
-
-        $parserData = $parserResponse->getData();
-        $fieldURI = $parserData['fieldURI'];
-        $xmlString = $parserData['xmlString'];
-
-        $xmlElements = [
-            ['class' => Logradouro::class, 'required' => true],
-            ['class' => NumeroEndereco::class, 'required' => true],
-            ['class' => ComplementoEndereco::class, 'required' => false],
-            ['class' => Bairro::class, 'required' => true],
-            ['class' => CodigoMunicipio::class, 'required' => true],
-            ['class' => NomeMunicipio::class, 'required' => true],
-            ['class' => SiglaUF::class, 'required' => true],
-            ['class' => CodigoPostal::class, 'required' => true],
-            ['class' => CodigoPais::class, 'required' => false],
-            ['class' => NomePais::class, 'required' => false],
-            ['class' => Telefone::class, 'required' => false],
-        ];
-
-        $parserErrorBag = [];
-        $xmlElementsBag = [];
-        foreach ($xmlElements as $element) {
-            $elementXmlString = self::xmlParser($xmlString)->getFirst($element['class']::$tagName);
-            if ($elementXmlString === '' && ! $element['required']) {
-                $xmlElementsBag[] = null;
-
-                continue;
-            }
-
-            $parsingResult = $element['class']::parse(
-                $elementXmlString,
-                $fieldURI,
-                $method
-            );
-
-            if ($parsingResult->isFailure()) {
-                $parserErrorBag[] = $parsingResult->getError();
-            } else {
-                $xmlElementsBag[] = $parsingResult->getData();
-            }
-        }
-
-        if (count($parserErrorBag) > 0) {
-            $parsingError = array_shift($parserErrorBag);
-            foreach ($parserErrorBag as $error) {
-                $parsingError->merge($error);
-            }
-
-            return Result::makeFailure($parsingError);
-        }
-
-        return Result::makeSuccess(
-            new self(
-                $xmlString,
-                ...$xmlElementsBag
-            )
-        );
+        $this->fieldURI = $parentFieldURI === '' ? static::TAG_NAME : $parentFieldURI . '.' . static::TAG_NAME;
     }
 
-    protected static function tagElementsValidators(): array
+    protected function tagElementsValidators(): array
     {
         return [
             new RequiredTagValidator(['xLgr', 'nro', 'xBairro', 'cMun', 'xMun', 'UF', 'CEP']),

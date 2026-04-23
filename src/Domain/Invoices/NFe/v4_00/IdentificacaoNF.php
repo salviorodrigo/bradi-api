@@ -37,93 +37,29 @@ final class IdentificacaoNF extends DFeElement
 {
     use ValidatesDFeGroupElement;
 
-    public static string $tagName = 'ide';
+    public const string TAG_NAME = 'ide';
 
-    private function __construct(
-        public readonly string $xmlString,
-        public readonly CodigoUF $cUF,
-        public readonly CodigoNF $cNF,
-        public readonly NaturezaOperacao $natOp,
-        public readonly ModeloDFe $mod,
-        public readonly Serie $serie,
-        public readonly NumeroNF $nNF,
-        public readonly DataHoraEmissao $dhEmi,
-        public readonly TipoNF $tpNF,
-        public readonly IdDestino $idDest,
-        public readonly CodigoMunicipioFatoGerador $cMunFG,
-        public readonly TipoEmissao $tpEmis,
-        public readonly TipoAmbiente $tpAmb,
-        public readonly FinalidadeNF $finNFe,
-        public readonly IndFinal $indFinal
-    ) {
-        $this->value = self::xmlParser($xmlString)->getTextContent();
-    }
+    public CodigoUF $cUF;
+    public CodigoNF $cNF;
+    public NaturezaOperacao $natOp;
+    public ModeloDFe $mod;
+    public Serie $serie;
+    public NumeroNF $nNF;
+    public DataHoraEmissao $dhEmi;
+    public TipoNF $tpNF;
+    public IdDestino $idDest;
+    public CodigoMunicipioFatoGerador $cMunFG;
+    public TipoEmissao $tpEmis;
+    public TipoAmbiente $tpAmb;
+    public FinalidadeNF $finNFe;
+    public IndFinal $indFinal;
 
-    public static function parse(mixed $rawData, string $parentFieldURI = '', string $method = __METHOD__): Result
+    public function __construct(string $parentFieldURI = '')
     {
-        $parserResponse = self::parser(
-            $rawData,
-            $parentFieldURI
-        );
-        if ($parserResponse->isFailure()) {
-            return $parserResponse;
-        }
-
-        $parserData = $parserResponse->getData();
-        $fieldURI = $parserData['fieldURI'];
-        $xmlString = $parserData['xmlString'];
-
-        $xmlElements = [
-            CodigoUF::class,
-            CodigoNF::class,
-            NaturezaOperacao::class,
-            ModeloDFe::class,
-            Serie::class,
-            NumeroNF::class,
-            DataHoraEmissao::class,
-            TipoNF::class,
-            IdDestino::class,
-            CodigoMunicipioFatoGerador::class,
-            TipoEmissao::class,
-            TipoAmbiente::class,
-            FinalidadeNF::class,
-            IndFinal::class,
-        ];
-
-        $parserErrorBag = [];
-        $xmlElementsBag = [];
-        foreach ($xmlElements as $element) {
-            $parsingResult = $element::parse(
-                self::xmlParser($xmlString)->getFirst($element::$tagName),
-                $fieldURI,
-                $method
-            );
-
-            if ($parsingResult->isFailure()) {
-                $parserErrorBag[] = $parsingResult->getError();
-            } else {
-                $xmlElementsBag[] = $parsingResult->getData();
-            }
-        }
-
-        if (count($parserErrorBag) > 0) {
-            $parsingError = array_shift($parserErrorBag);
-            foreach ($parserErrorBag as $error) {
-                $parsingError->merge($error);
-            }
-
-            return Result::makeFailure($parsingError);
-        }
-
-        return Result::makeSuccess(
-            new self(
-                $xmlString,
-                ...$xmlElementsBag
-            )
-        );
+        $this->fieldURI = $parentFieldURI === '' ? static::TAG_NAME : $parentFieldURI . '.' . static::TAG_NAME;
     }
 
-    protected static function tagElementsValidators(): array
+    protected function tagElementsValidators(): array
     {
         return [
             new RequiredTagValidator(['cUF', 'cNF', 'natOp', 'mod', 'serie', 'nNF', 'dhEmi', 'tpNF', 'idDest', 'cMunFG', 'tpImp', 'tpEmis', 'cDV', 'tpAmb', 'finNFe', 'indFinal', 'indPres', 'procEmi', 'verProc']),

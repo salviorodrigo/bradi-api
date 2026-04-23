@@ -30,85 +30,21 @@ final class Destinatario extends DFeElement
 {
     use ValidatesDFeGroupElement;
 
-    public static string $tagName = 'dest';
+    public const string TAG_NAME = 'dest';
 
-    private function __construct(
-        public readonly string $xmlString,
-        public readonly ?CadastroPJ $CNPJ,
-        public readonly ?CadastroPF $CPF,
-        public readonly ?Nome $xNome,
-        public readonly ?EnderecoDestinatario $endDest,
-        public readonly IndicadorIEDestinatario $indIEDest,
-        public readonly ?InscricaoEstadual $IE,
+    public ?CadastroPJ $CNPJ;
+    public ?CadastroPF $CPF;
+    public ?Nome $xNome;
+    public ?EnderecoDestinatario $endDest;
+    public IndicadorIEDestinatario $indIEDest;
+    public ?InscricaoEstadual $IE;
 
-    ) {
-        $this->value = self::xmlParser($xmlString)->getTextContent();
-    }
-
-    public static function parse(mixed $rawData, string $parentFieldURI = '', string $method = __METHOD__): Result
+    public function __construct(string $parentFieldURI = '')
     {
-        $parserResponse = self::parser(
-            $rawData,
-            $parentFieldURI
-        );
-        if ($parserResponse->isFailure()) {
-            return $parserResponse;
-        }
-
-        $parserData = $parserResponse->getData();
-        $fieldURI = $parserData['fieldURI'];
-        $xmlString = $parserData['xmlString'];
-
-        $xmlElements = [
-            ['class' => CadastroPJ::class, 'required' => false],
-            ['class' => CadastroPF::class, 'required' => false],
-            ['class' => Nome::class, 'required' => false],
-            ['class' => EnderecoDestinatario::class, 'required' => false],
-            ['class' => IndicadorIEDestinatario::class, 'required' => true],
-            ['class' => InscricaoEstadual::class, 'required' => false],
-        ];
-
-        $parserErrorBag = [];
-        $xmlElementsBag = [];
-        foreach ($xmlElements as $element) {
-            $elementXmlString = self::xmlParser($xmlString)->getFirst($element['class']::$tagName);
-            if ($elementXmlString === '' && ! $element['required']) {
-                $xmlElementsBag[] = null;
-
-                continue;
-            }
-
-            $parsingResult = $element['class']::parse(
-                $elementXmlString,
-                $fieldURI,
-                $method
-            );
-
-            if ($parsingResult->isFailure()) {
-                $parserErrorBag[] = $parsingResult->getError();
-            } else {
-                $xmlElementsBag[] = $parsingResult->getData();
-            }
-        }
-
-        if (count($parserErrorBag) > 0) {
-            $parsingError = array_shift($parserErrorBag);
-            foreach ($parserErrorBag as $error) {
-                $parsingError->merge($error);
-            }
-
-            return Result::makeFailure($parsingError);
-        }
-
-        return Result::makeSuccess(
-            new self(
-                $xmlString,
-                ...$xmlElementsBag
-            )
-        );
+        $this->fieldURI = $parentFieldURI === '' ? static::TAG_NAME : $parentFieldURI . '.' . static::TAG_NAME;
     }
 
-    protected static function tagElementsValidators(): array
+    protected function tagElementsValidators(): array
     {
         return [
             new AtLeastOneTagValidator(['CNPJ', 'CPF', 'idEstrangeiro']),

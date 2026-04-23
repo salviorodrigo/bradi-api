@@ -31,77 +31,21 @@ final class Icms00 extends DFeElement
 {
     use ValidatesDFeGroupElement;
 
-    public static string $tagName = 'ICMS00';
+    public const string TAG_NAME = 'ICMS00';
 
-    private function __construct(
-        public readonly string $xmlString,
-        public readonly IndOrigem $orig,
-        public readonly CodigoSituacaoTributaria $CST,
-        public readonly ModalidadeBC $modBC,
-        public readonly ValorBC $vBC,
-        public readonly AliquotaICMS $pICMS,
-        public readonly ValorICMS $vICMS,
-    ) {
-        $this->value = self::xmlParser($xmlString)->getTextContent();
-    }
+    public IndOrigem $orig;
+    public CodigoSituacaoTributaria $CST;
+    public ModalidadeBC $modBC;
+    public ValorBC $vBC;
+    public AliquotaICMS $pICMS;
+    public ValorICMS $vICMS;
 
-    public static function parse(mixed $rawData, string $parentFieldURI = '', string $method = __METHOD__): Result
+    public function __construct(string $parentFieldURI = '')
     {
-        $parserResponse = self::parser(
-            $rawData,
-            $parentFieldURI
-        );
-        if ($parserResponse->isFailure()) {
-            return $parserResponse;
-        }
-
-        $parserData = $parserResponse->getData();
-        $fieldURI = $parserData['fieldURI'];
-        $xmlString = $parserData['xmlString'];
-
-        $xmlElements = [
-            IndOrigem::class,
-            CodigoSituacaoTributaria::class,
-            ModalidadeBC::class,
-            ValorBC::class,
-            AliquotaICMS::class,
-            ValorICMS::class,
-        ];
-
-        $parserErrorBag = [];
-        $xmlElementsBag = [];
-        foreach ($xmlElements as $element) {
-            $parsingResult = $element::parse(
-                self::xmlParser($xmlString)->getFirst($element::$tagName),
-                $fieldURI,
-                $method
-            );
-
-            if ($parsingResult->isFailure()) {
-                $parserErrorBag[] = $parsingResult->getError();
-            } else {
-                $xmlElementsBag[] = $parsingResult->getData();
-            }
-        }
-
-        if (count($parserErrorBag) > 0) {
-            $parsingError = array_shift($parserErrorBag);
-            foreach ($parserErrorBag as $error) {
-                $parsingError->merge($error);
-            }
-
-            return Result::makeFailure($parsingError);
-        }
-
-        return Result::makeSuccess(
-            new self(
-                $xmlString,
-                ...$xmlElementsBag
-            )
-        );
+        $this->fieldURI = $parentFieldURI === '' ? static::TAG_NAME : $parentFieldURI . '.' . static::TAG_NAME;
     }
 
-    protected static function tagElementsValidators(): array
+    protected function tagElementsValidators(): array
     {
         return [
             new RequiredTagValidator(['orig', 'CST', 'modBC', 'vBC', 'pICMS', 'vICMS']),
