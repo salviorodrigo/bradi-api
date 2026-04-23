@@ -20,7 +20,6 @@ use BradiNfeApi\Domain\Common\Validators\IsDecimalValidator;
 use BradiNfeApi\Domain\Common\Validators\MaxValueValidator;
 use BradiNfeApi\Domain\Common\Validators\MinValueValidator;
 use BradiNfeApi\Domain\Common\Validators\NotNullValidator;
-use BradiNfeApi\Domain\Common\ValueObjects\Result;
 use BradiNfeApi\Domain\Invoices\Protocols\DFeElement;
 use BradiNfeApi\Domain\Invoices\Traits\ValidatesDFeValueElement;
 
@@ -32,7 +31,7 @@ final class ValorTotalProduto extends DFeElement
 
     public function __construct(string $parentFieldURI = '')
     {
-        $this->fieldURI = $parentFieldURI === '' ? static::TAG_NAME : $parentFieldURI . '.' . static::TAG_NAME;
+        $this->fieldURI = $parentFieldURI === '' ? self::TAG_NAME : $parentFieldURI . '.' . self::TAG_NAME;
     }
 
     protected function tagValueValidators(): array

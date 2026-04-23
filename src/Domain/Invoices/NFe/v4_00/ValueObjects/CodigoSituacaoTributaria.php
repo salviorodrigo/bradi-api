@@ -48,7 +48,6 @@ namespace BradiNfeApi\Domain\Invoices\NFe\v4_00\ValueObjects;
 use BradiNfeApi\Domain\Common\Validators\IsNumericValidator;
 use BradiNfeApi\Domain\Common\Validators\NotNullValidator;
 use BradiNfeApi\Domain\Common\Validators\StringLengthValidator;
-use BradiNfeApi\Domain\Common\ValueObjects\Result;
 use BradiNfeApi\Domain\Invoices\NFe\Validators\IsTipoSituacaoTributariaValidator;
 use BradiNfeApi\Domain\Invoices\Protocols\DFeElement;
 use BradiNfeApi\Domain\Invoices\Traits\ValidatesDFeValueElement;
@@ -61,7 +60,7 @@ final class CodigoSituacaoTributaria extends DFeElement
 
     public function __construct(string $parentFieldURI = '')
     {
-        $this->fieldURI = $parentFieldURI === '' ? static::TAG_NAME : $parentFieldURI . '.' . static::TAG_NAME;
+        $this->fieldURI = $parentFieldURI === '' ? self::TAG_NAME : $parentFieldURI . '.' . self::TAG_NAME;
     }
 
     protected function tagValueValidators(): array

@@ -2,16 +2,16 @@
 
 declare(strict_types=1);
 
-use BradiNfeApi\Tests\TestCase;
 use BradiNfeApi\Domain\Common\Protocols\ApiError;
 use BradiNfeApi\Domain\Common\ValueObjects\Result;
 use BradiNfeApi\Domain\Invoices\NFe\v4_00\Icms00;
+use BradiNfeApi\Tests\TestCase;
 
 describe('Icms00', function () {
 
     beforeEach(function () {
         /** @var TestCase $this */
-        $this->sut = new Icms00();
+        $this->sut = new Icms00;
     });
 
     describe('::parse()', function () {
@@ -24,7 +24,7 @@ describe('Icms00', function () {
             expect($sutResponse->getData())->toBeInstanceOf(Icms00::class);
             expect($sutResponse->getData()->value)->toBe('');
             expect($sutResponse->getData()->xmlString)->toBe($candidate);
-        })->with(datasets("dfes.nfe.element_tags.".Icms00::TAG_NAME.".valid"));
+        })->with(datasets('dfes.nfe.element_tags.' . Icms00::TAG_NAME . '.valid'));
 
         test('Should fail with dataset :dataset', function ($candidate) {
             $sutResponse = $this->sut->parse($candidate);
@@ -34,6 +34,6 @@ describe('Icms00', function () {
             }
             expect($sutResponse)->toBeInstanceOf(Result::class);
             expect($sutResponse->getError())->toBeInstanceOf(ApiError::class);
-        })->with(datasets("dfes.nfe.element_tags.".Icms00::TAG_NAME.".invalid"));
+        })->with(datasets('dfes.nfe.element_tags.' . Icms00::TAG_NAME . '.invalid'));
     });
 });

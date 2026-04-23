@@ -2,16 +2,16 @@
 
 declare(strict_types=1);
 
-use BradiNfeApi\Tests\TestCase;
 use BradiNfeApi\Domain\Common\Protocols\ApiError;
 use BradiNfeApi\Domain\Common\ValueObjects\Result;
 use BradiNfeApi\Domain\Invoices\NFe\v4_00\Destinatario;
+use BradiNfeApi\Tests\TestCase;
 
 describe('Destinatario', function () {
 
     beforeEach(function () {
         /** @var TestCase $this */
-        $this->sut = new Destinatario();
+        $this->sut = new Destinatario;
     });
 
     describe('::parse()', function () {
@@ -24,7 +24,7 @@ describe('Destinatario', function () {
             expect($sutResponse->getData())->toBeInstanceOf(Destinatario::class);
             expect($sutResponse->getData()->value)->toBe('');
             expect($sutResponse->getData()->xmlString)->toBe($candidate);
-        })->with(datasets("dfes.nfe.element_tags.".Destinatario::TAG_NAME.".valid"));
+        })->with(datasets('dfes.nfe.element_tags.' . Destinatario::TAG_NAME . '.valid'));
 
         test('Should fail with dataset :dataset', function ($candidate) {
             $sutResponse = $this->sut->parse($candidate);
@@ -34,6 +34,6 @@ describe('Destinatario', function () {
             }
             expect($sutResponse)->toBeInstanceOf(Result::class);
             expect($sutResponse->getError())->toBeInstanceOf(ApiError::class);
-        })->with(datasets("dfes.nfe.element_tags.".Destinatario::TAG_NAME.".invalid"));
+        })->with(datasets('dfes.nfe.element_tags.' . Destinatario::TAG_NAME . '.invalid'));
     });
 });

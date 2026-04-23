@@ -14,7 +14,6 @@ declare(strict_types=1);
 
 namespace BradiNfeApi\Domain\Invoices\NFe\v4_00;
 
-use BradiNfeApi\Domain\Common\ValueObjects\Result;
 use BradiNfeApi\Domain\Invoices\NFe\v4_00\ValueObjects\Bairro;
 use BradiNfeApi\Domain\Invoices\NFe\v4_00\ValueObjects\CodigoMunicipio;
 use BradiNfeApi\Domain\Invoices\NFe\v4_00\ValueObjects\CodigoPais;
@@ -50,7 +49,7 @@ final class EnderecoEmitente extends DFeElement
 
     public function __construct(string $parentFieldURI = '')
     {
-        $this->fieldURI = $parentFieldURI === '' ? static::TAG_NAME : $parentFieldURI . '.' . static::TAG_NAME;
+        $this->fieldURI = $parentFieldURI === '' ? self::TAG_NAME : $parentFieldURI . '.' . self::TAG_NAME;
     }
 
     protected function tagElementsValidators(): array

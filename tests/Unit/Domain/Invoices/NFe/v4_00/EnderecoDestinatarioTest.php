@@ -2,16 +2,16 @@
 
 declare(strict_types=1);
 
-use BradiNfeApi\Tests\TestCase;
 use BradiNfeApi\Domain\Common\Protocols\ApiError;
 use BradiNfeApi\Domain\Common\ValueObjects\Result;
 use BradiNfeApi\Domain\Invoices\NFe\v4_00\EnderecoDestinatario;
+use BradiNfeApi\Tests\TestCase;
 
 describe('EnderecoDestinatario', function () {
 
     beforeEach(function () {
         /** @var TestCase $this */
-        $this->sut = new EnderecoDestinatario();
+        $this->sut = new EnderecoDestinatario;
     });
 
     describe('::parse()', function () {
@@ -24,7 +24,7 @@ describe('EnderecoDestinatario', function () {
             expect($sutResponse->getData())->toBeInstanceOf(EnderecoDestinatario::class);
             expect($sutResponse->getData()->value)->toBe('');
             expect($sutResponse->getData()->xmlString)->toBe($candidate);
-        })->with(datasets("dfes.nfe.element_tags.".EnderecoDestinatario::TAG_NAME.".valid"));
+        })->with(datasets('dfes.nfe.element_tags.' . EnderecoDestinatario::TAG_NAME . '.valid'));
 
         test('Should fail with dataset :dataset', function ($candidate) {
             $sutResponse = $this->sut->parse($candidate);
@@ -34,6 +34,6 @@ describe('EnderecoDestinatario', function () {
             }
             expect($sutResponse)->toBeInstanceOf(Result::class);
             expect($sutResponse->getError())->toBeInstanceOf(ApiError::class);
-        })->with(datasets("dfes.nfe.element_tags.".EnderecoDestinatario::TAG_NAME.".invalid"));
+        })->with(datasets('dfes.nfe.element_tags.' . EnderecoDestinatario::TAG_NAME . '.invalid'));
     });
 });

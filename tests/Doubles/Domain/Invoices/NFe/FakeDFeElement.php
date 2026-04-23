@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace BradiNfeApi\Tests\Doubles\Domain\Invoices\NFe;
 
 use BradiNfeApi\Domain\Common\Protocols\Validator;
-use BradiNfeApi\Domain\Common\ValueObjects\Result;
 use BradiNfeApi\Domain\Invoices\Protocols\DFeElement;
 
 final class FakeDFeElement extends DFeElement
@@ -15,8 +14,8 @@ final class FakeDFeElement extends DFeElement
     public function __construct(string $value = 'fakeValue')
     {
         $this->value = $value;
-        $this->xmlString = '<' . static::TAG_NAME . '>' . $value . '</' . static::TAG_NAME . '>';
-        $this->fieldURI = static::TAG_NAME;
+        $this->xmlString = '<' . self::TAG_NAME . '>' . $value . '</' . self::TAG_NAME . '>';
+        $this->fieldURI = self::TAG_NAME;
     }
 
     /** @return array<Validator> */
