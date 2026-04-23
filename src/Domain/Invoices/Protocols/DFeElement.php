@@ -11,6 +11,8 @@ use BradiNfeApi\Domain\Common\Validators\IsXmlStringValidator;
 use BradiNfeApi\Domain\Common\ValueObjects\Result;
 use BradiNfeApi\Infra\Parses\XmlToDFeParser;
 
+use function PHPUnit\Framework\isNull;
+
 abstract class DFeElement
 {
     public static string $tagName;
@@ -147,28 +149,21 @@ abstract class DFeElement
      */
     private static function mergeValidationErrors(array $validationResults): ?ApiError
     {
-        $mergedError = null;
+        $failedValidations = array_filter(
+            $validationResults,
+            fn (Result $validationResult): bool =>
+                $validationResult->isFailure()
+                && $validationResult->getError() instanceof ApiError
+        );
 
-        foreach ($validationResults as $validationResult) {
-            if (! $validationResult->isFailure()) {
-                continue;
-            }
-
-            $error = $validationResult->getError();
-            if (! $error instanceof ApiError) {
-                continue;
-            }
-
-            if ($mergedError === null) {
-                $mergedError = $error;
-
-                continue;
-            }
-
-            $mergedError->merge($error);
-        }
-
-        return $mergedError;
+        return array_reduce(
+            $failedValidations,
+            function (?ApiError $mergedError, Result $validationResult): ?ApiError {
+                $error = $validationResult->getError();
+                return isNull($mergedError) ? $error : $mergedError->merge($error);
+            },
+            null
+        );
     }
 
     /**
