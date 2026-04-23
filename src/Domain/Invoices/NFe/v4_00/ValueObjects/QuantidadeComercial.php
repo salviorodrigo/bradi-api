@@ -21,7 +21,6 @@ use BradiNfeApi\Domain\Common\Validators\NotNullValidator;
 use BradiNfeApi\Domain\Common\ValueObjects\Result;
 use BradiNfeApi\Domain\Invoices\Protocols\DFeElement;
 use BradiNfeApi\Domain\Invoices\Traits\ValidatesDFeValueElement;
-use InvalidArgumentException;
 
 final class QuantidadeComercial extends DFeElement
 {
@@ -63,26 +62,6 @@ final class QuantidadeComercial extends DFeElement
                 $xmlString
             )
         );
-    }
-
-    public static function create(string $tagValue = '', array $elements = [], array $attributes = [], string $parentFieldURI = '', string $method = __METHOD__): Result
-    {
-        foreach ($attributes as $attributeName => $attributeValue) {
-            if (! is_string($attributeName)) {
-                throw new InvalidArgumentException('Attribute name must be a string. Found: ' . gettype($attributeName) . ' with value: ' . strval($attributeName));
-            }
-            if (! is_string($attributeValue)) {
-                throw new InvalidArgumentException('Attribute value must be a string. Found: ' . gettype($attributeValue) . ' with value: ' . strval($attributeValue));
-            }
-        }
-
-        foreach ($elements as $element) {
-            if (! $element instanceof DFeElement) {
-                throw new InvalidArgumentException('All elements must be instances of DFeElement. Found: ' . gettype($element) . ' with value: ' . strval($element));
-            }
-        }
-
-        return self::parse(self::generateXmlString($tagValue, $elements, $attributes), $parentFieldURI, $method);
     }
 
     protected static function tagValueValidators(): array

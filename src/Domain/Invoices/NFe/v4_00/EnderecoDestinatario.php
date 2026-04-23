@@ -29,7 +29,6 @@ use BradiNfeApi\Domain\Invoices\NFe\v4_00\ValueObjects\Telefone;
 use BradiNfeApi\Domain\Invoices\Protocols\DFeElement;
 use BradiNfeApi\Domain\Invoices\Traits\ValidatesDFeGroupElement;
 use BradiNfeApi\Domain\Invoices\Validators\RequiredTagValidator;
-use InvalidArgumentException;
 
 final class EnderecoDestinatario extends DFeElement
 {
@@ -123,27 +122,6 @@ final class EnderecoDestinatario extends DFeElement
                 ...$xmlElementsBag
             )
         );
-    }
-
-    public static function create(string $tagValue = '', array $elements = [], array $attributes = [], string $parentFieldURI = '', string $method = __METHOD__): Result
-    {
-        foreach ($attributes as $attributeName => $attributeValue) {
-            if (! is_string($attributeName)) {
-                throw new InvalidArgumentException('Attribute name must be a string. Found: ' . gettype($attributeName) . ' with value: ' . strval($attributeName));
-            }
-
-            if (! is_string($attributeValue)) {
-                throw new InvalidArgumentException('Attribute value must be a string. Found: ' . gettype($attributeValue) . ' with value: ' . strval($attributeValue));
-            }
-        }
-
-        foreach ($elements as $element) {
-            if (! $element instanceof DFeElement) {
-                throw new InvalidArgumentException('All elements must be instances of DFeElement. Found: ' . gettype($element) . ' with value: ' . strval($element));
-            }
-        }
-
-        return self::parse(self::generateXmlString($tagValue, $elements, $attributes), $parentFieldURI, $method);
     }
 
     protected static function tagElementsValidators(): array

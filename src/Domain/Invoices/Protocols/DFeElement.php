@@ -140,13 +140,6 @@ abstract class DFeElement
      **/
     abstract public static function parse(mixed $rawData, string $parentFieldURI = '', string $method = __METHOD__): Result;
 
-    /**
-     * @param  array<string,string>  $attributes
-     * @param  array<DFeElement>  $elements
-     * @return Result<DFeElement|ApiError>
-     **/
-    abstract public static function create(string $tagValue, array $elements, array $attributes, string $parentFieldURI = '', string $method = __METHOD__): Result;
-
     /** @return array<Validator> */
     abstract protected static function tagValueValidators(): array;
 

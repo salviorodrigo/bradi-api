@@ -24,11 +24,6 @@ final class FakeDFeElement extends DFeElement
         return Result::makeSuccess(new self);
     }
 
-    public static function create(string $tagValue, array $elements, array $attributes, string $parentFieldURI = '', string $method = __METHOD__): Result
-    {
-        return Result::makeSuccess(new self);
-    }
-
     /** @return array<Validator> */
     protected static function tagValueValidators(): array
     {
