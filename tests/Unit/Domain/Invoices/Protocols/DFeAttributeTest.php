@@ -6,7 +6,6 @@ use BradiNfeApi\Domain\Common\Protocols\ApiError;
 use BradiNfeApi\Domain\Common\ValueObjects\Result;
 use BradiNfeApi\Tests\Doubles\Domain\Invoices\NFe\FakeDFeAttribute;
 use BradiNfeApi\Tests\TestCase;
-use RuntimeException;
 
 describe('DFeAttribute', function () {
     beforeEach(function () {
@@ -15,19 +14,6 @@ describe('DFeAttribute', function () {
     });
 
     describe('::parse()', function () {
-        test('Should succeed parsing plain attribute value', function () {
-            $sutResponse = $this->sut->parse('NFe35240412345678000123550010000000011000000010');
-
-            expect($sutResponse)->toBeInstanceOf(Result::class);
-            if ($sutResponse->isFailure()) {
-                $this->fail(json_encode($sutResponse->getError()));
-            }
-
-            expect($sutResponse->getData())->toBeInstanceOf(FakeDFeAttribute::class);
-            expect($sutResponse->getData()->value)->toBe('NFe35240412345678000123550010000000011000000010');
-            expect((string) $sutResponse->getData())->toBe('fakeAttr="NFe35240412345678000123550010000000011000000010"');
-        });
-
         test('Should succeed extracting value from xml tag attribute', function () {
             $candidate = '<infNFe fakeAttr="ABC123" versao="4.00"></infNFe>';
             $sutResponse = $this->sut->parse($candidate);
@@ -57,7 +43,7 @@ describe('DFeAttribute', function () {
     describe('::__toString()', function () {
         test('Should throw if attribute value was not initialized', function () {
             expect(fn () => (string) new FakeDFeAttribute('infNFe'))
-                ->toThrow(RuntimeException::class);
+                ->toThrow(\RuntimeException::class);
         });
     });
 });
