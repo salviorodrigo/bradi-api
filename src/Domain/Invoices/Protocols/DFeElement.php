@@ -10,30 +10,76 @@ use BradiNfeApi\Domain\Common\Services\ValidationService;
 use BradiNfeApi\Domain\Common\Validators\IsXmlStringValidator;
 use BradiNfeApi\Domain\Common\ValueObjects\Result;
 use BradiNfeApi\Infra\Parses\XmlToDFeParser;
+use ReflectionClass;
+use ReflectionNamedType;
+use ReflectionProperty;
+use RuntimeException;
 
 abstract class DFeElement
 {
     public const string TAG_NAME = '';
 
-    public string $value;
+    public ?string $value;
+
     public protected(set) string $xmlString;
-    public protected(set) string $fieldURI;
+
+    public readonly string $fieldURI;
 
     protected static function xmlParser(string $xmlString): DFeParser
     {
         return new XmlToDFeParser($xmlString);
     }
+
+    /**
+     * @return Result<DFeElement|ApiError>
+     **/
+    final public function parse(mixed $rawData): Result
+    {
+        $fieldURI = $this->fieldURI;
+        $xmlString = static::xmlParser(strval($rawData))->getFirst(static::TAG_NAME);
+
+        $validationResults = [
+            $this->validateDataType($rawData, $fieldURI),
+            $this->validateTagAttributes($xmlString, $fieldURI),
+            $this->validateTagElements($xmlString, $fieldURI),
+            $this->validateTagValue($xmlString, $fieldURI),
+        ];
+
+        $validationFailures = array_filter(
+            $validationResults,
+            fn (Result $validationResult) => $validationResult->isFailure()
+        );
+
+        if (count($validationFailures) > 0) {
+            $validationError = array_shift($validationFailures)->getError();
+            foreach ($validationFailures as $failure) {
+                $validationError->merge($failure->getError());
+            }
+
+            return Result::makeFailure($validationError);
+        }
+
+        $this->xmlString = $xmlString;
+        $hydrateResult = $this->hydrate();
+        if ($hydrateResult->isFailure()) {
+            return $hydrateResult;
+        }
+
+        return Result::makeSuccess($this);
+    }
+
     /**
      * @param  array<string,string>  $attributes
      * @param  array<DFeElement>  $elements
      **/
-    final protected function generateXmlString(string $tagValue = '', array $elements = [], array $attributes = [], bool $isAutoCloseTag = false): string
+    final protected function generateXmlString(array $elements = [], array $attributes = []): string
     {
         $xmlString = '';
-        if ($tagValue == '' && empty($elements) && empty($attributes)) {
+        if (! isset($this->value) && empty($elements) && empty($attributes)) {
             return $xmlString;
         }
 
+        $isAutoCloseTag = ! isset($this->value) && (! empty($elements) || ! empty($attributes));
         if ($isAutoCloseTag) {
             $xmlString .= '<' . static::TAG_NAME;
             foreach ($attributes as $attributeName => $attributeValue) {
@@ -51,9 +97,9 @@ abstract class DFeElement
         }
 
         $xmlString .= '>';
-        $xmlString .= $tagValue;
+        $xmlString .= $this->value;
         foreach ($elements as $element) {
-            $xmlString .= $element->xmlString;
+            $xmlString .= (string) $element;
         }
 
         $xmlString .= '</' . static::TAG_NAME . '>';
@@ -114,43 +160,14 @@ abstract class DFeElement
         return $service->verify($candidate);
     }
 
-    /**
-     * @return Result<DFeElement|ApiError>
-     **/
-    final public function parse(mixed $rawData): Result
-    {
-        $fieldURI = $this->fieldURI;
-        $xmlString = static::xmlParser(strval($rawData))->getFirst(static::TAG_NAME);
+    /** @return array<Validator> */
+    abstract protected function tagValueValidators(): array;
 
-        $validationResults = [
-            $this->validateDataType($rawData, $fieldURI),
-            $this->validateTagAttributes($xmlString, $fieldURI),
-            $this->validateTagElements($xmlString, $fieldURI),
-            $this->validateTagValue($xmlString, $fieldURI),
-        ];
+    /** @return array<Validator> */
+    abstract protected function tagAttributesValidators(): array;
 
-        $validationFailures = array_filter(
-            $validationResults,
-            fn (Result $validationResult) => $validationResult->isFailure()
-        );
-
-        if (count($validationFailures) > 0) {
-            $validationError = array_shift($validationFailures)->getError();
-            foreach ($validationFailures as $failure) {
-                $validationError->merge($failure->getError());
-            }
-
-            return Result::makeFailure($validationError);
-        }
-   
-        $this->xmlString = $xmlString;
-        $hydrateResult = $this->hydrate();
-        if ($hydrateResult->isFailure()) {
-            return $hydrateResult;
-        }
-
-        return Result::makeSuccess($this);
-    }
+    /** @return array<Validator> */
+    abstract protected function tagElementsValidators(): array;
 
     /**
      * @return Result<null|ApiError>
@@ -214,8 +231,8 @@ abstract class DFeElement
         $requiredElements = [];
         $optionalElements = [];
 
-        $reflection = new \ReflectionClass($this);
-        foreach ($reflection->getProperties(\ReflectionProperty::IS_PUBLIC) as $property) {
+        $reflection = new ReflectionClass($this);
+        foreach ($reflection->getProperties(ReflectionProperty::IS_PUBLIC) as $property) {
             if (
                 in_array($property->getName(), ['value', 'xmlString', 'fieldURI'], true)
                 || ! $property->hasType()
@@ -224,7 +241,7 @@ abstract class DFeElement
             }
 
             $propertyType = $property->getType();
-            if (! $propertyType instanceof \ReflectionNamedType || $propertyType->isBuiltin()) {
+            if (! $propertyType instanceof ReflectionNamedType || $propertyType->isBuiltin()) {
                 continue;
             }
 
@@ -265,14 +282,78 @@ abstract class DFeElement
         return $elementParser->parse($elementXmlString);
     }
 
-    /** @return array<Validator> */
-    abstract protected function tagValueValidators(): array;
+    /**
+     * @return array<array{property: string, isOptional: bool}>
+     */
+    private function listSerializationElements(): array
+    {
+        $elements = [];
+        $reflection = new ReflectionClass($this);
+        $concreteClassName = $reflection->getName();
 
-    /** @return array<Validator> */
-    abstract protected function tagAttributesValidators(): array;
+        foreach ($reflection->getProperties(ReflectionProperty::IS_PUBLIC) as $property) {
+            if (
+                $property->getDeclaringClass()->getName() !== $concreteClassName
+                || in_array($property->getName(), ['value', 'xmlString', 'fieldURI'], true)
+                || ! $property->hasType()
+            ) {
+                continue;
+            }
 
-    /** @return array<Validator> */
-    abstract protected function tagElementsValidators(): array;
+            $propertyType = $property->getType();
+            if (! $propertyType instanceof ReflectionNamedType || $propertyType->isBuiltin()) {
+                continue;
+            }
+
+            $elementClass = $propertyType->getName();
+            if (! is_a($elementClass, self::class, true)) {
+                continue;
+            }
+
+            $elements[] = [
+                'property' => $property->getName(),
+                'isOptional' => $propertyType->allowsNull(),
+            ];
+        }
+
+        return $elements;
+    }
+
+    final public function __toString(): string
+    {
+        if (isset($this->xmlString)) {
+            return $this->xmlString;
+        }
+
+        $elements = [];
+        foreach ($this->listSerializationElements() as $elementMetadata) {
+            $propertyName = $elementMetadata['property'];
+            $property = new ReflectionProperty($this, $propertyName);
+
+            if (! $property->isInitialized($this)) {
+                if ($elementMetadata['isOptional']) {
+                    continue;
+                }
+
+                throw new RuntimeException(sprintf(
+                    'Property "%s::$%s" must be initialized before serialization.',
+                    static::class,
+                    $propertyName
+                ));
+            }
+
+            $element = $this->{$propertyName};
+            if ($elementMetadata['isOptional'] && $element === null) {
+                continue;
+            }
+
+            $elements[] = $element;
+        }
+
+        $this->xmlString = $this->generateXmlString(elements: $elements);
+
+        return $this->xmlString;
+    }
 }
 
 // TODO Make test file.
