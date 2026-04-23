@@ -6,7 +6,6 @@ namespace BradiNfeApi\Domain\Invoices\Protocols;
 
 use BradiNfeApi\Domain\Common\Protocols\ApiError;
 use BradiNfeApi\Domain\Common\Protocols\Validator;
-use BradiNfeApi\Domain\Common\Services\OptionalValidation;
 use BradiNfeApi\Domain\Common\Services\ValidationService;
 use BradiNfeApi\Domain\Common\Validators\IsXmlStringValidator;
 use BradiNfeApi\Domain\Common\ValueObjects\Result;
@@ -65,14 +64,10 @@ abstract class DFeElement
     /**
      * @return Result<null|ApiError>
      **/
-    final protected static function validateDataType(mixed $rawData, string $fieldURI, string $method, bool $isOptional = false): Result
+    final protected static function validateDataType(mixed $rawData, string $fieldURI): Result
     {
-        $typeValidator = new ValidationService($fieldURI, $method)
+        $typeValidator = new ValidationService($fieldURI, __METHOD__)
             ->addValidator(new IsXmlStringValidator);
-
-        if ($isOptional) {
-            return (new OptionalValidation($typeValidator))->verify($rawData);
-        }
 
         return $typeValidator->verify($rawData);
     }
@@ -80,59 +75,100 @@ abstract class DFeElement
     /**
      * @return Result<null|ApiError>
      **/
-    final protected static function validateTagValue(string $xmlString, string $fieldURI, string $method, bool $isOptional = false): Result
+    final protected static function validateTagValue(string $xmlString, string $fieldURI): Result
     {
         $candidate = static::xmlParser($xmlString)->getTextContent();
-        $service = new ValidationService($fieldURI, $method);
+        $service = new ValidationService($fieldURI, __METHOD__);
         foreach (static::tagValueValidators() as $validator) {
             $service->addValidator($validator);
         }
 
-        if ($isOptional) {
-            return (new OptionalValidation($service))->verify($candidate);
-        }
-
         return $service->verify($candidate);
     }
 
     /**
      * @return Result<null|ApiError>
      **/
-    final protected static function validateTagAttributes(string $xmlString, string $fieldURI, string $method, bool $isOptional = false): Result
+    final protected static function validateTagAttributes(string $xmlString, string $fieldURI): Result
     {
         $candidate = static::xmlParser($xmlString)->listAttributes();
-        $service = new ValidationService($fieldURI, $method);
+        $service = new ValidationService($fieldURI, __METHOD__);
         foreach (static::tagAttributesValidators() as $validator) {
             $service->addValidator($validator);
         }
 
-        if ($isOptional) {
-            return (new OptionalValidation($service))->verify($candidate);
-        }
-
         return $service->verify($candidate);
     }
 
     /**
      * @return Result<null|ApiError>
      **/
-    final protected static function validateTagElements(string $xmlString, string $fieldURI, string $method, bool $isOptional = false): Result
+    final protected static function validateTagElements(string $xmlString, string $fieldURI): Result
     {
-        if ($xmlString === '') {
-            return Result::makeSuccess();
-        }
-
         $candidate = static::xmlParser($xmlString)->listChildren();
-        $service = new ValidationService($fieldURI, $method);
+        $service = new ValidationService($fieldURI, __METHOD__);
         foreach (static::tagElementsValidators() as $validator) {
             $service->addValidator($validator);
         }
 
-        if ($isOptional) {
-            return (new OptionalValidation($service))->verify($candidate);
+        return $service->verify($candidate);
+    }
+
+    /**
+     * @return Result<array{fieldURI: string, xmlString: string}|ApiError>
+     **/
+    final protected static function parser(
+        mixed $rawData,
+        string $parentFieldURI = ''
+    ): Result {
+        $fieldURI = $parentFieldURI === '' ? static::$tagName : $parentFieldURI . '.' . static::$tagName;
+        $xmlString = static::xmlParser(strval($rawData))->getFirst(static::$tagName);
+
+        $validationResults = [
+            static::validateDataType($rawData, $fieldURI),
+            static::validateTagAttributes($xmlString, $fieldURI),
+            static::validateTagElements($xmlString, $fieldURI),
+            static::validateTagValue($xmlString, $fieldURI),
+        ];
+
+        $mergedError = static::mergeValidationErrors($validationResults);
+        if ($mergedError !== null) {
+            return Result::makeFailure($mergedError);
         }
 
-        return $service->verify($candidate);
+        return Result::makeSuccess([
+            'fieldURI' => $fieldURI,
+            'xmlString' => $xmlString,
+        ]);
+    }
+
+    /**
+     * @param  array<Result<null|ApiError>>  $validationResults
+     */
+    private static function mergeValidationErrors(array $validationResults): ?ApiError
+    {
+        $mergedError = null;
+
+        foreach ($validationResults as $validationResult) {
+            if (! $validationResult->isFailure()) {
+                continue;
+            }
+
+            $error = $validationResult->getError();
+            if (! $error instanceof ApiError) {
+                continue;
+            }
+
+            if ($mergedError === null) {
+                $mergedError = $error;
+
+                continue;
+            }
+
+            $mergedError->merge($error);
+        }
+
+        return $mergedError;
     }
 
     /**

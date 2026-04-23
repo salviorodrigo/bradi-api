@@ -39,27 +39,17 @@ class CodigoMunicipio extends DFeElement
 
     public static function parse(mixed $rawData, string $parentFieldURI = '', string $method = __METHOD__): Result
     {
-        $fieldURI = $parentFieldURI == '' ? static::$tagName : $parentFieldURI . '.' . static::$tagName;
-        $typeValidatorResponse = static::validateDataType($rawData, $fieldURI, $method, isOptional: true);
-        if ($typeValidatorResponse->isFailure()) {
-            return $typeValidatorResponse;
+        $parserResponse = static::parser(
+            $rawData,
+            $parentFieldURI
+        );
+        if ($parserResponse->isFailure()) {
+            return $parserResponse;
         }
 
-        $xmlString = static::xmlParser(strval($rawData))->getFirst(static::$tagName);
-        $tagAttributesValidationResponse = static::validateTagAttributes($xmlString, $fieldURI, $method);
-        if ($tagAttributesValidationResponse->isFailure()) {
-            return $tagAttributesValidationResponse;
-        }
-
-        $tagElementsValidationResponse = static::validateTagElements($xmlString, $fieldURI, $method);
-        if ($tagElementsValidationResponse->isFailure()) {
-            return $tagElementsValidationResponse;
-        }
-
-        $validationValueResponse = static::validateTagValue($xmlString, $fieldURI, $method, isOptional: true);
-        if (! $validationValueResponse->isSuccess()) {
-            return $validationValueResponse;
-        }
+        $parserData = $parserResponse->getData();
+        $fieldURI = $parserData['fieldURI'];
+        $xmlString = $parserData['xmlString'];
 
         return Result::makeSuccess(
             new static(

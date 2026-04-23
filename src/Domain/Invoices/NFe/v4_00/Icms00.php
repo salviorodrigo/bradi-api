@@ -47,27 +47,17 @@ final class Icms00 extends DFeElement
 
     public static function parse(mixed $rawData, string $parentFieldURI = '', string $method = __METHOD__): Result
     {
-        $fieldURI = $parentFieldURI == '' ? self::$tagName : $parentFieldURI . '.' . self::$tagName;
-        $typeValidatorResponse = self::validateDataType($rawData, $fieldURI, $method);
-        if (! $typeValidatorResponse->isSuccess()) {
-            return $typeValidatorResponse;
+        $parserResponse = self::parser(
+            $rawData,
+            $parentFieldURI
+        );
+        if ($parserResponse->isFailure()) {
+            return $parserResponse;
         }
 
-        $xmlString = self::xmlParser(strval($rawData))->getFirst(self::$tagName);
-        $tagValueValidationResponse = self::validateTagValue($xmlString, $fieldURI, $method);
-        if (! $tagValueValidationResponse->isSuccess()) {
-            return $tagValueValidationResponse;
-        }
-
-        $tagAttributesValidationResponse = self::validateTagAttributes($xmlString, $fieldURI, $method);
-        if ($tagAttributesValidationResponse->isFailure()) {
-            return $tagAttributesValidationResponse;
-        }
-
-        $tagElementsValidationResponse = self::validateTagElements($xmlString, $fieldURI, $method);
-        if ($tagElementsValidationResponse->isFailure()) {
-            return $tagElementsValidationResponse;
-        }
+        $parserData = $parserResponse->getData();
+        $fieldURI = $parserData['fieldURI'];
+        $xmlString = $parserData['xmlString'];
 
         $xmlElements = [
             IndOrigem::class,

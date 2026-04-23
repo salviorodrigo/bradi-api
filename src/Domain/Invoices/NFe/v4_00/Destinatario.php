@@ -34,12 +34,12 @@ final class Destinatario extends DFeElement
 
     private function __construct(
         public readonly string $xmlString,
-        public readonly CadastroPJ $CNPJ,
-        public readonly CadastroPF $CPF,
-        public readonly Nome $xNome,
-        public readonly EnderecoDestinatario $endDest,
+        public readonly ?CadastroPJ $CNPJ,
+        public readonly ?CadastroPF $CPF,
+        public readonly ?Nome $xNome,
+        public readonly ?EnderecoDestinatario $endDest,
         public readonly IndicadorIEDestinatario $indIEDest,
-        public readonly InscricaoEstadual $IE,
+        public readonly ?InscricaoEstadual $IE,
 
     ) {
         $this->value = self::xmlParser($xmlString)->getTextContent();
@@ -47,42 +47,39 @@ final class Destinatario extends DFeElement
 
     public static function parse(mixed $rawData, string $parentFieldURI = '', string $method = __METHOD__): Result
     {
-        $fieldURI = $parentFieldURI == '' ? self::$tagName : $parentFieldURI . '.' . self::$tagName;
-        $typeValidatorResponse = self::validateDataType($rawData, $fieldURI, $method, isOptional: true);
-        if (! $typeValidatorResponse->isSuccess()) {
-            return $typeValidatorResponse;
+        $parserResponse = self::parser(
+            $rawData,
+            $parentFieldURI
+        );
+        if ($parserResponse->isFailure()) {
+            return $parserResponse;
         }
 
-        $xmlString = self::xmlParser(strval($rawData))->getFirst(self::$tagName);
-        $tagValueValidationResponse = self::validateTagValue($xmlString, $fieldURI, $method, isOptional: true);
-        if (! $tagValueValidationResponse->isSuccess()) {
-            return $tagValueValidationResponse;
-        }
-
-        $tagAttributesValidationResponse = self::validateTagAttributes($xmlString, $fieldURI, $method);
-        if ($tagAttributesValidationResponse->isFailure()) {
-            return $tagAttributesValidationResponse;
-        }
-
-        $tagElementsValidationResponse = self::validateTagElements($xmlString, $fieldURI, $method);
-        if ($tagElementsValidationResponse->isFailure()) {
-            return $tagElementsValidationResponse;
-        }
+        $parserData = $parserResponse->getData();
+        $fieldURI = $parserData['fieldURI'];
+        $xmlString = $parserData['xmlString'];
 
         $xmlElements = [
-            CadastroPJ::class,
-            CadastroPF::class,
-            Nome::class,
-            EnderecoDestinatario::class,
-            IndicadorIEDestinatario::class,
-            InscricaoEstadual::class,
+            ['class' => CadastroPJ::class, 'required' => false],
+            ['class' => CadastroPF::class, 'required' => false],
+            ['class' => Nome::class, 'required' => false],
+            ['class' => EnderecoDestinatario::class, 'required' => false],
+            ['class' => IndicadorIEDestinatario::class, 'required' => true],
+            ['class' => InscricaoEstadual::class, 'required' => false],
         ];
 
         $parserErrorBag = [];
         $xmlElementsBag = [];
         foreach ($xmlElements as $element) {
-            $parsingResult = $element::parse(
-                self::xmlParser($xmlString)->getFirst($element::$tagName),
+            $elementXmlString = self::xmlParser($xmlString)->getFirst($element['class']::$tagName);
+            if ($elementXmlString === '' && ! $element['required']) {
+                $xmlElementsBag[] = null;
+
+                continue;
+            }
+
+            $parsingResult = $element['class']::parse(
+                $elementXmlString,
                 $fieldURI,
                 $method
             );

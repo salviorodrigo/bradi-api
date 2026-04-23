@@ -14,7 +14,6 @@ class DFes extends Dataset
                 'element_tags' => [
                     'dest' => [
                         'valid' => [
-                            'empty' => '',
                             'only_required' => [
                                 'CNPJ' => '<dest><CNPJ>04840356000194</CNPJ><indIEDest>1</indIEDest></dest>',
 
@@ -23,6 +22,7 @@ class DFes extends Dataset
                         ],
 
                         'invalid' => [
+                            'empty' => '',
                             'missing_required' => [
                                 'CNPJ_and_CPF' => '<dest><indIEDest>1</indIEDest></dest>',
 
@@ -55,10 +55,10 @@ class DFes extends Dataset
                     ],
                     'enderDest' => [
                         'valid' => [
-                            'empty' => '',
                             'only_required' => '<enderDest><xLgr>AV PRINCIPAL</xLgr><nro>10</nro><xBairro>CENTRO</xBairro><cMun>3550308</cMun><xMun>SAO PAULO</xMun><UF>SP</UF><CEP>05653070</CEP></enderDest>',
                         ],
                         'invalid' => [
+                            'empty' => '',
                             'missing_required' => [
                                 'xLgr' => '<enderDest><nro>10</nro><xBairro>CENTRO</xBairro><cMun>3550308</cMun><xMun>SAO PAULO</xMun><UF>SP</UF><CEP>05653070</CEP></enderDest>',
 
@@ -190,9 +190,9 @@ class DFes extends Dataset
                     'CEP' => [
                         'valid' => [
                             'standard' => '12345678',
-                            'empty' => '',
                         ],
                         'invalid' => [
+                            'empty' => '',
                             'too_short' => '1234567',
                             'too_long' => '123456789',
                             'masked' => '12.345-678',
@@ -298,9 +298,9 @@ class DFes extends Dataset
                             'sao_paulo_city' => '3550308',
                             'alta_floresta_ro' => '1100015',
                             'exterior' => '9999999',
-                            'empty' => '',
                         ],
                         'invalid' => [
+                            'empty' => '',
                             'too_short' => '355030',
                             'too_long' => '35503088',
                             'masked' => '355.030-8',
@@ -363,10 +363,10 @@ class DFes extends Dataset
                     ],
                     'CNPJ' => [
                         'valid' => [
-                            'empty' => '',
                             'standard' => '42247198000152',
                         ],
                         'invalid' => [
+                            'empty' => '',
                             'too_long' => '422471980001521',
                             'too_short' => '4224719800015',
                             'leading_space' => ' 42247198000152',
@@ -391,9 +391,9 @@ class DFes extends Dataset
                     'cPais' => [
                         'valid' => [
                             'standard' => '1058',
-                            'empty' => '',
                         ],
                         'invalid' => [
+                            'empty' => '',
                             'too_long' => '10589',
                             'too_short' => '105',
                             'leading_space' => ' 1058',
@@ -405,10 +405,10 @@ class DFes extends Dataset
                     ],
                     'CPF' => [
                         'valid' => [
-                            'empty' => '',
                             'standard' => '01505280001',
                         ],
                         'invalid' => [
+                            'empty' => '',
                             'too_long' => '015052800012',
                             'too_short' => '0150528000',
                             'leading_space' => ' 01505280001',
@@ -510,10 +510,10 @@ class DFes extends Dataset
                     ],
                     'dhSaiEnt' => [
                         'valid' => [
-                            'empty' => '',
                             'standard' => '2026-03-01T14:30:00-03:00',
                         ],
                         'invalid' => [
+                            'empty' => '',
                             'leading_space' => ' 2026-03-01T14:30:00-03:00',
                             'trailing_space' => '2026-03-01T14:30:00-03:00 ',
                             'missing_time_zone' => '2026-03-01T14:30:00',
@@ -542,11 +542,11 @@ class DFes extends Dataset
                     ],
                     'fone' => [
                         'valid' => [
-                            'empty' => '',
                             'min_length' => '123456',
                             'max_length' => '55456789012345',
                         ],
                         'invalid' => [
+                            'empty' => '',
                             'leading_space' => ' 123456',
                             'trailing_space' => '123456 ',
                             'alphabetic' => 'A123456',
@@ -559,10 +559,10 @@ class DFes extends Dataset
                         'valid' => [
                             'min_length' => '12',
                             'max_length' => '55456789012345',
-                            'empty' => '',
                             'leading_zeros' => '00001234567890',
                         ],
                         'invalid' => [
+                            'empty' => '',
                             'leading_space' => ' 12',
                             'trailing_space' => '12 ',
                             'alphabetic' => 'A12',
@@ -635,9 +635,9 @@ class DFes extends Dataset
                             'contributor' => '1',
                             'exempt_contributor' => '2',
                             'non_contributor' => '9',
-                            'empty' => '',
                         ],
                         'invalid' => [
+                            'empty' => '',
                             'leading_space' => ' 1',
                             'trailing_space' => '1 ',
                             'alphabetic' => 'A',
@@ -754,9 +754,9 @@ class DFes extends Dataset
                             'minimum_size' => '1',
                             'maximum_size' => 'STRING WITH SIXTY CHARACTERS STRING WITH SIXTY CHARACTERS AB',
                             'internal_spaces' => 'KM 45 BLOCO B',
-                            'empty' => '',
                         ],
                         'invalid' => [
+                            'empty' => '',
                             'too_long_size' => 'STRING WITH SIXTY ONE CHARACTERS STRING WITH SIXTY ONE ABCDEF',
                             'leading_space' => ' 123',
                             'trailing_space' => '123 ',
@@ -967,9 +967,9 @@ class DFes extends Dataset
                             'ap' => 'AP',
                             'pa' => 'PA',
                             'exterior' => 'EX',
-                            'empty' => '',
                         ],
                         'invalid' => [
+                            'empty' => '',
                             'lower_case' => [
                                 'sp' => 'sp',
                                 'rj' => 'rj',
@@ -1135,11 +1135,11 @@ class DFes extends Dataset
                     ],
                     'xBairro' => [
                         'valid' => [
-                            'empty' => '',
                             'min_length' => 'AB',
                             'max_length' => 'STRING WITH SIXTY CHARACTERS STRING WITH SIXTY CHARACTERS AB',
                         ],
                         'invalid' => [
+                            'empty' => '',
                             'too_long' => 'STRING WITH SIXTY ONE CHARACTERS STRING WITH SIXTY ONE ABCDEF',
                             'too_short' => 'A',
                             'leading_space' => ' NEIGHBORHOOD',
@@ -1149,11 +1149,11 @@ class DFes extends Dataset
                     ],
                     'xCpl' => [
                         'valid' => [
-                            'empty' => '',
                             'min_length' => 'A',
                             'max_length' => 'STRING WITH SIXTY CHARACTERS STRING WITH SIXTY CHARACTERS AB',
                         ],
                         'invalid' => [
+                            'empty' => '',
                             'too_long' => 'STRING WITH SIXTY ONE CHARACTERS STRING WITH SIXTY ONE ABCDEF',
                             'leading_space' => ' COMPLEMENT',
                             'trailing_space' => 'COMPLEMENT ',
@@ -1162,11 +1162,12 @@ class DFes extends Dataset
                     ],
                     'xFant' => [
                         'valid' => [
-                            'empty' => '',
-                            'min_length' => 'A',
+                            'min_length' => 'AB',
                             'max_length' => 'STRING WITH SIXTY CHARACTERS STRING WITH SIXTY CHARACTERS AB',
                         ],
                         'invalid' => [
+                            'too_short' => 'A',
+                            'empty' => '',
                             'too_long' => 'STRING WITH SIXTY ONE CHARACTERS STRING WITH SIXTY ONE ABCDEF',
                             'leading_space' => ' FANTASY',
                             'trailing_space' => 'FANTASY ',
@@ -1175,11 +1176,11 @@ class DFes extends Dataset
                     ],
                     'xLgr' => [
                         'valid' => [
-                            'empty' => '',
                             'min_length' => 'AB',
                             'max_length' => 'STRING WITH SIXTY CHARACTERS STRING WITH SIXTY CHARACTERS AB',
                         ],
                         'invalid' => [
+                            'empty' => '',
                             'too_short' => 'A',
                             'too_long' => 'STRING WITH SIXTY ONE CHARACTERS STRING WITH SIXTY ONE ABCDEF',
                             'leading_space' => ' STREET',
@@ -1189,11 +1190,11 @@ class DFes extends Dataset
                     ],
                     'xMun' => [
                         'valid' => [
-                            'empty' => '',
                             'min_length' => 'AB',
                             'max_length' => 'STRING WITH SIXTY CHARACTERS STRING WITH SIXTY CHARACTERS AB',
                         ],
                         'invalid' => [
+                            'empty' => '',
                             'too_short' => 'A',
                             'too_long' => 'STRING WITH SIXTY ONE CHARACTERS STRING WITH SIXTY ONE ABCDEF',
                             'leading_space' => ' CITY',
@@ -1203,11 +1204,11 @@ class DFes extends Dataset
                     ],
                     'xNome' => [
                         'valid' => [
-                            'empty' => '',
                             'min_length' => 'AB',
                             'max_length' => 'STRING WITH SIXTY CHARACTERS STRING WITH SIXTY CHARACTERS AB',
                         ],
                         'invalid' => [
+                            'empty' => '',
                             'too_short' => 'A',
                             'too_long' => 'STRING WITH SIXTY ONE CHARACTERS STRING WITH SIXTY ONE ABCDEF',
                             'leading_space' => ' NAME',
@@ -1217,11 +1218,11 @@ class DFes extends Dataset
                     ],
                     'xPais' => [
                         'valid' => [
-                            'empty' => '',
                             'min_length' => 'AB',
                             'max_length' => 'STRING WITH SIXTY CHARACTERS STRING WITH SIXTY CHARACTERS AB',
                         ],
                         'invalid' => [
+                            'empty' => '',
                             'too_short' => 'A',
                             'too_long' => 'STRING WITH SIXTY ONE CHARACTERS STRING WITH SIXTY ONE ABCDEF',
                             'leading_space' => ' NAME',

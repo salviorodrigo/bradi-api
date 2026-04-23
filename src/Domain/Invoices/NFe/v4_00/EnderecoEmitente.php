@@ -40,62 +40,59 @@ final class EnderecoEmitente extends DFeElement
         public readonly string $xmlString,
         public readonly Logradouro $xLgr,
         public readonly NumeroEndereco $nro,
-        public readonly ComplementoEndereco $Cpl,
+        public readonly ?ComplementoEndereco $Cpl,
         public readonly Bairro $xBairro,
         public readonly CodigoMunicipio $cMun,
         public readonly NomeMunicipio $xMun,
         public readonly SiglaUF $UF,
         public readonly CodigoPostal $CEP,
-        public readonly CodigoPais $cPais,
-        public readonly NomePais $xPais,
-        public readonly Telefone $fone,
+        public readonly ?CodigoPais $cPais,
+        public readonly ?NomePais $xPais,
+        public readonly ?Telefone $fone,
     ) {
         $this->value = self::xmlParser($xmlString)->getTextContent();
     }
 
     public static function parse(mixed $rawData, string $parentFieldURI = '', string $method = __METHOD__): Result
     {
-        $fieldURI = $parentFieldURI == '' ? self::$tagName : $parentFieldURI . '.' . self::$tagName;
-        $typeValidatorResponse = self::validateDataType($rawData, $fieldURI, $method);
-        if (! $typeValidatorResponse->isSuccess()) {
-            return $typeValidatorResponse;
+        $parserResponse = self::parser(
+            $rawData,
+            $parentFieldURI
+        );
+        if ($parserResponse->isFailure()) {
+            return $parserResponse;
         }
 
-        $xmlString = self::xmlParser(strval($rawData))->getFirst(self::$tagName);
-        $tagValueValidationResponse = self::validateTagValue($xmlString, $fieldURI, $method);
-        if (! $tagValueValidationResponse->isSuccess()) {
-            return $tagValueValidationResponse;
-        }
-
-        $tagAttributesValidationResponse = self::validateTagAttributes($xmlString, $fieldURI, $method);
-        if ($tagAttributesValidationResponse->isFailure()) {
-            return $tagAttributesValidationResponse;
-        }
-
-        $tagElementsValidationResponse = self::validateTagElements($xmlString, $fieldURI, $method);
-        if ($tagElementsValidationResponse->isFailure()) {
-            return $tagElementsValidationResponse;
-        }
+        $parserData = $parserResponse->getData();
+        $fieldURI = $parserData['fieldURI'];
+        $xmlString = $parserData['xmlString'];
 
         $xmlElements = [
-            Logradouro::class,
-            NumeroEndereco::class,
-            ComplementoEndereco::class,
-            Bairro::class,
-            CodigoMunicipio::class,
-            NomeMunicipio::class,
-            SiglaUF::class,
-            CodigoPostal::class,
-            CodigoPais::class,
-            NomePais::class,
-            Telefone::class,
+            ['class' => Logradouro::class, 'required' => true],
+            ['class' => NumeroEndereco::class, 'required' => true],
+            ['class' => ComplementoEndereco::class, 'required' => false],
+            ['class' => Bairro::class, 'required' => true],
+            ['class' => CodigoMunicipio::class, 'required' => true],
+            ['class' => NomeMunicipio::class, 'required' => true],
+            ['class' => SiglaUF::class, 'required' => true],
+            ['class' => CodigoPostal::class, 'required' => true],
+            ['class' => CodigoPais::class, 'required' => false],
+            ['class' => NomePais::class, 'required' => false],
+            ['class' => Telefone::class, 'required' => false],
         ];
 
         $parserErrorBag = [];
         $xmlElementsBag = [];
         foreach ($xmlElements as $element) {
-            $parsingResult = $element::parse(
-                self::xmlParser($xmlString)->getFirst($element::$tagName),
+            $elementXmlString = self::xmlParser($xmlString)->getFirst($element['class']::$tagName);
+            if ($elementXmlString === '' && ! $element['required']) {
+                $xmlElementsBag[] = null;
+
+                continue;
+            }
+
+            $parsingResult = $element['class']::parse(
+                $elementXmlString,
                 $fieldURI,
                 $method
             );
