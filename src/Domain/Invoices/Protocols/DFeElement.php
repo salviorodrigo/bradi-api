@@ -69,45 +69,6 @@ abstract class DFeElement
     }
 
     /**
-     * @param  array<string,string>  $attributes
-     * @param  array<DFeElement>  $elements
-     **/
-    final protected function generateXmlString(array $elements = [], array $attributes = []): string
-    {
-        $xmlString = '';
-        if (! isset($this->value) && empty($elements) && empty($attributes)) {
-            return $xmlString;
-        }
-
-        $isAutoCloseTag = ! isset($this->value) && (! empty($elements) || ! empty($attributes));
-        if ($isAutoCloseTag) {
-            $xmlString .= '<' . static::TAG_NAME;
-            foreach ($attributes as $attributeName => $attributeValue) {
-                $xmlString .= ' ' . $attributeName . '="' . $attributeValue . '"';
-            }
-
-            $xmlString .= '/>';
-
-            return $xmlString;
-        }
-
-        $xmlString .= '<' . static::TAG_NAME;
-        foreach ($attributes as $attributeName => $attributeValue) {
-            $xmlString .= ' ' . $attributeName . '="' . $attributeValue . '"';
-        }
-
-        $xmlString .= '>';
-        $xmlString .= $this->value;
-        foreach ($elements as $element) {
-            $xmlString .= (string) $element;
-        }
-
-        $xmlString .= '</' . static::TAG_NAME . '>';
-
-        return $xmlString;
-    }
-
-    /**
      * @return Result<null|ApiError>
      **/
     final protected function validateDataType(mixed $rawData, string $fieldURI): Result
@@ -168,6 +129,52 @@ abstract class DFeElement
 
     /** @return array<Validator> */
     abstract protected function tagElementsValidators(): array;
+
+    private function generateXmlString(): string
+    {
+        $attributes = [];
+        $elements = [];
+
+        foreach ($this->listSerializationProperties() as $metadata) {
+            $propertyName = $metadata['property'];
+            $value = $this->{$propertyName};
+            if ($metadata['type'] === 'attribute') {
+                $attributes[] = $value;
+            }
+
+            if ($metadata['type'] === 'element') {
+                $elements[] = $value;
+            }
+        }
+
+        $xmlString = '';
+        if (! isset($this->value) && empty($elements) && empty($attributes)) {
+            return $xmlString;
+        }
+
+        $isAutoCloseTag = ! isset($this->value) && empty($elements);
+
+        $xmlString .= '<' . static::TAG_NAME;
+        foreach ($attributes as $attribute) {
+            $xmlString .= ' ' . (string) $attribute;
+        }
+
+        if ($isAutoCloseTag) {
+            $xmlString .= '/>';
+
+            return $xmlString;
+        }
+
+        $xmlString .= '>';
+        $xmlString .= $this->value ?? '';
+        foreach ($elements as $element) {
+            $xmlString .= (string) $element;
+        }
+
+        $xmlString .= '</' . static::TAG_NAME . '>';
+
+        return $xmlString;
+    }
 
     /**
      * @return Result<null|ApiError>
@@ -283,20 +290,16 @@ abstract class DFeElement
     }
 
     /**
-     * @return array<array{property: string, isOptional: bool}>
+     * @return array<array{property: string, type: 'element'|'attribute'}>
      */
-    private function listSerializationElements(): array
+    private function listSerializationProperties(): array
     {
-        $elements = [];
+        $properties = [];
         $reflection = new ReflectionClass($this);
         $concreteClassName = $reflection->getName();
 
         foreach ($reflection->getProperties(ReflectionProperty::IS_PUBLIC) as $property) {
-            if (
-                $property->getDeclaringClass()->getName() !== $concreteClassName
-                || in_array($property->getName(), ['value', 'xmlString', 'fieldURI'], true)
-                || ! $property->hasType()
-            ) {
+            if ($property->getDeclaringClass()->getName() !== $concreteClassName) {
                 continue;
             }
 
@@ -305,18 +308,35 @@ abstract class DFeElement
                 continue;
             }
 
-            $elementClass = $propertyType->getName();
-            if (! is_a($elementClass, self::class, true)) {
+            $propertyAllowsNull = $propertyType->allowsNull();
+            if ($propertyAllowsNull && (! $property->isInitialized($this) || $this->{$property->getName()} === null)) {
                 continue;
             }
 
-            $elements[] = [
+            if (! $propertyAllowsNull && (! $property->isInitialized($this) || $this->{$property->getName()} === null)) {
+                throw new RuntimeException("Property {$property->getName()} is not initialized.");
+            }
+
+            $typeClass = $propertyType->getName();
+            if (is_a($typeClass, DFeAttribute::class, true)) {
+                $propertyType = 'attribute';
+            }
+
+            if (is_a($typeClass, self::class, true)) {
+                $propertyType = 'element';
+            }
+
+            if (! isset($propertyType)) {
+                continue;
+            }
+
+            $properties[] = [
                 'property' => $property->getName(),
-                'isOptional' => $propertyType->allowsNull(),
+                'type' => $propertyType,
             ];
         }
 
-        return $elements;
+        return $properties;
     }
 
     final public function __toString(): string
@@ -325,32 +345,7 @@ abstract class DFeElement
             return $this->xmlString;
         }
 
-        $elements = [];
-        foreach ($this->listSerializationElements() as $elementMetadata) {
-            $propertyName = $elementMetadata['property'];
-            $property = new ReflectionProperty($this, $propertyName);
-
-            if (! $property->isInitialized($this)) {
-                if ($elementMetadata['isOptional']) {
-                    continue;
-                }
-
-                throw new RuntimeException(sprintf(
-                    'Property "%s::$%s" must be initialized before serialization.',
-                    static::class,
-                    $propertyName
-                ));
-            }
-
-            $element = $this->{$propertyName};
-            if ($elementMetadata['isOptional'] && $element === null) {
-                continue;
-            }
-
-            $elements[] = $element;
-        }
-
-        $this->xmlString = $this->generateXmlString(elements: $elements);
+        $this->xmlString = $this->generateXmlString();
 
         return $this->xmlString;
     }

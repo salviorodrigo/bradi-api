@@ -14,7 +14,6 @@ use BradiNfeApi\Domain\Common\ValueObjects\FieldURI;
 use BradiNfeApi\Domain\Common\ValueObjects\Input;
 use BradiNfeApi\Domain\Common\ValueObjects\Result;
 use BradiNfeApi\Domain\Common\ValueObjects\Source;
-use BradiNfeApi\Domain\Invoices\Protocols\DFeParser;
 use BradiNfeApi\Infra\Parses\XmlToDFeParser;
 use InvalidArgumentException;
 use RuntimeException;
@@ -24,7 +23,9 @@ abstract class DFeAttribute
     public const string ATTRIBUTE_NAME = '';
 
     public string $value;
+
     public protected(set) string $xmlString;
+
     public readonly string $parentTagName;
     public readonly string $fieldURI;
 
@@ -37,32 +38,13 @@ abstract class DFeAttribute
             ));
         }
         $parents = explode('.', $parentFieldURI);
-        $this->parentTagName = array_pop($parents);   
-        $this->fieldURI =  $parentFieldURI . '.' . static::ATTRIBUTE_NAME;
+        $this->parentTagName = array_pop($parents);
+        $this->fieldURI = $parentFieldURI . '.' . static::ATTRIBUTE_NAME;
     }
 
     protected static function xmlParser(string $xmlString): DFeParser
     {
         return new XmlToDFeParser($xmlString);
-    }
-
-    final public function __toString(): string
-    {
-        if (isset($this->xmlString)) {
-            return $this->xmlString;
-        }
-
-        if (! isset($this->value)) {
-            throw new RuntimeException(sprintf(
-                'Property "%s::$value" must be initialized before serialization.',
-                static::class
-            ));
-        }
-
-        $escapedValue = htmlspecialchars($this->value, ENT_XML1 | ENT_QUOTES, 'UTF-8');
-        $this->xmlString = static::ATTRIBUTE_NAME . '="' . $escapedValue . '"';
-
-        return $this->xmlString;
     }
 
     /**
@@ -76,16 +58,16 @@ abstract class DFeAttribute
         }
 
         $attributes = $this->xmlParser((string) $rawData)->listAttributes();
-        if (! array_key_exists(static::ATTRIBUTE_NAME, $attributes) ) {
+        if (! array_key_exists(static::ATTRIBUTE_NAME, $attributes)) {
             return Result::makeFailure(new UnprocessableEntityError(
                 new Detail(
-                    FieldURI::from($this->fieldURI), 
-                    Source::from(__METHOD__)                , 
+                    FieldURI::from($this->fieldURI),
+                    Source::from(__METHOD__),
                     Input::from($rawData),
                     [new InvalidArgumentException(
-                        "Attribute {static::ATTRIBUTE_NAME} not found in provided XML string."
+                        'Attribute {static::ATTRIBUTE_NAME} not found in provided XML string.'
                     )],
-            ))); 
+                )));
         }
 
         $attributeValue = $attributes[static::ATTRIBUTE_NAME];
@@ -125,4 +107,23 @@ abstract class DFeAttribute
 
     /** @return array<Validator> */
     abstract protected function attributeValueValidators(): array;
+
+    final public function __toString(): string
+    {
+        if (isset($this->xmlString)) {
+            return $this->xmlString;
+        }
+
+        if (! isset($this->value)) {
+            throw new RuntimeException(sprintf(
+                'Property "%s::$value" must be initialized before serialization.',
+                static::class
+            ));
+        }
+
+        $escapedValue = htmlspecialchars($this->value, ENT_XML1 | ENT_QUOTES, 'UTF-8');
+        $this->xmlString = static::ATTRIBUTE_NAME . '="' . $escapedValue . '"';
+
+        return $this->xmlString;
+    }
 }

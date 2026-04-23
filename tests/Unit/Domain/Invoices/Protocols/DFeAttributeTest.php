@@ -43,7 +43,7 @@ describe('DFeAttribute', function () {
     describe('::__toString()', function () {
         test('Should throw if attribute value was not initialized', function () {
             expect(fn () => (string) new FakeDFeAttribute('infNFe'))
-                ->toThrow(\RuntimeException::class);
+                ->toThrow(RuntimeException::class);
         });
     });
 });
