@@ -8,7 +8,6 @@ use BradiNfeApi\Domain\Common\Protocols\Validator;
 use BradiNfeApi\Domain\Common\ValueObjects\Result;
 use BradiNfeApi\Domain\Xml\ValueObjects\Element;
 use InvalidArgumentException;
-use ReflectionProperty;
 use UnexpectedValueException;
 
 final class HasNoAttributesValidator implements Validator
