@@ -16,18 +16,18 @@ describe('Icms00', function () {
 
     describe('::parse()', function () {
         test('Should succeed with dataset :dataset', function ($candidate) {
-            $sutResponse = $this->sut->parse($candidate);
+            $sutResponse = $this->sut->parseFromXmlElement(xml_to_element($candidate));
             expect($sutResponse)->toBeInstanceOf(Result::class);
             if ($sutResponse->isFailure()) {
                 $this->fail(json_encode($sutResponse->getError()));
             }
             expect($sutResponse->getData())->toBeInstanceOf(Icms00::class);
             expect($sutResponse->getData()->value)->toBe('');
-            expect($sutResponse->getData()->xmlString)->toBe($candidate);
+            expect((string) $sutResponse->getData())->toBe($candidate);
         })->with(datasets('dfes.nfe.element_tags.' . Icms00::TAG_NAME . '.valid'));
 
         test('Should fail with dataset :dataset', function ($candidate) {
-            $sutResponse = $this->sut->parse($candidate);
+            $sutResponse = $this->sut->parseFromXmlElement(xml_to_element($candidate));
             expect($sutResponse)->toBeInstanceOf(Result::class);
             if ($sutResponse->isSuccess()) {
                 $this->fail(json_encode($sutResponse->getData()));

@@ -8,13 +8,12 @@ use BradiNfeApi\Domain\Common\Exceptions\UnprocessableEntityError;
 use BradiNfeApi\Domain\Common\Protocols\ApiError;
 use BradiNfeApi\Domain\Common\Protocols\Validator;
 use BradiNfeApi\Domain\Common\Services\ValidationService;
-use BradiNfeApi\Domain\Common\Validators\IsStringValidator;
 use BradiNfeApi\Domain\Common\ValueObjects\Detail;
 use BradiNfeApi\Domain\Common\ValueObjects\FieldURI;
 use BradiNfeApi\Domain\Common\ValueObjects\Input;
 use BradiNfeApi\Domain\Common\ValueObjects\Result;
 use BradiNfeApi\Domain\Common\ValueObjects\Source;
-use BradiNfeApi\Infra\Parses\XmlToDFeParser;
+use BradiNfeApi\Domain\Xml\ValueObjects\Element;
 use InvalidArgumentException;
 use RuntimeException;
 
@@ -24,10 +23,10 @@ abstract class DFeAttribute
 
     public string $value;
 
-    public protected(set) string $xmlString;
-
     public readonly string $parentTagName;
     public readonly string $fieldURI;
+
+    private ?string $serializedAttributeString = null;
 
     public function __construct(string $parentFieldURI)
     {
@@ -42,54 +41,47 @@ abstract class DFeAttribute
         $this->fieldURI = $parentFieldURI . '.' . static::ATTRIBUTE_NAME;
     }
 
-    protected static function xmlParser(string $xmlString): DFeParser
-    {
-        return new XmlToDFeParser($xmlString);
-    }
-
     /**
      * @return Result<DFeAttribute|ApiError>
      */
-    final public function parse(mixed $rawData): Result
+    final public function parseFromXmlElement(Element $element): Result
     {
-        $dataTypeValidation = $this->validateDataType($rawData, $this->fieldURI);
-        if ($dataTypeValidation->isFailure()) {
-            return $dataTypeValidation;
+        if ($element->name !== $this->parentTagName) {
+            return Result::makeFailure(new UnprocessableEntityError(new Detail(
+                FieldURI::from($this->fieldURI),
+                Source::from(__METHOD__),
+                Input::from($element->name),
+                [new InvalidArgumentException(sprintf(
+                    'Tag "%s" expected for attribute "%s".',
+                    $this->parentTagName,
+                    static::ATTRIBUTE_NAME,
+                ))],
+            )));
         }
 
-        $attributes = $this->xmlParser((string) $rawData)->listAttributes();
-        if (! array_key_exists(static::ATTRIBUTE_NAME, $attributes)) {
+        $attribute = $element->attributes->{static::ATTRIBUTE_NAME};
+        if ($attribute === null) {
             return Result::makeFailure(new UnprocessableEntityError(
                 new Detail(
                     FieldURI::from($this->fieldURI),
                     Source::from(__METHOD__),
-                    Input::from($rawData),
+                    Input::from($element),
                     [new InvalidArgumentException(
                         'Attribute {static::ATTRIBUTE_NAME} not found in provided XML string.'
                     )],
                 )));
         }
 
-        $attributeValue = $attributes[static::ATTRIBUTE_NAME];
+        $attributeValue = $attribute->value;
         $valueValidation = $this->validateAttributeValue($attributeValue, $this->fieldURI);
         if ($valueValidation->isFailure()) {
             return $valueValidation;
         }
 
         $this->value = $attributeValue;
+        $this->serializedAttributeString = (string) $attribute;
 
         return Result::makeSuccess($this);
-    }
-
-    /**
-     * @return Result<null|ApiError>
-     */
-    final protected function validateDataType(mixed $rawData, string $fieldURI): Result
-    {
-        $typeValidator = new ValidationService($fieldURI, __METHOD__);
-        $typeValidator->addValidator(new IsStringValidator);
-
-        return $typeValidator->verify($rawData);
     }
 
     /**
@@ -110,8 +102,8 @@ abstract class DFeAttribute
 
     final public function __toString(): string
     {
-        if (isset($this->xmlString)) {
-            return $this->xmlString;
+        if ($this->serializedAttributeString !== null) {
+            return $this->serializedAttributeString;
         }
 
         if (! isset($this->value)) {
@@ -122,8 +114,8 @@ abstract class DFeAttribute
         }
 
         $escapedValue = htmlspecialchars($this->value, ENT_XML1 | ENT_QUOTES, 'UTF-8');
-        $this->xmlString = static::ATTRIBUTE_NAME . '="' . $escapedValue . '"';
+        $this->serializedAttributeString = static::ATTRIBUTE_NAME . '="' . $escapedValue . '"';
 
-        return $this->xmlString;
+        return $this->serializedAttributeString;
     }
 }

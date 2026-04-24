@@ -14,7 +14,6 @@ final class FakeDFeElement extends DFeElement
     public function __construct(string $value = 'fakeValue')
     {
         $this->value = $value;
-        $this->xmlString = '<' . self::TAG_NAME . '>' . $value . '</' . self::TAG_NAME . '>';
         $this->fieldURI = self::TAG_NAME;
     }
 

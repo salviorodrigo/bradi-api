@@ -13,10 +13,10 @@ describe('DFeAttribute', function () {
         $this->sut = new FakeDFeAttribute('infNFe');
     });
 
-    describe('::parse()', function () {
+    describe('::parseFromXmlElement()', function () {
         test('Should succeed extracting value from xml tag attribute', function () {
             $candidate = '<infNFe fakeAttr="ABC123" versao="4.00"></infNFe>';
-            $sutResponse = $this->sut->parse($candidate);
+            $sutResponse = $this->sut->parseFromXmlElement(xml_to_element($candidate));
 
             expect($sutResponse)->toBeInstanceOf(Result::class);
             if ($sutResponse->isFailure()) {
@@ -28,8 +28,9 @@ describe('DFeAttribute', function () {
             expect((string) $sutResponse->getData())->toBe('fakeAttr="ABC123"');
         });
 
-        test('Should fail when data type is not string', function () {
-            $sutResponse = $this->sut->parse(['fakeAttr' => 'ABC123']);
+        test('Should fail when parent tag does not match', function () {
+            $candidate = '<other fakeAttr="ABC123"></other>';
+            $sutResponse = $this->sut->parseFromXmlElement(xml_to_element($candidate));
 
             expect($sutResponse)->toBeInstanceOf(Result::class);
             if ($sutResponse->isSuccess()) {

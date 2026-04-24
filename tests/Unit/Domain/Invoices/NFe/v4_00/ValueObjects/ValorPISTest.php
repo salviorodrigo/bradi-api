@@ -17,19 +17,19 @@ describe('ValorPIS', function () {
     describe('::parse()', function () {
         test('Should succeed with dataset :dataset', function ($candidate) {
             $xmlString = $candidate === '' ? '' : '<' . ValorPIS::TAG_NAME . ">{$candidate}</" . ValorPIS::TAG_NAME . '>';
-            $sutResponse = $this->sut->parse($xmlString);
+            $sutResponse = $this->sut->parseFromXmlElement(xml_to_element($xmlString));
             expect($sutResponse)->toBeInstanceOf(Result::class);
             if ($sutResponse->isFailure()) {
                 $this->fail(json_encode($sutResponse->getError()));
             }
             expect($sutResponse->getData())->toBeInstanceOf(ValorPIS::class);
             expect($sutResponse->getData()->value)->toBe($candidate);
-            expect($sutResponse->getData()->xmlString)->toBe($xmlString);
+            expect((string) $sutResponse->getData())->toBe($xmlString);
         })->with(datasets('dfes.nfe.value_tags.' . ValorPIS::TAG_NAME . '.valid'));
 
         test('Should fail with data set :dataset', function ($candidate) {
             $xmlString = '<' . ValorPIS::TAG_NAME . ">{$candidate}</" . ValorPIS::TAG_NAME . '>';
-            $sutResponse = $this->sut->parse($xmlString);
+            $sutResponse = $this->sut->parseFromXmlElement(xml_to_element($xmlString));
             if ($sutResponse->isSuccess()) {
                 $this->fail(json_encode($sutResponse->getData()));
             }
@@ -39,7 +39,7 @@ describe('ValorPIS', function () {
 
         test('Should fail if attributes is provided', function ($candidate) {
             $xmlString = '<' . ValorPIS::TAG_NAME . " fake=\"attribute\">{$candidate}</" . ValorPIS::TAG_NAME . '>';
-            $sutResponse = $this->sut->parse($xmlString);
+            $sutResponse = $this->sut->parseFromXmlElement(xml_to_element($xmlString));
             expect($sutResponse)->toBeInstanceOf(Result::class);
             if ($sutResponse->isSuccess()) {
                 $this->fail(json_encode($sutResponse->getData()));
@@ -49,7 +49,7 @@ describe('ValorPIS', function () {
 
         test('Should fail if elements is provided', function ($candidate) {
             $xmlString = '<' . ValorPIS::TAG_NAME . ">{$candidate}<fake>element</fake></" . ValorPIS::TAG_NAME . '>';
-            $sutResponse = $this->sut->parse($xmlString);
+            $sutResponse = $this->sut->parseFromXmlElement(xml_to_element($xmlString));
             expect($sutResponse)->toBeInstanceOf(Result::class);
             if ($sutResponse->isSuccess()) {
                 $this->fail(json_encode($sutResponse->getData()));

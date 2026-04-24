@@ -4,12 +4,18 @@ declare(strict_types=1);
 
 namespace BradiNfeApi\Domain\Invoices\Protocols;
 
+use BradiNfeApi\Domain\Common\Exceptions\UnprocessableEntityError;
 use BradiNfeApi\Domain\Common\Protocols\ApiError;
 use BradiNfeApi\Domain\Common\Protocols\Validator;
 use BradiNfeApi\Domain\Common\Services\ValidationService;
-use BradiNfeApi\Domain\Common\Validators\IsXmlStringValidator;
+use BradiNfeApi\Domain\Common\ValueObjects\Detail;
+use BradiNfeApi\Domain\Common\ValueObjects\FieldURI;
+use BradiNfeApi\Domain\Common\ValueObjects\Input;
 use BradiNfeApi\Domain\Common\ValueObjects\Result;
-use BradiNfeApi\Infra\Parses\XmlToDFeParser;
+use BradiNfeApi\Domain\Common\ValueObjects\Source;
+use BradiNfeApi\Domain\Xml\ValueObjects\Element;
+use BradiNfeApi\Domain\Xml\ValueObjects\ElementList;
+use InvalidArgumentException;
 use ReflectionClass;
 use ReflectionNamedType;
 use ReflectionProperty;
@@ -21,28 +27,23 @@ abstract class DFeElement
 
     public ?string $value;
 
-    public protected(set) string $xmlString;
-
     public readonly string $fieldURI;
 
-    protected static function xmlParser(string $xmlString): DFeParser
-    {
-        return new XmlToDFeParser($xmlString);
-    }
+    private ?Element $sourceElement = null;
+    private ?string $serializedXmlString = null;
 
     /**
      * @return Result<DFeElement|ApiError>
      **/
-    final public function parse(mixed $rawData): Result
+    final public function parseFromXmlElement(Element $element): Result
     {
         $fieldURI = $this->fieldURI;
-        $xmlString = static::xmlParser(strval($rawData))->getFirst(static::TAG_NAME);
 
         $validationResults = [
-            $this->validateDataType($rawData, $fieldURI),
-            $this->validateTagAttributes($xmlString, $fieldURI),
-            $this->validateTagElements($xmlString, $fieldURI),
-            $this->validateTagValue($xmlString, $fieldURI),
+            $this->validateTagName($element, $fieldURI),
+            $this->validateTagAttributes($element, $fieldURI),
+            $this->validateTagElements($element, $fieldURI),
+            $this->validateTagValue($element, $fieldURI),
         ];
 
         $validationFailures = array_filter(
@@ -59,7 +60,9 @@ abstract class DFeElement
             return Result::makeFailure($validationError);
         }
 
-        $this->xmlString = $xmlString;
+        $this->sourceElement = $element;
+        $this->serializedXmlString = null;
+
         $hydrateResult = $this->hydrate();
         if ($hydrateResult->isFailure()) {
             return $hydrateResult;
@@ -71,20 +74,26 @@ abstract class DFeElement
     /**
      * @return Result<null|ApiError>
      **/
-    final protected function validateDataType(mixed $rawData, string $fieldURI): Result
+    final protected function validateTagName(Element $element, string $fieldURI): Result
     {
-        $typeValidator = new ValidationService($fieldURI, __METHOD__)
-            ->addValidator(new IsXmlStringValidator);
+        if ($element->name === static::TAG_NAME) {
+            return Result::makeSuccess();
+        }
 
-        return $typeValidator->verify($rawData);
+        return $this->makeValidationFailure(
+            $fieldURI,
+            __METHOD__,
+            $element->name,
+            new InvalidArgumentException(sprintf('tag "%s" expected.', static::TAG_NAME))
+        );
     }
 
     /**
      * @return Result<null|ApiError>
      **/
-    final protected function validateTagValue(string $xmlString, string $fieldURI): Result
+    final protected function validateTagValue(Element $element, string $fieldURI): Result
     {
-        $candidate = static::xmlParser($xmlString)->getTextContent();
+        $candidate = $element->value ?? '';
         $service = new ValidationService($fieldURI, __METHOD__);
         foreach ($this->tagValueValidators() as $validator) {
             $service->addValidator($validator);
@@ -96,29 +105,27 @@ abstract class DFeElement
     /**
      * @return Result<null|ApiError>
      **/
-    final protected function validateTagAttributes(string $xmlString, string $fieldURI): Result
+    final protected function validateTagAttributes(Element $element, string $fieldURI): Result
     {
-        $candidate = static::xmlParser($xmlString)->listAttributes();
         $service = new ValidationService($fieldURI, __METHOD__);
         foreach ($this->tagAttributesValidators() as $validator) {
             $service->addValidator($validator);
         }
 
-        return $service->verify($candidate);
+        return $service->verify($element);
     }
 
     /**
      * @return Result<null|ApiError>
      **/
-    final protected function validateTagElements(string $xmlString, string $fieldURI): Result
+    final protected function validateTagElements(Element $element, string $fieldURI): Result
     {
-        $candidate = static::xmlParser($xmlString)->listChildren();
         $service = new ValidationService($fieldURI, __METHOD__);
         foreach ($this->tagElementsValidators() as $validator) {
             $service->addValidator($validator);
         }
 
-        return $service->verify($candidate);
+        return $service->verify($element);
     }
 
     /** @return array<Validator> */
@@ -181,7 +188,11 @@ abstract class DFeElement
      **/
     private function hydrate(): Result
     {
-        $this->value = static::xmlParser($this->xmlString)->getTextContent();
+        if ($this->sourceElement === null) {
+            return Result::makeSuccess();
+        }
+
+        $this->value = $this->sourceElement->value ?? '';
 
         $elementsMetadata = $this->listHydrationElements();
         if (empty($elementsMetadata)) {
@@ -201,8 +212,8 @@ abstract class DFeElement
         }
 
         foreach ($elementsMetadata['optional'] as $element) {
-            $elementXmlString = self::xmlParser($this->xmlString)->getFirst($element['class']::TAG_NAME);
-            if ($elementXmlString === '') {
+            $childElement = $this->getFirstChildElementByTagName($element['class']::TAG_NAME);
+            if ($childElement === null) {
                 $this->{$element['property']} = null;
 
                 continue;
@@ -283,10 +294,50 @@ abstract class DFeElement
      */
     private function parseChildElement(array $element): Result
     {
-        $elementXmlString = self::xmlParser($this->xmlString)->getFirst($element['class']::TAG_NAME);
+        $childElement = $this->getFirstChildElementByTagName($element['class']::TAG_NAME);
+        if ($childElement === null) {
+            return $this->makeValidationFailure(
+                $this->fieldURI,
+                __METHOD__,
+                $this->sourceElement,
+                new InvalidArgumentException(sprintf('tag "%s" must be informed.', $element['class']::TAG_NAME))
+            );
+        }
+
         $elementParser = new ($element['class'])($this->fieldURI);
 
-        return $elementParser->parse($elementXmlString);
+        return $elementParser->parseFromXmlElement($childElement);
+    }
+
+    private function getFirstChildElementByTagName(string $tagName): ?Element
+    {
+        if ($this->sourceElement === null) {
+            return null;
+        }
+
+        $child = $this->sourceElement->{$tagName};
+        if ($child instanceof Element) {
+            return $child;
+        }
+
+        if ($child instanceof ElementList) {
+            return array_first($child->records) ?? null;
+        }
+
+        return null;
+    }
+
+    /**
+     * @return Result<null|ApiError>
+     */
+    private function makeValidationFailure(string $fieldURI, string $source, mixed $input, \Exception $exception): Result
+    {
+        return Result::makeFailure(new UnprocessableEntityError(new Detail(
+            FieldURI::from($fieldURI),
+            Source::from($source),
+            Input::from($input),
+            [$exception],
+        )));
     }
 
     /**
@@ -341,13 +392,19 @@ abstract class DFeElement
 
     final public function __toString(): string
     {
-        if (isset($this->xmlString)) {
-            return $this->xmlString;
+        if ($this->serializedXmlString !== null) {
+            return $this->serializedXmlString;
         }
 
-        $this->xmlString = $this->generateXmlString();
+        if ($this->sourceElement !== null) {
+            $this->serializedXmlString = (string) $this->sourceElement;
 
-        return $this->xmlString;
+            return $this->serializedXmlString;
+        }
+
+        $this->serializedXmlString = $this->generateXmlString();
+
+        return $this->serializedXmlString;
     }
 }
 

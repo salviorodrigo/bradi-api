@@ -62,6 +62,11 @@ class Element
         return $this->children->$name;
     }
 
+    public function children(): ElementList
+    {
+        return $this->children;
+    }
+
     public function __toString(): string
     {
         $hasValue = $this->value !== null && $this->value !== '';

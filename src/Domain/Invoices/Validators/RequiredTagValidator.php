@@ -6,6 +6,7 @@ namespace BradiNfeApi\Domain\Invoices\Validators;
 
 use BradiNfeApi\Domain\Common\Protocols\Validator;
 use BradiNfeApi\Domain\Common\ValueObjects\Result;
+use BradiNfeApi\Domain\Xml\ValueObjects\Element;
 use InvalidArgumentException;
 
 final class RequiredTagValidator implements Validator
@@ -16,7 +17,14 @@ final class RequiredTagValidator implements Validator
 
     public function check(mixed $candidate): Result
     {
-        $providedTagsName = is_array($candidate) ? array_keys($candidate) : [];
+        if (! $candidate instanceof Element) {
+            return Result::makeFailure(new InvalidArgumentException('candidate must be an Element instance.'));
+        }
+
+        $providedTagsName = array_map(
+            fn (Element $element) => $element->name,
+            $candidate->children()->records,
+        );
         foreach ($this->requiredTagsName as $requiredTag) {
             if (! in_array($requiredTag, $providedTagsName)) {
                 return Result::makeFailure(new InvalidArgumentException(sprintf(
