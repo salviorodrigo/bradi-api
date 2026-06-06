@@ -10,12 +10,10 @@ use BradiNfeApi\Domain\Xml\Protocols\XmlIterator;
 
 class Element
 {
-    public private(set) AttributeList $attributes;
-
     public ?string $value = null;
     public string $name;
-
-    private ElementList $children;
+    public private(set) AttributeList $attributes;
+    public private(set) ElementList $children;
 
     public function __construct(
         private readonly XmlIterator $iterator,
@@ -57,9 +55,9 @@ class Element
         return Result::makeSuccess($this);
     }
 
-    public function __get(string $name): ElementList|Element|null
+    public function __get(string $name): Attribute|ElementList|Element|null
     {
-        return $this->children->$name;
+        return $this->attributes->$name ?? $this->children->$name;
     }
 
     public function children(): ElementList
