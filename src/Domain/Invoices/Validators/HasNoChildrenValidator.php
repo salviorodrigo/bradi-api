@@ -18,7 +18,7 @@ final class HasNoChildrenValidator implements Validator
             return Result::makeFailure(new InvalidArgumentException('candidate must be an Element instance.'));
         }
 
-        if (count($candidate->children()->records) > 0) {
+        if (count($candidate->children->records) > 0) {
             return Result::makeFailure(new UnexpectedValueException('cannot contain child elements.'));
         }
 

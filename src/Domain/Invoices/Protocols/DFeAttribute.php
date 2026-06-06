@@ -13,6 +13,7 @@ use BradiNfeApi\Domain\Common\ValueObjects\FieldURI;
 use BradiNfeApi\Domain\Common\ValueObjects\Input;
 use BradiNfeApi\Domain\Common\ValueObjects\Result;
 use BradiNfeApi\Domain\Common\ValueObjects\Source;
+use BradiNfeApi\Domain\Xml\ValueObjects\Attribute;
 use BradiNfeApi\Domain\Xml\ValueObjects\Element;
 use InvalidArgumentException;
 use RuntimeException;
@@ -26,9 +27,9 @@ abstract class DFeAttribute
     public readonly string $parentTagName;
     public readonly string $fieldURI;
 
-    private ?string $serializedAttributeString = null;
+    private ?Attribute $attribute;
 
-    public function __construct(string $parentFieldURI)
+    final public function __construct(string $parentFieldURI)
     {
         if ($parentFieldURI === '') {
             throw new RuntimeException(sprintf(
@@ -36,6 +37,7 @@ abstract class DFeAttribute
                 static::ATTRIBUTE_NAME
             ));
         }
+        
         $parents = explode('.', $parentFieldURI);
         $this->parentTagName = array_pop($parents);
         $this->fieldURI = $parentFieldURI . '.' . static::ATTRIBUTE_NAME;
@@ -79,7 +81,7 @@ abstract class DFeAttribute
         }
 
         $this->value = $attributeValue;
-        $this->serializedAttributeString = (string) $attribute;
+        $this->attribute = $attribute;
 
         return Result::makeSuccess($this);
     }
@@ -102,8 +104,8 @@ abstract class DFeAttribute
 
     final public function __toString(): string
     {
-        if ($this->serializedAttributeString !== null) {
-            return $this->serializedAttributeString;
+        if (isset($this->attribute)) {
+            return (string) $this->attribute;
         }
 
         if (! isset($this->value)) {
@@ -114,8 +116,8 @@ abstract class DFeAttribute
         }
 
         $escapedValue = htmlspecialchars($this->value, ENT_XML1 | ENT_QUOTES, 'UTF-8');
-        $this->serializedAttributeString = static::ATTRIBUTE_NAME . '="' . $escapedValue . '"';
+        $this->attribute = new Attribute(static::ATTRIBUTE_NAME, $escapedValue);
 
-        return $this->serializedAttributeString;
+        return (string) $this->attribute;
     }
 }

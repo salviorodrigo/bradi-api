@@ -11,10 +11,9 @@ final class FakeDFeElement extends DFeElement
 {
     public const string TAG_NAME = 'FakeTag';
 
-    public function __construct(string $value = 'fakeValue')
+    public function __construct(string $parentFieldURI = 'fakeValue')
     {
-        $this->value = $value;
-        $this->fieldURI = self::TAG_NAME;
+        $this->fieldURI = $parentFieldURI;
     }
 
     /** @return array<Validator> */

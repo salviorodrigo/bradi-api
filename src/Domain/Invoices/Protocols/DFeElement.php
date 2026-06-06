@@ -4,18 +4,15 @@ declare(strict_types=1);
 
 namespace BradiNfeApi\Domain\Invoices\Protocols;
 
-use BradiNfeApi\Domain\Common\Exceptions\UnprocessableEntityError;
 use BradiNfeApi\Domain\Common\Protocols\ApiError;
 use BradiNfeApi\Domain\Common\Protocols\Validator;
 use BradiNfeApi\Domain\Common\Services\ValidationService;
-use BradiNfeApi\Domain\Common\ValueObjects\Detail;
-use BradiNfeApi\Domain\Common\ValueObjects\FieldURI;
-use BradiNfeApi\Domain\Common\ValueObjects\Input;
 use BradiNfeApi\Domain\Common\ValueObjects\Result;
-use BradiNfeApi\Domain\Common\ValueObjects\Source;
+use BradiNfeApi\Domain\Invoices\Protocols\DFeAttribute;
+use BradiNfeApi\Domain\Invoices\Validators\RootTagValidator;
+use BradiNfeApi\Domain\Xml\ValueObjects\Attribute;
 use BradiNfeApi\Domain\Xml\ValueObjects\Element;
-use BradiNfeApi\Domain\Xml\ValueObjects\ElementList;
-use InvalidArgumentException;
+use BradiNfeApi\Infra\Parses\XmlStringIterator;
 use ReflectionClass;
 use ReflectionNamedType;
 use ReflectionProperty;
@@ -24,26 +21,26 @@ use RuntimeException;
 abstract class DFeElement
 {
     public const string TAG_NAME = '';
-
-    public ?string $value;
-
+    
     public readonly string $fieldURI;
+    public ?string $value;
+    private ?Element $sourceElement;
 
-    private ?Element $sourceElement = null;
-    private ?string $serializedXmlString = null;
+    public function __construct(string $parentFieldURI = '')
+    {
+        $this->fieldURI = $parentFieldURI === '' ? self::TAG_NAME : $parentFieldURI . '.' . self::TAG_NAME;
+    }
 
     /**
      * @return Result<DFeElement|ApiError>
      **/
     final public function parseFromXmlElement(Element $element): Result
     {
-        $fieldURI = $this->fieldURI;
-
         $validationResults = [
-            $this->validateTagName($element, $fieldURI),
-            $this->validateTagAttributes($element, $fieldURI),
-            $this->validateTagElements($element, $fieldURI),
-            $this->validateTagValue($element, $fieldURI),
+            $this->validateRootTag($element),
+            $this->validateTagAttributes($element),
+            $this->validateTagElements($element),
+            $this->validateTagValue($element),
         ];
 
         $validationFailures = array_filter(
@@ -60,13 +57,12 @@ abstract class DFeElement
             return Result::makeFailure($validationError);
         }
 
-        $this->sourceElement = $element;
-        $this->serializedXmlString = null;
-
-        $hydrateResult = $this->hydrate();
+        $hydrateResult = $this->hydrateFromXmlElement($element);
         if ($hydrateResult->isFailure()) {
             return $hydrateResult;
         }
+            
+        $this->sourceElement = $element;
 
         return Result::makeSuccess($this);
     }
@@ -74,27 +70,21 @@ abstract class DFeElement
     /**
      * @return Result<null|ApiError>
      **/
-    final protected function validateTagName(Element $element, string $fieldURI): Result
+    final protected function validateRootTag(Element $element): Result
     {
-        if ($element->name === static::TAG_NAME) {
-            return Result::makeSuccess();
-        }
+        $service = new ValidationService($this->fieldURI, __METHOD__);
+        $service->addValidator(new RootTagValidator(static::TAG_NAME));
 
-        return $this->makeValidationFailure(
-            $fieldURI,
-            __METHOD__,
-            $element->name,
-            new InvalidArgumentException(sprintf('tag "%s" expected.', static::TAG_NAME))
-        );
+        return $service->verify($element);
     }
 
     /**
      * @return Result<null|ApiError>
      **/
-    final protected function validateTagValue(Element $element, string $fieldURI): Result
+    final protected function validateTagValue(Element $element): Result
     {
         $candidate = $element->value ?? '';
-        $service = new ValidationService($fieldURI, __METHOD__);
+        $service = new ValidationService($this->fieldURI, __METHOD__);
         foreach ($this->tagValueValidators() as $validator) {
             $service->addValidator($validator);
         }
@@ -105,9 +95,9 @@ abstract class DFeElement
     /**
      * @return Result<null|ApiError>
      **/
-    final protected function validateTagAttributes(Element $element, string $fieldURI): Result
+    final protected function validateTagAttributes(Element $element): Result
     {
-        $service = new ValidationService($fieldURI, __METHOD__);
+        $service = new ValidationService($this->fieldURI, __METHOD__);
         foreach ($this->tagAttributesValidators() as $validator) {
             $service->addValidator($validator);
         }
@@ -118,9 +108,9 @@ abstract class DFeElement
     /**
      * @return Result<null|ApiError>
      **/
-    final protected function validateTagElements(Element $element, string $fieldURI): Result
+    final protected function validateTagElements(Element $element): Result
     {
-        $service = new ValidationService($fieldURI, __METHOD__);
+        $service = new ValidationService($this->fieldURI, __METHOD__);
         foreach ($this->tagElementsValidators() as $validator) {
             $service->addValidator($validator);
         }
@@ -137,96 +127,51 @@ abstract class DFeElement
     /** @return array<Validator> */
     abstract protected function tagElementsValidators(): array;
 
-    private function generateXmlString(): string
-    {
-        $attributes = [];
-        $elements = [];
-
-        foreach ($this->listSerializationProperties() as $metadata) {
-            $propertyName = $metadata['property'];
-            $value = $this->{$propertyName};
-            if ($metadata['type'] === 'attribute') {
-                $attributes[] = $value;
-            }
-
-            if ($metadata['type'] === 'element') {
-                $elements[] = $value;
-            }
-        }
-
-        $xmlString = '';
-        if (! isset($this->value) && empty($elements) && empty($attributes)) {
-            return $xmlString;
-        }
-
-        $isAutoCloseTag = ! isset($this->value) && empty($elements);
-
-        $xmlString .= '<' . static::TAG_NAME;
-        foreach ($attributes as $attribute) {
-            $xmlString .= ' ' . (string) $attribute;
-        }
-
-        if ($isAutoCloseTag) {
-            $xmlString .= '/>';
-
-            return $xmlString;
-        }
-
-        $xmlString .= '>';
-        $xmlString .= $this->value ?? '';
-        foreach ($elements as $element) {
-            $xmlString .= (string) $element;
-        }
-
-        $xmlString .= '</' . static::TAG_NAME . '>';
-
-        return $xmlString;
-    }
 
     /**
      * @return Result<null|ApiError>
      **/
-    private function hydrate(): Result
+    private function hydrateFromXmlElement(Element $xmlElement): Result
     {
-        if ($this->sourceElement === null) {
+        if (isset($xmlElement->value)) {
+            $this->value = $xmlElement->value;
+        }
+
+        $propsMetadata = $this->listChildElements();
+        if (empty($propsMetadata)) {
             return Result::makeSuccess();
         }
 
-        $this->value = $this->sourceElement->value ?? '';
-
-        $elementsMetadata = $this->listHydrationElements();
-        if (empty($elementsMetadata)) {
-            return Result::makeSuccess();
-        }
+        $requiredElements = array_filter($propsMetadata, fn (array $element) => ! $element['isOptional']);
+        $optionalElements = array_filter($propsMetadata, fn (array $element) => $element['isOptional']);
 
         $parserErrorBag = [];
-        foreach ($elementsMetadata['required'] as $element) {
-            $parsingResult = $this->parseChildElement($element);
+        foreach ($requiredElements as $element) {
+            $concreteElement = new $element['class']($this->fieldURI);
+            $parsingResult = $concreteElement->parseFromXmlElement($xmlElement->{static::TAG_NAME});
             if ($parsingResult->isFailure()) {
                 $parserErrorBag[] = $parsingResult->getError();
 
                 continue;
             }
 
-            $this->{$element['property']} = $parsingResult->getData();
+            $this->{$element['propertyName']} = $parsingResult->getData();
         }
 
-        foreach ($elementsMetadata['optional'] as $element) {
-            $childElement = $this->getFirstChildElementByTagName($element['class']::TAG_NAME);
-            if ($childElement === null) {
-                $this->{$element['property']} = null;
-
+        foreach ($optionalElements as $element) {
+            if (! isset($xmlElement->{static::TAG_NAME})) {
                 continue;
             }
 
-            $parsingResult = $this->parseChildElement($element);
+            $concreteElement = new $element['class']($this->fieldURI);
+            $parsingResult = $concreteElement->parseFromXmlElement($xmlElement->{static::TAG_NAME});
             if ($parsingResult->isFailure()) {
                 $parserErrorBag[] = $parsingResult->getError();
 
                 continue;
             }
 
-            $this->{$element['property']} = $parsingResult->getData();
+            $this->{$element['propertyName']} = $parsingResult->getData();
         }
 
         if (count($parserErrorBag) > 0) {
@@ -240,21 +185,15 @@ abstract class DFeElement
 
         return Result::makeSuccess();
     }
-
-    /**
-     * @return array{required: array<array{class: class-string<DFeElement>, property: string}>, optional: array<array{class: class-string<DFeElement>, property: string}>}
-     */
-    private function listHydrationElements(): array
+     /**
+      * @return array<array{parentClass: string, class: string, property: string, isOptional: bool, isSet: bool}>
+      */
+    private function listChildElements(): array
     {
-        $requiredElements = [];
-        $optionalElements = [];
-
+        $elementsList = []; 
         $reflection = new ReflectionClass($this);
         foreach ($reflection->getProperties(ReflectionProperty::IS_PUBLIC) as $property) {
-            if (
-                in_array($property->getName(), ['value', 'xmlString', 'fieldURI'], true)
-                || ! $property->hasType()
-            ) {
+            if (! $property->hasType()) {
                 continue;
             }
 
@@ -264,147 +203,110 @@ abstract class DFeElement
             }
 
             $elementClass = $propertyType->getName();
-            if (! is_a($elementClass, self::class, true)) {
+            if (! is_a($elementClass, self::class, true) || ! is_a($elementClass, DFeAttribute::class, true)) {
                 continue;
             }
 
-            $metadata = [
+            $elementsList[] = [
+                'parentClass' => get_parent_class($elementClass),
                 'class' => $elementClass,
-                'property' => $property->getName(),
-            ];
-
-            if ($propertyType->allowsNull()) {
-                $optionalElements[] = $metadata;
-
-                continue;
-            }
-
-            $requiredElements[] = $metadata;
-        }
-
-        return [
-            'required' => $requiredElements,
-            'optional' => $optionalElements,
-        ];
-    }
-
-    /**
-     * @param  array{class: class-string<DFeElement>, property: string}  $element
-     * @return Result<DFeElement|ApiError>
-     */
-    private function parseChildElement(array $element): Result
-    {
-        $childElement = $this->getFirstChildElementByTagName($element['class']::TAG_NAME);
-        if ($childElement === null) {
-            return $this->makeValidationFailure(
-                $this->fieldURI,
-                __METHOD__,
-                $this->sourceElement,
-                new InvalidArgumentException(sprintf('tag "%s" must be informed.', $element['class']::TAG_NAME))
-            );
-        }
-
-        $elementParser = new ($element['class'])($this->fieldURI);
-
-        return $elementParser->parseFromXmlElement($childElement);
-    }
-
-    private function getFirstChildElementByTagName(string $tagName): ?Element
-    {
-        if ($this->sourceElement === null) {
-            return null;
-        }
-
-        $child = $this->sourceElement->{$tagName};
-        if ($child instanceof Element) {
-            return $child;
-        }
-
-        if ($child instanceof ElementList) {
-            return array_first($child->records) ?? null;
-        }
-
-        return null;
-    }
-
-    /**
-     * @return Result<null|ApiError>
-     */
-    private function makeValidationFailure(string $fieldURI, string $source, mixed $input, \Exception $exception): Result
-    {
-        return Result::makeFailure(new UnprocessableEntityError(new Detail(
-            FieldURI::from($fieldURI),
-            Source::from($source),
-            Input::from($input),
-            [$exception],
-        )));
-    }
-
-    /**
-     * @return array<array{property: string, type: 'element'|'attribute'}>
-     */
-    private function listSerializationProperties(): array
-    {
-        $properties = [];
-        $reflection = new ReflectionClass($this);
-        $concreteClassName = $reflection->getName();
-
-        foreach ($reflection->getProperties(ReflectionProperty::IS_PUBLIC) as $property) {
-            if ($property->getDeclaringClass()->getName() !== $concreteClassName) {
-                continue;
-            }
-
-            $propertyType = $property->getType();
-            if (! $propertyType instanceof ReflectionNamedType || $propertyType->isBuiltin()) {
-                continue;
-            }
-
-            $propertyAllowsNull = $propertyType->allowsNull();
-            if ($propertyAllowsNull && (! $property->isInitialized($this) || $this->{$property->getName()} === null)) {
-                continue;
-            }
-
-            if (! $propertyAllowsNull && (! $property->isInitialized($this) || $this->{$property->getName()} === null)) {
-                throw new RuntimeException("Property {$property->getName()} is not initialized.");
-            }
-
-            $typeClass = $propertyType->getName();
-            if (is_a($typeClass, DFeAttribute::class, true)) {
-                $propertyType = 'attribute';
-            }
-
-            if (is_a($typeClass, self::class, true)) {
-                $propertyType = 'element';
-            }
-
-            if (! isset($propertyType)) {
-                continue;
-            }
-
-            $properties[] = [
-                'property' => $property->getName(),
-                'type' => $propertyType,
+                'propertyName' => $property->getName(),
+                'isOptional' => $propertyType->allowsNull(),
+                'isSet' => isset($this->{$property->getName()})
             ];
         }
 
-        return $properties;
+        return $elementsList;
     }
 
     final public function __toString(): string
     {
-        if ($this->serializedXmlString !== null) {
-            return $this->serializedXmlString;
+        if (isset($this->sourceElement)) {
+            // verify is all  delcared and stted properties are setted into Element instance, if not, set them before return the string ordenation is important. Verify if all values are equals, if not, update the Element instance with the current values. If all values are equals, return the string. 
+            return (string) $this->sourceElement;
         }
 
-        if ($this->sourceElement !== null) {
-            $this->serializedXmlString = (string) $this->sourceElement;
+        $validationService = new ValidationService($this->fieldURI, __METHOD__);
+        $this->sourceElement = new Element(new XmlStringIterator($validationService), $validationService);
+        $this->sourceElement->name = static::TAG_NAME;
 
-            return $this->serializedXmlString;
+        if (isset($this->value)) {
+            $this->sourceElement->value = $this->value;
         }
 
-        $this->serializedXmlString = $this->generateXmlString();
+        $propsMetadata = $this->listChildElements();
+        if (! empty($propsMetadata)) {
+            $elementsList = array_filter($propsMetadata, fn (array $element) => ! $element['parentClass'] === DFeElement::class);
+            $attributesList = array_filter($propsMetadata, fn (array $element) => $element['parentClass'] === DFeAttribute::class);
 
-        return $this->serializedXmlString;
+            foreach ($attributesList as $attribute) {
+                if (! isset($this->{$attribute['propertyName']}) && ! $attribute['isOptional']) {
+                    throw new RuntimeException(sprintf(
+                        'Required attribute "%s" not initialized.',
+                        $attribute['propertyName']
+                    ));
+                }
+
+                if (! isset($this->{$attribute['propertyName']})) {
+                    continue;
+                }
+
+                $attributeInstance = new Attribute(
+                    $attribute['propertyName'], 
+                    $this->{$attribute['propertyName']}->value
+                );
+
+                $this->sourceElement->addAttribute($attributeInstance);
+            }
+
+            foreach ($elementsList as $element) {
+                if (! isset($this->{$element['propertyName']}) && ! $element['isOptional']) {
+                    throw new RuntimeException(sprintf(
+                        'Required element "%s" not initialized.',
+                        $element['propertyName']
+                    ));
+                }
+
+                if (! isset($this->{$element['propertyName']})) {
+                    continue;
+                }
+
+                $elementInstance = new Element(new XmlStringIterator($validationService), $validationService);
+                $elementInstance->parse((string) $this->{$element['propertyName']});
+                $this->sourceElement->addChild($elementInstance);
+            }
+        }
+
+        return (string) $this;
+    }
+
+    private function validateSourceElement(): void
+    {
+        if (! isset($this->sourceElement)) {
+            throw new RuntimeException('Source element not initialized.');
+        }
+
+        $propsMetadata = $this->listChildElements();
+        $setedProps = array_filter($propsMetadata, fn (array $element) => $element['isSet']);
+
+        foreach ($setedProps as $classProp) {
+            $validationService = new ValidationService($this->fieldURI, __METHOD__);
+            $element = new Element(new XmlStringIterator($validationService), $validationService);
+            if (! isset($this->{$classProp['propertyName']})) {
+                // adicionar uma forma de inserir o valor em Element na ordem correta na lista de childres ou attributes
+                throw new RuntimeException(sprintf(
+                    'Required element "%s" not initialized.',
+                    $classProp['propertyName']
+                ));
+            }
+
+            if ((string) $this->sourceElement->{$classProp['propertyName']} !== (string) $this->{$classProp['propertyName']}) {
+                throw new RuntimeException(sprintf(
+                    'Source element "%s" value is different from current value.',
+                    $classProp['propertyName']
+                ));
+            }
+        }
     }
 }
 

@@ -23,7 +23,7 @@ final class RequiredTagValidator implements Validator
 
         $providedTagsName = array_map(
             fn (Element $element) => $element->name,
-            $candidate->children()->records,
+            $candidate->children->records,
         );
         foreach ($this->requiredTagsName as $requiredTag) {
             if (! in_array($requiredTag, $providedTagsName)) {

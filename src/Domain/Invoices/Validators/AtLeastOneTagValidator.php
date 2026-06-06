@@ -23,7 +23,7 @@ final class AtLeastOneTagValidator implements Validator
 
         $providedTagNames = array_map(
             fn (Element $element) => $element->name,
-            $candidate->children()->records,
+            $candidate->children->records,
         );
         if (array_intersect($this->requiredTagNames, $providedTagNames) === []) {
             return Result::makeFailure(new InvalidArgumentException(sprintf(
