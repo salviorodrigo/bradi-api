@@ -25,7 +25,7 @@ final class XmlStringIterator implements XmlIterator
 
     public private(set) mixed $candidate;
 
-    private function __construct(
+    public function __construct(
         private readonly ValidationService $validationService,
         private readonly string $encode = 'UTF-8'
     ) {}
