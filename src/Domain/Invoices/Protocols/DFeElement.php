@@ -202,14 +202,16 @@ abstract class DFeElement
                 continue;
             }
 
-            $elementClass = $propertyType->getName();
-            if (! is_a($elementClass, self::class, true) || ! is_a($elementClass, DFeAttribute::class, true)) {
+            $elementClass = new ReflectionClass($propertyType->getName());
+            $parentClass = $elementClass->getParentClass();
+            $allowedClasses = [DFeElement::class, DFeAttribute::class];
+            if (! array_reduce($allowedClasses, fn (bool $carry, string $allowedClass) => $carry || is_a($parentClass->getName(), $allowedClass, true), false)) {
                 continue;
             }
 
             $elementsList[] = [
-                'parentClass' => get_parent_class($elementClass),
-                'class' => $elementClass,
+                'parentClass' => $parentClass->getName(),
+                'class' => $elementClass->getName(),
                 'propertyName' => $property->getName(),
                 'isOptional' => $propertyType->allowsNull(),
                 'isSet' => isset($this->{$property->getName()})
@@ -236,7 +238,7 @@ abstract class DFeElement
 
         $propsMetadata = $this->listChildElements();
         if (! empty($propsMetadata)) {
-            $elementsList = array_filter($propsMetadata, fn (array $element) => ! $element['parentClass'] === DFeElement::class);
+            $elementsList = array_filter($propsMetadata, fn (array $element) => $element['parentClass'] === DFeElement::class);
             $attributesList = array_filter($propsMetadata, fn (array $element) => $element['parentClass'] === DFeAttribute::class);
 
             foreach ($attributesList as $attribute) {
