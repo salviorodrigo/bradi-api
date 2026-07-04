@@ -9,13 +9,15 @@ use BradiNfeApi\Tests\Doubles\Domain\Invoices\NFe\FakeDFeGroupWithAttribute;
 describe('DFeElement', function () {
     describe('::__toString()', function () {
         test('Should serialize xml string from cache when already set', function () {
-            $sut = new FakeDFeElement('hello');
+            $sut = new FakeDFeElement();
+            $sut->value = 'hello';
 
             expect((string) $sut)->toBe('<FakeTag>hello</FakeTag>');
         });
 
         test('Should serialize group with child DFeElement', function () {
-            $child = new FakeDFeElement('childValue');
+            $child = new FakeDFeElement();
+            $child->value = 'childValue';
 
             $sut = new FakeDFeGroupWithAttribute;
             $sut->fakeAttr = new FakeDFeAttribute('FakeDFeGroupWithAttribute');
@@ -42,9 +44,10 @@ describe('DFeElement', function () {
 
         test('Should skip optional child when not initialized', function () {
             $attr = new FakeDFeAttribute('FakeDFeGroupWithAttribute');
-            $attr->value = 'x';
+            $attr->value = 'attrValue';
 
-            $child = new FakeDFeElement('y');
+            $child = new FakeDFeElement();
+            $child->value = 'childValue';
 
             $sut = new FakeDFeGroupWithAttribute;
             $sut->fakeAttr = $attr;
@@ -53,14 +56,15 @@ describe('DFeElement', function () {
 
             $result = (string) $sut;
 
-            expect($result)->toBe('<FakeGroup fakeAttr="x"><FakeTag>y</FakeTag></FakeGroup>');
+            expect($result)->toBe('<FakeGroup fakeAttr="attrValue"><FakeTag>childValue</FakeTag></FakeGroup>');
         });
 
         test('Should skip optional child when null', function () {
             $attr = new FakeDFeAttribute('FakeDFeGroupWithAttribute');
-            $attr->value = 'x';
+            $attr->value = 'attrValue';
 
-            $child = new FakeDFeElement('y');
+            $child = new FakeDFeElement();
+            $child->value = 'childValue';
 
             $sut = new FakeDFeGroupWithAttribute;
             $sut->fakeAttr = $attr;
@@ -69,13 +73,13 @@ describe('DFeElement', function () {
 
             $result = (string) $sut;
 
-            expect($result)->toBe('<FakeGroup fakeAttr="x"><FakeTag>y</FakeTag></FakeGroup>');
+            expect($result)->toBe('<FakeGroup fakeAttr="attrValue"><FakeTag>childValue</FakeTag></FakeGroup>');
         });
 
         test('Should throw RuntimeException when required DFeElement property is not initialized', function () {
             $sut = new FakeDFeGroupWithAttribute;
             $sut->fakeAttr = new FakeDFeAttribute('FakeDFeGroupWithAttribute');
-            $sut->fakeAttr->value = 'x';
+            $sut->fakeAttr->value = 'attrValue';
             // fakeChild intentionally not initialized
 
             expect(fn () => (string) $sut)->toThrow(RuntimeException::class);
@@ -88,4 +92,4 @@ describe('DFeElement', function () {
             expect(fn () => (string) $sut)->toThrow(RuntimeException::class);
         });
     });
-})->skip();
+});
