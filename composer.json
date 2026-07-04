@@ -19,7 +19,7 @@
         "lint:fix": "./vendor/bin/duster fix",
         "test": "XDEBUG_MODE=off ./vendor/bin/pest",
         "test:ci": "XDEBUG_MODE=off ./vendor/bin/pest --parallel",
-        "test:debug": "XDEBUG_MODE=debug XDEBUG_TRIGGER=1 ./vendor/bin/pest",
+        "test:debug": "XDEBUG_TRIGGER=true ./vendor/bin/pest",
         "test:dirty": "XDEBUG_MODE=off ./vendor/bin/pest --dirty"
     },
     "authors": [
