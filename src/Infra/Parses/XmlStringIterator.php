@@ -249,8 +249,12 @@ final class XmlStringIterator implements XmlIterator
             throw new Exception('Candidate not loaded.');
         }
 
+        if (! $this->hasAttributes()) {
+            return [];
+        }
+
         return $this->sliceCandidate(0, iconv_strpos($this->candidate, '>', encoding: $this->encode))
-            |>(fn ($str) => iconv_substr($str, 0, iconv_strpos($str, ' ') + 1, $this->encode))
+            |>(fn ($str) => iconv_substr($str, (iconv_strpos($str, ' ') + 1), strlen($str) , $this->encode))
             |>(fn ($str) => iconv_substr($str, 0, iconv_strrpos($str, '"') + 1, $this->encode))
             |>(fn ($str) => str_replace('"', '', $str))
             |>(fn ($str) => trim($str))
@@ -296,5 +300,14 @@ final class XmlStringIterator implements XmlIterator
         }
 
         return $this->candidate[strpos($this->candidate, '>', $pointer) - 1] == '/';
+    }
+
+    private function hasAttributes(): bool
+    {
+        if (! isset($this->candidate)) {
+            throw new Exception('Candidate not loaded.');
+        }
+
+        return strpos($this->candidate, ' ') !== false;
     }
 }
