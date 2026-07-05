@@ -14,6 +14,6 @@
 		}
 	},
 	"postCreateCommand": 
-		"sudo chown -R $(whoami) . && sudo sed -i \"s/xdebug.start_with_request = yes/xdebug.start_with_request = trigger\\nxdebug.client_host = host.docker.internal/\" /usr/local/etc/php/conf.d/xdebug.ini && composer install --no-interaction"
+		"sudo chown -R $(whoami) . && sudo sed -i \"s/xdebug.start_with_request = yes/xdebug.start_with_request = trigger\\nxdebug.client_host = host.docker.internal/\" /usr/local/etc/php/conf.d/xdebug.ini && sudo docker-php-ext-install iconv && composer install --no-interaction && composer dump-autoload --optimize"
 	
 }

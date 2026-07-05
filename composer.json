@@ -19,8 +19,10 @@
         "lint:fix": "./vendor/bin/duster fix",
         "test": "XDEBUG_MODE=off ./vendor/bin/pest",
         "test:ci": "XDEBUG_MODE=off ./vendor/bin/pest --parallel",
+        "test:coverage": "XDEBUG_MODE=coverage ./vendor/bin/pest --coverage --coverage-html=./.coverage",
         "test:debug": "XDEBUG_TRIGGER=true ./vendor/bin/pest",
-        "test:dirty": "XDEBUG_MODE=off ./vendor/bin/pest --dirty"
+        "test:dirty": "XDEBUG_MODE=off ./vendor/bin/pest --dirty",
+        "test:type-coverage": "./vendor/bin/pest --type-coverage"
     },
     "authors": [
         {
@@ -36,7 +38,8 @@
         "tightenco/duster": "~3.1",
         "mockery/mockery": "~1.6",
         "symfony/var-dumper": "~8.0",
-        "phpro/grumphp": "~2.0"
+        "phpro/grumphp": "~2.0",
+        "pestphp/pest-plugin-type-coverage": "^4.0"
     },
     "config": {
         "allow-plugins": {
