@@ -308,6 +308,8 @@ final class XmlStringIterator implements XmlIterator
             throw new Exception('Candidate not loaded.');
         }
 
-        return strpos($this->candidate, ' ') !== false;
+        $openTag = $this->sliceCandidate(0, iconv_strpos($this->candidate, '>', encoding: $this->encode));
+
+        return strpos($openTag, ' ') !== false;
     }
 }
