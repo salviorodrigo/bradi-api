@@ -7,6 +7,7 @@ namespace BradiNfeApi\Domain\Xml\ValueObjects;
 use BradiNfeApi\Domain\Common\Protocols\ValidationService;
 use BradiNfeApi\Domain\Common\ValueObjects\Result;
 use BradiNfeApi\Domain\Xml\Protocols\XmlIterator;
+use BradiNfeApi\Infra\Parses\XmlStringIterator;
 
 class Element
 {
@@ -16,12 +17,14 @@ class Element
     public private(set) AttributeList $attributes;
     public private(set) ElementList $children;
 
+    private XmlIterator $iterator;
+
     public function __construct(
-        private readonly XmlIterator $iterator,
         private readonly ValidationService $validationService
     ) {
         $this->attributes = new AttributeList;
         $this->children = new ElementList;
+        $this->iterator = new XmlStringIterator($this->validationService);
     }
 
     public function addChild(Element $child): void
@@ -48,7 +51,7 @@ class Element
         }
 
         foreach ($this->iterator->children as $child) {
-            $childElement = new Element($this->iterator, $this->validationService);
+            $childElement = new Element($this->validationService);
             $childElement->parse($child);
             $this->addChild($childElement);
         }

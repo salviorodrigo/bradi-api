@@ -8,12 +8,9 @@ use BradiNfeApi\Domain\Common\Protocols\ApiError;
 use BradiNfeApi\Domain\Common\Protocols\Validator;
 use BradiNfeApi\Domain\Common\Services\ValidationService;
 use BradiNfeApi\Domain\Common\ValueObjects\Result;
-use BradiNfeApi\Domain\Invoices\Protocols\DFeAttribute;
 use BradiNfeApi\Domain\Invoices\Validators\RootTagValidator;
-use BradiNfeApi\Domain\Xml\Protocols\XmlIterator;
 use BradiNfeApi\Domain\Xml\ValueObjects\Attribute;
 use BradiNfeApi\Domain\Xml\ValueObjects\Element;
-use BradiNfeApi\Infra\Parses\XmlStringIterator;
 use ReflectionClass;
 use ReflectionNamedType;
 use ReflectionProperty;
@@ -29,13 +26,11 @@ abstract class DFeElement
 
     private ?Element $sourceElement;
     private ValidationService $validationService;
-    private XmlIterator $parser;
 
     final public function __construct(string $parentFieldURI = '')
     {
         $this->fieldURI = $parentFieldURI === '' ? static::TAG_NAME : $parentFieldURI . '.' . static::TAG_NAME;
         $this->validationService = new ValidationService($this->fieldURI, __METHOD__);
-        $this->parser = new XmlStringIterator($this->validationService);
     }
 
     /** @return Result<DFeElement|ApiError> */
@@ -208,13 +203,13 @@ abstract class DFeElement
 
     final public function __toString(): string
     {
+        // verify is all  delcared and stted properties are setted into Element instance, if not, set them before return the string ordenation is important. Verify if all values are equals, if not, update the Element instance with the current values. If all values are equals, return the string.
         if (isset($this->sourceElement)) {
-            // verify is all  delcared and stted properties are setted into Element instance, if not, set them before return the string ordenation is important. Verify if all values are equals, if not, update the Element instance with the current values. If all values are equals, return the string.
             return (string) $this->sourceElement;
         }
 
         $this->validationService->reset();
-        $this->sourceElement = new Element($this->parser, $this->validationService);
+        $this->sourceElement = new Element($this->validationService);
         $this->sourceElement->name = static::TAG_NAME;
 
         if (isset($this->value)) {
@@ -258,7 +253,7 @@ abstract class DFeElement
                     continue;
                 }
 
-                $elementInstance = new Element($this->parser, $this->validationService);
+                $elementInstance = new Element($this->validationService);
                 $elementInstance->parse((string) $this->{$element['propertyName']});
                 $this->sourceElement->addChild($elementInstance);
             }

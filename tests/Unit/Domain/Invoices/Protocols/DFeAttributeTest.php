@@ -5,7 +5,6 @@ declare(strict_types=1);
 use BradiNfeApi\Domain\Common\Protocols\ApiError;
 use BradiNfeApi\Domain\Common\ValueObjects\Result;
 use BradiNfeApi\Domain\Xml\ValueObjects\Element;
-use BradiNfeApi\Infra\Parses\XmlStringIterator;
 use BradiNfeApi\Tests\Doubles\Domain\Common\FakeValidationService;
 use BradiNfeApi\Tests\Doubles\Domain\Invoices\NFe\FakeDFeAttribute;
 use BradiNfeApi\Tests\TestCase;
@@ -20,8 +19,7 @@ describe('DFeAttribute', function () {
         test('Should succeed extracting value from xml tag attribute', function () {
             $candidate = '<infNFe fakeAttr="ABC123" versao="4.00"></infNFe>';
             $validationService = new FakeValidationService;
-            $xmlIterator = new XmlStringIterator($validationService);
-            $element = new Element($xmlIterator, $validationService);
+            $element = new Element($validationService);
             $parsingResult = $element->parse($candidate);
             if ($parsingResult->isFailure()) {
                 $this->fail(json_encode($parsingResult->getError()));
@@ -42,8 +40,7 @@ describe('DFeAttribute', function () {
         test('Should fail when parent tag does not match', function () {
             $candidate = '<other fakeAttr="ABC123"></other>';
             $validationService = new FakeValidationService;
-            $xmlIterator = new XmlStringIterator($validationService);
-            $element = new Element($xmlIterator, $validationService);
+            $element = new Element($validationService);
             $parsingResult = $element->parse($candidate);
             if ($parsingResult->isFailure()) {
                 $this->fail(json_encode($parsingResult->getError()));
