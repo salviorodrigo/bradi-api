@@ -15,11 +15,6 @@ final class FakeDFeGroupWithAttribute extends DFeElement
     public FakeDFeElement $fakeChild;
     public ?FakeDFeElement $fakeOptionalChild;
 
-    public function __construct()
-    {
-        $this->fieldURI = self::TAG_NAME;
-    }
-
     /** @return array<Validator> */
     protected function tagValueValidators(): array
     {

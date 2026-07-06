@@ -31,11 +31,6 @@ class CodigoMunicipio extends DFeElement
 
     public const string TAG_NAME = 'cMun';
 
-    public function __construct(string $parentFieldURI = '')
-    {
-        $this->fieldURI = $parentFieldURI === '' ? static::TAG_NAME : $parentFieldURI . '.' . static::TAG_NAME;
-    }
-
     protected function tagValueValidators(): array
     {
         return [

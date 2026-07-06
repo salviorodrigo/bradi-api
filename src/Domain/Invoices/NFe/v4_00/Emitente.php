@@ -37,11 +37,6 @@ final class Emitente extends DFeElement
     public EnderecoEmitente $endEmit;
     public InscricaoEstadual $IE;
 
-    public function __construct(string $parentFieldURI = '')
-    {
-        $this->fieldURI = $parentFieldURI === '' ? self::TAG_NAME : $parentFieldURI . '.' . self::TAG_NAME;
-    }
-
     protected function tagElementsValidators(): array
     {
         return [

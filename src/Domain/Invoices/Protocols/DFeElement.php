@@ -8,7 +8,9 @@ use BradiNfeApi\Domain\Common\Protocols\ApiError;
 use BradiNfeApi\Domain\Common\Protocols\Validator;
 use BradiNfeApi\Domain\Common\Services\ValidationService;
 use BradiNfeApi\Domain\Common\ValueObjects\Result;
+use BradiNfeApi\Domain\Invoices\Protocols\DFeAttribute;
 use BradiNfeApi\Domain\Invoices\Validators\RootTagValidator;
+use BradiNfeApi\Domain\Xml\Protocols\XmlIterator;
 use BradiNfeApi\Domain\Xml\ValueObjects\Attribute;
 use BradiNfeApi\Domain\Xml\ValueObjects\Element;
 use BradiNfeApi\Infra\Parses\XmlStringIterator;
@@ -26,10 +28,14 @@ abstract class DFeElement
     public ?string $value;
 
     private ?Element $sourceElement;
+    private ValidationService $validationService;
+    private XmlIterator $parser;
 
-    public function __construct(string $parentFieldURI = '')
+    final public function __construct(string $parentFieldURI = '')
     {
-        $this->fieldURI = $parentFieldURI === '' ? self::TAG_NAME : $parentFieldURI . '.' . self::TAG_NAME;
+        $this->fieldURI = $parentFieldURI === '' ? static::TAG_NAME : $parentFieldURI . '.' . static::TAG_NAME;
+        $this->validationService = new ValidationService($this->fieldURI, __METHOD__);
+        $this->parser = new XmlStringIterator($this->validationService);
     }
 
     /** @return Result<DFeElement|ApiError> */
@@ -69,44 +75,44 @@ abstract class DFeElement
     /** @return Result<null|ApiError> */
     final protected function validateRootTag(Element $element): Result
     {
-        $service = new ValidationService($this->fieldURI, __METHOD__);
-        $service->addValidator(new RootTagValidator(static::TAG_NAME));
+        $this->validationService->reset();
+        $this->validationService->addValidator(new RootTagValidator(static::TAG_NAME));
 
-        return $service->verify($element);
+        return $this->validationService->verify($element);
     }
 
     /** @return Result<null|ApiError> */
     final protected function validateTagValue(Element $element): Result
     {
         $candidate = $element->value ?? '';
-        $service = new ValidationService($this->fieldURI, __METHOD__);
+        $this->validationService->reset();
         foreach ($this->tagValueValidators() as $validator) {
-            $service->addValidator($validator);
+            $this->validationService->addValidator($validator);
         }
 
-        return $service->verify($candidate);
+        return $this->validationService->verify($candidate);
     }
 
     /** @return Result<null|ApiError> */
     final protected function validateTagAttributes(Element $element): Result
     {
-        $service = new ValidationService($this->fieldURI, __METHOD__);
+        $this->validationService->reset();
         foreach ($this->tagAttributesValidators() as $validator) {
-            $service->addValidator($validator);
+            $this->validationService->addValidator($validator);
         }
 
-        return $service->verify($element);
+        return $this->validationService->verify($element);
     }
 
     /**  @return Result<null|ApiError> */
     final protected function validateTagElements(Element $element): Result
     {
-        $service = new ValidationService($this->fieldURI, __METHOD__);
+        $this->validationService->reset();
         foreach ($this->tagElementsValidators() as $validator) {
-            $service->addValidator($validator);
+            $this->validationService->addValidator($validator);
         }
 
-        return $service->verify($element);
+        return $this->validationService->verify($element);
     }
 
     /** @return Result<null|ApiError> **/
@@ -207,8 +213,8 @@ abstract class DFeElement
             return (string) $this->sourceElement;
         }
 
-        $validationService = new ValidationService($this->fieldURI, __METHOD__);
-        $this->sourceElement = new Element(new XmlStringIterator($validationService), $validationService);
+        $this->validationService->reset();
+        $this->sourceElement = new Element($this->parser, $this->validationService);
         $this->sourceElement->name = static::TAG_NAME;
 
         if (isset($this->value)) {
@@ -252,13 +258,13 @@ abstract class DFeElement
                     continue;
                 }
 
-                $elementInstance = new Element(new XmlStringIterator($validationService), $validationService);
+                $elementInstance = new Element($this->parser, $this->validationService);
                 $elementInstance->parse((string) $this->{$element['propertyName']});
                 $this->sourceElement->addChild($elementInstance);
             }
         }
 
-        return (string) $this;
+        return (string) $this->sourceElement;
     }
 }
 

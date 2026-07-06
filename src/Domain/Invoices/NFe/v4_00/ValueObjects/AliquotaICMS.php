@@ -27,11 +27,6 @@ final class AliquotaICMS extends DFeElement
 
     public const string TAG_NAME = 'pICMS';
 
-    public function __construct(string $parentFieldURI = '')
-    {
-        $this->fieldURI = $parentFieldURI === '' ? self::TAG_NAME : $parentFieldURI . '.' . self::TAG_NAME;
-    }
-
     protected function tagValueValidators(): array
     {
         return [

@@ -47,11 +47,6 @@ final class EnderecoEmitente extends DFeElement
     public ?NomePais $xPais;
     public ?Telefone $fone;
 
-    public function __construct(string $parentFieldURI = '')
-    {
-        $this->fieldURI = $parentFieldURI === '' ? self::TAG_NAME : $parentFieldURI . '.' . self::TAG_NAME;
-    }
-
     protected function tagElementsValidators(): array
     {
         return [

@@ -31,11 +31,6 @@ final class NaturezaOperacao extends DFeElement
 
     public const string TAG_NAME = 'natOp';
 
-    public function __construct(string $parentFieldURI = '')
-    {
-        $this->fieldURI = $parentFieldURI === '' ? self::TAG_NAME : $parentFieldURI . '.' . self::TAG_NAME;
-    }
-
     protected function tagValueValidators(): array
     {
         return [

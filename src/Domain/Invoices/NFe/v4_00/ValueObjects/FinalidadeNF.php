@@ -30,11 +30,6 @@ final class FinalidadeNF extends DFeElement
 
     public const string TAG_NAME = 'finNFe';
 
-    public function __construct(string $parentFieldURI = '')
-    {
-        $this->fieldURI = $parentFieldURI === '' ? self::TAG_NAME : $parentFieldURI . '.' . self::TAG_NAME;
-    }
-
     protected function tagValueValidators(): array
     {
         return [
