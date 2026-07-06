@@ -19,7 +19,7 @@ describe('DFeAttribute', function () {
     describe('::parseFromXmlElement()', function () {
         test('Should succeed extracting value from xml tag attribute', function () {
             $candidate = '<infNFe fakeAttr="ABC123" versao="4.00"></infNFe>';
-            $validationService = new FakeValidationService();
+            $validationService = new FakeValidationService;
             $xmlIterator = new XmlStringIterator($validationService);
             $element = new Element($xmlIterator, $validationService);
             $parsingResult = $element->parse($candidate);
@@ -41,10 +41,10 @@ describe('DFeAttribute', function () {
 
         test('Should fail when parent tag does not match', function () {
             $candidate = '<other fakeAttr="ABC123"></other>';
-            $validationService = new FakeValidationService();
+            $validationService = new FakeValidationService;
             $xmlIterator = new XmlStringIterator($validationService);
             $element = new Element($xmlIterator, $validationService);
-            $parsingResult = $element->parse($candidate);   
+            $parsingResult = $element->parse($candidate);
             if ($parsingResult->isFailure()) {
                 $this->fail(json_encode($parsingResult->getError()));
             }

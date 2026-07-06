@@ -33,14 +33,11 @@ abstract class DFeAttribute
                 static::ATTRIBUTE_NAME
             ));
         }
-        
+
         $parents = explode('.', $parentFieldURI);
         $this->parentTagName = array_pop($parents);
         $this->fieldURI = $parentFieldURI . '.' . static::ATTRIBUTE_NAME;
     }
-
-    /** @return array<Validator> */
-    abstract protected function attributeValueValidators(): array;
 
     /**
      * @return Result<DFeAttribute|ApiError>
@@ -50,7 +47,7 @@ abstract class DFeAttribute
         $validationSteps = [
             fn ($candidate) => $this->validateRootTag($candidate),
             fn ($candidate) => $this->validateTagAttributes($candidate),
-            fn ($candidate) => $this->validateAttributeValue($candidate)
+            fn ($candidate) => $this->validateAttributeValue($candidate),
         ];
 
         foreach ($validationSteps as $validationService) {
@@ -67,6 +64,9 @@ abstract class DFeAttribute
 
         return Result::makeSuccess($this);
     }
+
+    /** @return array<Validator> */
+    abstract protected function attributeValueValidators(): array;
 
     /** @return Result<null|ApiError> */
     final protected function validateRootTag(Element $element): Result
@@ -88,7 +88,8 @@ abstract class DFeAttribute
 
     /** @return Result<null|ApiError> */
     final protected function validateAttributeValue(Element $element): Result
-    {   $attribute = $element->attributes->{static::ATTRIBUTE_NAME};
+    {
+        $attribute = $element->attributes->{static::ATTRIBUTE_NAME};
         $candidate = $attribute->value;
         $service = new ValidationService($this->fieldURI, __METHOD__);
         foreach ($this->attributeValueValidators() as $validator) {
@@ -96,6 +97,15 @@ abstract class DFeAttribute
         }
 
         return $service->verify($candidate);
+    }
+
+    /** @return Result<null|ApiError> **/
+    private function hydrateFromXmlElement(Element $xmlElement): Result
+    {
+        $this->sourceAttribute = $xmlElement->attributes->{static::ATTRIBUTE_NAME};
+        $this->value = $this->sourceAttribute->value;
+
+        return Result::makeSuccess();
     }
 
     final public function __toString(): string
@@ -115,14 +125,5 @@ abstract class DFeAttribute
         $this->sourceAttribute = new Attribute(static::ATTRIBUTE_NAME, $escapedValue);
 
         return (string) $this->sourceAttribute;
-    }
-
-    /** @return Result<null|ApiError> **/
-    private function hydrateFromXmlElement(Element $xmlElement): Result
-    {
-        $this->sourceAttribute = $xmlElement->attributes->{static::ATTRIBUTE_NAME};
-        $this->value = $this->sourceAttribute->value;           
-
-        return Result::makeSuccess();
     }
 }

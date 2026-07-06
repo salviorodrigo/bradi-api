@@ -254,7 +254,7 @@ final class XmlStringIterator implements XmlIterator
         }
 
         return $this->sliceCandidate(0, iconv_strpos($this->candidate, '>', encoding: $this->encode))
-            |>(fn ($str) => iconv_substr($str, (iconv_strpos($str, ' ') + 1), strlen($str) , $this->encode))
+            |>(fn ($str) => iconv_substr($str, (iconv_strpos($str, ' ') + 1), strlen($str), $this->encode))
             |>(fn ($str) => iconv_substr($str, 0, iconv_strrpos($str, '"') + 1, $this->encode))
             |>(fn ($str) => str_replace('"', '', $str))
             |>(fn ($str) => trim($str))

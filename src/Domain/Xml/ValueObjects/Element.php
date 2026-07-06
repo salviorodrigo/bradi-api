@@ -12,6 +12,7 @@ class Element
 {
     public ?string $value = null;
     public string $name;
+
     public private(set) AttributeList $attributes;
     public private(set) ElementList $children;
 

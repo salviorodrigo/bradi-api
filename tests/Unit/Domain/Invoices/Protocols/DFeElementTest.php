@@ -9,14 +9,14 @@ use BradiNfeApi\Tests\Doubles\Domain\Invoices\NFe\FakeDFeGroupWithAttribute;
 describe('DFeElement', function () {
     describe('::__toString()', function () {
         test('Should serialize xml string from cache when already set', function () {
-            $sut = new FakeDFeElement();
+            $sut = new FakeDFeElement;
             $sut->value = 'hello';
 
             expect((string) $sut)->toBe('<FakeTag>hello</FakeTag>');
         });
 
         test('Should serialize group with child DFeElement', function () {
-            $child = new FakeDFeElement();
+            $child = new FakeDFeElement;
             $child->value = 'childValue';
 
             $sut = new FakeDFeGroupWithAttribute;
@@ -46,7 +46,7 @@ describe('DFeElement', function () {
             $attr = new FakeDFeAttribute('FakeDFeGroupWithAttribute');
             $attr->value = 'attrValue';
 
-            $child = new FakeDFeElement();
+            $child = new FakeDFeElement;
             $child->value = 'childValue';
 
             $sut = new FakeDFeGroupWithAttribute;
@@ -63,7 +63,7 @@ describe('DFeElement', function () {
             $attr = new FakeDFeAttribute('FakeDFeGroupWithAttribute');
             $attr->value = 'attrValue';
 
-            $child = new FakeDFeElement();
+            $child = new FakeDFeElement;
             $child->value = 'childValue';
 
             $sut = new FakeDFeGroupWithAttribute;

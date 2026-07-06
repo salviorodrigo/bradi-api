@@ -8,7 +8,6 @@ use BradiNfeApi\Domain\Common\Protocols\ApiError;
 use BradiNfeApi\Domain\Common\Protocols\Validator;
 use BradiNfeApi\Domain\Common\Services\ValidationService;
 use BradiNfeApi\Domain\Common\ValueObjects\Result;
-use BradiNfeApi\Domain\Invoices\Protocols\DFeAttribute;
 use BradiNfeApi\Domain\Invoices\Validators\RootTagValidator;
 use BradiNfeApi\Domain\Xml\ValueObjects\Attribute;
 use BradiNfeApi\Domain\Xml\ValueObjects\Element;
@@ -21,24 +20,17 @@ use RuntimeException;
 abstract class DFeElement
 {
     public const string TAG_NAME = '';
-    
+
     public readonly string $fieldURI;
+
     public ?string $value;
+
     private ?Element $sourceElement;
 
     public function __construct(string $parentFieldURI = '')
     {
         $this->fieldURI = $parentFieldURI === '' ? self::TAG_NAME : $parentFieldURI . '.' . self::TAG_NAME;
     }
-
-    /** @return array<Validator> */
-    abstract protected function tagValueValidators(): array;
-
-    /** @return array<Validator> */
-    abstract protected function tagAttributesValidators(): array;
-
-    /** @return array<Validator> */
-    abstract protected function tagElementsValidators(): array;
 
     /** @return Result<DFeElement|ApiError> */
     final public function parseFromXmlElement(Element $element): Result
@@ -64,6 +56,15 @@ abstract class DFeElement
 
         return Result::makeSuccess($this);
     }
+
+    /** @return array<Validator> */
+    abstract protected function tagValueValidators(): array;
+
+    /** @return array<Validator> */
+    abstract protected function tagAttributesValidators(): array;
+
+    /** @return array<Validator> */
+    abstract protected function tagElementsValidators(): array;
 
     /** @return Result<null|ApiError> */
     final protected function validateRootTag(Element $element): Result
@@ -106,67 +107,6 @@ abstract class DFeElement
         }
 
         return $service->verify($element);
-    }
-
-    final public function __toString(): string
-    {
-        if (isset($this->sourceElement)) {
-            // verify is all  delcared and stted properties are setted into Element instance, if not, set them before return the string ordenation is important. Verify if all values are equals, if not, update the Element instance with the current values. If all values are equals, return the string. 
-            return (string) $this->sourceElement;
-        }
-
-        $validationService = new ValidationService($this->fieldURI, __METHOD__);
-        $this->sourceElement = new Element(new XmlStringIterator($validationService), $validationService);
-        $this->sourceElement->name = static::TAG_NAME;
-
-        if (isset($this->value)) {
-            $this->sourceElement->value = $this->value;
-        }
-
-        $propsMetadata = $this->listChildElements();
-        if (! empty($propsMetadata)) {
-            $elementsList = array_filter($propsMetadata, fn (array $element) => $element['parentClass'] === DFeElement::class);
-            $attributesList = array_filter($propsMetadata, fn (array $element) => $element['parentClass'] === DFeAttribute::class);
-
-            foreach ($attributesList as $attribute) {
-                if (! isset($this->{$attribute['propertyName']}) && ! $attribute['isOptional']) {
-                    throw new RuntimeException(sprintf(
-                        'Required attribute "%s" not initialized.',
-                        $attribute['propertyName']
-                    ));
-                }
-
-                if (! isset($this->{$attribute['propertyName']})) {
-                    continue;
-                }
-
-                $attributeInstance = new Attribute(
-                    $attribute['propertyName'], 
-                    $this->{$attribute['propertyName']}->value
-                );
-
-                $this->sourceElement->addAttribute($attributeInstance);
-            }
-
-            foreach ($elementsList as $element) {
-                if (! isset($this->{$element['propertyName']}) && ! $element['isOptional']) {
-                    throw new RuntimeException(sprintf(
-                        'Required element "%s" not initialized.',
-                        $element['propertyName']
-                    ));
-                }
-
-                if (! isset($this->{$element['propertyName']})) {
-                    continue;
-                }
-
-                $elementInstance = new Element(new XmlStringIterator($validationService), $validationService);
-                $elementInstance->parse((string) $this->{$element['propertyName']});
-                $this->sourceElement->addChild($elementInstance);
-            }
-        }
-
-        return (string) $this;
     }
 
     /** @return Result<null|ApiError> **/
@@ -220,16 +160,16 @@ abstract class DFeElement
 
             return Result::makeFailure($parsingError);
         }
-            
+
         $this->sourceElement = $xmlElement;
 
         return Result::makeSuccess();
     }
-    
-     /** @return array<array{parentClass: string, class:string,propertyName:string,isOptional:bool,isSet:bool}> */
+
+    /** @return array<array{parentClass: string, class:string,propertyName:string,isOptional:bool,isSet:bool}> */
     private function listChildElements(): array
     {
-        $elementsList = []; 
+        $elementsList = [];
         $reflection = new ReflectionClass($this);
         foreach ($reflection->getProperties(ReflectionProperty::IS_PUBLIC) as $property) {
             if (! $property->hasType()) {
@@ -253,11 +193,72 @@ abstract class DFeElement
                 'class' => $elementClass->getName(),
                 'propertyName' => $property->getName(),
                 'isOptional' => $propertyType->allowsNull(),
-                'isSet' => isset($this->{$property->getName()})
+                'isSet' => isset($this->{$property->getName()}),
             ];
         }
 
         return $elementsList;
+    }
+
+    final public function __toString(): string
+    {
+        if (isset($this->sourceElement)) {
+            // verify is all  delcared and stted properties are setted into Element instance, if not, set them before return the string ordenation is important. Verify if all values are equals, if not, update the Element instance with the current values. If all values are equals, return the string.
+            return (string) $this->sourceElement;
+        }
+
+        $validationService = new ValidationService($this->fieldURI, __METHOD__);
+        $this->sourceElement = new Element(new XmlStringIterator($validationService), $validationService);
+        $this->sourceElement->name = static::TAG_NAME;
+
+        if (isset($this->value)) {
+            $this->sourceElement->value = $this->value;
+        }
+
+        $propsMetadata = $this->listChildElements();
+        if (! empty($propsMetadata)) {
+            $elementsList = array_filter($propsMetadata, fn (array $element) => $element['parentClass'] === DFeElement::class);
+            $attributesList = array_filter($propsMetadata, fn (array $element) => $element['parentClass'] === DFeAttribute::class);
+
+            foreach ($attributesList as $attribute) {
+                if (! isset($this->{$attribute['propertyName']}) && ! $attribute['isOptional']) {
+                    throw new RuntimeException(sprintf(
+                        'Required attribute "%s" not initialized.',
+                        $attribute['propertyName']
+                    ));
+                }
+
+                if (! isset($this->{$attribute['propertyName']})) {
+                    continue;
+                }
+
+                $attributeInstance = new Attribute(
+                    $attribute['propertyName'],
+                    $this->{$attribute['propertyName']}->value
+                );
+
+                $this->sourceElement->addAttribute($attributeInstance);
+            }
+
+            foreach ($elementsList as $element) {
+                if (! isset($this->{$element['propertyName']}) && ! $element['isOptional']) {
+                    throw new RuntimeException(sprintf(
+                        'Required element "%s" not initialized.',
+                        $element['propertyName']
+                    ));
+                }
+
+                if (! isset($this->{$element['propertyName']})) {
+                    continue;
+                }
+
+                $elementInstance = new Element(new XmlStringIterator($validationService), $validationService);
+                $elementInstance->parse((string) $this->{$element['propertyName']});
+                $this->sourceElement->addChild($elementInstance);
+            }
+        }
+
+        return (string) $this;
     }
 }
 
