@@ -42,4 +42,4 @@ describe('Icms00', function () {
             expect($sutResponse->getError())->toBeInstanceOf(ApiError::class);
         })->with(datasets('dfes.nfe.element_tags.' . Icms00::TAG_NAME . '.invalid'));
     });
-})->skip();
+});

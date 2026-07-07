@@ -42,4 +42,4 @@ describe('IdentificacaoNF', function () {
             expect($sutResponse->getError())->toBeInstanceOf(ApiError::class);
         })->with(datasets('dfes.nfe.element_tags.' . IdentificacaoNF::TAG_NAME . '.invalid'));
     });
-})->skip();
+});

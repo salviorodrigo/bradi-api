@@ -42,4 +42,4 @@ describe('Destinatario', function () {
             expect($sutResponse->getError())->toBeInstanceOf(ApiError::class);
         })->with(datasets('dfes.nfe.element_tags.' . Destinatario::TAG_NAME . '.invalid'));
     });
-})->skip();
+});

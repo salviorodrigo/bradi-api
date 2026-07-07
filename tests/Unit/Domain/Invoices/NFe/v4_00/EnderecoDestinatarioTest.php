@@ -42,4 +42,4 @@ describe('EnderecoDestinatario', function () {
             expect($sutResponse->getError())->toBeInstanceOf(ApiError::class);
         })->with(datasets('dfes.nfe.element_tags.' . EnderecoDestinatario::TAG_NAME . '.invalid'));
     });
-})->skip();
+});

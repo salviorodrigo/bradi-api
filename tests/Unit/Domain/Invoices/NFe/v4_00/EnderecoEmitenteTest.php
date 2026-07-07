@@ -42,4 +42,4 @@ describe('EnderecoEmitente', function () {
             expect($sutResponse->getError())->toBeInstanceOf(ApiError::class);
         })->with(datasets('dfes.nfe.element_tags.' . EnderecoEmitente::TAG_NAME . '.invalid'));
     });
-})->skip();
+});

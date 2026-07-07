@@ -42,4 +42,4 @@ describe('Emitente', function () {
             expect($sutResponse->getError())->toBeInstanceOf(ApiError::class);
         })->with(datasets('dfes.nfe.element_tags.' . Emitente::TAG_NAME . '.invalid'));
     });
-})->skip();
+});
