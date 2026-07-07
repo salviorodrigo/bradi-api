@@ -21,10 +21,14 @@ final class RootTagValidator implements Validator
             return Result::makeFailure(new InvalidArgumentException('candidate must be an Element instance.'));
         }
 
-        if ($candidate->name === $this->rootTagName) {
-            return Result::makeSuccess();
+        if (! isset($candidate->name)) {
+            return Result::makeFailure(new InvalidArgumentException(sprintf('Tag "%s" expected.', $this->rootTagName)));
         }
 
-        return Result::makeFailure(new InvalidArgumentException(sprintf('Tag "%s" expected.', $this->rootTagName)));
+        if ($candidate->name !== $this->rootTagName) {
+            return Result::makeFailure(new InvalidArgumentException(sprintf('Tag "%s" expected. "%s" found.', $this->rootTagName, $candidate->name)));
+        }
+            
+        return Result::makeSuccess();
     }
 }
