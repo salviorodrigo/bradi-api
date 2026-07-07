@@ -8,6 +8,7 @@ use BradiNfeApi\Domain\Common\Protocols\ApiError;
 use BradiNfeApi\Domain\Common\Protocols\Validator;
 use BradiNfeApi\Domain\Common\Services\ValidationService;
 use BradiNfeApi\Domain\Common\ValueObjects\Result;
+use BradiNfeApi\Domain\Invoices\Validators\RequiredTagValidator;
 use BradiNfeApi\Domain\Invoices\Validators\RootTagValidator;
 use BradiNfeApi\Domain\Xml\ValueObjects\Attribute;
 use BradiNfeApi\Domain\Xml\ValueObjects\Element;
@@ -127,7 +128,7 @@ abstract class DFeElement
         $parserErrorBag = [];
         foreach ($requiredElements as $element) {
             $concreteElement = new $element['class']($this->fieldURI);
-            $parsingResult = $concreteElement->parseFromXmlElement($xmlElement->{static::TAG_NAME});
+            $parsingResult = $concreteElement->parseFromXmlElement($xmlElement->{$concreteElement::class::TAG_NAME});
             if ($parsingResult->isFailure()) {
                 $parserErrorBag[] = $parsingResult->getError();
 
@@ -138,12 +139,12 @@ abstract class DFeElement
         }
 
         foreach ($optionalElements as $element) {
-            if (! isset($xmlElement->{static::TAG_NAME})) {
+            $concreteElement = new $element['class']($this->fieldURI);
+            if (! isset($xmlElement->{$concreteElement::class::TAG_NAME})) {
                 continue;
             }
 
-            $concreteElement = new $element['class']($this->fieldURI);
-            $parsingResult = $concreteElement->parseFromXmlElement($xmlElement->{static::TAG_NAME});
+            $parsingResult = $concreteElement->parseFromXmlElement($xmlElement->{$concreteElement::class::TAG_NAME});
             if ($parsingResult->isFailure()) {
                 $parserErrorBag[] = $parsingResult->getError();
 
