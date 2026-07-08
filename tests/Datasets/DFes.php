@@ -30,6 +30,19 @@ class DFes extends Dataset
                             ],
                         ],
                     ],
+                    'det' => [
+                        'valid' => [
+                            'only_required' => '<det nItem="1"><prod><cProd>P001</cProd><cEAN>SEM GTIN</cEAN><xProd>PRODUTO TESTE</xProd><NCM>01012100</NCM><CFOP>5102</CFOP><uCom>UN</uCom><qCom>1.0000</qCom><vUnCom>10.0000000000</vUnCom><vProd>10.00</vProd></prod><imposto><ICMS><ICMS00><orig>0</orig><CST>00</CST><modBC>3</modBC><vBC>1000.00</vBC><pICMS>18.00</pICMS><vICMS>180.00</vICMS></ICMS00></ICMS></imposto></det>',
+                        ],
+                        'invalid' => [
+                            'empty' => '',
+                            'missing_required' => [
+                                'nItem' => '<det><prod><cProd>P001</cProd><cEAN>SEM GTIN</cEAN><xProd>PRODUTO TESTE</xProd><NCM>01012100</NCM><CFOP>5102</CFOP><uCom>UN</uCom><qCom>1.0000</qCom><vUnCom>10.0000000000</vUnCom><vProd>10.00</vProd><imposto><ICMS><ICMS00><orig>0</orig><CST>00</CST><modBC>3</modBC><vBC>1000.00</vBC><pICMS>18.00</pICMS><vICMS>180.00</vICMS></ICMS00></ICMS></imposto></prod></det>',
+                                'prod' => '<det nItem="1"><imposto><ICMS><ICMS00><orig>0</orig><CST>00</CST><modBC>3</modBC><vBC>1000.00</vBC><pICMS>18.00</pICMS><vICMS>180.00</vICMS></ICMS00></ICMS></imposto></det>',
+                                'imposto' => '<det nItem="1"><prod><cProd>P001</cProd><cEAN>SEM GTIN</cEAN><xProd>PRODUTO TESTE</xProd><NCM>01012100</NCM><CFOP>5102</CFOP><uCom>UN</uCom><qCom>1.0000</qCom><vUnCom>10.0000000000</vUnCom><vProd>10.00</vProd></prod></det>',
+                            ],
+                        ],
+                    ],
                     'emit' => [
                         'valid' => [
                             'only_required' => [
@@ -156,6 +169,28 @@ class DFes extends Dataset
                             'empty' => '',
                             'missing_required' => [
                                 'cProd' => '<prod><cEAN>SEM GTIN</cEAN><xProd>PRODUTO TESTE</xProd><NCM>01012100</NCM><CFOP>5102</CFOP><uCom>UN</uCom><qCom>1.0000</qCom><vUnCom>10.0000000000</vUnCom><vProd>10.00</vProd></prod>',
+                            ],
+                        ],
+                    ],
+                    'imposto' => [
+                        'valid' => [
+                            'only_required' => '<imposto><ICMS><ICMS00><orig>0</orig><CST>00</CST><modBC>3</modBC><vBC>1000.00</vBC><pICMS>18.00</pICMS><vICMS>180.00</vICMS></ICMS00></ICMS></imposto>',
+                        ],
+                        'invalid' => [
+                            'empty' => '',
+                            'missing_required' => [
+                                'ICMS' => '<imposto></imposto>',
+                            ],
+                        ],
+                    ],
+                    'ICMS' => [
+                        'valid' => [
+                            'only_required' => '<ICMS><ICMS00><orig>0</orig><CST>00</CST><modBC>3</modBC><vBC>1000.00</vBC><pICMS>18.00</pICMS><vICMS>180.00</vICMS></ICMS00></ICMS>',
+                        ],
+                        'invalid' => [
+                            'empty' => '',
+                            'missing_required' => [
+                                'ICMS00' => '<ICMS></ICMS>',
                             ],
                         ],
                     ],
