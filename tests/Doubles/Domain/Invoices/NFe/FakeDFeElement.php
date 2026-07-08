@@ -9,7 +9,7 @@ use BradiNfeApi\Domain\Invoices\Templates\DFeElement;
 
 final class FakeDFeElement extends DFeElement
 {
-    public const string TAG_NAME = 'FakeTag';
+    public const string FIELD_NAME = 'FakeTag';
 
     /** @return array<Validator> */
     protected function tagValueValidators(): array

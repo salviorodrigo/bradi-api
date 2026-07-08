@@ -29,7 +29,7 @@ final class CodigoMercosul extends DFeElement
 {
     use ValidatesDFeValueElement;
 
-    public const string TAG_NAME = 'NCM';
+    public const string FIELD_NAME = 'NCM';
 
     protected function tagValueValidators(): array
     {

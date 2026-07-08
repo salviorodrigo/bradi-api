@@ -18,7 +18,7 @@ describe('Logradouro', function () {
 
     describe('::parse()', function () {
         test('Should succeed with dataset :dataset', function ($candidate) {
-            $xmlString = $candidate === '' ? '' : '<' . Logradouro::TAG_NAME . ">{$candidate}</" . Logradouro::TAG_NAME . '>';
+            $xmlString = $candidate === '' ? '' : '<' . Logradouro::FIELD_NAME . ">{$candidate}</" . Logradouro::FIELD_NAME . '>';
             $xmlElement = new Element(new FakeValidationService);
             $xmlElement->parse($xmlString);
             $sutResponse = $this->sut->parseFromXmlElement($xmlElement);
@@ -29,10 +29,10 @@ describe('Logradouro', function () {
             expect($sutResponse->getData())->toBeInstanceOf(Logradouro::class);
             expect($sutResponse->getData()->value)->toBe($candidate);
             expect((string) $sutResponse->getData())->toBe($xmlString);
-        })->with(datasets('dfes.nfe.value_tags.' . Logradouro::TAG_NAME . '.valid'));
+        })->with(datasets('dfes.nfe.value_tags.' . Logradouro::FIELD_NAME . '.valid'));
 
         test('Should fail with data set :dataset', function ($candidate) {
-            $xmlString = '<' . Logradouro::TAG_NAME . ">{$candidate}</" . Logradouro::TAG_NAME . '>';
+            $xmlString = '<' . Logradouro::FIELD_NAME . ">{$candidate}</" . Logradouro::FIELD_NAME . '>';
             $xmlElement = new Element(new FakeValidationService);
             $xmlElement->parse($xmlString);
             $sutResponse = $this->sut->parseFromXmlElement($xmlElement);
@@ -41,10 +41,10 @@ describe('Logradouro', function () {
             }
             expect($sutResponse)->toBeInstanceOf(Result::class);
             expect($sutResponse->getError())->toBeInstanceOf(ApiError::class);
-        })->with(datasets('dfes.nfe.value_tags.' . Logradouro::TAG_NAME . '.invalid'));
+        })->with(datasets('dfes.nfe.value_tags.' . Logradouro::FIELD_NAME . '.invalid'));
 
         test('Should fail if attributes is provided', function ($candidate) {
-            $xmlString = '<' . Logradouro::TAG_NAME . " fake=\"attribute\">{$candidate}</" . Logradouro::TAG_NAME . '>';
+            $xmlString = '<' . Logradouro::FIELD_NAME . " fake=\"attribute\">{$candidate}</" . Logradouro::FIELD_NAME . '>';
             $xmlElement = new Element(new FakeValidationService);
             $xmlElement->parse($xmlString);
             $sutResponse = $this->sut->parseFromXmlElement($xmlElement);
@@ -53,10 +53,10 @@ describe('Logradouro', function () {
                 $this->fail(json_encode($sutResponse->getData()));
             }
             expect($sutResponse->getError())->toBeInstanceOf(ApiError::class);
-        })->with(datasets('dfes.nfe.value_tags.' . Logradouro::TAG_NAME . '.valid'));
+        })->with(datasets('dfes.nfe.value_tags.' . Logradouro::FIELD_NAME . '.valid'));
 
         test('Should fail if elements is provided', function ($candidate) {
-            $xmlString = '<' . Logradouro::TAG_NAME . ">{$candidate}<fake>element</fake></" . Logradouro::TAG_NAME . '>';
+            $xmlString = '<' . Logradouro::FIELD_NAME . ">{$candidate}<fake>element</fake></" . Logradouro::FIELD_NAME . '>';
             $xmlElement = new Element(new FakeValidationService);
             $xmlElement->parse($xmlString);
             $sutResponse = $this->sut->parseFromXmlElement($xmlElement);
@@ -65,6 +65,6 @@ describe('Logradouro', function () {
                 $this->fail(json_encode($sutResponse->getData()));
             }
             expect($sutResponse->getError())->toBeInstanceOf(ApiError::class);
-        })->with(datasets('dfes.nfe.value_tags.' . Logradouro::TAG_NAME . '.valid'));
+        })->with(datasets('dfes.nfe.value_tags.' . Logradouro::FIELD_NAME . '.valid'));
     });
 });

@@ -28,7 +28,7 @@ describe('EnderecoDestinatario', function () {
             expect($sutResponse->getData())->toBeInstanceOf(EnderecoDestinatario::class);
             expect($sutResponse->getData()->value)->toBe('');
             expect((string) $sutResponse->getData())->toBe($candidate);
-        })->with(datasets('dfes.nfe.element_tags.' . EnderecoDestinatario::TAG_NAME . '.valid'));
+        })->with(datasets('dfes.nfe.element_tags.' . EnderecoDestinatario::FIELD_NAME . '.valid'));
 
         test('Should fail with dataset :dataset', function ($candidate) {
             $xmlElement = new Element(new FakeValidationService);
@@ -40,6 +40,6 @@ describe('EnderecoDestinatario', function () {
             }
             expect($sutResponse)->toBeInstanceOf(Result::class);
             expect($sutResponse->getError())->toBeInstanceOf(ApiError::class);
-        })->with(datasets('dfes.nfe.element_tags.' . EnderecoDestinatario::TAG_NAME . '.invalid'));
+        })->with(datasets('dfes.nfe.element_tags.' . EnderecoDestinatario::FIELD_NAME . '.invalid'));
     });
 });

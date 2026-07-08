@@ -25,7 +25,7 @@ final class ValorPIS extends DFeElement
 {
     use ValidatesDFeValueElement;
 
-    public const string TAG_NAME = 'vPIS';
+    public const string FIELD_NAME = 'vPIS';
 
     protected function tagValueValidators(): array
     {

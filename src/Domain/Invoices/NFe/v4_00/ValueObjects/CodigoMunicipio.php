@@ -29,7 +29,7 @@ class CodigoMunicipio extends DFeElement
 {
     use ValidatesDFeValueElement;
 
-    public const string TAG_NAME = 'cMun';
+    public const string FIELD_NAME = 'cMun';
 
     protected function tagValueValidators(): array
     {

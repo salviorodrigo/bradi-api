@@ -27,7 +27,7 @@ final class ValorTotalProduto extends DFeElement
 {
     use ValidatesDFeValueElement;
 
-    public const string TAG_NAME = 'vProd';
+    public const string FIELD_NAME = 'vProd';
 
     protected function tagValueValidators(): array
     {

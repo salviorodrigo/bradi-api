@@ -18,7 +18,7 @@ describe('CodigoUF', function () {
 
     describe('::parse()', function () {
         test('Should succeed with dataset :dataset', function ($candidate) {
-            $xmlString = $candidate === '' ? '' : '<' . CodigoUF::TAG_NAME . ">{$candidate}</" . CodigoUF::TAG_NAME . '>';
+            $xmlString = $candidate === '' ? '' : '<' . CodigoUF::FIELD_NAME . ">{$candidate}</" . CodigoUF::FIELD_NAME . '>';
             $xmlElement = new Element(new FakeValidationService);
             $xmlElement->parse($xmlString);
             $sutResponse = $this->sut->parseFromXmlElement($xmlElement);
@@ -29,10 +29,10 @@ describe('CodigoUF', function () {
             expect($sutResponse->getData())->toBeInstanceOf(CodigoUF::class);
             expect($sutResponse->getData()->value)->toBe($candidate);
             expect((string) $sutResponse->getData())->toBe($xmlString);
-        })->with(datasets('dfes.nfe.value_tags.' . CodigoUF::TAG_NAME . '.valid'));
+        })->with(datasets('dfes.nfe.value_tags.' . CodigoUF::FIELD_NAME . '.valid'));
 
         test('Should fail with data set :dataset', function ($candidate) {
-            $xmlString = '<' . CodigoUF::TAG_NAME . ">{$candidate}</" . CodigoUF::TAG_NAME . '>';
+            $xmlString = '<' . CodigoUF::FIELD_NAME . ">{$candidate}</" . CodigoUF::FIELD_NAME . '>';
             $xmlElement = new Element(new FakeValidationService);
             $xmlElement->parse($xmlString);
             $sutResponse = $this->sut->parseFromXmlElement($xmlElement);
@@ -41,10 +41,10 @@ describe('CodigoUF', function () {
             }
             expect($sutResponse)->toBeInstanceOf(Result::class);
             expect($sutResponse->getError())->toBeInstanceOf(ApiError::class);
-        })->with(datasets('dfes.nfe.value_tags.' . CodigoUF::TAG_NAME . '.invalid'));
+        })->with(datasets('dfes.nfe.value_tags.' . CodigoUF::FIELD_NAME . '.invalid'));
 
         test('Should fail if attributes is provided', function ($candidate) {
-            $xmlString = '<' . CodigoUF::TAG_NAME . " fake=\"attribute\">{$candidate}</" . CodigoUF::TAG_NAME . '>';
+            $xmlString = '<' . CodigoUF::FIELD_NAME . " fake=\"attribute\">{$candidate}</" . CodigoUF::FIELD_NAME . '>';
             $xmlElement = new Element(new FakeValidationService);
             $xmlElement->parse($xmlString);
             $sutResponse = $this->sut->parseFromXmlElement($xmlElement);
@@ -53,10 +53,10 @@ describe('CodigoUF', function () {
                 $this->fail(json_encode($sutResponse->getData()));
             }
             expect($sutResponse->getError())->toBeInstanceOf(ApiError::class);
-        })->with(datasets('dfes.nfe.value_tags.' . CodigoUF::TAG_NAME . '.valid'));
+        })->with(datasets('dfes.nfe.value_tags.' . CodigoUF::FIELD_NAME . '.valid'));
 
         test('Should fail if elements is provided', function ($candidate) {
-            $xmlString = '<' . CodigoUF::TAG_NAME . ">{$candidate}<fake>element</fake></" . CodigoUF::TAG_NAME . '>';
+            $xmlString = '<' . CodigoUF::FIELD_NAME . ">{$candidate}<fake>element</fake></" . CodigoUF::FIELD_NAME . '>';
             $xmlElement = new Element(new FakeValidationService);
             $xmlElement->parse($xmlString);
             $sutResponse = $this->sut->parseFromXmlElement($xmlElement);
@@ -65,6 +65,6 @@ describe('CodigoUF', function () {
                 $this->fail(json_encode($sutResponse->getData()));
             }
             expect($sutResponse->getError())->toBeInstanceOf(ApiError::class);
-        })->with(datasets('dfes.nfe.value_tags.' . CodigoUF::TAG_NAME . '.valid'));
+        })->with(datasets('dfes.nfe.value_tags.' . CodigoUF::FIELD_NAME . '.valid'));
     });
 });

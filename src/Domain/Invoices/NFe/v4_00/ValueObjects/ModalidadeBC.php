@@ -28,7 +28,7 @@ final class ModalidadeBC extends DFeElement
 {
     use ValidatesDFeValueElement;
 
-    public const string TAG_NAME = 'modBC';
+    public const string FIELD_NAME = 'modBC';
 
     protected function tagValueValidators(): array
     {

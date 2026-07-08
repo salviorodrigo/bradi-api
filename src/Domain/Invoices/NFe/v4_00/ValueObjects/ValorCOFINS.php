@@ -25,7 +25,7 @@ final class ValorCOFINS extends DFeElement
 {
     use ValidatesDFeValueElement;
 
-    public const string TAG_NAME = 'vCOFINS';
+    public const string FIELD_NAME = 'vCOFINS';
 
     protected function tagValueValidators(): array
     {

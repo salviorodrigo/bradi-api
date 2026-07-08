@@ -28,7 +28,7 @@ describe('Icms00', function () {
             expect($sutResponse->getData())->toBeInstanceOf(Icms00::class);
             expect($sutResponse->getData()->value)->toBe('');
             expect((string) $sutResponse->getData())->toBe($candidate);
-        })->with(datasets('dfes.nfe.element_tags.' . Icms00::TAG_NAME . '.valid'));
+        })->with(datasets('dfes.nfe.element_tags.' . Icms00::FIELD_NAME . '.valid'));
 
         test('Should fail with dataset :dataset', function ($candidate) {
             $xmlElement = new Element(new FakeValidationService);
@@ -40,6 +40,6 @@ describe('Icms00', function () {
             }
             expect($sutResponse)->toBeInstanceOf(Result::class);
             expect($sutResponse->getError())->toBeInstanceOf(ApiError::class);
-        })->with(datasets('dfes.nfe.element_tags.' . Icms00::TAG_NAME . '.invalid'));
+        })->with(datasets('dfes.nfe.element_tags.' . Icms00::FIELD_NAME . '.invalid'));
     });
 });

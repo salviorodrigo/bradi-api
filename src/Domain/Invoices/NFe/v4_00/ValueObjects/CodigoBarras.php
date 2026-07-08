@@ -28,7 +28,7 @@ final class CodigoBarras extends DFeElement
 {
     use ValidatesDFeValueElement;
 
-    public const string TAG_NAME = 'cEAN';
+    public const string FIELD_NAME = 'cEAN';
 
     protected function tagValueValidators(): array
     {

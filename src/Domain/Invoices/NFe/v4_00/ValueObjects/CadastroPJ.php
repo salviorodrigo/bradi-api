@@ -21,7 +21,7 @@ final class CadastroPJ extends DFeElement
 {
     use ValidatesDFeValueElement;
 
-    public const string TAG_NAME = 'CNPJ';
+    public const string FIELD_NAME = 'CNPJ';
 
     protected function tagValueValidators(): array
     {

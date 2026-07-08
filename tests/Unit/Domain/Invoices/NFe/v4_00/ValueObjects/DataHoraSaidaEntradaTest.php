@@ -18,7 +18,7 @@ describe('DataHoraSaidaEntrada', function () {
 
     describe('::parse()', function () {
         test('Should succeed with dataset :dataset', function ($candidate) {
-            $xmlString = $candidate === '' ? '' : '<' . DataHoraSaidaEntrada::TAG_NAME . ">{$candidate}</" . DataHoraSaidaEntrada::TAG_NAME . '>';
+            $xmlString = $candidate === '' ? '' : '<' . DataHoraSaidaEntrada::FIELD_NAME . ">{$candidate}</" . DataHoraSaidaEntrada::FIELD_NAME . '>';
             $xmlElement = new Element(new FakeValidationService);
             $xmlElement->parse($xmlString);
             $sutResponse = $this->sut->parseFromXmlElement($xmlElement);
@@ -29,10 +29,10 @@ describe('DataHoraSaidaEntrada', function () {
             expect($sutResponse->getData())->toBeInstanceOf(DataHoraSaidaEntrada::class);
             expect($sutResponse->getData()->value)->toBe($candidate);
             expect((string) $sutResponse->getData())->toBe($xmlString);
-        })->with(datasets('dfes.nfe.value_tags.' . DataHoraSaidaEntrada::TAG_NAME . '.valid'));
+        })->with(datasets('dfes.nfe.value_tags.' . DataHoraSaidaEntrada::FIELD_NAME . '.valid'));
 
         test('Should fail with data set :dataset', function ($candidate) {
-            $xmlString = '<' . DataHoraSaidaEntrada::TAG_NAME . ">{$candidate}</" . DataHoraSaidaEntrada::TAG_NAME . '>';
+            $xmlString = '<' . DataHoraSaidaEntrada::FIELD_NAME . ">{$candidate}</" . DataHoraSaidaEntrada::FIELD_NAME . '>';
             $xmlElement = new Element(new FakeValidationService);
             $xmlElement->parse($xmlString);
             $sutResponse = $this->sut->parseFromXmlElement($xmlElement);
@@ -41,10 +41,10 @@ describe('DataHoraSaidaEntrada', function () {
             }
             expect($sutResponse)->toBeInstanceOf(Result::class);
             expect($sutResponse->getError())->toBeInstanceOf(ApiError::class);
-        })->with(datasets('dfes.nfe.value_tags.' . DataHoraSaidaEntrada::TAG_NAME . '.invalid'));
+        })->with(datasets('dfes.nfe.value_tags.' . DataHoraSaidaEntrada::FIELD_NAME . '.invalid'));
 
         test('Should fail if attributes is provided', function ($candidate) {
-            $xmlString = '<' . DataHoraSaidaEntrada::TAG_NAME . " fake=\"attribute\">{$candidate}</" . DataHoraSaidaEntrada::TAG_NAME . '>';
+            $xmlString = '<' . DataHoraSaidaEntrada::FIELD_NAME . " fake=\"attribute\">{$candidate}</" . DataHoraSaidaEntrada::FIELD_NAME . '>';
             $xmlElement = new Element(new FakeValidationService);
             $xmlElement->parse($xmlString);
             $sutResponse = $this->sut->parseFromXmlElement($xmlElement);
@@ -53,10 +53,10 @@ describe('DataHoraSaidaEntrada', function () {
                 $this->fail(json_encode($sutResponse->getData()));
             }
             expect($sutResponse->getError())->toBeInstanceOf(ApiError::class);
-        })->with(datasets('dfes.nfe.value_tags.' . DataHoraSaidaEntrada::TAG_NAME . '.valid'));
+        })->with(datasets('dfes.nfe.value_tags.' . DataHoraSaidaEntrada::FIELD_NAME . '.valid'));
 
         test('Should fail if elements is provided', function ($candidate) {
-            $xmlString = '<' . DataHoraSaidaEntrada::TAG_NAME . ">{$candidate}<fake>element</fake></" . DataHoraSaidaEntrada::TAG_NAME . '>';
+            $xmlString = '<' . DataHoraSaidaEntrada::FIELD_NAME . ">{$candidate}<fake>element</fake></" . DataHoraSaidaEntrada::FIELD_NAME . '>';
             $xmlElement = new Element(new FakeValidationService);
             $xmlElement->parse($xmlString);
             $sutResponse = $this->sut->parseFromXmlElement($xmlElement);
@@ -65,6 +65,6 @@ describe('DataHoraSaidaEntrada', function () {
                 $this->fail(json_encode($sutResponse->getData()));
             }
             expect($sutResponse->getError())->toBeInstanceOf(ApiError::class);
-        })->with(datasets('dfes.nfe.value_tags.' . DataHoraSaidaEntrada::TAG_NAME . '.valid'));
+        })->with(datasets('dfes.nfe.value_tags.' . DataHoraSaidaEntrada::FIELD_NAME . '.valid'));
     });
 });

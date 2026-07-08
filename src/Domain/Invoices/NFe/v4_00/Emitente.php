@@ -28,7 +28,7 @@ final class Emitente extends DFeElement
 {
     use ValidatesDFeGroupElement;
 
-    public const string TAG_NAME = 'emit';
+    public const string FIELD_NAME = 'emit';
 
     public ?CadastroPJ $CNPJ;
     public ?CadastroPF $CPF;

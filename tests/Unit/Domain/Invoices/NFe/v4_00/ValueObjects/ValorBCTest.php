@@ -18,7 +18,7 @@ describe('ValorBC', function () {
 
     describe('::parse()', function () {
         test('Should succeed with dataset :dataset', function ($candidate) {
-            $xmlString = $candidate === '' ? '' : '<' . ValorBC::TAG_NAME . ">{$candidate}</" . ValorBC::TAG_NAME . '>';
+            $xmlString = $candidate === '' ? '' : '<' . ValorBC::FIELD_NAME . ">{$candidate}</" . ValorBC::FIELD_NAME . '>';
             $xmlElement = new Element(new FakeValidationService);
             $xmlElement->parse($xmlString);
             $sutResponse = $this->sut->parseFromXmlElement($xmlElement);
@@ -29,10 +29,10 @@ describe('ValorBC', function () {
             expect($sutResponse->getData())->toBeInstanceOf(ValorBC::class);
             expect($sutResponse->getData()->value)->toBe($candidate);
             expect((string) $sutResponse->getData())->toBe($xmlString);
-        })->with(datasets('dfes.nfe.value_tags.' . ValorBC::TAG_NAME . '.valid'));
+        })->with(datasets('dfes.nfe.value_tags.' . ValorBC::FIELD_NAME . '.valid'));
 
         test('Should fail with data set :dataset', function ($candidate) {
-            $xmlString = '<' . ValorBC::TAG_NAME . ">{$candidate}</" . ValorBC::TAG_NAME . '>';
+            $xmlString = '<' . ValorBC::FIELD_NAME . ">{$candidate}</" . ValorBC::FIELD_NAME . '>';
             $xmlElement = new Element(new FakeValidationService);
             $xmlElement->parse($xmlString);
             $sutResponse = $this->sut->parseFromXmlElement($xmlElement);
@@ -41,10 +41,10 @@ describe('ValorBC', function () {
             }
             expect($sutResponse)->toBeInstanceOf(Result::class);
             expect($sutResponse->getError())->toBeInstanceOf(ApiError::class);
-        })->with(datasets('dfes.nfe.value_tags.' . ValorBC::TAG_NAME . '.invalid'));
+        })->with(datasets('dfes.nfe.value_tags.' . ValorBC::FIELD_NAME . '.invalid'));
 
         test('Should fail if attributes is provided', function ($candidate) {
-            $xmlString = '<' . ValorBC::TAG_NAME . " fake=\"attribute\">{$candidate}</" . ValorBC::TAG_NAME . '>';
+            $xmlString = '<' . ValorBC::FIELD_NAME . " fake=\"attribute\">{$candidate}</" . ValorBC::FIELD_NAME . '>';
             $xmlElement = new Element(new FakeValidationService);
             $xmlElement->parse($xmlString);
             $sutResponse = $this->sut->parseFromXmlElement($xmlElement);
@@ -53,10 +53,10 @@ describe('ValorBC', function () {
                 $this->fail(json_encode($sutResponse->getData()));
             }
             expect($sutResponse->getError())->toBeInstanceOf(ApiError::class);
-        })->with(datasets('dfes.nfe.value_tags.' . ValorBC::TAG_NAME . '.valid'));
+        })->with(datasets('dfes.nfe.value_tags.' . ValorBC::FIELD_NAME . '.valid'));
 
         test('Should fail if elements is provided', function ($candidate) {
-            $xmlString = '<' . ValorBC::TAG_NAME . ">{$candidate}<fake>element</fake></" . ValorBC::TAG_NAME . '>';
+            $xmlString = '<' . ValorBC::FIELD_NAME . ">{$candidate}<fake>element</fake></" . ValorBC::FIELD_NAME . '>';
             $xmlElement = new Element(new FakeValidationService);
             $xmlElement->parse($xmlString);
             $sutResponse = $this->sut->parseFromXmlElement($xmlElement);
@@ -65,6 +65,6 @@ describe('ValorBC', function () {
                 $this->fail(json_encode($sutResponse->getData()));
             }
             expect($sutResponse->getError())->toBeInstanceOf(ApiError::class);
-        })->with(datasets('dfes.nfe.value_tags.' . ValorBC::TAG_NAME . '.valid'));
+        })->with(datasets('dfes.nfe.value_tags.' . ValorBC::FIELD_NAME . '.valid'));
     });
 });

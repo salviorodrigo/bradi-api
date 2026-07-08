@@ -27,7 +27,7 @@ final class TipoNF extends DFeElement
 {
     use ValidatesDFeValueElement;
 
-    public const string TAG_NAME = 'tpNF';
+    public const string FIELD_NAME = 'tpNF';
 
     protected function tagValueValidators(): array
     {

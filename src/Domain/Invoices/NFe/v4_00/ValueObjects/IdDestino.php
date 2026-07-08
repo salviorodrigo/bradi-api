@@ -27,7 +27,7 @@ final class IdDestino extends DFeElement
 {
     use ValidatesDFeValueElement;
 
-    public const string TAG_NAME = 'idDest';
+    public const string FIELD_NAME = 'idDest';
 
     protected function tagValueValidators(): array
     {

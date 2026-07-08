@@ -24,7 +24,7 @@ final class Logradouro extends DFeElement
 {
     use ValidatesDFeValueElement;
 
-    public const string TAG_NAME = 'xLgr';
+    public const string FIELD_NAME = 'xLgr';
 
     protected function tagValueValidators(): array
     {

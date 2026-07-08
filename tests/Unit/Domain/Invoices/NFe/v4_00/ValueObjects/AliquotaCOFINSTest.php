@@ -18,7 +18,7 @@ describe('AliquotaCOFINS', function () {
 
     describe('::parse()', function () {
         test('Should succeed with dataset :dataset', function ($candidate) {
-            $xmlString = $candidate === '' ? '' : '<' . AliquotaCOFINS::TAG_NAME . ">{$candidate}</" . AliquotaCOFINS::TAG_NAME . '>';
+            $xmlString = $candidate === '' ? '' : '<' . AliquotaCOFINS::FIELD_NAME . ">{$candidate}</" . AliquotaCOFINS::FIELD_NAME . '>';
             $xmlElement = new Element(new FakeValidationService);
             $xmlElement->parse($xmlString);
             $sutResponse = $this->sut->parseFromXmlElement($xmlElement);
@@ -29,10 +29,10 @@ describe('AliquotaCOFINS', function () {
             expect($sutResponse->getData())->toBeInstanceOf(AliquotaCOFINS::class);
             expect($sutResponse->getData()->value)->toBe($candidate);
             expect((string) $sutResponse->getData())->toBe($xmlString);
-        })->with(datasets('dfes.nfe.value_tags.' . AliquotaCOFINS::TAG_NAME . '.valid'));
+        })->with(datasets('dfes.nfe.value_tags.' . AliquotaCOFINS::FIELD_NAME . '.valid'));
 
         test('Should fail with data set :dataset', function ($candidate) {
-            $xmlString = '<' . AliquotaCOFINS::TAG_NAME . ">{$candidate}</" . AliquotaCOFINS::TAG_NAME . '>';
+            $xmlString = '<' . AliquotaCOFINS::FIELD_NAME . ">{$candidate}</" . AliquotaCOFINS::FIELD_NAME . '>';
             $xmlElement = new Element(new FakeValidationService);
             $xmlElement->parse($xmlString);
             $sutResponse = $this->sut->parseFromXmlElement($xmlElement);
@@ -41,10 +41,10 @@ describe('AliquotaCOFINS', function () {
             }
             expect($sutResponse)->toBeInstanceOf(Result::class);
             expect($sutResponse->getError())->toBeInstanceOf(ApiError::class);
-        })->with(datasets('dfes.nfe.value_tags.' . AliquotaCOFINS::TAG_NAME . '.invalid'));
+        })->with(datasets('dfes.nfe.value_tags.' . AliquotaCOFINS::FIELD_NAME . '.invalid'));
 
         test('Should fail if attributes is provided', function ($candidate) {
-            $xmlString = '<' . AliquotaCOFINS::TAG_NAME . " fake=\"attribute\">{$candidate}</" . AliquotaCOFINS::TAG_NAME . '>';
+            $xmlString = '<' . AliquotaCOFINS::FIELD_NAME . " fake=\"attribute\">{$candidate}</" . AliquotaCOFINS::FIELD_NAME . '>';
             $xmlElement = new Element(new FakeValidationService);
             $xmlElement->parse($xmlString);
             $sutResponse = $this->sut->parseFromXmlElement($xmlElement);
@@ -53,10 +53,10 @@ describe('AliquotaCOFINS', function () {
                 $this->fail(json_encode($sutResponse->getData()));
             }
             expect($sutResponse->getError())->toBeInstanceOf(ApiError::class);
-        })->with(datasets('dfes.nfe.value_tags.' . AliquotaCOFINS::TAG_NAME . '.valid'));
+        })->with(datasets('dfes.nfe.value_tags.' . AliquotaCOFINS::FIELD_NAME . '.valid'));
 
         test('Should fail if elements is provided', function ($candidate) {
-            $xmlString = '<' . AliquotaCOFINS::TAG_NAME . ">{$candidate}<fake>element</fake></" . AliquotaCOFINS::TAG_NAME . '>';
+            $xmlString = '<' . AliquotaCOFINS::FIELD_NAME . ">{$candidate}<fake>element</fake></" . AliquotaCOFINS::FIELD_NAME . '>';
             $xmlElement = new Element(new FakeValidationService);
             $xmlElement->parse($xmlString);
             $sutResponse = $this->sut->parseFromXmlElement($xmlElement);
@@ -65,6 +65,6 @@ describe('AliquotaCOFINS', function () {
                 $this->fail(json_encode($sutResponse->getData()));
             }
             expect($sutResponse->getError())->toBeInstanceOf(ApiError::class);
-        })->with(datasets('dfes.nfe.value_tags.' . AliquotaCOFINS::TAG_NAME . '.valid'));
+        })->with(datasets('dfes.nfe.value_tags.' . AliquotaCOFINS::FIELD_NAME . '.valid'));
     });
 });

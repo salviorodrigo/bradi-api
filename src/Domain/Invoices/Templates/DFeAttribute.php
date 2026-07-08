@@ -16,7 +16,7 @@ use RuntimeException;
 
 abstract class DFeAttribute
 {
-    public const string ATTRIBUTE_NAME = '';
+    public const string FIELD_NAME = '';
 
     public string $value;
 
@@ -30,13 +30,13 @@ abstract class DFeAttribute
         if ($parentFieldURI === '') {
             throw new RuntimeException(sprintf(
                 'Parent field URI must be provided for attribute "%s".',
-                static::ATTRIBUTE_NAME
+                static::FIELD_NAME
             ));
         }
 
         $parents = explode('.', $parentFieldURI);
         $this->parentTagName = array_pop($parents);
-        $this->fieldURI = $parentFieldURI . '.' . static::ATTRIBUTE_NAME;
+        $this->fieldURI = $parentFieldURI . '.' . static::FIELD_NAME;
     }
 
     /**
@@ -81,7 +81,7 @@ abstract class DFeAttribute
     final protected function validateTagAttributes(Element $element): Result
     {
         $service = new ValidationService($this->fieldURI, __METHOD__);
-        $service->addValidator(new RequiredAttributeValidator([static::ATTRIBUTE_NAME]));
+        $service->addValidator(new RequiredAttributeValidator([static::FIELD_NAME]));
 
         return $service->verify($element);
     }
@@ -89,7 +89,7 @@ abstract class DFeAttribute
     /** @return Result<null|ApiError> */
     final protected function validateAttributeValue(Element $element): Result
     {
-        $attribute = $element->attributes->{static::ATTRIBUTE_NAME};
+        $attribute = $element->attributes->{static::FIELD_NAME};
         $candidate = $attribute->value;
         $service = new ValidationService($this->fieldURI, __METHOD__);
         foreach ($this->attributeValueValidators() as $validator) {
@@ -102,7 +102,7 @@ abstract class DFeAttribute
     /** @return Result<null|ApiError> **/
     private function hydrateFromXmlElement(Element $xmlElement): Result
     {
-        $this->sourceAttribute = $xmlElement->attributes->{static::ATTRIBUTE_NAME};
+        $this->sourceAttribute = $xmlElement->attributes->{static::FIELD_NAME};
         $this->value = $this->sourceAttribute->value;
 
         return Result::makeSuccess();
@@ -122,7 +122,7 @@ abstract class DFeAttribute
         }
 
         $escapedValue = htmlspecialchars($this->value, ENT_XML1 | ENT_QUOTES, 'UTF-8');
-        $this->sourceAttribute = new Attribute(static::ATTRIBUTE_NAME, $escapedValue);
+        $this->sourceAttribute = new Attribute(static::FIELD_NAME, $escapedValue);
 
         return (string) $this->sourceAttribute;
     }

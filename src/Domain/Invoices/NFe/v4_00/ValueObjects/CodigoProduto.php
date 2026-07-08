@@ -28,7 +28,7 @@ final class CodigoProduto extends DFeElement
 {
     use ValidatesDFeValueElement;
 
-    public const string TAG_NAME = 'cProd';
+    public const string FIELD_NAME = 'cProd';
 
     protected function tagValueValidators(): array
     {

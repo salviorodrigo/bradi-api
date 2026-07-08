@@ -25,7 +25,7 @@ final class InscricaoEstadual extends DFeElement
 {
     use ValidatesDFeValueElement;
 
-    public const string TAG_NAME = 'IE';
+    public const string FIELD_NAME = 'IE';
 
     protected function tagValueValidators(): array
     {

@@ -33,7 +33,7 @@ final class IndOrigem extends DFeElement
 {
     use ValidatesDFeValueElement;
 
-    public const string TAG_NAME = 'orig';
+    public const string FIELD_NAME = 'orig';
 
     protected function tagValueValidators(): array
     {

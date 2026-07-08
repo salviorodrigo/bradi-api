@@ -23,7 +23,7 @@ final class SiglaUF extends DFeElement
 {
     use ValidatesDFeValueElement;
 
-    public const string TAG_NAME = 'UF';
+    public const string FIELD_NAME = 'UF';
 
     protected function tagValueValidators(): array
     {

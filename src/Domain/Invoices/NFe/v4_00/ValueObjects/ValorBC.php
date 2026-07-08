@@ -25,7 +25,7 @@ final class ValorBC extends DFeElement
 {
     use ValidatesDFeValueElement;
 
-    public const string TAG_NAME = 'vBC';
+    public const string FIELD_NAME = 'vBC';
 
     protected function tagValueValidators(): array
     {

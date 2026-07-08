@@ -26,7 +26,7 @@ final class DataHoraSaidaEntrada extends DFeElement
 {
     use ValidatesDFeValueElement;
 
-    public const string TAG_NAME = 'dhSaiEnt';
+    public const string FIELD_NAME = 'dhSaiEnt';
 
     protected function tagValueValidators(): array
     {

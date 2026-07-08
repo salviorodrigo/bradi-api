@@ -25,7 +25,7 @@ final class AliquotaPIS extends DFeElement
 {
     use ValidatesDFeValueElement;
 
-    public const string TAG_NAME = 'pPIS';
+    public const string FIELD_NAME = 'pPIS';
 
     protected function tagValueValidators(): array
     {

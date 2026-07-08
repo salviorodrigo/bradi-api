@@ -24,7 +24,7 @@ final class CodigoNF extends DFeElement
 {
     use ValidatesDFeValueElement;
 
-    public const string TAG_NAME = 'cNF';
+    public const string FIELD_NAME = 'cNF';
 
     protected function tagValueValidators(): array
     {

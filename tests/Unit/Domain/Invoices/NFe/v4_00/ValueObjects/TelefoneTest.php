@@ -18,7 +18,7 @@ describe('Telefone', function () {
 
     describe('::parse()', function () {
         test('Should succeed with dataset :dataset', function ($candidate) {
-            $xmlString = $candidate === '' ? '' : '<' . Telefone::TAG_NAME . ">{$candidate}</" . Telefone::TAG_NAME . '>';
+            $xmlString = $candidate === '' ? '' : '<' . Telefone::FIELD_NAME . ">{$candidate}</" . Telefone::FIELD_NAME . '>';
             $xmlElement = new Element(new FakeValidationService);
             $xmlElement->parse($xmlString);
             $sutResponse = $this->sut->parseFromXmlElement($xmlElement);
@@ -29,10 +29,10 @@ describe('Telefone', function () {
             expect($sutResponse->getData())->toBeInstanceOf(Telefone::class);
             expect($sutResponse->getData()->value)->toBe($candidate);
             expect((string) $sutResponse->getData())->toBe($xmlString);
-        })->with(datasets('dfes.nfe.value_tags.' . Telefone::TAG_NAME . '.valid'));
+        })->with(datasets('dfes.nfe.value_tags.' . Telefone::FIELD_NAME . '.valid'));
 
         test('Should fail with data set :dataset', function ($candidate) {
-            $xmlString = '<' . Telefone::TAG_NAME . ">{$candidate}</" . Telefone::TAG_NAME . '>';
+            $xmlString = '<' . Telefone::FIELD_NAME . ">{$candidate}</" . Telefone::FIELD_NAME . '>';
             $xmlElement = new Element(new FakeValidationService);
             $xmlElement->parse($xmlString);
             $sutResponse = $this->sut->parseFromXmlElement($xmlElement);
@@ -41,10 +41,10 @@ describe('Telefone', function () {
             }
             expect($sutResponse)->toBeInstanceOf(Result::class);
             expect($sutResponse->getError())->toBeInstanceOf(ApiError::class);
-        })->with(datasets('dfes.nfe.value_tags.' . Telefone::TAG_NAME . '.invalid'));
+        })->with(datasets('dfes.nfe.value_tags.' . Telefone::FIELD_NAME . '.invalid'));
 
         test('Should fail if attributes is provided', function ($candidate) {
-            $xmlString = '<' . Telefone::TAG_NAME . " fake=\"attribute\">{$candidate}</" . Telefone::TAG_NAME . '>';
+            $xmlString = '<' . Telefone::FIELD_NAME . " fake=\"attribute\">{$candidate}</" . Telefone::FIELD_NAME . '>';
             $xmlElement = new Element(new FakeValidationService);
             $xmlElement->parse($xmlString);
             $sutResponse = $this->sut->parseFromXmlElement($xmlElement);
@@ -53,10 +53,10 @@ describe('Telefone', function () {
                 $this->fail(json_encode($sutResponse->getData()));
             }
             expect($sutResponse->getError())->toBeInstanceOf(ApiError::class);
-        })->with(datasets('dfes.nfe.value_tags.' . Telefone::TAG_NAME . '.valid'));
+        })->with(datasets('dfes.nfe.value_tags.' . Telefone::FIELD_NAME . '.valid'));
 
         test('Should fail if elements is provided', function ($candidate) {
-            $xmlString = '<' . Telefone::TAG_NAME . ">{$candidate}<fake>element</fake></" . Telefone::TAG_NAME . '>';
+            $xmlString = '<' . Telefone::FIELD_NAME . ">{$candidate}<fake>element</fake></" . Telefone::FIELD_NAME . '>';
             $xmlElement = new Element(new FakeValidationService);
             $xmlElement->parse($xmlString);
             $sutResponse = $this->sut->parseFromXmlElement($xmlElement);
@@ -65,6 +65,6 @@ describe('Telefone', function () {
                 $this->fail(json_encode($sutResponse->getData()));
             }
             expect($sutResponse->getError())->toBeInstanceOf(ApiError::class);
-        })->with(datasets('dfes.nfe.value_tags.' . Telefone::TAG_NAME . '.valid'));
+        })->with(datasets('dfes.nfe.value_tags.' . Telefone::FIELD_NAME . '.valid'));
     });
 });

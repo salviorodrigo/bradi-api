@@ -18,7 +18,7 @@ describe('NomeMunicipio', function () {
 
     describe('::parse()', function () {
         test('Should succeed with dataset :dataset', function ($candidate) {
-            $xmlString = $candidate === '' ? '' : '<' . NomeMunicipio::TAG_NAME . ">{$candidate}</" . NomeMunicipio::TAG_NAME . '>';
+            $xmlString = $candidate === '' ? '' : '<' . NomeMunicipio::FIELD_NAME . ">{$candidate}</" . NomeMunicipio::FIELD_NAME . '>';
             $xmlElement = new Element(new FakeValidationService);
             $xmlElement->parse($xmlString);
             $sutResponse = $this->sut->parseFromXmlElement($xmlElement);
@@ -29,10 +29,10 @@ describe('NomeMunicipio', function () {
             expect($sutResponse->getData())->toBeInstanceOf(NomeMunicipio::class);
             expect($sutResponse->getData()->value)->toBe($candidate);
             expect((string) $sutResponse->getData())->toBe($xmlString);
-        })->with(datasets('dfes.nfe.value_tags.' . NomeMunicipio::TAG_NAME . '.valid'));
+        })->with(datasets('dfes.nfe.value_tags.' . NomeMunicipio::FIELD_NAME . '.valid'));
 
         test('Should fail with data set :dataset', function ($candidate) {
-            $xmlString = '<' . NomeMunicipio::TAG_NAME . ">{$candidate}</" . NomeMunicipio::TAG_NAME . '>';
+            $xmlString = '<' . NomeMunicipio::FIELD_NAME . ">{$candidate}</" . NomeMunicipio::FIELD_NAME . '>';
             $xmlElement = new Element(new FakeValidationService);
             $xmlElement->parse($xmlString);
             $sutResponse = $this->sut->parseFromXmlElement($xmlElement);
@@ -41,10 +41,10 @@ describe('NomeMunicipio', function () {
             }
             expect($sutResponse)->toBeInstanceOf(Result::class);
             expect($sutResponse->getError())->toBeInstanceOf(ApiError::class);
-        })->with(datasets('dfes.nfe.value_tags.' . NomeMunicipio::TAG_NAME . '.invalid'));
+        })->with(datasets('dfes.nfe.value_tags.' . NomeMunicipio::FIELD_NAME . '.invalid'));
 
         test('Should fail if attributes is provided', function ($candidate) {
-            $xmlString = '<' . NomeMunicipio::TAG_NAME . " fake=\"attribute\">{$candidate}</" . NomeMunicipio::TAG_NAME . '>';
+            $xmlString = '<' . NomeMunicipio::FIELD_NAME . " fake=\"attribute\">{$candidate}</" . NomeMunicipio::FIELD_NAME . '>';
             $xmlElement = new Element(new FakeValidationService);
             $xmlElement->parse($xmlString);
             $sutResponse = $this->sut->parseFromXmlElement($xmlElement);
@@ -53,10 +53,10 @@ describe('NomeMunicipio', function () {
                 $this->fail(json_encode($sutResponse->getData()));
             }
             expect($sutResponse->getError())->toBeInstanceOf(ApiError::class);
-        })->with(datasets('dfes.nfe.value_tags.' . NomeMunicipio::TAG_NAME . '.valid'));
+        })->with(datasets('dfes.nfe.value_tags.' . NomeMunicipio::FIELD_NAME . '.valid'));
 
         test('Should fail if elements is provided', function ($candidate) {
-            $xmlString = '<' . NomeMunicipio::TAG_NAME . ">{$candidate}<fake>element</fake></" . NomeMunicipio::TAG_NAME . '>';
+            $xmlString = '<' . NomeMunicipio::FIELD_NAME . ">{$candidate}<fake>element</fake></" . NomeMunicipio::FIELD_NAME . '>';
             $xmlElement = new Element(new FakeValidationService);
             $xmlElement->parse($xmlString);
             $sutResponse = $this->sut->parseFromXmlElement($xmlElement);
@@ -65,6 +65,6 @@ describe('NomeMunicipio', function () {
                 $this->fail(json_encode($sutResponse->getData()));
             }
             expect($sutResponse->getError())->toBeInstanceOf(ApiError::class);
-        })->with(datasets('dfes.nfe.value_tags.' . NomeMunicipio::TAG_NAME . '.valid'));
+        })->with(datasets('dfes.nfe.value_tags.' . NomeMunicipio::FIELD_NAME . '.valid'));
     });
 });

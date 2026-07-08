@@ -21,7 +21,7 @@ use BradiNfeApi\Domain\Invoices\Templates\DFeAttribute;
 
 final class NumeroItem extends DFeAttribute
 {
-    public const string ATTRIBUTE_NAME = 'nItem';
+    public const string FIELD_NAME = 'nItem';
 
     protected function attributeValueValidators(): array
     {

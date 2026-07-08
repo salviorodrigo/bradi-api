@@ -29,7 +29,7 @@ final class CodigoSubstituicaoTributaria extends DFeElement
 {
     use ValidatesDFeValueElement;
 
-    public const string TAG_NAME = 'CEST';
+    public const string FIELD_NAME = 'CEST';
 
     protected function tagValueValidators(): array
     {

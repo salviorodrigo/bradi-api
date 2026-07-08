@@ -36,7 +36,7 @@ final class IdentificacaoNF extends DFeElement
 {
     use ValidatesDFeGroupElement;
 
-    public const string TAG_NAME = 'ide';
+    public const string FIELD_NAME = 'ide';
 
     public CodigoUF $cUF;
     public CodigoNF $cNF;

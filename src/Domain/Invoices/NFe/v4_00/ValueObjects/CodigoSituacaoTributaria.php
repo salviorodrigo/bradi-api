@@ -56,7 +56,7 @@ final class CodigoSituacaoTributaria extends DFeElement
 {
     use ValidatesDFeValueElement;
 
-    public const string TAG_NAME = 'CST';
+    public const string FIELD_NAME = 'CST';
 
     protected function tagValueValidators(): array
     {

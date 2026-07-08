@@ -24,7 +24,7 @@ final class Bairro extends DFeElement
 {
     use ValidatesDFeValueElement;
 
-    public const string TAG_NAME = 'xBairro';
+    public const string FIELD_NAME = 'xBairro';
 
     protected function tagValueValidators(): array
     {

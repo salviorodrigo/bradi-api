@@ -24,7 +24,7 @@ class DataHoraEmissao extends DFeElement
 {
     use ValidatesDFeValueElement;
 
-    public const string TAG_NAME = 'dhEmi';
+    public const string FIELD_NAME = 'dhEmi';
 
     protected function tagValueValidators(): array
     {

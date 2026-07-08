@@ -29,7 +29,7 @@ final class NaturezaOperacao extends DFeElement
 {
     use ValidatesDFeValueElement;
 
-    public const string TAG_NAME = 'natOp';
+    public const string FIELD_NAME = 'natOp';
 
     protected function tagValueValidators(): array
     {

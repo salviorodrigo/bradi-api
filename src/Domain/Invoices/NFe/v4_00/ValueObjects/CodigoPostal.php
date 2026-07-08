@@ -24,7 +24,7 @@ final class CodigoPostal extends DFeElement
 {
     use ValidatesDFeValueElement;
 
-    public const string TAG_NAME = 'CEP';
+    public const string FIELD_NAME = 'CEP';
 
     protected function tagValueValidators(): array
     {

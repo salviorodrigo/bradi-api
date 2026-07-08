@@ -33,7 +33,7 @@ final class EnderecoDestinatario extends DFeElement
 {
     use ValidatesDFeGroupElement;
 
-    public const string TAG_NAME = 'enderDest';
+    public const string FIELD_NAME = 'enderDest';
 
     public Logradouro $xLgr;
     public NumeroEndereco $nro;

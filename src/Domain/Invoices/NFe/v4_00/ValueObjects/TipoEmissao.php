@@ -38,7 +38,7 @@ final class TipoEmissao extends DFeElement
 {
     use ValidatesDFeValueElement;
 
-    public const string TAG_NAME = 'tpEmis';
+    public const string FIELD_NAME = 'tpEmis';
 
     protected function tagValueValidators(): array
     {

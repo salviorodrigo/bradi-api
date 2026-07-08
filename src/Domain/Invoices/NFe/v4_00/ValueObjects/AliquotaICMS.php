@@ -25,7 +25,7 @@ final class AliquotaICMS extends DFeElement
 {
     use ValidatesDFeValueElement;
 
-    public const string TAG_NAME = 'pICMS';
+    public const string FIELD_NAME = 'pICMS';
 
     protected function tagValueValidators(): array
     {

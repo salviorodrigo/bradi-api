@@ -28,7 +28,7 @@ describe('Produto', function () {
             expect($sutResponse->getData())->toBeInstanceOf(Produto::class);
             expect($sutResponse->getData()->value)->toBe('');
             expect((string) $sutResponse->getData())->toBe($candidate);
-        })->with(datasets('dfes.nfe.element_tags.' . Produto::TAG_NAME . '.valid'));
+        })->with(datasets('dfes.nfe.element_tags.' . Produto::FIELD_NAME . '.valid'));
 
         test('Should fail with dataset :dataset', function ($candidate) {
             $xmlElement = new Element(new FakeValidationService);
@@ -40,6 +40,6 @@ describe('Produto', function () {
             }
             expect($sutResponse)->toBeInstanceOf(Result::class);
             expect($sutResponse->getError())->toBeInstanceOf(ApiError::class);
-        })->with(datasets('dfes.nfe.element_tags.' . Produto::TAG_NAME . '.invalid'));
+        })->with(datasets('dfes.nfe.element_tags.' . Produto::FIELD_NAME . '.invalid'));
     });
 });

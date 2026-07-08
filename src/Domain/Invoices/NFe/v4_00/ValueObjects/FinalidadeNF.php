@@ -28,7 +28,7 @@ final class FinalidadeNF extends DFeElement
 {
     use ValidatesDFeValueElement;
 
-    public const string TAG_NAME = 'finNFe';
+    public const string FIELD_NAME = 'finNFe';
 
     protected function tagValueValidators(): array
     {

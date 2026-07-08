@@ -24,7 +24,7 @@ final class Telefone extends DFeElement
 {
     use ValidatesDFeValueElement;
 
-    public const string TAG_NAME = 'fone';
+    public const string FIELD_NAME = 'fone';
 
     protected function tagValueValidators(): array
     {

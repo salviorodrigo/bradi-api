@@ -24,7 +24,7 @@ final class CodigoPais extends DFeElement
 {
     use ValidatesDFeValueElement;
 
-    public const string TAG_NAME = 'cPais';
+    public const string FIELD_NAME = 'cPais';
 
     protected function tagValueValidators(): array
     {

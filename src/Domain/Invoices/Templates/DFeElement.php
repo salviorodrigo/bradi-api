@@ -18,7 +18,7 @@ use RuntimeException;
 
 abstract class DFeElement
 {
-    public const string TAG_NAME = '';
+    public const string FIELD_NAME = '';
 
     public readonly string $fieldURI;
 
@@ -29,7 +29,7 @@ abstract class DFeElement
 
     final public function __construct(string $parentFieldURI = '')
     {
-        $this->fieldURI = $parentFieldURI === '' ? static::TAG_NAME : $parentFieldURI . '.' . static::TAG_NAME;
+        $this->fieldURI = $parentFieldURI === '' ? static::FIELD_NAME : $parentFieldURI . '.' . static::FIELD_NAME;
         $this->validationService = new ValidationService($this->fieldURI, __METHOD__);
     }
 
@@ -71,7 +71,7 @@ abstract class DFeElement
     final protected function validateRootTag(Element $element): Result
     {
         $this->validationService->reset();
-        $this->validationService->addValidator(new RootTagValidator(static::TAG_NAME));
+        $this->validationService->addValidator(new RootTagValidator(static::FIELD_NAME));
 
         return $this->validationService->verify($element);
     }
@@ -127,7 +127,7 @@ abstract class DFeElement
         $parserErrorBag = [];
         foreach ($requiredElements as $element) {
             $concreteElement = new $element['class']($this->fieldURI);
-            $parsingResult = $concreteElement->parseFromXmlElement($xmlElement->{$concreteElement::class::TAG_NAME});
+            $parsingResult = $concreteElement->parseFromXmlElement($xmlElement->{$concreteElement::class::FIELD_NAME});
             if ($parsingResult->isFailure()) {
                 $parserErrorBag[] = $parsingResult->getError();
 
@@ -139,11 +139,11 @@ abstract class DFeElement
 
         foreach ($optionalElements as $element) {
             $concreteElement = new $element['class']($this->fieldURI);
-            if (! isset($xmlElement->{$concreteElement::class::TAG_NAME})) {
+            if (! isset($xmlElement->{$concreteElement::class::FIELD_NAME})) {
                 continue;
             }
 
-            $parsingResult = $concreteElement->parseFromXmlElement($xmlElement->{$concreteElement::class::TAG_NAME});
+            $parsingResult = $concreteElement->parseFromXmlElement($xmlElement->{$concreteElement::class::FIELD_NAME});
             if ($parsingResult->isFailure()) {
                 $parserErrorBag[] = $parsingResult->getError();
 
@@ -210,7 +210,7 @@ abstract class DFeElement
 
         $this->validationService->reset();
         $this->sourceElement = new Element($this->validationService);
-        $this->sourceElement->name = static::TAG_NAME;
+        $this->sourceElement->name = static::FIELD_NAME;
 
         if (isset($this->value)) {
             $this->sourceElement->value = $this->value;

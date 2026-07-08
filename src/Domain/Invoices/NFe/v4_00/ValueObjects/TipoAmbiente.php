@@ -27,7 +27,7 @@ final class TipoAmbiente extends DFeElement
 {
     use ValidatesDFeValueElement;
 
-    public const string TAG_NAME = 'tpAmb';
+    public const string FIELD_NAME = 'tpAmb';
 
     protected function tagValueValidators(): array
     {

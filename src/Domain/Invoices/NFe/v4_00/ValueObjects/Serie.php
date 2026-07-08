@@ -43,7 +43,7 @@ final class Serie extends DFeElement
 {
     use ValidatesDFeValueElement;
 
-    public const string TAG_NAME = 'serie';
+    public const string FIELD_NAME = 'serie';
 
     protected function tagValueValidators(): array
     {

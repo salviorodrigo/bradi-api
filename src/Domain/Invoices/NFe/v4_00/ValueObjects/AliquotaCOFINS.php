@@ -25,7 +25,7 @@ final class AliquotaCOFINS extends DFeElement
 {
     use ValidatesDFeValueElement;
 
-    public const string TAG_NAME = 'pCOFINS';
+    public const string FIELD_NAME = 'pCOFINS';
 
     protected function tagValueValidators(): array
     {

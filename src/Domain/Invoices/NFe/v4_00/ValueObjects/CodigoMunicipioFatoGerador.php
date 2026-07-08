@@ -28,7 +28,7 @@ final class CodigoMunicipioFatoGerador extends DFeElement
 {
     use ValidatesDFeValueElement;
 
-    public const string TAG_NAME = 'cMunFG';
+    public const string FIELD_NAME = 'cMunFG';
 
     protected function tagValueValidators(): array
     {

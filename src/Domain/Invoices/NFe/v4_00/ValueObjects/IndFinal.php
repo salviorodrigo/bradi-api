@@ -26,7 +26,7 @@ final class IndFinal extends DFeElement
 {
     use ValidatesDFeValueElement;
 
-    public const string TAG_NAME = 'indFinal';
+    public const string FIELD_NAME = 'indFinal';
 
     protected function tagValueValidators(): array
     {

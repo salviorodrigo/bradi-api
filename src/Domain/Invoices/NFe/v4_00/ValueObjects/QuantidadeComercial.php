@@ -25,7 +25,7 @@ final class QuantidadeComercial extends DFeElement
 {
     use ValidatesDFeValueElement;
 
-    public const string TAG_NAME = 'qCom';
+    public const string FIELD_NAME = 'qCom';
 
     protected function tagValueValidators(): array
     {

@@ -24,7 +24,7 @@ final class Nome extends DFeElement
 {
     use ValidatesDFeValueElement;
 
-    public const string TAG_NAME = 'xNome';
+    public const string FIELD_NAME = 'xNome';
 
     protected function tagValueValidators(): array
     {

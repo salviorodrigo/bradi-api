@@ -15,16 +15,16 @@ final class AttributeList
 
     public function add(Attribute $attribute): void
     {
-        if ($this->exists($attribute)) {
+        if ($this->exists($attribute->name)) {
             throw new InvalidArgumentException("Attribute with name '{$attribute->name}' already exists.");
         }
 
         $this->records[] = $attribute;
     }
 
-    private function exists(Attribute $attribute): bool
+    public function exists(string $attributeName): bool
     {
-        return array_find($this->records, fn (Attribute $existingAttribute) => $existingAttribute->name === $attribute->name) !== null;
+        return array_find($this->records, fn (Attribute $existingAttribute) => $existingAttribute->name === $attributeName) !== null;
     }
 
     public function __get(string $name): ?Attribute

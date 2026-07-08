@@ -30,7 +30,7 @@ final class Icms00 extends DFeElement
 {
     use ValidatesDFeGroupElement;
 
-    public const string TAG_NAME = 'ICMS00';
+    public const string FIELD_NAME = 'ICMS00';
 
     public IndOrigem $orig;
     public CodigoSituacaoTributaria $CST;

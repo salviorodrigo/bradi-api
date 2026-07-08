@@ -9,7 +9,7 @@ use BradiNfeApi\Domain\Invoices\Templates\DFeAttribute;
 
 final class FakeDFeAttribute extends DFeAttribute
 {
-    public const string ATTRIBUTE_NAME = 'fakeAttr';
+    public const string FIELD_NAME = 'fakeAttr';
 
     /** @return array<Validator> */
     protected function attributeValueValidators(): array

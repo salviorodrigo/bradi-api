@@ -34,7 +34,7 @@ final class IndicadorIEDestinatario extends DFeElement
 {
     use ValidatesDFeValueElement;
 
-    public const string TAG_NAME = 'indIEDest';
+    public const string FIELD_NAME = 'indIEDest';
 
     protected function tagValueValidators(): array
     {

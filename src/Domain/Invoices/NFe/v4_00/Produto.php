@@ -31,7 +31,7 @@ final class Produto extends DFeElement
 {
     use ValidatesDFeGroupElement;
 
-    public const string TAG_NAME = 'prod';
+    public const string FIELD_NAME = 'prod';
 
     public CodigoProduto $cProd;
     public CodigoBarras $cEAN;

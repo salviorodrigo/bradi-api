@@ -59,9 +59,13 @@ class Element
         return Result::makeSuccess($this);
     }
 
-    public function __get(string $name): Attribute|ElementList|Element|null
+    public function __get(string $name): ElementList|Element|null
     {
-        return $this->attributes->$name ?? $this->children->$name;
+        if ($this->attributes->exists($name)) {
+            return $this;
+        }
+
+        return $this->children->$name;
     }
 
     public function __toString(): string

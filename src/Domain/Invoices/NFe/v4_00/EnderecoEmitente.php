@@ -33,7 +33,7 @@ final class EnderecoEmitente extends DFeElement
 {
     use ValidatesDFeGroupElement;
 
-    public const string TAG_NAME = 'enderEmit';
+    public const string FIELD_NAME = 'enderEmit';
 
     public Logradouro $xLgr;
     public NumeroEndereco $nro;

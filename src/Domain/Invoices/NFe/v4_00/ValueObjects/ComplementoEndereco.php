@@ -25,7 +25,7 @@ final class ComplementoEndereco extends DFeElement
 {
     use ValidatesDFeValueElement;
 
-    public const string TAG_NAME = 'xCpl';
+    public const string FIELD_NAME = 'xCpl';
 
     protected function tagValueValidators(): array
     {

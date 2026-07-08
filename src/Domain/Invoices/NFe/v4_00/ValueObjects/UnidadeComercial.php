@@ -25,7 +25,7 @@ final class UnidadeComercial extends DFeElement
 {
     use ValidatesDFeValueElement;
 
-    public const string TAG_NAME = 'uCom';
+    public const string FIELD_NAME = 'uCom';
 
     protected function tagValueValidators(): array
     {

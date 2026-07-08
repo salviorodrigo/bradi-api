@@ -21,7 +21,7 @@ final class CadastroPF extends DFeElement
 {
     use ValidatesDFeValueElement;
 
-    public const string TAG_NAME = 'CPF';
+    public const string FIELD_NAME = 'CPF';
 
     protected function tagValueValidators(): array
     {

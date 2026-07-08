@@ -25,7 +25,7 @@ final class NumeroNF extends DFeElement
 {
     use ValidatesDFeValueElement;
 
-    public const string TAG_NAME = 'nNF';
+    public const string FIELD_NAME = 'nNF';
 
     protected function tagValueValidators(): array
     {

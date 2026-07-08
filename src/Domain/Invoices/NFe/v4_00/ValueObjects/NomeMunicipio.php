@@ -24,7 +24,7 @@ final class NomeMunicipio extends DFeElement
 {
     use ValidatesDFeValueElement;
 
-    public const string TAG_NAME = 'xMun';
+    public const string FIELD_NAME = 'xMun';
 
     protected function tagValueValidators(): array
     {

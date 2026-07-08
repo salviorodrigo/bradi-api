@@ -27,7 +27,7 @@ final class CodigoUF extends DFeElement
 {
     use ValidatesDFeValueElement;
 
-    public const string TAG_NAME = 'cUF';
+    public const string FIELD_NAME = 'cUF';
 
     protected function tagValueValidators(): array
     {

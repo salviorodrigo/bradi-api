@@ -24,7 +24,7 @@ final class NomeFantasia extends DFeElement
 {
     use ValidatesDFeValueElement;
 
-    public const string TAG_NAME = 'xFant';
+    public const string FIELD_NAME = 'xFant';
 
     protected function tagValueValidators(): array
     {

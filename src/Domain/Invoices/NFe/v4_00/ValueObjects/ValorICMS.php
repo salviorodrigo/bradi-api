@@ -25,7 +25,7 @@ final class ValorICMS extends DFeElement
 {
     use ValidatesDFeValueElement;
 
-    public const string TAG_NAME = 'vICMS';
+    public const string FIELD_NAME = 'vICMS';
 
     protected function tagValueValidators(): array
     {

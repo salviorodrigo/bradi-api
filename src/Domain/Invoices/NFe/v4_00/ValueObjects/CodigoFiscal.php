@@ -24,7 +24,7 @@ final class CodigoFiscal extends DFeElement
 {
     use ValidatesDFeValueElement;
 
-    public const string TAG_NAME = 'CFOP';
+    public const string FIELD_NAME = 'CFOP';
 
     protected function tagValueValidators(): array
     {

@@ -24,7 +24,7 @@ final class NumeroEndereco extends DFeElement
 {
     use ValidatesDFeValueElement;
 
-    public const string TAG_NAME = 'nro';
+    public const string FIELD_NAME = 'nro';
 
     protected function tagValueValidators(): array
     {

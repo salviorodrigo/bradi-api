@@ -23,7 +23,7 @@ final class DescricaoProduto extends DFeElement
 {
     use ValidatesDFeValueElement;
 
-    public const string TAG_NAME = 'xProd';
+    public const string FIELD_NAME = 'xProd';
 
     protected function tagValueValidators(): array
     {

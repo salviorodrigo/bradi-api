@@ -18,7 +18,7 @@ describe('CodigoSubstituicaoTributaria', function () {
 
     describe('::parse()', function () {
         test('Should succeed with dataset :dataset', function ($candidate) {
-            $xmlString = $candidate === '' ? '' : '<' . CodigoSubstituicaoTributaria::TAG_NAME . ">{$candidate}</" . CodigoSubstituicaoTributaria::TAG_NAME . '>';
+            $xmlString = $candidate === '' ? '' : '<' . CodigoSubstituicaoTributaria::FIELD_NAME . ">{$candidate}</" . CodigoSubstituicaoTributaria::FIELD_NAME . '>';
             $xmlElement = new Element(new FakeValidationService);
             $xmlElement->parse($xmlString);
             $sutResponse = $this->sut->parseFromXmlElement($xmlElement);
@@ -29,10 +29,10 @@ describe('CodigoSubstituicaoTributaria', function () {
             expect($sutResponse->getData())->toBeInstanceOf(CodigoSubstituicaoTributaria::class);
             expect($sutResponse->getData()->value)->toBe($candidate);
             expect((string) $sutResponse->getData())->toBe($xmlString);
-        })->with(datasets('dfes.nfe.value_tags.' . CodigoSubstituicaoTributaria::TAG_NAME . '.valid'));
+        })->with(datasets('dfes.nfe.value_tags.' . CodigoSubstituicaoTributaria::FIELD_NAME . '.valid'));
 
         test('Should fail with data set :dataset', function ($candidate) {
-            $xmlString = '<' . CodigoSubstituicaoTributaria::TAG_NAME . ">{$candidate}</" . CodigoSubstituicaoTributaria::TAG_NAME . '>';
+            $xmlString = '<' . CodigoSubstituicaoTributaria::FIELD_NAME . ">{$candidate}</" . CodigoSubstituicaoTributaria::FIELD_NAME . '>';
             $xmlElement = new Element(new FakeValidationService);
             $xmlElement->parse($xmlString);
             $sutResponse = $this->sut->parseFromXmlElement($xmlElement);
@@ -41,10 +41,10 @@ describe('CodigoSubstituicaoTributaria', function () {
             }
             expect($sutResponse)->toBeInstanceOf(Result::class);
             expect($sutResponse->getError())->toBeInstanceOf(ApiError::class);
-        })->with(datasets('dfes.nfe.value_tags.' . CodigoSubstituicaoTributaria::TAG_NAME . '.invalid'));
+        })->with(datasets('dfes.nfe.value_tags.' . CodigoSubstituicaoTributaria::FIELD_NAME . '.invalid'));
 
         test('Should fail if attributes is provided', function ($candidate) {
-            $xmlString = '<' . CodigoSubstituicaoTributaria::TAG_NAME . " fake=\"attribute\">{$candidate}</" . CodigoSubstituicaoTributaria::TAG_NAME . '>';
+            $xmlString = '<' . CodigoSubstituicaoTributaria::FIELD_NAME . " fake=\"attribute\">{$candidate}</" . CodigoSubstituicaoTributaria::FIELD_NAME . '>';
             $xmlElement = new Element(new FakeValidationService);
             $xmlElement->parse($xmlString);
             $sutResponse = $this->sut->parseFromXmlElement($xmlElement);
@@ -53,10 +53,10 @@ describe('CodigoSubstituicaoTributaria', function () {
                 $this->fail(json_encode($sutResponse->getData()));
             }
             expect($sutResponse->getError())->toBeInstanceOf(ApiError::class);
-        })->with(datasets('dfes.nfe.value_tags.' . CodigoSubstituicaoTributaria::TAG_NAME . '.valid'));
+        })->with(datasets('dfes.nfe.value_tags.' . CodigoSubstituicaoTributaria::FIELD_NAME . '.valid'));
 
         test('Should fail if elements is provided', function ($candidate) {
-            $xmlString = '<' . CodigoSubstituicaoTributaria::TAG_NAME . ">{$candidate}<fake>element</fake></" . CodigoSubstituicaoTributaria::TAG_NAME . '>';
+            $xmlString = '<' . CodigoSubstituicaoTributaria::FIELD_NAME . ">{$candidate}<fake>element</fake></" . CodigoSubstituicaoTributaria::FIELD_NAME . '>';
             $xmlElement = new Element(new FakeValidationService);
             $xmlElement->parse($xmlString);
             $sutResponse = $this->sut->parseFromXmlElement($xmlElement);
@@ -65,6 +65,6 @@ describe('CodigoSubstituicaoTributaria', function () {
                 $this->fail(json_encode($sutResponse->getData()));
             }
             expect($sutResponse->getError())->toBeInstanceOf(ApiError::class);
-        })->with(datasets('dfes.nfe.value_tags.' . CodigoSubstituicaoTributaria::TAG_NAME . '.valid'));
+        })->with(datasets('dfes.nfe.value_tags.' . CodigoSubstituicaoTributaria::FIELD_NAME . '.valid'));
     });
 });

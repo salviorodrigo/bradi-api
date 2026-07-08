@@ -30,7 +30,7 @@ final class ValorUnitarioComercial extends DFeElement
 {
     use ValidatesDFeValueElement;
 
-    public const string TAG_NAME = 'vUnCom';
+    public const string FIELD_NAME = 'vUnCom';
 
     protected function tagValueValidators(): array
     {

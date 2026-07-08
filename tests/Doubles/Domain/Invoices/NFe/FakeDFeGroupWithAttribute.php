@@ -9,7 +9,7 @@ use BradiNfeApi\Domain\Invoices\Templates\DFeElement;
 
 final class FakeDFeGroupWithAttribute extends DFeElement
 {
-    public const string TAG_NAME = 'FakeGroup';
+    public const string FIELD_NAME = 'FakeGroup';
 
     public FakeDFeAttribute $fakeAttr;
     public FakeDFeElement $fakeChild;

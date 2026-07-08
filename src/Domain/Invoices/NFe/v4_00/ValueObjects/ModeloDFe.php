@@ -27,7 +27,7 @@ final class ModeloDFe extends DFeElement
 {
     use ValidatesDFeValueElement;
 
-    public const string TAG_NAME = 'mod';
+    public const string FIELD_NAME = 'mod';
 
     protected function tagValueValidators(): array
     {

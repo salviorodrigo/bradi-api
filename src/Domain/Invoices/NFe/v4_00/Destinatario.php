@@ -29,7 +29,7 @@ final class Destinatario extends DFeElement
 {
     use ValidatesDFeGroupElement;
 
-    public const string TAG_NAME = 'dest';
+    public const string FIELD_NAME = 'dest';
 
     public ?CadastroPJ $CNPJ;
     public ?CadastroPF $CPF;
