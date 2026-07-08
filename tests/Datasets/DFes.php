@@ -148,6 +148,17 @@ class DFes extends Dataset
                             ],
                         ],
                     ],
+                    'prod' => [
+                        'valid' => [
+                            'only_required' => '<prod><cProd>P001</cProd><cEAN>SEM GTIN</cEAN><xProd>PRODUTO TESTE</xProd><NCM>01012100</NCM><CFOP>5102</CFOP><uCom>UN</uCom><qCom>1.0000</qCom><vUnCom>10.0000000000</vUnCom><vProd>10.00</vProd></prod>',
+                        ],
+                        'invalid' => [
+                            'empty' => '',
+                            'missing_required' => [
+                                'cProd' => '<prod><cEAN>SEM GTIN</cEAN><xProd>PRODUTO TESTE</xProd><NCM>01012100</NCM><CFOP>5102</CFOP><uCom>UN</uCom><qCom>1.0000</qCom><vUnCom>10.0000000000</vUnCom><vProd>10.00</vProd></prod>',
+                            ],
+                        ],
+                    ],
                     'ICMS00' => [
                         'valid' => [
                             'only_required' => '<ICMS00><orig>0</orig><CST>00</CST><modBC>3</modBC><vBC>1000.00</vBC><pICMS>18.00</pICMS><vICMS>180.00</vICMS></ICMS00>',
