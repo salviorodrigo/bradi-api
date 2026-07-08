@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace BradiNfeApi\Domain\Invoices\Protocols;
+namespace BradiNfeApi\Domain\Invoices\Templates;
 
 use Exception;
 use InvalidArgumentException;

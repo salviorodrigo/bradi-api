@@ -23,7 +23,7 @@ use BradiNfeApi\Domain\Common\Validators\IsDecimalValidator;
 use BradiNfeApi\Domain\Common\Validators\MaxValueValidator;
 use BradiNfeApi\Domain\Common\Validators\MinValueValidator;
 use BradiNfeApi\Domain\Common\Validators\NotNullValidator;
-use BradiNfeApi\Domain\Invoices\Protocols\DFeElement;
+use BradiNfeApi\Domain\Invoices\Templates\DFeElement;
 use BradiNfeApi\Domain\Invoices\Traits\ValidatesDFeValueElement;
 
 final class ValorUnitarioComercial extends DFeElement

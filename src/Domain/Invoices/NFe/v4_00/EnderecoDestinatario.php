@@ -25,7 +25,7 @@ use BradiNfeApi\Domain\Invoices\NFe\v4_00\ValueObjects\NomePais;
 use BradiNfeApi\Domain\Invoices\NFe\v4_00\ValueObjects\NumeroEndereco;
 use BradiNfeApi\Domain\Invoices\NFe\v4_00\ValueObjects\SiglaUF;
 use BradiNfeApi\Domain\Invoices\NFe\v4_00\ValueObjects\Telefone;
-use BradiNfeApi\Domain\Invoices\Protocols\DFeElement;
+use BradiNfeApi\Domain\Invoices\Templates\DFeElement;
 use BradiNfeApi\Domain\Invoices\Traits\ValidatesDFeGroupElement;
 use BradiNfeApi\Domain\Invoices\Validators\RequiredTagValidator;
 

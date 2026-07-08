@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace BradiNfeApi\Tests\Doubles\Domain\Invoices\NFe;
 
 use BradiNfeApi\Domain\Common\Protocols\Validator;
-use BradiNfeApi\Domain\Invoices\Protocols\DFeElement;
+use BradiNfeApi\Domain\Invoices\Templates\DFeElement;
 
 final class FakeDFeElement extends DFeElement
 {
