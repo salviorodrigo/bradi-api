@@ -235,7 +235,8 @@ abstract class DFeElement
 
                 $attributeInstance = new Attribute(
                     $attribute['propertyName'],
-                    $this->{$attribute['propertyName']}->value
+                    $this->{$attribute['propertyName']}->value,
+                    static::FIELD_NAME
                 );
 
                 $this->sourceElement->addAttribute($attributeInstance);

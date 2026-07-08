@@ -5,8 +5,7 @@ declare(strict_types=1);
 use BradiNfeApi\Domain\Common\Protocols\ApiError;
 use BradiNfeApi\Domain\Common\ValueObjects\Result;
 use BradiNfeApi\Domain\Invoices\NFe\v4_00\NumeroItem;
-use BradiNfeApi\Domain\Xml\ValueObjects\Element;
-use BradiNfeApi\Tests\Doubles\Domain\Common\FakeValidationService;
+use BradiNfeApi\Domain\Xml\ValueObjects\Attribute;
 use BradiNfeApi\Tests\TestCase;
 
 describe('NumeroItem', function () {
@@ -17,15 +16,8 @@ describe('NumeroItem', function () {
 
     describe('::parseFromXmlElement()', function () {
         test('Should succeed extracting nItem attribute with valid value :value', function (string $value) {
-            $candidate = sprintf('<infItem nItem="%s"></infItem>', $value);
-            $validationService = new FakeValidationService;
-            $element = new Element($validationService);
-            $parsingResult = $element->parse($candidate);
-            if ($parsingResult->isFailure()) {
-                $this->fail(json_encode($parsingResult->getError()));
-            }
-
-            $sutResponse = $this->sut->parseFromXmlElement($parsingResult->getData());
+            $attribute = new Attribute('nItem', $value, 'infItem');
+            $sutResponse = $this->sut->parseFromXmlElement($attribute);
 
             expect($sutResponse)->toBeInstanceOf(Result::class);
             if ($sutResponse->isFailure()) {
@@ -42,16 +34,8 @@ describe('NumeroItem', function () {
         ]);
 
         test('Should fail when parent tag does not match', function () {
-            $candidate = '<det nItem="10"></det>';
-            $validationService = new FakeValidationService;
-            $element = new Element($validationService);
-            $parsingResult = $element->parse($candidate);
-            if ($parsingResult->isFailure()) {
-                $this->fail(json_encode($parsingResult->getError()));
-            }
-
-            $sutResponse = $this->sut->parseFromXmlElement($parsingResult->getData());
-
+            $attribute = new Attribute('nItem', '10', 'wrongParentTag');
+            $sutResponse = $this->sut->parseFromXmlElement($attribute);
             expect($sutResponse)->toBeInstanceOf(Result::class);
             if ($sutResponse->isSuccess()) {
                 $this->fail(json_encode($sutResponse->getData()));
@@ -61,16 +45,8 @@ describe('NumeroItem', function () {
         });
 
         test('Should fail when nItem is outside allowed range or not numeric :value', function (string $value) {
-            $candidate = sprintf('<infItem nItem="%s"></infItem>', $value);
-            $validationService = new FakeValidationService;
-            $element = new Element($validationService);
-            $parsingResult = $element->parse($candidate);
-            if ($parsingResult->isFailure()) {
-                $this->fail(json_encode($parsingResult->getError()));
-            }
-
-            $sutResponse = $this->sut->parseFromXmlElement($parsingResult->getData());
-
+            $attribute = new Attribute('nItem', $value, 'infItem');
+            $sutResponse = $this->sut->parseFromXmlElement($attribute);
             expect($sutResponse)->toBeInstanceOf(Result::class);
             if ($sutResponse->isSuccess()) {
                 $this->fail(json_encode($sutResponse->getData()));

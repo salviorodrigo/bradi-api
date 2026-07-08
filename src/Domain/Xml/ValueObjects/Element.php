@@ -47,7 +47,7 @@ class Element
         $this->name = $this->iterator->name;
         $this->value = $this->iterator->value;
         foreach ($this->iterator->attributes as $attributeName => $attributeValue) {
-            $this->addAttribute(new Attribute($attributeName, $attributeValue));
+            $this->addAttribute(new Attribute($attributeName, $attributeValue, $this->name));
         }
 
         foreach ($this->iterator->children as $child) {
@@ -59,10 +59,10 @@ class Element
         return Result::makeSuccess($this);
     }
 
-    public function __get(string $name): ElementList|Element|null
+    public function __get(string $name): Attribute|ElementList|Element|null
     {
         if ($this->attributes->exists($name)) {
-            return $this;
+            return $this->attributes->$name;
         }
 
         return $this->children->$name;

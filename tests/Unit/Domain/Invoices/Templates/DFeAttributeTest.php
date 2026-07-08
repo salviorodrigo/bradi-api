@@ -4,8 +4,7 @@ declare(strict_types=1);
 
 use BradiNfeApi\Domain\Common\Protocols\ApiError;
 use BradiNfeApi\Domain\Common\ValueObjects\Result;
-use BradiNfeApi\Domain\Xml\ValueObjects\Element;
-use BradiNfeApi\Tests\Doubles\Domain\Common\FakeValidationService;
+use BradiNfeApi\Domain\Xml\ValueObjects\Attribute;
 use BradiNfeApi\Tests\Doubles\Domain\Invoices\NFe\FakeDFeAttribute;
 use BradiNfeApi\Tests\TestCase;
 
@@ -17,15 +16,8 @@ describe('DFeAttribute', function () {
 
     describe('::parseFromXmlElement()', function () {
         test('Should succeed extracting value from xml tag attribute', function () {
-            $candidate = '<infNFe fakeAttr="ABC123" versao="4.00"></infNFe>';
-            $validationService = new FakeValidationService;
-            $element = new Element($validationService);
-            $parsingResult = $element->parse($candidate);
-            if ($parsingResult->isFailure()) {
-                $this->fail(json_encode($parsingResult->getError()));
-            }
-
-            $sutResponse = $this->sut->parseFromXmlElement($parsingResult->getData());
+            $attribute = new Attribute('fakeAttr', 'ABC123', 'infNFe');
+            $sutResponse = $this->sut->parseFromXmlElement($attribute);
 
             expect($sutResponse)->toBeInstanceOf(Result::class);
             if ($sutResponse->isFailure()) {
@@ -38,14 +30,8 @@ describe('DFeAttribute', function () {
         });
 
         test('Should fail when parent tag does not match', function () {
-            $candidate = '<other fakeAttr="ABC123"></other>';
-            $validationService = new FakeValidationService;
-            $element = new Element($validationService);
-            $parsingResult = $element->parse($candidate);
-            if ($parsingResult->isFailure()) {
-                $this->fail(json_encode($parsingResult->getError()));
-            }
-            $sutResponse = $this->sut->parseFromXmlElement($parsingResult->getData());
+            $attribute = new Attribute('fakeAttr', 'ABC123', 'wrongParentTag');
+            $sutResponse = $this->sut->parseFromXmlElement($attribute);
 
             expect($sutResponse)->toBeInstanceOf(Result::class);
             if ($sutResponse->isSuccess()) {

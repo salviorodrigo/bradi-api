@@ -21,14 +21,14 @@ describe('Element', function () {
             });
 
             test('returns auto-close tag with attribute when no value and no children', function () {
-                $this->sut->addAttribute(new Attribute('id', '1'));
+                $this->sut->addAttribute(new Attribute('id', '1', 'tag'));
 
                 expect((string) $this->sut)->toBe('<tag id="1"/>');
             });
 
             test('returns auto-close tag with multiple attributes', function () {
-                $this->sut->addAttribute(new Attribute('id', '1'));
-                $this->sut->addAttribute(new Attribute('status', 'active'));
+                $this->sut->addAttribute(new Attribute('id', '1', 'tag'));
+                $this->sut->addAttribute(new Attribute('status', 'active', 'tag'));
 
                 expect((string) $this->sut)->toBe('<tag id="1" status="active"/>');
             });
@@ -43,15 +43,15 @@ describe('Element', function () {
 
             test('returns tag with value and attribute', function () {
                 $this->sut->value = 'content';
-                $this->sut->addAttribute(new Attribute('id', '1'));
+                $this->sut->addAttribute(new Attribute('id', '1', 'tag'));
 
                 expect((string) $this->sut)->toBe('<tag id="1">content</tag>');
             });
 
             test('returns tag with value and multiple attributes', function () {
                 $this->sut->value = 'content';
-                $this->sut->addAttribute(new Attribute('id', '1'));
-                $this->sut->addAttribute(new Attribute('type', 'A'));
+                $this->sut->addAttribute(new Attribute('id', '1', 'tag'));
+                $this->sut->addAttribute(new Attribute('type', 'A', 'tag'));
 
                 expect((string) $this->sut)->toBe('<tag id="1" type="A">content</tag>');
             });
@@ -135,13 +135,13 @@ describe('Element', function () {
             });
 
             test('escapes double quotes in attribute value', function () {
-                $this->sut->addAttribute(new Attribute('ref', 'say "hi"'));
+                $this->sut->addAttribute(new Attribute('ref', 'say "hi"', 'tag'));
 
                 expect((string) $this->sut)->toBe('<tag ref="say &quot;hi&quot;"/>');
             });
 
             test('escapes ampersand in attribute value', function () {
-                $this->sut->addAttribute(new Attribute('ref', 'A&B'));
+                $this->sut->addAttribute(new Attribute('ref', 'A&B', 'tag'));
 
                 expect((string) $this->sut)->toBe('<tag ref="A&amp;B"/>');
             });

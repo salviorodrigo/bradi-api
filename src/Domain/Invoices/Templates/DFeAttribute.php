@@ -23,6 +23,8 @@ abstract class DFeAttribute
     public readonly string $parentTagName;
     public readonly string $fieldURI;
 
+    private ValidationService $validationService;
+
     private ?Attribute $sourceAttribute;
 
     final public function __construct(string $parentFieldURI)
@@ -37,27 +39,28 @@ abstract class DFeAttribute
         $parents = explode('.', $parentFieldURI);
         $this->parentTagName = array_pop($parents);
         $this->fieldURI = $parentFieldURI . '.' . static::FIELD_NAME;
+        $this->validationService = new ValidationService($this->fieldURI, __METHOD__);
     }
 
     /**
      * @return Result<DFeAttribute|ApiError>
      */
-    final public function parseFromXmlElement(Element $element): Result
+    final public function parseFromXmlElement(Attribute $attribute): Result
     {
         $validationSteps = [
-            fn ($candidate) => $this->validateRootTag($candidate),
-            fn ($candidate) => $this->validateTagAttributes($candidate),
+            fn ($candidate) => $this->validateParentTag($candidate),
+            fn ($candidate) => $this->validateAttributeKey($candidate),
             fn ($candidate) => $this->validateAttributeValue($candidate),
         ];
 
         foreach ($validationSteps as $validationService) {
-            $validationResult = $validationService($element);
+            $validationResult = $validationService($attribute);
             if ($validationResult->isFailure()) {
                 return $validationResult;
             }
         }
 
-        $hydrateResult = $this->hydrateFromXmlElement($element);
+        $hydrateResult = $this->hydrateFromXmlElement($attribute);
         if ($hydrateResult->isFailure()) {
             return $hydrateResult;
         }
@@ -68,28 +71,32 @@ abstract class DFeAttribute
     /** @return array<Validator> */
     abstract protected function attributeValueValidators(): array;
 
-    /** @return Result<null|ApiError> */
-    final protected function validateRootTag(Element $element): Result
+    final protected function validateParentTag(Attribute $attribute): Result
     {
+        $candidate = new Element($this->validationService);
+        $candidate->name = $attribute->parentTagName;
+        $candidate->addAttribute($attribute);
         $service = new ValidationService($this->fieldURI, __METHOD__);
         $service->addValidator(new RootTagValidator($this->parentTagName));
 
-        return $service->verify($element);
+        return $service->verify($candidate);
     }
 
     /** @return Result<null|ApiError> */
-    final protected function validateTagAttributes(Element $element): Result
+    final protected function validateAttributeKey(Attribute $attribute): Result
     {
+        $candidate = new Element($this->validationService);
+        $candidate->name = $this->parentTagName;
+        $candidate->addAttribute($attribute);
         $service = new ValidationService($this->fieldURI, __METHOD__);
         $service->addValidator(new RequiredAttributeValidator([static::FIELD_NAME]));
 
-        return $service->verify($element);
+        return $service->verify($candidate);
     }
 
     /** @return Result<null|ApiError> */
-    final protected function validateAttributeValue(Element $element): Result
+    final protected function validateAttributeValue(Attribute $attribute): Result
     {
-        $attribute = $element->attributes->{static::FIELD_NAME};
         $candidate = $attribute->value;
         $service = new ValidationService($this->fieldURI, __METHOD__);
         foreach ($this->attributeValueValidators() as $validator) {
@@ -100,10 +107,10 @@ abstract class DFeAttribute
     }
 
     /** @return Result<null|ApiError> **/
-    private function hydrateFromXmlElement(Element $xmlElement): Result
+    private function hydrateFromXmlElement(Attribute $attribute): Result
     {
-        $this->sourceAttribute = $xmlElement->attributes->{static::FIELD_NAME};
-        $this->value = $this->sourceAttribute->value;
+        $this->sourceAttribute = $attribute;
+        $this->value = $attribute->value;
 
         return Result::makeSuccess();
     }
@@ -122,7 +129,7 @@ abstract class DFeAttribute
         }
 
         $escapedValue = htmlspecialchars($this->value, ENT_XML1 | ENT_QUOTES, 'UTF-8');
-        $this->sourceAttribute = new Attribute(static::FIELD_NAME, $escapedValue);
+        $this->sourceAttribute = new Attribute(static::FIELD_NAME, $escapedValue, $this->parentTagName);
 
         return (string) $this->sourceAttribute;
     }
