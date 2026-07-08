@@ -7,13 +7,8 @@ grumphp:
     tasks:
         shell:
             scripts:
-                - ['-c', 'composer', 'lint:dirty']
+                - ['-c', './bin/grumphp-pre-commit.sh']
             triggered_by: ['php']
-
-        pest:
-            config_file: ~
-            testsuite: ~
-            always_execute: true
 
         git_commit_message:
             allow_empty_message: false
