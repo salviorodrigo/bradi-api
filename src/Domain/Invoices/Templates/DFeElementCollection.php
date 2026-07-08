@@ -6,7 +6,6 @@ namespace BradiNfeApi\Domain\Invoices\Templates;
 
 use BradiNfeApi\Domain\Common\Protocols\ApiError;
 use BradiNfeApi\Domain\Common\ValueObjects\Result;
-use BradiNfeApi\Domain\Invoices\Templates\DFeElement;
 use BradiNfeApi\Domain\Xml\ValueObjects\Element;
 use BradiNfeApi\Domain\Xml\ValueObjects\ElementList;
 use Exception;
@@ -14,11 +13,13 @@ use Exception;
 abstract class DFeElementCollection
 {
     private const string BASE_CLASS = '';
+
     /** @var DFeElement[] */
     public array $collection = [];
+
     private DFeElement $baseClass;
 
-    final public function __construct(private readonly string $parentFieldURI = ''){}
+    final public function __construct(private readonly string $parentFieldURI = '') {}
 
     /** @return Result<DFeElement|ApiError> */
     final public function parseFromXmlElement(Element|ElementList $elementOrElementList): Result
@@ -35,11 +36,6 @@ abstract class DFeElementCollection
         }
 
         return Result::makeSuccess($this);
-    }
-
-    public function __toString()
-    {
-        throw new Exception('Not implemented');
     }
 
     private function resetBaseClass(): void
@@ -64,5 +60,8 @@ abstract class DFeElementCollection
         return $elementOrElementList->records;
     }
 
-    
+    public function __toString()
+    {
+        throw new Exception('Not implemented');
+    }
 }

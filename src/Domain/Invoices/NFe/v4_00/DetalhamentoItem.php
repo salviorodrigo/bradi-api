@@ -33,7 +33,7 @@ final class DetalhamentoItem extends DFeElement
     protected function tagElementsValidators(): array
     {
         return [
-            new RequiredTagValidator([ 'prod', 'imposto' ]),
+            new RequiredTagValidator(['prod', 'imposto']),
         ];
     }
 

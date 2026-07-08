@@ -26,9 +26,9 @@ final class NumeroItem extends DFeAttribute
     protected function attributeValueValidators(): array
     {
         return [
-            new IsNumericValidator(),
+            new IsNumericValidator,
             new MinValueValidator(1),
-            new MaxValueValidator(990)
+            new MaxValueValidator(990),
         ];
     }
 }

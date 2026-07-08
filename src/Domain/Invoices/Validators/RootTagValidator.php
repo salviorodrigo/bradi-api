@@ -28,7 +28,7 @@ final class RootTagValidator implements Validator
         if ($candidate->name !== $this->rootTagName) {
             return Result::makeFailure(new InvalidArgumentException(sprintf('Tag "%s" expected. "%s" found.', $this->rootTagName, $candidate->name)));
         }
-            
+
         return Result::makeSuccess();
     }
 }

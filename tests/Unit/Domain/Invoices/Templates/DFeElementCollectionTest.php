@@ -96,12 +96,13 @@ describe('DFeElementCollection', function () {
                 $this->fail(json_encode($parsingResult->getError()));
             }
 
-            $sut = new class extends DFeElementCollection {
+            $sut = new class extends DFeElementCollection
+            {
                 public const string BASE_CLASS = '';
             };
 
             expect(fn () => $sut->parseFromXmlElement($parsingResult->getData()))
-                ->toThrow(\Exception::class, 'BASE_CLASS constant must be defined in the child class.');
+                ->toThrow(Exception::class, 'BASE_CLASS constant must be defined in the child class.');
         });
 
         test('Should throw when BASE_CLASS is not a subclass of DFeElement', function () {
@@ -113,12 +114,13 @@ describe('DFeElementCollection', function () {
                 $this->fail(json_encode($parsingResult->getError()));
             }
 
-            $sut = new class extends DFeElementCollection {
-                public const string BASE_CLASS = \stdClass::class;
+            $sut = new class extends DFeElementCollection
+            {
+                public const string BASE_CLASS = stdClass::class;
             };
 
             expect(fn () => $sut->parseFromXmlElement($parsingResult->getData()))
-                ->toThrow(\Exception::class, 'BASE_CLASS must be a subclass of DFeElement.');
+                ->toThrow(Exception::class, 'BASE_CLASS must be a subclass of DFeElement.');
         });
     });
 });

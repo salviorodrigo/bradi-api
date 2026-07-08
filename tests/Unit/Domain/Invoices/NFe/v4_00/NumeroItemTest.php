@@ -38,7 +38,7 @@ describe('NumeroItem', function () {
         })->with([
             '1',
             '500',
-            '990'
+            '990',
         ]);
 
         test('Should fail when parent tag does not match', function () {
@@ -80,7 +80,7 @@ describe('NumeroItem', function () {
         })->with([
             '0',
             '991',
-            'ABC'
+            'ABC',
         ]);
     });
 

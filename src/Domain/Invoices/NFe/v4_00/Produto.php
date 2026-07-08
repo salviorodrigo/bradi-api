@@ -46,7 +46,7 @@ final class Produto extends DFeElement
     protected function tagElementsValidators(): array
     {
         return [
-            new RequiredTagValidator([ 'cProd', 'cEAN', 'xProd', 'NCM', 'CFOP', 'uCom', 'qCom', 'vUnCom', 'vProd' ]),
+            new RequiredTagValidator(['cProd', 'cEAN', 'xProd', 'NCM', 'CFOP', 'uCom', 'qCom', 'vUnCom', 'vProd']),
         ];
     }
 }
