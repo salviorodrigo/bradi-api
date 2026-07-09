@@ -40,6 +40,13 @@ abstract class DFeAttribute
         $this->parentTagName = array_pop($parents);
         $this->fieldURI = $parentFieldURI . '.' . static::FIELD_NAME;
         $this->validationService = new ValidationService($this->fieldURI, __METHOD__);
+
+        if (! defined(static::class . '::FIELD_NAME') || static::FIELD_NAME === '') {
+            throw new RuntimeException(sprintf(
+                'The class "%s" must define a constant "FIELD_NAME" with the name of the XML attribute it represents.',
+                static::class
+            ));
+        }
     }
 
     /**

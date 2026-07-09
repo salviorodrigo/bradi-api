@@ -31,6 +31,13 @@ abstract class DFeElement
     {
         $this->fieldURI = $parentFieldURI === '' ? static::FIELD_NAME : $parentFieldURI . '.' . static::FIELD_NAME;
         $this->validationService = new ValidationService($this->fieldURI, __METHOD__);
+
+        if (! defined(static::class . '::FIELD_NAME') || static::FIELD_NAME === '') {
+            throw new RuntimeException(sprintf(
+                'The class "%s" must define a constant "FIELD_NAME" with the name of the XML tag it represents.',
+                static::class
+            ));
+        }
     }
 
     /** @return Result<DFeElement|ApiError> */
