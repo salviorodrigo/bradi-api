@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace BradiNfeApi\Domain\Invoices\Templates;
 
 use BradiNfeApi\Domain\Common\Protocols\ApiError;
+use BradiNfeApi\Domain\Common\Protocols\ValidationService as ValidationServiceProtocol;
 use BradiNfeApi\Domain\Common\Protocols\Validator;
 use BradiNfeApi\Domain\Common\Services\ValidationService;
 use BradiNfeApi\Domain\Common\ValueObjects\Result;
@@ -23,7 +24,7 @@ abstract class DFeAttribute
     public readonly string $parentTagName;
     public readonly string $fieldURI;
 
-    private ValidationService $validationService;
+    private ValidationServiceProtocol $validationService;
 
     private ?Attribute $sourceAttribute;
 

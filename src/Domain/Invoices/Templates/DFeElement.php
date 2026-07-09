@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace BradiNfeApi\Domain\Invoices\Templates;
 
 use BradiNfeApi\Domain\Common\Protocols\ApiError;
+use BradiNfeApi\Domain\Common\Protocols\ValidationService as ValidationServiceProtocol;
 use BradiNfeApi\Domain\Common\Protocols\Validator;
 use BradiNfeApi\Domain\Common\Services\ValidationService;
 use BradiNfeApi\Domain\Common\ValueObjects\Result;
@@ -25,7 +26,7 @@ abstract class DFeElement
     public ?string $value;
 
     private ?Element $sourceElement;
-    private ValidationService $validationService;
+    private ValidationServiceProtocol $validationService;
 
     final public function __construct(string $parentFieldURI = '')
     {
