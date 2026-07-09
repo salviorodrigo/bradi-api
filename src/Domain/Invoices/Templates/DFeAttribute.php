@@ -81,7 +81,7 @@ abstract class DFeAttribute
 
     final protected function validateParentTag(Attribute $attribute): Result
     {
-        $candidate = new Element($this->validationService);
+        $candidate = new Element;
         $candidate->name = $attribute->parentTagName;
         $candidate->addAttribute($attribute);
         $service = new ValidationService($this->fieldURI, __METHOD__);
@@ -93,7 +93,7 @@ abstract class DFeAttribute
     /** @return Result<null|ApiError> */
     final protected function validateAttributeKey(Attribute $attribute): Result
     {
-        $candidate = new Element($this->validationService);
+        $candidate = new Element;
         $candidate->name = $this->parentTagName;
         $candidate->addAttribute($attribute);
         $service = new ValidationService($this->fieldURI, __METHOD__);

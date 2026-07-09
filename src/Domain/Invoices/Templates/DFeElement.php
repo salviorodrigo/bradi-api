@@ -217,7 +217,7 @@ abstract class DFeElement
         }
 
         $this->validationService->reset();
-        $this->sourceElement = new Element($this->validationService);
+        $this->sourceElement = new Element;
         $this->sourceElement->name = static::FIELD_NAME;
 
         if (isset($this->value)) {
@@ -262,7 +262,7 @@ abstract class DFeElement
                     continue;
                 }
 
-                $elementInstance = new Element($this->validationService);
+                $elementInstance = new Element;
                 $elementInstance->parse((string) $this->{$element['propertyName']});
                 $this->sourceElement->addChild($elementInstance);
             }

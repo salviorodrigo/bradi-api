@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace BradiNfeApi\Infra\Parses;
 
 use BradiNfeApi\Domain\Common\Protocols\ApiError;
-use BradiNfeApi\Domain\Common\Protocols\ValidationService;
 use BradiNfeApi\Domain\Common\Validators\IsXmlStringValidator;
 use BradiNfeApi\Domain\Common\ValueObjects\Result;
 use BradiNfeApi\Domain\Xml\Protocols\XmlIterator;
@@ -26,7 +25,6 @@ final class XmlStringIterator implements XmlIterator
     public private(set) mixed $candidate;
 
     public function __construct(
-        private readonly ValidationService $validationService,
         private readonly string $encode = 'UTF-8'
     ) {}
 
