@@ -82,7 +82,7 @@ final class XmlStringIterator implements XmlIterator
         }
 
         $tagName = '';
-        $startPosition = strpos($this->candidate, '<', $offset);
+        $startPosition = iconv_strpos($this->candidate, '<', $offset);
         for ($i = $startPosition + 1; $i < strlen($this->candidate); $i++) {
             if ($this->candidate[$i] == ' ' || $this->candidate[$i] == '>' || $this->candidate[$i] == '/') {
                 break;
@@ -171,7 +171,7 @@ final class XmlStringIterator implements XmlIterator
         }
 
         $xmlTag = '<' . $tagName;
-        $startPosition = strpos($this->candidate, $xmlTag, $offset);
+        $startPosition = iconv_strpos($this->candidate, $xmlTag, $offset);
         if ($startPosition === false) {
             return false;
         }
@@ -195,7 +195,7 @@ final class XmlStringIterator implements XmlIterator
             return $this->getInnerEndPositionTag();
         }
         $pattern = '<' . $tagName;
-        $pointer = strpos($this->candidate, $pattern, $offset);
+        $pointer = iconv_strpos($this->candidate, $pattern, $offset, $this->encode);
 
         if (in_array($this->candidate[$pointer + strlen($pattern)], [' ', '>', '/'])) {
             return (int) $pointer;
@@ -211,12 +211,12 @@ final class XmlStringIterator implements XmlIterator
         }
 
         if ($this->isAutoClosedTag($tagName, $offset)) {
-            return (int) strpos($this->candidate, '/>', $offset) + strlen('/>');
+            return (int) iconv_strpos($this->candidate, '/>', $offset, $this->encode) + strlen('/>');
         }
 
         $xmlTag = '</' . $tagName . '>';
 
-        return (int) strpos($this->candidate, $xmlTag, $offset) + strlen($xmlTag);
+        return (int) iconv_strpos($this->candidate, $xmlTag, $offset, $this->encode) + strlen($xmlTag);
     }
 
     private function getInnerStartPositionTag(): int
@@ -225,7 +225,7 @@ final class XmlStringIterator implements XmlIterator
             throw new Exception('Candidate not loaded.');
         }
 
-        return (int) iconv_strpos($this->candidate, '>', encoding: $this->encode) + 1;
+        return (int) iconv_strpos($this->candidate, '>', 0, $this->encode) + 1;
     }
 
     private function getInnerEndPositionTag(): int
@@ -251,9 +251,9 @@ final class XmlStringIterator implements XmlIterator
             return [];
         }
 
-        return $this->sliceCandidate(0, iconv_strpos($this->candidate, '>', encoding: $this->encode))
-            |>(fn ($str) => iconv_substr($str, (iconv_strpos($str, ' ') + 1), strlen($str), $this->encode))
-            |>(fn ($str) => iconv_substr($str, 0, iconv_strrpos($str, '"') + 1, $this->encode))
+        return $this->sliceCandidate(0, iconv_strpos($this->candidate, '>', 0, $this->encode))
+            |>(fn ($str) => iconv_substr($str, (iconv_strpos($str, ' ', 0, $this->encode) + 1), strlen($str), $this->encode))
+            |>(fn ($str) => iconv_substr($str, 0, iconv_strrpos($str, '"', $this->encode) + 1, $this->encode))
             |>(fn ($str) => str_replace('"', '', $str))
             |>(fn ($str) => trim($str))
             |>(fn ($str) => explode(' ', $str))
@@ -286,7 +286,7 @@ final class XmlStringIterator implements XmlIterator
         }
 
         $pattern = '<' . $tagName;
-        $pointer = strpos($this->candidate, $pattern, $offset);
+        $pointer = iconv_strpos($this->candidate, $pattern, $offset);
         if ($pointer === false) {
             return false;
         }
@@ -297,7 +297,7 @@ final class XmlStringIterator implements XmlIterator
             return $this->isAutoClosedTag($tagName, $pointer + strlen($pattern));
         }
 
-        return $this->candidate[strpos($this->candidate, '>', $pointer) - 1] == '/';
+        return $this->candidate[iconv_strpos($this->candidate, '>', $pointer) - 1] == '/';
     }
 
     private function hasAttributes(): bool
@@ -306,8 +306,8 @@ final class XmlStringIterator implements XmlIterator
             throw new Exception('Candidate not loaded.');
         }
 
-        $openTag = $this->sliceCandidate(0, iconv_strpos($this->candidate, '>', encoding: $this->encode));
+        $openTag = $this->sliceCandidate(0, iconv_strpos($this->candidate, '>', 0, $this->encode));
 
-        return strpos($openTag, ' ') !== false;
+        return iconv_strpos($openTag, ' ', 0, $this->encode) !== false;
     }
 }
