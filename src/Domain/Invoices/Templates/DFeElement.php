@@ -211,17 +211,16 @@ abstract class DFeElement
 
     final public function __toString(): string
     {
-        // verify is all  delcared and stted properties are setted into Element instance, if not, set them before return the string ordenation is important. Verify if all values are equals, if not, update the Element instance with the current values. If all values are equals, return the string.
         if (isset($this->sourceElement)) {
             return (string) $this->sourceElement;
         }
 
-        $this->validationService->reset();
         $this->sourceElement = new Element;
         $this->sourceElement->name = static::FIELD_NAME;
 
         if (isset($this->value)) {
-            $this->sourceElement->value = $this->value;
+            $escapedValue = htmlspecialchars($this->value, ENT_XML1 | ENT_QUOTES, 'UTF-8');
+            $this->sourceElement->value = $escapedValue;
         }
 
         $propsMetadata = $this->listChildElements();
