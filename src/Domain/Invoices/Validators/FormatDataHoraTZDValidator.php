@@ -25,5 +25,3 @@ final class FormatDataHoraTZDValidator implements Validator
         return Result::makeSuccess();
     }
 }
-
-// TODO Make test file.

@@ -28,5 +28,3 @@ final class MaxStringLengthValidator implements Validator
         return Result::makeSuccess();
     }
 }
-
-// TODO Make test file.

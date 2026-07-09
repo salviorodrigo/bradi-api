@@ -61,8 +61,6 @@ class FieldURI
     }
 }
 
-// TODO Make test file.
-
 /**
  * Allows
  *

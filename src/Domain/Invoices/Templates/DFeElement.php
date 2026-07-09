@@ -270,5 +270,3 @@ abstract class DFeElement
         return (string) $this->sourceElement;
     }
 }
-
-// TODO Make test file.

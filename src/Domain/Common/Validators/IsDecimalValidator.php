@@ -89,7 +89,3 @@ class IsDecimalValidator implements Validator
         return Result::makeSuccess();
     }
 }
-
-// TODO Make test file (with negative numbers).
-// TODO Refactor LessThanError to MinDecimalDigitsError
-// TODO Refactor GreatThanError to MaxIntegerDigitsError

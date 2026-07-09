@@ -46,4 +46,3 @@ final class IsCodigoMunicipioValidator implements Validator
         return ($totalMod10 % 10) == $candidate[-1];
     }
 }
-// TODO Make test file.

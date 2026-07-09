@@ -47,5 +47,3 @@ final class StringLengthValidator implements Validator
         );
     }
 }
-
-// TODO Make test file.

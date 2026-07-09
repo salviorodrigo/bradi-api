@@ -112,5 +112,3 @@ final class IsNumericValidator implements Validator
         return Result::makeSuccess();
     }
 }
-
-// TODO Make test file.

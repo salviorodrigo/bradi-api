@@ -36,5 +36,3 @@ final class NotNullValidator implements Validator
         return is_object($candidate) && count(get_object_vars($candidate)) === 0;
     }
 }
-
-// TODO Make test file.

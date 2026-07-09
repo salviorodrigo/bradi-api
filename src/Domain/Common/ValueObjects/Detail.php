@@ -59,5 +59,3 @@ class Detail
         return $this;
     }
 }
-
-// TODO Make test file.

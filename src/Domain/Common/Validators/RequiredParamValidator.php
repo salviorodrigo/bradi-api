@@ -50,5 +50,3 @@ final class RequiredParamValidator implements Validator
  * "NULL"
  * "unknown type"
 **/
-
-// TODO Make test file.

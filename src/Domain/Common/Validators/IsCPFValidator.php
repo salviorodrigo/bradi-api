@@ -76,5 +76,3 @@ final class IsCPFValidator implements Validator
         return ($mod11 < 2) ? 0 : 11 - $mod11;
     }
 }
-
-// TODO Make test file.

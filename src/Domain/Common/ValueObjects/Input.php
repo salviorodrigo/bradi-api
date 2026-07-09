@@ -77,5 +77,3 @@ class Input
         return explode(' ', $data, 2)[1];
     }
 }
-
-// TODO Make test file.

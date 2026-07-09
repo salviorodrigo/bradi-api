@@ -93,5 +93,3 @@ abstract class ApiError
  *     }
  * ]}
 **/
-
-// TODO Make test file.
