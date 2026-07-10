@@ -1,7 +1,15 @@
 {
 	"$schema": "https://json-schema.org/draft/2019-09/schema",
 	"name": "PHP",
-	"image": "mcr.microsoft.com/devcontainers/php:3-8.5-bookworm",
+	"build": {
+		"dockerfile": "Dockerfile",
+		"context": ".."
+	},
+	"features": {
+		"ghcr.io/devcontainers/features/node:1": {
+			"version": "lts"
+		}
+	},
 	"forwardPorts": [8080],
 	"customizations": {
 		"vscode": {
@@ -14,6 +22,6 @@
 		}
 	},
 	"postCreateCommand": 
-		"sudo chown -R $(whoami) . && sudo sed -i \"s/xdebug.start_with_request = yes/xdebug.start_with_request = trigger\\nxdebug.client_host = host.docker.internal/\" /usr/local/etc/php/conf.d/xdebug.ini && sudo docker-php-ext-install iconv && composer install --no-interaction && composer dump-autoload --optimize"
+		"sudo chown -R $(whoami) . && composer install --no-interaction && composer dump-autoload --optimize"
 	
 }
