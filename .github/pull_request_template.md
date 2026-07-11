@@ -35,3 +35,20 @@ Descreva o que foi alterado e por que.
 ## Evidencias
 
 Cole aqui saidas resumidas de lint/testes e qualquer evidência relevante.
+
+## ADR Rapido (quando aplicavel)
+
+Se este PR inclui decisao arquitetural/processual, cole e preencha o bloco abaixo no corpo do PR e depois converta para um arquivo em `docs/history/adr/`.
+
+```md
+## ADR (rascunho)
+
+- Status: Proposed
+- Contexto:
+- Decisao:
+- Alternativas consideradas:
+- Consequencias:
+- Revisitar em:
+```
+
+Referencia completa: `docs/history/adr/ADR-PR-SNIPPET.md` e `docs/history/adr/ADR-0000-template.md`.

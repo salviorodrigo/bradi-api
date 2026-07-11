@@ -67,6 +67,10 @@ Caso: padrao de commit e regra de rollout para trabalho com agente, sem mudar ru
 3. Se houve decisao estrutural/processual, abrir ADR e atualizar DECISIONS.
 4. Referenciar links de historico no corpo do PR.
 
+Atalho de rascunho para PR:
+
+- `docs/history/adr/ADR-PR-SNIPPET.md`
+
 ## Checklist final do autor
 
 - Atualizei `CHANGELOG.md` quando aplicavel.
