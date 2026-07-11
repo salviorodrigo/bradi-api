@@ -16,6 +16,15 @@ Guia de uso: consulte `docs/history/README.md`.
 
 ## 2026-07-11
 
+### Docs
+
+- Escopo: Governanca/Skills
+- Descricao: Adicionado template operacional de skill para fluxo de correcao de testes com loop de validacao e commits segmentados por escopo.
+- Arquivos:
+  - `docs/skills/TEST_FIX_WORKFLOW_SKILL_TEMPLATE.md`
+- Impacto: acelera reuso do processo em sessoes futuras e reduz variabilidade de execucao.
+- Evidencia: template derivado de execucao validada e formalizada no ADR-0002.
+
 ### Process
 
 - Escopo: Testes/Governanca
