@@ -2,8 +2,8 @@
 name: test-fix-workflow
 description: 'Executa a skill test-fix-workflow com os acessos necessarios para diagnosticar, corrigir, validar e commitar a primeira falha da suite.'
 argument-hint: 'Contexto opcional sobre a falha ou area afetada'
-agent: 'agent'
-tools: ['list_dir', 'file_search', 'grep_search', 'read_file', 'get_errors', 'run_in_terminal', 'apply_patch']
+agent: 'test-fix-workflow'
+tools: [read, edit, search, execute, todo]
 ---
 
 Siga a skill [test-fix-workflow](../skills/test-fix-workflow/SKILL.md) neste repositorio.

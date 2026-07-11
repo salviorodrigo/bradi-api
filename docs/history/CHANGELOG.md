@@ -26,6 +26,16 @@ Guia de uso: consulte `docs/history/README.md`.
 - Impacto: padroniza a invocacao do fluxo assistido diretamente pelo chat e reduz falhas por falta de ferramentas disponiveis durante a execucao.
 - Evidencia: validacao estrutural dos arquivos de customizacao e alinhamento ao ADR-0002.
 
+### Changed
+
+- Escopo: Governanca/Skills
+- Descricao: Corrigida a configuracao do slash command `test-fix-workflow` para usar aliases de ferramentas suportados e um custom agent dedicado ao fluxo.
+- Arquivos:
+  - `.github/agents/test-fix-workflow.agent.md`
+  - `.github/prompts/test-fix-workflow.prompt.md`
+- Impacto: evita perda de acesso a leitura, edicao e execucao durante a invocacao do workflow pelo chat.
+- Evidencia: configuracao alinhada a referencia oficial de prompts e agents para `tools: [read, edit, search, execute, todo]`.
+
 ### Docs
 
 - Escopo: Governanca/Skills
