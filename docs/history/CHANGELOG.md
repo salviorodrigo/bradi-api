@@ -16,6 +16,16 @@ Guia de uso: consulte `docs/history/README.md`.
 
 ## 2026-07-11
 
+### Changed
+
+- Escopo: Build
+- Descricao: Devcontainer passou a refletir `.gitconfig` e chaves SSH do host dentro do container para manter identidade Git e autenticacao por SSH em pull/push/clone.
+- Arquivos:
+  - `.devcontainer/devcontainer.json`
+  - `.devcontainer/setup-git-credentials.sh`
+- Impacto: reduz setup manual apos rebuild e evita falhas de permissao do OpenSSH ao sincronizar as credenciais do host para o usuario remoto do container.
+- Evidencia: validacao local prevista com `jq` no JSON do devcontainer e `bash -n` no script de sincronizacao.
+
 ### Process
 
 - Escopo: Governanca

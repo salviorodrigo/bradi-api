@@ -5,6 +5,10 @@
 		"dockerfile": "Dockerfile",
 		"context": ".."
 	},
+	"mounts": [
+		"source=${localEnv:HOME}/.gitconfig,target=/home/vscode/.gitconfig,type=bind,consistency=cached",
+		"source=${localEnv:HOME}/.ssh,target=/tmp/host-ssh,type=bind,readonly"
+	],
 	"features": {
 		"ghcr.io/devcontainers/features/node:1": {
 			"version": "lts"
@@ -21,7 +25,7 @@
 			]
 		}
 	},
-	"postCreateCommand": 
-		"sudo chown -R $(whoami) . && composer install --no-interaction && composer dump-autoload --optimize"
+	"postCreateCommand": "sudo chown -R $(whoami) . && .devcontainer/setup-git-credentials.sh && composer install --no-interaction && composer dump-autoload --optimize",
+	"postStartCommand": ".devcontainer/setup-git-credentials.sh"
 	
 }
