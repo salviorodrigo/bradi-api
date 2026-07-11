@@ -29,6 +29,8 @@ Executar correcao orientada pela primeira falha da suite, com loop de validacao 
 2. Se houver falha, capturar somente a primeira falha reportada.
 3. Elaborar plano curto para causa raiz.
 4. Implementar menor mudanca possivel para resolver a falha.
+  - Se existirem varios testes locais com falha e nao comitados, manter apenas o teste alvo no worktree e colocar os demais em `stash` antes do ajuste.
+  - Reaplicar o `stash` depois que o teste alvo estiver corrigido e validado.
 5. Rodar `composer lint` e `composer test:ci`.
 6. Se tudo verde:
    - commit de `src/` com tipo adequado (`feat`, `fix`, `refactor` ou equivalente).

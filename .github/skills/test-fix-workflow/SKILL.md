@@ -102,6 +102,10 @@ Formular um plano curto com:
 
 10. **Separar obrigatoriamente** `src/` de `tests/`:
 
+   - Se houver mais de um teste local com falha e ainda nao comitado, manter somente o teste alvo no worktree.
+   - Antes de ajustar o teste alvo, colocar os outros testes em `stash` para que nao fiquem em stage no momento do commit.
+   - Depois que o teste alvo estiver corrigido e validado, reaplicar o `stash` antes de seguir com os commits restantes.
+
     - Se alterou `src/Domain/` ou `src/Infra/`:
       - **Commit `src`** com tipo `feat`, `fix` ou `refactor`.
       - Exemplo: `feat(nfe): add InformacoesNotaFiscal element for v4_00`
