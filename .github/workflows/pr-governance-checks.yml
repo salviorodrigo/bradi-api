@@ -1,0 +1,108 @@
+name: PR Governance Checks
+
+on:
+  pull_request:
+    types: [opened, edited, synchronize, reopened, ready_for_review]
+
+permissions:
+  contents: read
+  pull-requests: read
+
+jobs:
+  governance:
+    name: Validate PR checklist and history
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Detect relevant code changes
+        id: changes
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          BASE_SHA="${{ github.event.pull_request.base.sha }}"
+          HEAD_SHA="${{ github.event.pull_request.head.sha }}"
+
+          CHANGED_FILES="$(git diff --name-only "$BASE_SHA" "$HEAD_SHA")"
+
+          echo "Changed files:"
+          echo "$CHANGED_FILES"
+
+          CODE_RELEVANT="false"
+          HISTORY_UPDATED="false"
+
+          if echo "$CHANGED_FILES" | grep -Eq '^(src/|tests/|composer\.json|composer\.lock|phpunit\.xml|grumphp\.yml)'; then
+            CODE_RELEVANT="true"
+          fi
+
+          if echo "$CHANGED_FILES" | grep -Eq '^(docs/history/CHANGELOG\.md|docs/history/adr/ADR-[0-9]{4}.*\.md)'; then
+            HISTORY_UPDATED="true"
+          fi
+
+          echo "code_relevant=$CODE_RELEVANT" >> "$GITHUB_OUTPUT"
+          echo "history_updated=$HISTORY_UPDATED" >> "$GITHUB_OUTPUT"
+
+      - name: Enforce history update for relevant changes
+        if: steps.changes.outputs.code_relevant == 'true'
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          if [[ "${{ steps.changes.outputs.history_updated }}" != "true" ]]; then
+            echo "Erro: houve mudanca relevante de codigo, mas nao foi detectada atualizacao em docs/history/CHANGELOG.md nem novo ADR em docs/history/adr/."
+            echo "Atualize o historico para manter rastreabilidade da mudanca."
+            exit 1
+          fi
+
+      - name: Validate PR checklist marks
+        env:
+          PR_BODY: ${{ github.event.pull_request.body }}
+          CODE_RELEVANT: ${{ steps.changes.outputs.code_relevant }}
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          python - <<'PY'
+          import os
+          import re
+          import sys
+
+          body = os.getenv("PR_BODY") or ""
+          code_relevant = (os.getenv("CODE_RELEVANT") or "false").lower() == "true"
+
+          if not body.strip():
+              print("Erro: o corpo do PR esta vazio. Preencha o template de PR.")
+              sys.exit(1)
+
+          type_patterns = [
+              r"- \[[xX]\] feat",
+              r"- \[[xX]\] fix",
+              r"- \[[xX]\] refactor",
+              r"- \[[xX]\] test",
+              r"- \[[xX]\] docs",
+              r"- \[[xX]\] chore",
+          ]
+
+          if not any(re.search(pattern, body) for pattern in type_patterns):
+              print("Erro: marque pelo menos um item em 'Tipo de mudanca' no template de PR.")
+              sys.exit(1)
+
+          if code_relevant:
+              required_marks = [
+                  r"- \[[xX]\] Rodei `composer lint`",
+                  r"- \[[xX]\] Rodei `composer test`",
+              ]
+
+              missing = [pattern for pattern in required_marks if not re.search(pattern, body)]
+              if missing:
+                  print("Erro: para mudanca relevante de codigo, marque no PR que executou lint e testes.")
+                  print("Itens obrigatorios: 'Rodei composer lint' e 'Rodei composer test'.")
+                  sys.exit(1)
+
+          print("Checklist do PR validado com sucesso.")
+          PY
