@@ -23,6 +23,9 @@ final class InformacoesNotaFiscal extends DFeElement
     public const string FIELD_NAME = 'infNFe';
 
     public IdentificacaoNF $ide;
+    public Emitente $emit;
+    public Destinatario $dest;
+    public DetalhamentoItem $det;
 
     /** @return array<Validator> */
     protected function tagValueValidators(): array
