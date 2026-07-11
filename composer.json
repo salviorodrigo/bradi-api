@@ -17,6 +17,7 @@
         "lint": "./vendor/bin/duster lint",
         "lint:dirty": "./vendor/bin/duster lint --dirty",
         "lint:fix": "./vendor/bin/duster fix",
+        "history:check": "bash ./scripts/check-history.sh",
         "test": "XDEBUG_MODE=off ./vendor/bin/pest",
         "test:ci": "XDEBUG_MODE=off ./vendor/bin/pest --parallel",
         "test:coverage": "XDEBUG_MODE=coverage php -d memory_limit=1024M ./vendor/bin/pest --coverage --coverage-html=./.coverage",

@@ -25,6 +25,10 @@ Se a mudanca afetar multiplos modulos ou risco mais alto:
 
 - composer test:ci
 
+Validacao recomendada para governanca de historico:
+
+- composer history:check
+
 ## Convencao de commit
 
 Formato:

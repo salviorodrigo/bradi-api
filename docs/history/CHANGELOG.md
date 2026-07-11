@@ -14,6 +14,20 @@ Guia de uso: consulte `docs/history/README.md`.
 
 ---
 
+## 2026-07-11
+
+### Process
+
+- Escopo: Governanca
+- Descricao: Adicionado check local de historico via script para validar mudanca relevante de codigo sem atualizacao de CHANGELOG/ADR.
+- Arquivos:
+  - `scripts/check-history.sh`
+  - `composer.json`
+  - `CONTRIBUTING.md`
+  - `.github/workflows/quality-checks.yml`
+- Impacto: reduz risco de merge sem rastreabilidade de historico e alinha validacao manual local ao gate de PR.
+- Evidencia: `composer history:check`, pipeline de CI para `composer lint` e `composer test:ci` em PR/push.
+
 ## 2026-07-10
 
 ### Added
