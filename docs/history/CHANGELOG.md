@@ -16,6 +16,16 @@ Guia de uso: consulte `docs/history/README.md`.
 
 ## 2026-07-11
 
+### Added
+
+- Escopo: Governanca/Skills
+- Descricao: Criada a skill invocavel `test-fix-workflow` em `.github/skills/` e exposto o slash command correspondente com acessos explicitos para leitura, edicao e validacao do fluxo de correcao da primeira falha.
+- Arquivos:
+  - `.github/skills/test-fix-workflow/SKILL.md`
+  - `.github/prompts/test-fix-workflow.prompt.md`
+- Impacto: padroniza a invocacao do fluxo assistido diretamente pelo chat e reduz falhas por falta de ferramentas disponiveis durante a execucao.
+- Evidencia: validacao estrutural dos arquivos de customizacao e alinhamento ao ADR-0002.
+
 ### Docs
 
 - Escopo: Governanca/Skills
