@@ -22,6 +22,8 @@ final class InformacoesNotaFiscal extends DFeElement
 {
     public const string FIELD_NAME = 'infNFe';
 
+    public IdentificacaoNF $ide;
+
     /** @return array<Validator> */
     protected function tagValueValidators(): array
     {
