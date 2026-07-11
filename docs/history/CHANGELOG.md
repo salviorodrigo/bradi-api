@@ -16,6 +16,16 @@ Guia de uso: consulte `docs/history/README.md`.
 
 ## 2026-07-11
 
+### Docs
+
+- Escopo: Governanca/Projeto
+- Descricao: Adicionados o arquivo de licenca do projeto e um historico dedicado para rastrear alteracoes de namespace raiz e convencoes relacionadas.
+- Arquivos:
+  - `LICENSE`
+  - `docs/history/NAMESPACE_HISTORY.md`
+- Impacto: melhora a conformidade documental do repositorio e cria rastreabilidade explicita para futuras migracoes de namespace.
+- Evidencia: licenca alinhada ao `composer.json` (`GPL-3.0-only`) e baseline inicial do namespace `BradiApi\\` documentado no historico.
+
 ### Added
 
 - Escopo: Governanca/Skills
