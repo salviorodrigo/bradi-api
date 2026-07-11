@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-use BradiNfeApi\Domain\Xml\ValueObjects\Attribute;
-use BradiNfeApi\Domain\Xml\ValueObjects\Element;
-use BradiNfeApi\Tests\Doubles\Domain\Common\FakeValidationService;
-use BradiNfeApi\Tests\TestCase;
+use BradiApi\Domain\Xml\ValueObjects\Attribute;
+use BradiApi\Domain\Xml\ValueObjects\Element;
+use BradiApi\Tests\Doubles\Domain\Common\FakeValidationService;
+use BradiApi\Tests\TestCase;
 
 describe('Element', function () {
     describe('::__toString()', function () {

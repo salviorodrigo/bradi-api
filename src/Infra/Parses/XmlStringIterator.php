@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace BradiNfeApi\Infra\Parses;
+namespace BradiApi\Infra\Parses;
 
-use BradiNfeApi\Domain\Common\Protocols\ApiError;
-use BradiNfeApi\Domain\Common\Validators\IsXmlStringValidator;
-use BradiNfeApi\Domain\Common\ValueObjects\Result;
-use BradiNfeApi\Domain\Xml\Protocols\XmlIterator;
+use BradiApi\Domain\Common\Protocols\ApiError;
+use BradiApi\Domain\Common\Validators\IsXmlStringValidator;
+use BradiApi\Domain\Common\ValueObjects\Result;
+use BradiApi\Domain\Xml\Protocols\XmlIterator;
 use Exception;
 
 final class XmlStringIterator implements XmlIterator

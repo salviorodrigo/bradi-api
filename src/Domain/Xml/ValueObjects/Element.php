@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace BradiNfeApi\Domain\Xml\ValueObjects;
+namespace BradiApi\Domain\Xml\ValueObjects;
 
-use BradiNfeApi\Domain\Common\ValueObjects\Result;
-use BradiNfeApi\Domain\Xml\Protocols\XmlIterator;
-use BradiNfeApi\Infra\Parses\XmlStringIterator;
+use BradiApi\Domain\Common\ValueObjects\Result;
+use BradiApi\Domain\Xml\Protocols\XmlIterator;
+use BradiApi\Infra\Parses\XmlStringIterator;
 
 class Element
 {

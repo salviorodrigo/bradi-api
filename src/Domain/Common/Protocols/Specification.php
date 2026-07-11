@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace BradiNfeApi\Domain\Common\Protocols;
+namespace BradiApi\Domain\Common\Protocols;
 
 interface Specification
 {

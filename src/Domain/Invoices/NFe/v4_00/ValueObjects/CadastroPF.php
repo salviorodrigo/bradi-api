@@ -11,11 +11,11 @@ declare(strict_types=1);
  * OBS:
  */
 
-namespace BradiNfeApi\Domain\Invoices\NFe\v4_00\ValueObjects;
+namespace BradiApi\Domain\Invoices\NFe\v4_00\ValueObjects;
 
-use BradiNfeApi\Domain\Common\Validators\IsCPFValidator;
-use BradiNfeApi\Domain\Invoices\Templates\DFeElement;
-use BradiNfeApi\Domain\Invoices\Traits\ValidatesDFeValueElement;
+use BradiApi\Domain\Common\Validators\IsCPFValidator;
+use BradiApi\Domain\Invoices\Templates\DFeElement;
+use BradiApi\Domain\Invoices\Traits\ValidatesDFeValueElement;
 
 final class CadastroPF extends DFeElement
 {

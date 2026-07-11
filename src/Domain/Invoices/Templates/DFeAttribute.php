@@ -2,17 +2,17 @@
 
 declare(strict_types=1);
 
-namespace BradiNfeApi\Domain\Invoices\Templates;
+namespace BradiApi\Domain\Invoices\Templates;
 
-use BradiNfeApi\Domain\Common\Protocols\ApiError;
-use BradiNfeApi\Domain\Common\Protocols\ValidationService as ValidationServiceProtocol;
-use BradiNfeApi\Domain\Common\Protocols\Validator;
-use BradiNfeApi\Domain\Common\Services\ValidationService;
-use BradiNfeApi\Domain\Common\ValueObjects\Result;
-use BradiNfeApi\Domain\Invoices\Validators\RequiredAttributeValidator;
-use BradiNfeApi\Domain\Invoices\Validators\RootTagValidator;
-use BradiNfeApi\Domain\Xml\ValueObjects\Attribute;
-use BradiNfeApi\Domain\Xml\ValueObjects\Element;
+use BradiApi\Domain\Common\Protocols\ApiError;
+use BradiApi\Domain\Common\Protocols\ValidationService as ValidationServiceProtocol;
+use BradiApi\Domain\Common\Protocols\Validator;
+use BradiApi\Domain\Common\Services\ValidationService;
+use BradiApi\Domain\Common\ValueObjects\Result;
+use BradiApi\Domain\Invoices\Validators\RequiredAttributeValidator;
+use BradiApi\Domain\Invoices\Validators\RootTagValidator;
+use BradiApi\Domain\Xml\ValueObjects\Attribute;
+use BradiApi\Domain\Xml\ValueObjects\Element;
 use RuntimeException;
 
 abstract class DFeAttribute

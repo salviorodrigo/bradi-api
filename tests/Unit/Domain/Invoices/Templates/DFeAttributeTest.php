@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-use BradiNfeApi\Domain\Common\Protocols\ApiError;
-use BradiNfeApi\Domain\Common\ValueObjects\Result;
-use BradiNfeApi\Domain\Xml\ValueObjects\Attribute;
-use BradiNfeApi\Tests\Doubles\Domain\Invoices\NFe\FakeDFeAttribute;
-use BradiNfeApi\Tests\TestCase;
+use BradiApi\Domain\Common\Protocols\ApiError;
+use BradiApi\Domain\Common\ValueObjects\Result;
+use BradiApi\Domain\Xml\ValueObjects\Attribute;
+use BradiApi\Tests\Doubles\Domain\Invoices\NFe\FakeDFeAttribute;
+use BradiApi\Tests\TestCase;
 
 describe('DFeAttribute', function () {
     beforeEach(function () {

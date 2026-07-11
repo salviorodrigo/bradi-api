@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace BradiNfeApi\Tests\Datasets;
+namespace BradiApi\Tests\Datasets;
 
-use BradiNfeApi\Tests\Datasets\Protocols\Dataset;
+use BradiApi\Tests\Datasets\Protocols\Dataset;
 use stdClass;
 
 class NonStringable extends Dataset

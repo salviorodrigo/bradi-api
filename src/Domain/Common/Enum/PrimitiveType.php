@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace BradiNfeApi\Domain\Common\Enum;
+namespace BradiApi\Domain\Common\Enum;
 
 enum PrimitiveType: string
 {

@@ -15,15 +15,15 @@ declare(strict_types=1);
  * Informar ‘9999999 ‘para operações com o exterior.
  */
 
-namespace BradiNfeApi\Domain\Invoices\NFe\v4_00\ValueObjects;
+namespace BradiApi\Domain\Invoices\NFe\v4_00\ValueObjects;
 
-use BradiNfeApi\Domain\Common\Validators\IsNumericValidator;
-use BradiNfeApi\Domain\Common\Validators\NotNullValidator;
-use BradiNfeApi\Domain\Common\Validators\StringLengthValidator;
-use BradiNfeApi\Domain\Invoices\Templates\DFeElement;
-use BradiNfeApi\Domain\Invoices\Traits\ValidatesDFeValueElement;
-use BradiNfeApi\Domain\Invoices\Validators\IsCodigoMunicipioUFPrefixValidator;
-use BradiNfeApi\Domain\Invoices\Validators\IsCodigoMunicipioValidator;
+use BradiApi\Domain\Common\Validators\IsNumericValidator;
+use BradiApi\Domain\Common\Validators\NotNullValidator;
+use BradiApi\Domain\Common\Validators\StringLengthValidator;
+use BradiApi\Domain\Invoices\Templates\DFeElement;
+use BradiApi\Domain\Invoices\Traits\ValidatesDFeValueElement;
+use BradiApi\Domain\Invoices\Validators\IsCodigoMunicipioUFPrefixValidator;
+use BradiApi\Domain\Invoices\Validators\IsCodigoMunicipioValidator;
 
 class CodigoMunicipio extends DFeElement
 {

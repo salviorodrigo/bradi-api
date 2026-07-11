@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace BradiNfeApi\Domain\Common\ValueObjects;
+namespace BradiApi\Domain\Common\ValueObjects;
 
-use BradiNfeApi\Domain\Common\Protocols\ValueObject;
-use BradiNfeApi\Domain\Common\Services\ValidationService;
-use BradiNfeApi\Domain\Common\Validators\IsStringValidator;
-use BradiNfeApi\Domain\Common\Validators\NotNullValidator;
+use BradiApi\Domain\Common\Protocols\ValueObject;
+use BradiApi\Domain\Common\Services\ValidationService;
+use BradiApi\Domain\Common\Validators\IsStringValidator;
+use BradiApi\Domain\Common\Validators\NotNullValidator;
 
 final class Id extends ValueObject
 {

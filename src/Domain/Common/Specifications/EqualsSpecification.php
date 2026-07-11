@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace BradiNfeApi\Domain\Common\Specifications;
+namespace BradiApi\Domain\Common\Specifications;
 
-use BradiNfeApi\Domain\Common\Protocols\Specification;
-use BradiNfeApi\Domain\Common\Traits\SpecificationComposer;
+use BradiApi\Domain\Common\Protocols\Specification;
+use BradiApi\Domain\Common\Traits\SpecificationComposer;
 
 final class EqualsSpecification implements Specification
 {

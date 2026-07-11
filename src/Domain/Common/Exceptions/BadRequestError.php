@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace BradiNfeApi\Domain\Common\Exceptions;
+namespace BradiApi\Domain\Common\Exceptions;
 
-use BradiNfeApi\Domain\Common\Protocols\ApiError;
-use BradiNfeApi\Domain\Common\ValueObjects\Detail;
+use BradiApi\Domain\Common\Protocols\ApiError;
+use BradiApi\Domain\Common\ValueObjects\Detail;
 
 final class BadRequestError extends ApiError
 {

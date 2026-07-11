@@ -14,17 +14,17 @@ declare(strict_types=1);
  * aliquota e valor do ICMS da operacao propria.
  */
 
-namespace BradiNfeApi\Domain\Invoices\NFe\v4_00;
+namespace BradiApi\Domain\Invoices\NFe\v4_00;
 
-use BradiNfeApi\Domain\Invoices\NFe\v4_00\ValueObjects\AliquotaICMS;
-use BradiNfeApi\Domain\Invoices\NFe\v4_00\ValueObjects\CodigoSituacaoTributaria;
-use BradiNfeApi\Domain\Invoices\NFe\v4_00\ValueObjects\IndOrigem;
-use BradiNfeApi\Domain\Invoices\NFe\v4_00\ValueObjects\ModalidadeBC;
-use BradiNfeApi\Domain\Invoices\NFe\v4_00\ValueObjects\ValorBC;
-use BradiNfeApi\Domain\Invoices\NFe\v4_00\ValueObjects\ValorICMS;
-use BradiNfeApi\Domain\Invoices\Templates\DFeElement;
-use BradiNfeApi\Domain\Invoices\Traits\ValidatesDFeGroupElement;
-use BradiNfeApi\Domain\Invoices\Validators\RequiredTagValidator;
+use BradiApi\Domain\Invoices\NFe\v4_00\ValueObjects\AliquotaICMS;
+use BradiApi\Domain\Invoices\NFe\v4_00\ValueObjects\CodigoSituacaoTributaria;
+use BradiApi\Domain\Invoices\NFe\v4_00\ValueObjects\IndOrigem;
+use BradiApi\Domain\Invoices\NFe\v4_00\ValueObjects\ModalidadeBC;
+use BradiApi\Domain\Invoices\NFe\v4_00\ValueObjects\ValorBC;
+use BradiApi\Domain\Invoices\NFe\v4_00\ValueObjects\ValorICMS;
+use BradiApi\Domain\Invoices\Templates\DFeElement;
+use BradiApi\Domain\Invoices\Traits\ValidatesDFeGroupElement;
+use BradiApi\Domain\Invoices\Validators\RequiredTagValidator;
 
 final class Icms00 extends DFeElement
 {

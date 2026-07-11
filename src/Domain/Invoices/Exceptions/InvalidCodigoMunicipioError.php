@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace BradiNfeApi\Domain\Invoices\Exceptions;
+namespace BradiApi\Domain\Invoices\Exceptions;
 
-use BradiNfeApi\Domain\Common\Protocols\UnprocessableEntityError;
-use BradiNfeApi\Domain\Common\ValueObjects\Detail;
-use BradiNfeApi\Domain\Common\ValueObjects\Error;
-use BradiNfeApi\Domain\Common\ValueObjects\Input;
+use BradiApi\Domain\Common\Protocols\UnprocessableEntityError;
+use BradiApi\Domain\Common\ValueObjects\Detail;
+use BradiApi\Domain\Common\ValueObjects\Error;
+use BradiApi\Domain\Common\ValueObjects\Input;
 
 final class InvalidCodigoMunicipioError extends UnprocessableEntityError
 {

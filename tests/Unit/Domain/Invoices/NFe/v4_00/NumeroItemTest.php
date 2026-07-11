@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-use BradiNfeApi\Domain\Common\Protocols\ApiError;
-use BradiNfeApi\Domain\Common\ValueObjects\Result;
-use BradiNfeApi\Domain\Invoices\NFe\v4_00\NumeroItem;
-use BradiNfeApi\Domain\Xml\ValueObjects\Attribute;
-use BradiNfeApi\Tests\TestCase;
+use BradiApi\Domain\Common\Protocols\ApiError;
+use BradiApi\Domain\Common\ValueObjects\Result;
+use BradiApi\Domain\Invoices\NFe\v4_00\NumeroItem;
+use BradiApi\Domain\Xml\ValueObjects\Attribute;
+use BradiApi\Tests\TestCase;
 
 describe('NumeroItem', function () {
     beforeEach(function () {

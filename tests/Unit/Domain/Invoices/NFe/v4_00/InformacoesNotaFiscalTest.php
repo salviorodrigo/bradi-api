@@ -2,17 +2,17 @@
 
 declare(strict_types=1);
 
-use BradiNfeApi\Domain\Invoices\NFe\v4_00\Destinatario;
-use BradiNfeApi\Domain\Invoices\NFe\v4_00\DetalhamentoItem;
-use BradiNfeApi\Domain\Invoices\NFe\v4_00\Emitente;
-use BradiNfeApi\Domain\Invoices\NFe\v4_00\IdentificacaoNF;
-use BradiNfeApi\Domain\Invoices\NFe\v4_00\InformacoesNotaFiscal;
-use BradiNfeApi\Domain\Invoices\Templates\DFeElement;
+use BradiApi\Domain\Invoices\NFe\v4_00\Destinatario;
+use BradiApi\Domain\Invoices\NFe\v4_00\DetalhamentoItem;
+use BradiApi\Domain\Invoices\NFe\v4_00\Emitente;
+use BradiApi\Domain\Invoices\NFe\v4_00\IdentificacaoNF;
+use BradiApi\Domain\Invoices\NFe\v4_00\InformacoesNotaFiscal;
+use BradiApi\Domain\Invoices\Templates\DFeElement;
 
 describe('InformacoesNotaFiscal', function () {
     describe('::class', function () {
         test('Should succeed if InformacoesNotaFiscal is declared', function () {
-            expect(class_exists('BradiNfeApi\Domain\Invoices\NFe\v4_00\InformacoesNotaFiscal'))->toBeTrue();
+            expect(class_exists('BradiApi\Domain\Invoices\NFe\v4_00\InformacoesNotaFiscal'))->toBeTrue();
         });
 
         test('Should succeed if InformacoesNotaFiscal extends DFeElement', function () {

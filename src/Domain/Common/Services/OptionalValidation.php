@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace BradiNfeApi\Domain\Common\Services;
+namespace BradiApi\Domain\Common\Services;
 
-use BradiNfeApi\Domain\Common\Protocols\ValidationService;
-use BradiNfeApi\Domain\Common\Protocols\Validator;
-use BradiNfeApi\Domain\Common\ValueObjects\Result;
+use BradiApi\Domain\Common\Protocols\ValidationService;
+use BradiApi\Domain\Common\Protocols\Validator;
+use BradiApi\Domain\Common\ValueObjects\Result;
 
 final class OptionalValidation implements ValidationService
 {

@@ -12,22 +12,22 @@ declare(strict_types=1);
  * OBS:
  */
 
-namespace BradiNfeApi\Domain\Invoices\NFe\v4_00;
+namespace BradiApi\Domain\Invoices\NFe\v4_00;
 
-use BradiNfeApi\Domain\Invoices\NFe\v4_00\ValueObjects\Bairro;
-use BradiNfeApi\Domain\Invoices\NFe\v4_00\ValueObjects\CodigoMunicipio;
-use BradiNfeApi\Domain\Invoices\NFe\v4_00\ValueObjects\CodigoPais;
-use BradiNfeApi\Domain\Invoices\NFe\v4_00\ValueObjects\CodigoPostal;
-use BradiNfeApi\Domain\Invoices\NFe\v4_00\ValueObjects\ComplementoEndereco;
-use BradiNfeApi\Domain\Invoices\NFe\v4_00\ValueObjects\Logradouro;
-use BradiNfeApi\Domain\Invoices\NFe\v4_00\ValueObjects\NomeMunicipio;
-use BradiNfeApi\Domain\Invoices\NFe\v4_00\ValueObjects\NomePais;
-use BradiNfeApi\Domain\Invoices\NFe\v4_00\ValueObjects\NumeroEndereco;
-use BradiNfeApi\Domain\Invoices\NFe\v4_00\ValueObjects\SiglaUF;
-use BradiNfeApi\Domain\Invoices\NFe\v4_00\ValueObjects\Telefone;
-use BradiNfeApi\Domain\Invoices\Templates\DFeElement;
-use BradiNfeApi\Domain\Invoices\Traits\ValidatesDFeGroupElement;
-use BradiNfeApi\Domain\Invoices\Validators\RequiredTagValidator;
+use BradiApi\Domain\Invoices\NFe\v4_00\ValueObjects\Bairro;
+use BradiApi\Domain\Invoices\NFe\v4_00\ValueObjects\CodigoMunicipio;
+use BradiApi\Domain\Invoices\NFe\v4_00\ValueObjects\CodigoPais;
+use BradiApi\Domain\Invoices\NFe\v4_00\ValueObjects\CodigoPostal;
+use BradiApi\Domain\Invoices\NFe\v4_00\ValueObjects\ComplementoEndereco;
+use BradiApi\Domain\Invoices\NFe\v4_00\ValueObjects\Logradouro;
+use BradiApi\Domain\Invoices\NFe\v4_00\ValueObjects\NomeMunicipio;
+use BradiApi\Domain\Invoices\NFe\v4_00\ValueObjects\NomePais;
+use BradiApi\Domain\Invoices\NFe\v4_00\ValueObjects\NumeroEndereco;
+use BradiApi\Domain\Invoices\NFe\v4_00\ValueObjects\SiglaUF;
+use BradiApi\Domain\Invoices\NFe\v4_00\ValueObjects\Telefone;
+use BradiApi\Domain\Invoices\Templates\DFeElement;
+use BradiApi\Domain\Invoices\Traits\ValidatesDFeGroupElement;
+use BradiApi\Domain\Invoices\Validators\RequiredTagValidator;
 
 final class EnderecoDestinatario extends DFeElement
 {

@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace BradiNfeApi\Domain\Common\Validators;
+namespace BradiApi\Domain\Common\Validators;
 
-use BradiNfeApi\Domain\Common\Protocols\Validator;
-use BradiNfeApi\Domain\Common\ValueObjects\Result;
+use BradiApi\Domain\Common\Protocols\Validator;
+use BradiApi\Domain\Common\ValueObjects\Result;
 use OutOfRangeException;
 
 final class MaxValueValidator implements Validator

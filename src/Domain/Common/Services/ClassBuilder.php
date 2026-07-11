@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace BradiNfeApi\Domain\Common\Services;
+namespace BradiApi\Domain\Common\Services;
 
-use BradiNfeApi\Domain\Common\ValueObjects\PhpVar;
+use BradiApi\Domain\Common\ValueObjects\PhpVar;
 use InvalidArgumentException;
 use ReflectionClass;
 

@@ -12,17 +12,17 @@ declare(strict_types=1);
  * OBS:
  */
 
-namespace BradiNfeApi\Domain\Invoices\NFe\v4_00;
+namespace BradiApi\Domain\Invoices\NFe\v4_00;
 
-use BradiNfeApi\Domain\Invoices\NFe\v4_00\ValueObjects\CadastroPF;
-use BradiNfeApi\Domain\Invoices\NFe\v4_00\ValueObjects\CadastroPJ;
-use BradiNfeApi\Domain\Invoices\NFe\v4_00\ValueObjects\InscricaoEstadual;
-use BradiNfeApi\Domain\Invoices\NFe\v4_00\ValueObjects\Nome;
-use BradiNfeApi\Domain\Invoices\NFe\v4_00\ValueObjects\NomeFantasia;
-use BradiNfeApi\Domain\Invoices\Templates\DFeElement;
-use BradiNfeApi\Domain\Invoices\Traits\ValidatesDFeGroupElement;
-use BradiNfeApi\Domain\Invoices\Validators\AtLeastOneTagValidator;
-use BradiNfeApi\Domain\Invoices\Validators\RequiredTagValidator;
+use BradiApi\Domain\Invoices\NFe\v4_00\ValueObjects\CadastroPF;
+use BradiApi\Domain\Invoices\NFe\v4_00\ValueObjects\CadastroPJ;
+use BradiApi\Domain\Invoices\NFe\v4_00\ValueObjects\InscricaoEstadual;
+use BradiApi\Domain\Invoices\NFe\v4_00\ValueObjects\Nome;
+use BradiApi\Domain\Invoices\NFe\v4_00\ValueObjects\NomeFantasia;
+use BradiApi\Domain\Invoices\Templates\DFeElement;
+use BradiApi\Domain\Invoices\Traits\ValidatesDFeGroupElement;
+use BradiApi\Domain\Invoices\Validators\AtLeastOneTagValidator;
+use BradiApi\Domain\Invoices\Validators\RequiredTagValidator;
 
 final class Emitente extends DFeElement
 {

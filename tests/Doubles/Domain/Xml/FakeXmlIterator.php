@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace BradiNfeApi\Tests\Doubles\Domain\Xml;
+namespace BradiApi\Tests\Doubles\Domain\Xml;
 
-use BradiNfeApi\Domain\Common\ValueObjects\Result;
-use BradiNfeApi\Domain\Xml\Protocols\XmlIterator;
+use BradiApi\Domain\Common\ValueObjects\Result;
+use BradiApi\Domain\Xml\Protocols\XmlIterator;
 
 final class FakeXmlIterator implements XmlIterator
 {

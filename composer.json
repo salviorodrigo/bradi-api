@@ -1,16 +1,15 @@
 {
-    "name": "salviorodrigo/bradi-nfe-api",
-    "description": "This is a module of Bradi software responsible to work with brazilian invoices (NFe and NFCe)",
+    "name": "salviorodrigo/bradi-api",
+    "description": "Brazilian Documents Invoices Management System",
     "type": "project",
-    
     "autoload": {
         "psr-4": {
-            "BradiNfeApi\\": [ "src/" ]
+            "BradiApi\\": [ "src/" ]
         }
     },
     "autoload-dev": {
         "psr-4": {
-            "BradiNfeApi\\Tests\\": [ "tests/" ]
+            "BradiApi\\Tests\\": [ "tests/" ]
         }
     },
     "scripts": {

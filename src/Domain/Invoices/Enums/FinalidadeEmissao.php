@@ -7,7 +7,7 @@ declare(strict_types=1);
  * acordo com  MOC 7.0, campo finNFe.
  */
 
-namespace BradiNfeApi\Domain\Invoices\Enums;
+namespace BradiApi\Domain\Invoices\Enums;
 
 enum FinalidadeEmissao: string
 {

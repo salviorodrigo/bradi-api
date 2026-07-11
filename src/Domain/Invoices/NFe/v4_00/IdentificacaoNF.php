@@ -12,25 +12,25 @@ declare(strict_types=1);
  * OBS:
  */
 
-namespace BradiNfeApi\Domain\Invoices\NFe\v4_00;
+namespace BradiApi\Domain\Invoices\NFe\v4_00;
 
-use BradiNfeApi\Domain\Invoices\NFe\v4_00\ValueObjects\CodigoMunicipioFatoGerador;
-use BradiNfeApi\Domain\Invoices\NFe\v4_00\ValueObjects\CodigoNF;
-use BradiNfeApi\Domain\Invoices\NFe\v4_00\ValueObjects\CodigoUF;
-use BradiNfeApi\Domain\Invoices\NFe\v4_00\ValueObjects\DataHoraEmissao;
-use BradiNfeApi\Domain\Invoices\NFe\v4_00\ValueObjects\FinalidadeNF;
-use BradiNfeApi\Domain\Invoices\NFe\v4_00\ValueObjects\IdDestino;
-use BradiNfeApi\Domain\Invoices\NFe\v4_00\ValueObjects\IndFinal;
-use BradiNfeApi\Domain\Invoices\NFe\v4_00\ValueObjects\ModeloDFe;
-use BradiNfeApi\Domain\Invoices\NFe\v4_00\ValueObjects\NaturezaOperacao;
-use BradiNfeApi\Domain\Invoices\NFe\v4_00\ValueObjects\NumeroNF;
-use BradiNfeApi\Domain\Invoices\NFe\v4_00\ValueObjects\Serie;
-use BradiNfeApi\Domain\Invoices\NFe\v4_00\ValueObjects\TipoAmbiente;
-use BradiNfeApi\Domain\Invoices\NFe\v4_00\ValueObjects\TipoEmissao;
-use BradiNfeApi\Domain\Invoices\NFe\v4_00\ValueObjects\TipoNF;
-use BradiNfeApi\Domain\Invoices\Templates\DFeElement;
-use BradiNfeApi\Domain\Invoices\Traits\ValidatesDFeGroupElement;
-use BradiNfeApi\Domain\Invoices\Validators\RequiredTagValidator;
+use BradiApi\Domain\Invoices\NFe\v4_00\ValueObjects\CodigoMunicipioFatoGerador;
+use BradiApi\Domain\Invoices\NFe\v4_00\ValueObjects\CodigoNF;
+use BradiApi\Domain\Invoices\NFe\v4_00\ValueObjects\CodigoUF;
+use BradiApi\Domain\Invoices\NFe\v4_00\ValueObjects\DataHoraEmissao;
+use BradiApi\Domain\Invoices\NFe\v4_00\ValueObjects\FinalidadeNF;
+use BradiApi\Domain\Invoices\NFe\v4_00\ValueObjects\IdDestino;
+use BradiApi\Domain\Invoices\NFe\v4_00\ValueObjects\IndFinal;
+use BradiApi\Domain\Invoices\NFe\v4_00\ValueObjects\ModeloDFe;
+use BradiApi\Domain\Invoices\NFe\v4_00\ValueObjects\NaturezaOperacao;
+use BradiApi\Domain\Invoices\NFe\v4_00\ValueObjects\NumeroNF;
+use BradiApi\Domain\Invoices\NFe\v4_00\ValueObjects\Serie;
+use BradiApi\Domain\Invoices\NFe\v4_00\ValueObjects\TipoAmbiente;
+use BradiApi\Domain\Invoices\NFe\v4_00\ValueObjects\TipoEmissao;
+use BradiApi\Domain\Invoices\NFe\v4_00\ValueObjects\TipoNF;
+use BradiApi\Domain\Invoices\Templates\DFeElement;
+use BradiApi\Domain\Invoices\Traits\ValidatesDFeGroupElement;
+use BradiApi\Domain\Invoices\Validators\RequiredTagValidator;
 
 final class IdentificacaoNF extends DFeElement
 {

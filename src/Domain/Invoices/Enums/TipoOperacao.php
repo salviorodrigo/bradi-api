@@ -7,7 +7,7 @@ declare(strict_types=1);
  * acordo com  MOC 7.0, campo idDest.
  */
 
-namespace BradiNfeApi\Domain\Invoices\Enums;
+namespace BradiApi\Domain\Invoices\Enums;
 
 enum TipoOperacao: string
 {

@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace BradiNfeApi\Tests\Doubles\Domain\Invoices\NFe;
+namespace BradiApi\Tests\Doubles\Domain\Invoices\NFe;
 
-use BradiNfeApi\Domain\Common\Protocols\Validator;
-use BradiNfeApi\Domain\Invoices\Templates\DFeAttribute;
+use BradiApi\Domain\Common\Protocols\Validator;
+use BradiApi\Domain\Invoices\Templates\DFeAttribute;
 
 final class FakeDFeAttribute extends DFeAttribute
 {

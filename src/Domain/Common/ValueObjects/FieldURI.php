@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace BradiNfeApi\Domain\Common\ValueObjects;
+namespace BradiApi\Domain\Common\ValueObjects;
 
 use Exception;
 use InvalidArgumentException;

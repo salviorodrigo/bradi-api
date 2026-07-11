@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace BradiNfeApi\Domain\Invoices\Templates;
+namespace BradiApi\Domain\Invoices\Templates;
 
-use BradiNfeApi\Domain\Common\Protocols\ApiError;
-use BradiNfeApi\Domain\Common\ValueObjects\Result;
-use BradiNfeApi\Domain\Xml\ValueObjects\Element;
-use BradiNfeApi\Domain\Xml\ValueObjects\ElementList;
+use BradiApi\Domain\Common\Protocols\ApiError;
+use BradiApi\Domain\Common\ValueObjects\Result;
+use BradiApi\Domain\Xml\ValueObjects\Element;
+use BradiApi\Domain\Xml\ValueObjects\ElementList;
 use Exception;
 
 abstract class DFeElementCollection

@@ -2,21 +2,21 @@
 
 declare(strict_types=1);
 
-namespace BradiNfeApi\Tests\Doubles\Factories;
+namespace BradiApi\Tests\Doubles\Factories;
 
-use BradiNfeApi\Tests\Datasets\Arrays;
-use BradiNfeApi\Tests\Datasets\Booleans;
-use BradiNfeApi\Tests\Datasets\CNPJs;
-use BradiNfeApi\Tests\Datasets\CPFs;
-use BradiNfeApi\Tests\Datasets\DFes;
-use BradiNfeApi\Tests\Datasets\Emails;
-use BradiNfeApi\Tests\Datasets\Empties;
-use BradiNfeApi\Tests\Datasets\Exceptions;
-use BradiNfeApi\Tests\Datasets\NonStringable;
-use BradiNfeApi\Tests\Datasets\Numerics;
-use BradiNfeApi\Tests\Datasets\Strings;
-use BradiNfeApi\Tests\Datasets\Uuids;
-use BradiNfeApi\Tests\Datasets\Xmls;
+use BradiApi\Tests\Datasets\Arrays;
+use BradiApi\Tests\Datasets\Booleans;
+use BradiApi\Tests\Datasets\CNPJs;
+use BradiApi\Tests\Datasets\CPFs;
+use BradiApi\Tests\Datasets\DFes;
+use BradiApi\Tests\Datasets\Emails;
+use BradiApi\Tests\Datasets\Empties;
+use BradiApi\Tests\Datasets\Exceptions;
+use BradiApi\Tests\Datasets\NonStringable;
+use BradiApi\Tests\Datasets\Numerics;
+use BradiApi\Tests\Datasets\Strings;
+use BradiApi\Tests\Datasets\Uuids;
+use BradiApi\Tests\Datasets\Xmls;
 use InvalidArgumentException;
 
 final class DatasetFactory

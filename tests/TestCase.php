@@ -1,6 +1,6 @@
 <?php
 
-namespace BradiNfeApi\Tests;
+namespace BradiApi\Tests;
 
 use PHPUnit\Framework\TestCase as BaseTestCase;
 

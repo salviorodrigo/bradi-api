@@ -11,13 +11,13 @@ declare(strict_types=1);
  * OBS:
  */
 
-namespace BradiNfeApi\Domain\Invoices\NFe\v4_00\ValueObjects;
+namespace BradiApi\Domain\Invoices\NFe\v4_00\ValueObjects;
 
-use BradiNfeApi\Domain\Common\Validators\MaxStringLengthValidator;
-use BradiNfeApi\Domain\Common\Validators\NotNullValidator;
-use BradiNfeApi\Domain\Common\Validators\TextFormatValidator;
-use BradiNfeApi\Domain\Invoices\Templates\DFeElement;
-use BradiNfeApi\Domain\Invoices\Traits\ValidatesDFeValueElement;
+use BradiApi\Domain\Common\Validators\MaxStringLengthValidator;
+use BradiApi\Domain\Common\Validators\NotNullValidator;
+use BradiApi\Domain\Common\Validators\TextFormatValidator;
+use BradiApi\Domain\Invoices\Templates\DFeElement;
+use BradiApi\Domain\Invoices\Traits\ValidatesDFeValueElement;
 
 final class DescricaoProduto extends DFeElement
 {

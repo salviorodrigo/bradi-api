@@ -11,13 +11,13 @@ declare(strict_types=1);
  * OBS:
  */
 
-namespace BradiNfeApi\Domain\Invoices\NFe\v4_00\ValueObjects;
+namespace BradiApi\Domain\Invoices\NFe\v4_00\ValueObjects;
 
-use BradiNfeApi\Domain\Common\Validators\NotNullValidator;
-use BradiNfeApi\Domain\Common\Validators\StringLengthValidator;
-use BradiNfeApi\Domain\Invoices\Templates\DFeElement;
-use BradiNfeApi\Domain\Invoices\Traits\ValidatesDFeValueElement;
-use BradiNfeApi\Domain\Invoices\Validators\IsSiglaUnidadeFederativaValidator;
+use BradiApi\Domain\Common\Validators\NotNullValidator;
+use BradiApi\Domain\Common\Validators\StringLengthValidator;
+use BradiApi\Domain\Invoices\Templates\DFeElement;
+use BradiApi\Domain\Invoices\Traits\ValidatesDFeValueElement;
+use BradiApi\Domain\Invoices\Validators\IsSiglaUnidadeFederativaValidator;
 
 final class SiglaUF extends DFeElement
 {

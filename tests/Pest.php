@@ -11,7 +11,7 @@ require __DIR__ . '/../vendor/autoload.php';
 |
 */
 
-pest()->extend(\BradiNfeApi\Tests\TestCase::class)->in('Feature', 'Unit');
+pest()->extend(\BradiApi\Tests\TestCase::class)->in('Feature', 'Unit');
 
 /*
 |--------------------------------------------------------------------------
@@ -41,5 +41,5 @@ pest()->extend(\BradiNfeApi\Tests\TestCase::class)->in('Feature', 'Unit');
 
 function datasets(string ...$keyStrings): array
 {
-    return \BradiNfeApi\Tests\Doubles\Factories\DatasetFactory::generateByKeyStrings(...$keyStrings);
+    return \BradiApi\Tests\Doubles\Factories\DatasetFactory::generateByKeyStrings(...$keyStrings);
 }

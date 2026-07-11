@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace BradiNfeApi\Domain\Invoices\Validators;
+namespace BradiApi\Domain\Invoices\Validators;
 
-use BradiNfeApi\Domain\Common\Protocols\Validator;
-use BradiNfeApi\Domain\Common\ValueObjects\Result;
-use BradiNfeApi\Domain\Xml\ValueObjects\Element;
+use BradiApi\Domain\Common\Protocols\Validator;
+use BradiApi\Domain\Common\ValueObjects\Result;
+use BradiApi\Domain\Xml\ValueObjects\Element;
 use InvalidArgumentException;
 use UnexpectedValueException;
 

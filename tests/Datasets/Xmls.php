@@ -1,8 +1,8 @@
 <?php
 
-namespace BradiNfeApi\Tests\Datasets;
+namespace BradiApi\Tests\Datasets;
 
-use BradiNfeApi\Tests\Datasets\Protocols\Dataset;
+use BradiApi\Tests\Datasets\Protocols\Dataset;
 
 class Xmls extends Dataset
 {

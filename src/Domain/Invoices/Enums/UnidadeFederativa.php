@@ -8,7 +8,7 @@ declare(strict_types=1);
  * Geral, Tabela de UF, Município e País) de 10 de fevereiro de 2025.
  */
 
-namespace BradiNfeApi\Domain\Invoices\Enums;
+namespace BradiApi\Domain\Invoices\Enums;
 
 enum UnidadeFederativa: string
 {

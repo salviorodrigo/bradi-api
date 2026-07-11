@@ -12,12 +12,12 @@ declare(strict_types=1);
  * OBS:
  */
 
-namespace BradiNfeApi\Domain\Invoices\NFe\v4_00;
+namespace BradiApi\Domain\Invoices\NFe\v4_00;
 
-use BradiNfeApi\Domain\Common\Validators\IsNumericValidator;
-use BradiNfeApi\Domain\Common\Validators\MaxValueValidator;
-use BradiNfeApi\Domain\Common\Validators\MinValueValidator;
-use BradiNfeApi\Domain\Invoices\Templates\DFeAttribute;
+use BradiApi\Domain\Common\Validators\IsNumericValidator;
+use BradiApi\Domain\Common\Validators\MaxValueValidator;
+use BradiApi\Domain\Common\Validators\MinValueValidator;
+use BradiApi\Domain\Invoices\Templates\DFeAttribute;
 
 final class NumeroItem extends DFeAttribute
 {

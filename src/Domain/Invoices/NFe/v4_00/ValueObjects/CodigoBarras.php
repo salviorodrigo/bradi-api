@@ -15,14 +15,14 @@ declare(strict_types=1);
  * GTIN, deve ser informado o literal “SEM GTIN”; (atualizado NT 2017/001)
  */
 
-namespace BradiNfeApi\Domain\Invoices\NFe\v4_00\ValueObjects;
+namespace BradiApi\Domain\Invoices\NFe\v4_00\ValueObjects;
 
-use BradiNfeApi\Domain\Common\Validators\NotNullValidator;
-use BradiNfeApi\Domain\Common\Validators\StringLengthValidator;
-use BradiNfeApi\Domain\Common\Validators\TextFormatValidator;
-use BradiNfeApi\Domain\Invoices\Templates\DFeElement;
-use BradiNfeApi\Domain\Invoices\Traits\ValidatesDFeValueElement;
-use BradiNfeApi\Domain\Invoices\Validators\IsValidCodigoBarrasValidator;
+use BradiApi\Domain\Common\Validators\NotNullValidator;
+use BradiApi\Domain\Common\Validators\StringLengthValidator;
+use BradiApi\Domain\Common\Validators\TextFormatValidator;
+use BradiApi\Domain\Invoices\Templates\DFeElement;
+use BradiApi\Domain\Invoices\Traits\ValidatesDFeValueElement;
+use BradiApi\Domain\Invoices\Validators\IsValidCodigoBarrasValidator;
 
 final class CodigoBarras extends DFeElement
 {

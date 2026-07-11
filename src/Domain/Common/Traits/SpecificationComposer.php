@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace BradiNfeApi\Domain\Common\Traits;
+namespace BradiApi\Domain\Common\Traits;
 
-use BradiNfeApi\Domain\Common\Protocols\Specification;
-use BradiNfeApi\Domain\Common\Specifications\AndSpecification;
-use BradiNfeApi\Domain\Common\Specifications\NotSpecification;
-use BradiNfeApi\Domain\Common\Specifications\OrSpecification;
+use BradiApi\Domain\Common\Protocols\Specification;
+use BradiApi\Domain\Common\Specifications\AndSpecification;
+use BradiApi\Domain\Common\Specifications\NotSpecification;
+use BradiApi\Domain\Common\Specifications\OrSpecification;
 
 trait SpecificationComposer
 {

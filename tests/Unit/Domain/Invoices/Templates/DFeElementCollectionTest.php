@@ -2,15 +2,15 @@
 
 declare(strict_types=1);
 
-use BradiNfeApi\Domain\Common\Protocols\ApiError;
-use BradiNfeApi\Domain\Common\ValueObjects\Result;
-use BradiNfeApi\Domain\Invoices\Templates\DFeElementCollection;
-use BradiNfeApi\Domain\Xml\ValueObjects\Element;
-use BradiNfeApi\Domain\Xml\ValueObjects\ElementList;
-use BradiNfeApi\Tests\Doubles\Domain\Common\FakeValidationService;
-use BradiNfeApi\Tests\Doubles\Domain\Invoices\NFe\FakeDFeElement;
-use BradiNfeApi\Tests\Doubles\Domain\Invoices\NFe\FakeDFeElementCollection;
-use BradiNfeApi\Tests\TestCase;
+use BradiApi\Domain\Common\Protocols\ApiError;
+use BradiApi\Domain\Common\ValueObjects\Result;
+use BradiApi\Domain\Invoices\Templates\DFeElementCollection;
+use BradiApi\Domain\Xml\ValueObjects\Element;
+use BradiApi\Domain\Xml\ValueObjects\ElementList;
+use BradiApi\Tests\Doubles\Domain\Common\FakeValidationService;
+use BradiApi\Tests\Doubles\Domain\Invoices\NFe\FakeDFeElement;
+use BradiApi\Tests\Doubles\Domain\Invoices\NFe\FakeDFeElementCollection;
+use BradiApi\Tests\TestCase;
 
 describe('DFeElementCollection', function () {
     beforeEach(function () {

@@ -7,7 +7,7 @@ declare(strict_types=1);
  * acordo com  MOC 7.0, campo tpNF.
  */
 
-namespace BradiNfeApi\Domain\Invoices\Enums;
+namespace BradiApi\Domain\Invoices\Enums;
 
 enum TipoMovimentacao: string
 {

@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace BradiNfeApi\Domain\Invoices\Traits;
+namespace BradiApi\Domain\Invoices\Traits;
 
-use BradiNfeApi\Domain\Common\Protocols\Validator;
-use BradiNfeApi\Domain\Invoices\Validators\HasNoAttributesValidator;
-use BradiNfeApi\Domain\Invoices\Validators\HasNoTextContentValidator;
+use BradiApi\Domain\Common\Protocols\Validator;
+use BradiApi\Domain\Invoices\Validators\HasNoAttributesValidator;
+use BradiApi\Domain\Invoices\Validators\HasNoTextContentValidator;
 
 trait ValidatesDFeGroupElement
 {

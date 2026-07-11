@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace BradiNfeApi\Domain\Common\Protocols;
+namespace BradiApi\Domain\Common\Protocols;
 
-use BradiNfeApi\Domain\Common\ValueObjects\Result;
+use BradiApi\Domain\Common\ValueObjects\Result;
 
 interface ValidationService
 {

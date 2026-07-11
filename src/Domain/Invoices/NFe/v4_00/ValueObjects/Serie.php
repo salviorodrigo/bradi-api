@@ -30,14 +30,14 @@ declare(strict_types=1);
  * (Atualizado NT 2018/001)
  */
 
-namespace BradiNfeApi\Domain\Invoices\NFe\v4_00\ValueObjects;
+namespace BradiApi\Domain\Invoices\NFe\v4_00\ValueObjects;
 
-use BradiNfeApi\Domain\Common\Validators\MaxStringLengthValidator;
-use BradiNfeApi\Domain\Common\Validators\MaxValueValidator;
-use BradiNfeApi\Domain\Common\Validators\MinValueValidator;
-use BradiNfeApi\Domain\Common\Validators\NotNullValidator;
-use BradiNfeApi\Domain\Invoices\Templates\DFeElement;
-use BradiNfeApi\Domain\Invoices\Traits\ValidatesDFeValueElement;
+use BradiApi\Domain\Common\Validators\MaxStringLengthValidator;
+use BradiApi\Domain\Common\Validators\MaxValueValidator;
+use BradiApi\Domain\Common\Validators\MinValueValidator;
+use BradiApi\Domain\Common\Validators\NotNullValidator;
+use BradiApi\Domain\Invoices\Templates\DFeElement;
+use BradiApi\Domain\Invoices\Traits\ValidatesDFeValueElement;
 
 final class Serie extends DFeElement
 {

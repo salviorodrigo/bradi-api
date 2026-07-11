@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-use BradiNfeApi\Domain\Common\ValueObjects\FieldURI;
+use BradiApi\Domain\Common\ValueObjects\FieldURI;
 
 describe('FieldURI', function () {
     $sut = FieldURI::class;

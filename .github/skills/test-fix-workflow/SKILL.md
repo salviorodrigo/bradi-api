@@ -65,7 +65,7 @@ Formular um plano curto com:
 ## Plano
 
 - Falha: tests/Unit/Domain/Invoices/NFe/v4_00/InformacoesNotaFiscalTest.php:8
-  - Mensagem: class_exists('BradiNfeApi\Domain\Invoices\NFe\v4_00\InformacoesNotaFiscal') retornou false
+  - Mensagem: class_exists('BradiApi\Domain\Invoices\NFe\v4_00\InformacoesNotaFiscal') retornou false
   
 - Causa raiz: classe InformacoesNotaFiscal nao existe em src/
   

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace BradiNfeApi\Tests\Datasets\Protocols;
+namespace BradiApi\Tests\Datasets\Protocols;
 
 abstract class Dataset
 {

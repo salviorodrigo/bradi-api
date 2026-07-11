@@ -1,6 +1,6 @@
 <?php
 
-use BradiNfeApi\Domain\Common\Validators\IsUuidV7Validator;
+use BradiApi\Domain\Common\Validators\IsUuidV7Validator;
 
 describe('IsUuidV7Validator', function () {
     describe('.validate()', function () {

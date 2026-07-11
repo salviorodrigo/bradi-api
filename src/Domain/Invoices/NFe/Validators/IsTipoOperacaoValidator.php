@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace BradiNfeApi\Domain\Invoices\NFe\Validators;
+namespace BradiApi\Domain\Invoices\NFe\Validators;
 
-use BradiNfeApi\Domain\Common\Protocols\Validator;
-use BradiNfeApi\Domain\Common\ValueObjects\Result;
-use BradiNfeApi\Domain\Invoices\Enums\TipoOperacao;
+use BradiApi\Domain\Common\Protocols\Validator;
+use BradiApi\Domain\Common\ValueObjects\Result;
+use BradiApi\Domain\Invoices\Enums\TipoOperacao;
 use InvalidArgumentException;
 
 final class IsTipoOperacaoValidator implements Validator

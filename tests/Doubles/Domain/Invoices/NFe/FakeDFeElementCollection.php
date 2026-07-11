@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace BradiNfeApi\Tests\Doubles\Domain\Invoices\NFe;
+namespace BradiApi\Tests\Doubles\Domain\Invoices\NFe;
 
-use BradiNfeApi\Domain\Invoices\Templates\DFeElementCollection;
+use BradiApi\Domain\Invoices\Templates\DFeElementCollection;
 
 final class FakeDFeElementCollection extends DFeElementCollection
 {

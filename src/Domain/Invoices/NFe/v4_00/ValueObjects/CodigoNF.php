@@ -14,11 +14,11 @@ declare(strict_types=1);
  * indevidos da NF-e. (v2.0)
  */
 
-namespace BradiNfeApi\Domain\Invoices\NFe\v4_00\ValueObjects;
+namespace BradiApi\Domain\Invoices\NFe\v4_00\ValueObjects;
 
-use BradiNfeApi\Domain\Invoices\NFe\Validators\IsCodigoNFValidator;
-use BradiNfeApi\Domain\Invoices\Templates\DFeElement;
-use BradiNfeApi\Domain\Invoices\Traits\ValidatesDFeValueElement;
+use BradiApi\Domain\Invoices\NFe\Validators\IsCodigoNFValidator;
+use BradiApi\Domain\Invoices\Templates\DFeElement;
+use BradiApi\Domain\Invoices\Traits\ValidatesDFeValueElement;
 
 final class CodigoNF extends DFeElement
 {

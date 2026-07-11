@@ -12,11 +12,11 @@ declare(strict_types=1);
  * OBS:
  */
 
-namespace BradiNfeApi\Domain\Invoices\NFe\v4_00;
+namespace BradiApi\Domain\Invoices\NFe\v4_00;
 
-use BradiNfeApi\Domain\Invoices\Templates\DFeElement;
-use BradiNfeApi\Domain\Invoices\Traits\ValidatesDFeGroupElement;
-use BradiNfeApi\Domain\Invoices\Validators\RequiredTagValidator;
+use BradiApi\Domain\Invoices\Templates\DFeElement;
+use BradiApi\Domain\Invoices\Traits\ValidatesDFeGroupElement;
+use BradiApi\Domain\Invoices\Validators\RequiredTagValidator;
 
 final class Imposto extends DFeElement
 {

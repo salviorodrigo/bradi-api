@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace BradiNfeApi\Tests\Doubles\Domain\Common\Validators;
+namespace BradiApi\Tests\Doubles\Domain\Common\Validators;
 
-use BradiNfeApi\Domain\Common\Protocols\Validator;
-use BradiNfeApi\Domain\Common\ValueObjects\Result;
+use BradiApi\Domain\Common\Protocols\Validator;
+use BradiApi\Domain\Common\ValueObjects\Result;
 
 class FakeValidator implements Validator
 {

@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace BradiNfeApi\Domain\Common\ValueObjects;
+namespace BradiApi\Domain\Common\ValueObjects;
 
-use BradiNfeApi\Domain\Common\Enum\PrimitiveType;
+use BradiApi\Domain\Common\Enum\PrimitiveType;
 use Exception;
 use InvalidArgumentException;
 

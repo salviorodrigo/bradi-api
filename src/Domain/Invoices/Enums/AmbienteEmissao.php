@@ -8,7 +8,7 @@ declare(strict_types=1);
  * MOC 7.0, campo tpAmb.
  */
 
-namespace BradiNfeApi\Domain\Invoices\Enums;
+namespace BradiApi\Domain\Invoices\Enums;
 
 enum AmbienteEmissao: string
 {

@@ -12,13 +12,13 @@ declare(strict_types=1);
  * Tag opcional.
  */
 
-namespace BradiNfeApi\Domain\Invoices\NFe\v4_00\ValueObjects;
+namespace BradiApi\Domain\Invoices\NFe\v4_00\ValueObjects;
 
-use BradiNfeApi\Domain\Common\Validators\MaxStringLengthValidator;
-use BradiNfeApi\Domain\Common\Validators\MinStringLengthValidator;
-use BradiNfeApi\Domain\Common\Validators\TextFormatValidator;
-use BradiNfeApi\Domain\Invoices\Templates\DFeElement;
-use BradiNfeApi\Domain\Invoices\Traits\ValidatesDFeValueElement;
+use BradiApi\Domain\Common\Validators\MaxStringLengthValidator;
+use BradiApi\Domain\Common\Validators\MinStringLengthValidator;
+use BradiApi\Domain\Common\Validators\TextFormatValidator;
+use BradiApi\Domain\Invoices\Templates\DFeElement;
+use BradiApi\Domain\Invoices\Traits\ValidatesDFeValueElement;
 
 final class NomeFantasia extends DFeElement
 {

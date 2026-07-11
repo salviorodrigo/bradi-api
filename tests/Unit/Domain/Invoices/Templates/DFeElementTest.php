@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-use BradiNfeApi\Tests\Doubles\Domain\Invoices\NFe\FakeDFeAttribute;
-use BradiNfeApi\Tests\Doubles\Domain\Invoices\NFe\FakeDFeElement;
-use BradiNfeApi\Tests\Doubles\Domain\Invoices\NFe\FakeDFeGroupWithAttribute;
+use BradiApi\Tests\Doubles\Domain\Invoices\NFe\FakeDFeAttribute;
+use BradiApi\Tests\Doubles\Domain\Invoices\NFe\FakeDFeElement;
+use BradiApi\Tests\Doubles\Domain\Invoices\NFe\FakeDFeGroupWithAttribute;
 
 describe('DFeElement', function () {
     describe('::__toString()', function () {
