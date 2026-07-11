@@ -16,6 +16,16 @@ Guia de uso: consulte `docs/history/README.md`.
 
 ## 2026-07-11
 
+### Process
+
+- Escopo: Testes/Governanca
+- Descricao: Formalizado fluxo assistido para correcao de testes com loop de validacao e commits segmentados por escopo (`src` e `tests`) no padrao conventional commits.
+- Arquivos:
+  - `docs/history/adr/ADR-0002-fluxo-assistido-correcao-testes.md`
+  - `docs/history/DECISIONS.md`
+- Impacto: aumenta previsibilidade do ciclo de correcao, melhora rastreabilidade de mudancas e prepara base para futura skill de automacao.
+- Evidencia: execucao de referencia em 2026-07-11 com `composer lint` e `composer test:ci` verdes, e commits separados por escopo.
+
 ### Changed
 
 - Escopo: Build
