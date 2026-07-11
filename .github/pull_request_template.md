@@ -16,8 +16,7 @@ Descreva o que foi alterado e por que.
 - [ ] Segui ciclo Red -> Green -> Refactor (quando aplicavel)
 - [ ] Adicionei/atualizei testes para comportamento novo ou bug corrigido
 - [ ] Rodei `composer lint`
-- [ ] Rodei `composer test`
-- [ ] Se impacto amplo, rodei `composer test:ci`
+- [ ] Rodei `composer test:ci`
 
 ## Checklist de Governanca e Contexto
 

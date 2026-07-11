@@ -95,13 +95,13 @@ jobs:
           if code_relevant:
               required_marks = [
                   r"- \[[xX]\] Rodei `composer lint`",
-                  r"- \[[xX]\] Rodei `composer test`",
+                r"- \[[xX]\] Rodei `composer test:ci`",
               ]
 
               missing = [pattern for pattern in required_marks if not re.search(pattern, body)]
               if missing:
                   print("Erro: para mudanca relevante de codigo, marque no PR que executou lint e testes.")
-                  print("Itens obrigatorios: 'Rodei composer lint' e 'Rodei composer test'.")
+                  print("Itens obrigatorios: 'Rodei composer lint' e 'Rodei composer test:ci'.")
                   sys.exit(1)
 
           print("Checklist do PR validado com sucesso.")
