@@ -57,3 +57,9 @@ Uma tarefa so termina quando:
 - Alteracoes de comportamento relevante: registrar em `docs/history/CHANGELOG.md`.
 - Decisao estrutural/processual: registrar em `docs/history/DECISIONS.md` e ADR em `docs/history/adr/`.
 - Toda decisao deve incluir contexto, escolha, consequencias e plano de revisao.
+
+## Contribuicao e PR
+
+- Siga o fluxo em `CONTRIBUTING.md` para branch, validacoes locais e abertura de PR.
+- Use o template de PR em `.github/pull_request_template.md`.
+- O CI valida checklist e historico via `.github/workflows/pr-governance-checks.yml`.
