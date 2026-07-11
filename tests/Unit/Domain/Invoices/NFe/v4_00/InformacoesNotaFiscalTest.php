@@ -14,5 +14,10 @@ describe('InformacoesNotaFiscal', function () {
         test('Should succeed if InformacoesNotaFiscal extends DFeElement', function () {
             expect(is_subclass_of(InformacoesNotaFiscal::class, DFeElement::class))->toBeTrue();
         });
+
+        test('Should succeed if InformacoesNotaFiscal has $ide attribute', function () {
+            $informacoesNotaFiscal = new InformacoesNotaFiscal;
+            expect(property_exists($informacoesNotaFiscal, 'ide'))->toBeTrue();
+        });
     });
 });
