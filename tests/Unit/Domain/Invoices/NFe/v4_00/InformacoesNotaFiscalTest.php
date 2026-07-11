@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 
+use BradiNfeApi\Domain\Invoices\NFe\v4_00\IdentificacaoNF;
 use BradiNfeApi\Domain\Invoices\NFe\v4_00\InformacoesNotaFiscal;
 use BradiNfeApi\Domain\Invoices\Templates\DFeElement;
 
@@ -18,6 +19,11 @@ describe('InformacoesNotaFiscal', function () {
         test('Should succeed if InformacoesNotaFiscal has $ide attribute', function () {
             $informacoesNotaFiscal = new InformacoesNotaFiscal;
             expect(property_exists($informacoesNotaFiscal, 'ide'))->toBeTrue();
+        });
+
+        test('Should succeed if InformacoesNotaFiscal::$ide is a IdentificacaoNF::class', function () {
+            $informacoesNotaFiscal = new InformacoesNotaFiscal;
+            expect($informacoesNotaFiscal->ide)->toBeInstanceOf(IdentificacaoNF::class);
         });
     });
 });
