@@ -2,6 +2,8 @@
 
 Indice de decisoes arquiteturais e de processo.
 
+Guia de uso: consulte `docs/history/README.md`.
+
 ## Como usar
 
 - Para cada decisao relevante, criar um ADR em `docs/history/adr/`.

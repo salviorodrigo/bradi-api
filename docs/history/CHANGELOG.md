@@ -2,6 +2,8 @@
 
 Registro de alteracoes relevantes do projeto.
 
+Guia de uso: consulte `docs/history/README.md`.
+
 ## Formato
 
 - Data: YYYY-MM-DD
