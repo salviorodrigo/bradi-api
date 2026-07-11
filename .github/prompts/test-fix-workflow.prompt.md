@@ -1,8 +1,8 @@
 ---
-name: test-fix-workflow
-description: 'Executa a skill test-fix-workflow com os acessos necessarios para diagnosticar, corrigir, validar e commitar a primeira falha da suite.'
-argument-hint: 'Contexto opcional sobre a falha ou area afetada'
-agent: 'test-fix-workflow'
+name: run-test-fix-workflow
+description: "Executa o fluxo test-fix-workflow para diagnosticar, corrigir, validar e commitar a primeira falha da suite."
+argument-hint: "Contexto opcional sobre a falha ou area afetada"
+agent: test-fix-workflow-agent
 tools: [read, edit, search, execute, todo]
 ---
 

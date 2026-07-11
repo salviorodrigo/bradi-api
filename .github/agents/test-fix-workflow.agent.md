@@ -1,8 +1,8 @@
 ---
-name: test-fix-workflow
-description: 'Executa o fluxo de correcao da primeira falha da suite com diagnostico, edicao, execucao de comandos, validacao e commits separados por escopo.'
+name: test-fix-workflow-agent
+description: "Especialista em corrigir a primeira falha do composer test:ci com validacao completa e commits separados."
 tools: [read, edit, search, execute, todo]
-user-invocable: false
+user-invocable: true
 ---
 
 Você executa o fluxo operacional de correção da primeira falha da suíte neste repositório.
