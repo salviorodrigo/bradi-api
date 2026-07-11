@@ -10,7 +10,7 @@
 		"source=${localEnv:HOME}/.ssh,target=/tmp/host-ssh,type=bind,readonly"
 	],
 	"features": {
-		"ghcr.io/devcontainers/features/node:1": {
+		"ghcr.io/devcontainers/features/node:2": {
 			"version": "lts"
 		}
 	},
