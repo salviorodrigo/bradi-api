@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 use BradiApi\Domain\Invoices\NFe\v4_00\InformacoesNotaFiscal;
+use BradiApi\Domain\Invoices\Templates\DFeAttribute;
 use BradiApi\Domain\Invoices\Templates\DFeElement;
 
 describe('InformacoesNotaFiscal', function () {
@@ -17,6 +18,19 @@ describe('InformacoesNotaFiscal', function () {
             $sut = new InformacoesNotaFiscal;
             expect(is_subclass_of($sut, DFeElement::class))->toBeTrue();
         });
+
+        test('Should succeed if InformacoesNotaFiscal has $versao attribute', function () {
+            $sut = new InformacoesNotaFiscal;
+            expect($sut)->toHaveProperty('versao');
+        })->skip();
+
+        test('Should succeed if $versao is a subclass of DFeAttribute::class', function () {
+            $reflection = new ReflectionClass(InformacoesNotaFiscal::class);
+            $versao = $reflection->getProperty('versao');
+            $sut = $versao->getType();
+
+            expect((is_subclass_of($sut->getName(), DFeAttribute::class)))->toBeTrue();
+        })->skip();
 
         test('Should succeed if InformacoesNotaFiscal has $ide element', function () {
             $sut = new InformacoesNotaFiscal;
