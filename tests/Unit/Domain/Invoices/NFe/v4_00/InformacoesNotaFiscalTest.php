@@ -88,6 +88,28 @@ describe('InformacoesNotaFiscal', function () {
             });
         });
 
+        describe('$avulsa', function () {
+            test('Should be declared', function () {
+                $sut = new InformacoesNotaFiscal;
+                expect($sut)->toHaveProperty('avulsa');
+            });
+
+            test('Should be a subclass of DFeElement::class', function () {
+                $reflection = new ReflectionClass(InformacoesNotaFiscal::class);
+                $avulsa = $reflection->getProperty('avulsa');
+            $sut = $avulsa->getType();
+            expect((is_subclass_of($sut->getName(), DFeElement::class)))->toBeTrue();
+        });
+
+            test('Should be optional', function () {
+                $reflection = new ReflectionClass(InformacoesNotaFiscal::class);
+                $avulsa = $reflection->getProperty('avulsa');
+                $sut = $avulsa->getType();
+
+                expect($sut->allowsNull())->toBeTrue();
+            });
+        });
+
         describe('$dest', function () {
             test('Should be declared', function () {
                 $sut = new InformacoesNotaFiscal;
