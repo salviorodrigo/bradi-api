@@ -132,6 +132,28 @@ describe('InformacoesNotaFiscal', function () {
             });
         });
 
+        describe('$retirada', function () {
+            test('Should be declared', function () {
+                $sut = new InformacoesNotaFiscal;
+                expect($sut)->toHaveProperty('retirada');
+            });
+
+            test('Should be a subclass of DFeElement::class', function () {
+                $reflection = new ReflectionClass(InformacoesNotaFiscal::class);
+                $retirada = $reflection->getProperty('retirada');
+            $sut = $retirada->getType();
+            expect((is_subclass_of($sut->getName(), DFeElement::class)))->toBeTrue();
+        });
+
+            test('Should be optional', function () {
+                $reflection = new ReflectionClass(InformacoesNotaFiscal::class);
+                $retirada = $reflection->getProperty('retirada');
+                $sut = $retirada->getType();
+
+                expect($sut->allowsNull())->toBeTrue();
+            });
+        });
+
         describe('$detCollection', function () {
             test('Should be declared', function () {
                 $sut = new InformacoesNotaFiscal;
