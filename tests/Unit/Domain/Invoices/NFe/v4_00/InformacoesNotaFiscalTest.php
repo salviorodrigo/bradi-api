@@ -288,6 +288,28 @@ describe('InformacoesNotaFiscal', function () {
             });
         })->skip();
 
+        describe('$infIntermed', function () {
+            test('Should be declared', function () {
+                $sut = new InformacoesNotaFiscal;
+                expect($sut)->toHaveProperty('infIntermed');
+            });
+
+            test('Should be a subclass of DFeElement::class', function () {
+                $reflection = new ReflectionClass(InformacoesNotaFiscal::class);
+                $infIntermed = $reflection->getProperty('infIntermed');
+            $sut = $infIntermed->getType();
+            expect((is_subclass_of($sut->getName(), DFeElement::class)))->toBeTrue();
+        });
+
+            test('Should be optional', function () {
+                $reflection = new ReflectionClass(InformacoesNotaFiscal::class);
+                $infIntermed = $reflection->getProperty('infIntermed');
+                $sut = $infIntermed->getType();
+
+                expect($sut->allowsNull())->toBeTrue();
+            });
+        })->skip();
+
         describe('$pag', function () {
             test('Should be declared', function () {
                 $sut = new InformacoesNotaFiscal;
