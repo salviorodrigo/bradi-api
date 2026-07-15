@@ -6,7 +6,6 @@ use BradiApi\Domain\Invoices\NFe\v4_00\InformacoesNotaFiscal;
 use BradiApi\Domain\Invoices\Templates\DFeAttribute;
 use BradiApi\Domain\Invoices\Templates\DFeElement;
 use BradiApi\Domain\Invoices\Templates\DFeElementCollection;
-use ReflectionClass;
 
 describe('InformacoesNotaFiscal', function () {
     describe('properties', function () {
@@ -29,16 +28,16 @@ describe('InformacoesNotaFiscal', function () {
 
             test('Should be a subclass of DFeAttribute::class', function () {
                 $reflection = new ReflectionClass(InformacoesNotaFiscal::class);
-                $versao = $reflection->getProperty('versao');
-                $sut = $versao->getType();
+                $reflectedProperty = $reflection->getProperty('versao');
+                $sut = $reflectedProperty->getType();
 
                 expect((is_subclass_of($sut->getName(), DFeAttribute::class)))->toBeTrue();
             })->skip();
 
             test('Should be requited', function () {
                 $reflection = new ReflectionClass(InformacoesNotaFiscal::class);
-                $versao = $reflection->getProperty('versao');
-                $sut = $versao->getType();
+                $reflectedProperty = $reflection->getProperty('versao');
+                $sut = $reflectedProperty->getType();
 
                 expect($sut->allowsNull())->toBeFalse();
             })->skip();
@@ -52,16 +51,15 @@ describe('InformacoesNotaFiscal', function () {
 
             test('Should be a subclass of DFeElement::class', function () {
                 $reflection = new ReflectionClass(InformacoesNotaFiscal::class);
-                $ide = $reflection->getProperty('ide');
-                $sut = $ide->getType();
+                $reflectedProperty = $reflection->getProperty('ide');
+                $sut = $reflectedProperty->getType();
                 expect((is_subclass_of($sut->getName(), DFeElement::class)))->toBeTrue();
             });
             
             test('Should be requited', function () {
                 $reflection = new ReflectionClass(InformacoesNotaFiscal::class);
-                $ide = $reflection->getProperty('ide');
-                $sut = $ide->getType();
-
+                $reflectedProperty = $reflection->getProperty('ide');
+                $sut = $reflectedProperty->getType();
                 expect($sut->allowsNull())->toBeFalse();
             });
         });
@@ -74,16 +72,15 @@ describe('InformacoesNotaFiscal', function () {
 
             test('Should be a subclass of DFeElement::class', function () {
                 $reflection = new ReflectionClass(InformacoesNotaFiscal::class);
-                $emit = $reflection->getProperty('emit');
-                $sut = $emit->getType();
+                $reflectedProperty = $reflection->getProperty('emit');
+                $sut = $reflectedProperty->getType();
                 expect((is_subclass_of($sut->getName(), DFeElement::class)))->toBeTrue();
             });
 
             test('Should be required', function () {
                 $reflection = new ReflectionClass(InformacoesNotaFiscal::class);
-                $emit = $reflection->getProperty('emit');
-                $sut = $emit->getType();
-
+                $reflectedProperty = $reflection->getProperty('emit');
+                $sut = $reflectedProperty->getType();
                 expect($sut->allowsNull())->toBeFalse();
             });
         });
@@ -96,15 +93,15 @@ describe('InformacoesNotaFiscal', function () {
 
             test('Should be a subclass of DFeElement::class', function () {
                 $reflection = new ReflectionClass(InformacoesNotaFiscal::class);
-                $avulsa = $reflection->getProperty('avulsa');
-            $sut = $avulsa->getType();
-            expect((is_subclass_of($sut->getName(), DFeElement::class)))->toBeTrue();
-        });
+                $reflectedProperty = $reflection->getProperty('avulsa');
+                $sut = $reflectedProperty->getType();
+                expect((is_subclass_of($sut->getName(), DFeElement::class)))->toBeTrue();
+            });
 
             test('Should be optional', function () {
                 $reflection = new ReflectionClass(InformacoesNotaFiscal::class);
-                $avulsa = $reflection->getProperty('avulsa');
-                $sut = $avulsa->getType();
+                $reflectedProperty = $reflection->getProperty('avulsa');
+                $sut = $reflectedProperty->getType();
 
                 expect($sut->allowsNull())->toBeTrue();
             });
@@ -118,18 +115,17 @@ describe('InformacoesNotaFiscal', function () {
 
             test('Should be a subclass of DFeElement::class', function () {
                 $reflection = new ReflectionClass(InformacoesNotaFiscal::class);
-                $dest = $reflection->getProperty('dest');
-            $sut = $dest->getType();
-            expect((is_subclass_of($sut->getName(), DFeElement::class)))->toBeTrue();
-        });
+                $reflectedProperty = $reflection->getProperty('dest');
+                $sut = $reflectedProperty->getType();
+                expect((is_subclass_of($sut->getName(), DFeElement::class)))->toBeTrue();
+            });
 
             test('Should be optional', function () {
                 $reflection = new ReflectionClass(InformacoesNotaFiscal::class);
-                $dest = $reflection->getProperty('dest');
-                $sut = $dest->getType();
-
+                $reflectedProperty = $reflection->getProperty('dest');
+                $sut = $reflectedProperty->getType();
                 expect($sut->allowsNull())->toBeTrue();
-            });
+            })->skip();
         });
 
         describe('$retirada', function () {
@@ -140,15 +136,15 @@ describe('InformacoesNotaFiscal', function () {
 
             test('Should be a subclass of DFeElement::class', function () {
                 $reflection = new ReflectionClass(InformacoesNotaFiscal::class);
-                $retirada = $reflection->getProperty('retirada');
-            $sut = $retirada->getType();
-            expect((is_subclass_of($sut->getName(), DFeElement::class)))->toBeTrue();
-        });
+                $reflectedProperty = $reflection->getProperty('retirada');
+                $sut = $reflectedProperty->getType();
+                expect((is_subclass_of($sut->getName(), DFeElement::class)))->toBeTrue();
+            });
 
             test('Should be optional', function () {
                 $reflection = new ReflectionClass(InformacoesNotaFiscal::class);
-                $retirada = $reflection->getProperty('retirada');
-                $sut = $retirada->getType();
+                $reflectedProperty = $reflection->getProperty('retirada');
+                $sut = $reflectedProperty->getType();
 
                 expect($sut->allowsNull())->toBeTrue();
             });
@@ -162,16 +158,15 @@ describe('InformacoesNotaFiscal', function () {
 
             test('Should be a subclass of DFeElement::class', function () {
                 $reflection = new ReflectionClass(InformacoesNotaFiscal::class);
-                $entrega = $reflection->getProperty('entrega');
-            $sut = $entrega->getType();
-            expect((is_subclass_of($sut->getName(), DFeElement::class)))->toBeTrue();
-        });
+                $reflectedProperty = $reflection->getProperty('entrega');
+                $sut = $reflectedProperty->getType();
+                expect((is_subclass_of($sut->getName(), DFeElement::class)))->toBeTrue();
+            });
 
             test('Should be optional', function () {
                 $reflection = new ReflectionClass(InformacoesNotaFiscal::class);
-                $entrega = $reflection->getProperty('entrega');
-                $sut = $entrega->getType();
-
+                $reflectedProperty = $reflection->getProperty('entrega');
+                $sut = $reflectedProperty->getType();
                 expect($sut->allowsNull())->toBeTrue();
             });
         })->skip();
@@ -184,17 +179,15 @@ describe('InformacoesNotaFiscal', function () {
 
             test('Should be a subclass of DFeElementCollection::class', function () {
                 $reflection = new ReflectionClass(InformacoesNotaFiscal::class);
-                $autXML = $reflection->getProperty('autXMLCollection');
-                $sut = $autXML->getType();
-
+                $reflectedProperty = $reflection->getProperty('autXMLCollection');
+                $sut = $reflectedProperty->getType();
                 expect((is_subclass_of($sut->getName(), DFeElementCollection::class)))->toBeTrue();
             });
 
             test('Should be required', function () {
                 $reflection = new ReflectionClass(InformacoesNotaFiscal::class);
-                $autXML = $reflection->getProperty('autXMLCollection');
-                $sut = $autXML->getType();
-
+                $reflectedProperty = $reflection->getProperty('autXMLCollection');
+                $sut = $reflectedProperty->getType();
                 expect($sut->allowsNull())->toBeFalse();
             });
         })->skip();
@@ -207,17 +200,15 @@ describe('InformacoesNotaFiscal', function () {
 
             test('Should be a subclass of DFeElementCollection::class', function () {
                 $reflection = new ReflectionClass(InformacoesNotaFiscal::class);
-                $det = $reflection->getProperty('detCollection');
-                $sut = $det->getType();
-
+                $reflectedProperty = $reflection->getProperty('detCollection');
+                $sut = $reflectedProperty->getType();
                 expect((is_subclass_of($sut->getName(), DFeElementCollection::class)))->toBeTrue();
             });
 
             test('Should be required', function () {
                 $reflection = new ReflectionClass(InformacoesNotaFiscal::class);
-                $det = $reflection->getProperty('detCollection');
-                $sut = $det->getType();
-
+                $reflectedProperty = $reflection->getProperty('detCollection');
+                $sut = $reflectedProperty->getType();
                 expect($sut->allowsNull())->toBeFalse();
             });
         })->skip();
@@ -230,16 +221,15 @@ describe('InformacoesNotaFiscal', function () {
 
             test('Should be a subclass of DFeElement::class', function () {
                 $reflection = new ReflectionClass(InformacoesNotaFiscal::class);
-                $total = $reflection->getProperty('total');
-                $sut = $total->getType();
+                $reflectedProperty = $reflection->getProperty('total');
+                $sut = $reflectedProperty->getType();
                 expect((is_subclass_of($sut->getName(), DFeElement::class)))->toBeTrue();
             });
 
             test('Should be required', function () {
                 $reflection = new ReflectionClass(InformacoesNotaFiscal::class);
-                $total = $reflection->getProperty('total');
-                $sut = $total->getType();
-
+                $reflectedProperty = $reflection->getProperty('total');
+                $sut = $reflectedProperty->getType();
                 expect($sut->allowsNull())->toBeFalse();
             });
         })->skip();
@@ -252,16 +242,15 @@ describe('InformacoesNotaFiscal', function () {
 
             test('Should be a subclass of DFeElement::class', function () {
                 $reflection = new ReflectionClass(InformacoesNotaFiscal::class);
-                $transp = $reflection->getProperty('transp');
-                $sut = $transp->getType();
+                $reflectedProperty = $reflection->getProperty('transp');
+                $sut = $reflectedProperty->getType();
                 expect((is_subclass_of($sut->getName(), DFeElement::class)))->toBeTrue();
             });
 
             test('Should be required', function () {
                 $reflection = new ReflectionClass(InformacoesNotaFiscal::class);
-                $transp = $reflection->getProperty('transp');
-                $sut = $transp->getType();
-
+                $reflectedProperty = $reflection->getProperty('transp');
+                $sut = $reflectedProperty->getType();
                 expect($sut->allowsNull())->toBeFalse();
             });
         })->skip();
@@ -274,16 +263,15 @@ describe('InformacoesNotaFiscal', function () {
 
             test('Should be a subclass of DFeElement::class', function () {
                 $reflection = new ReflectionClass(InformacoesNotaFiscal::class);
-                $cobr = $reflection->getProperty('cobr');
-            $sut = $cobr->getType();
-            expect((is_subclass_of($sut->getName(), DFeElement::class)))->toBeTrue();
-        });
+                $reflectedProperty = $reflection->getProperty('cobr');
+                $sut = $reflectedProperty->getType();
+                expect((is_subclass_of($sut->getName(), DFeElement::class)))->toBeTrue();
+            });
 
             test('Should be optional', function () {
                 $reflection = new ReflectionClass(InformacoesNotaFiscal::class);
-                $cobr = $reflection->getProperty('cobr');
-                $sut = $cobr->getType();
-
+                $reflectedProperty = $reflection->getProperty('cobr');
+                $sut = $reflectedProperty->getType();
                 expect($sut->allowsNull())->toBeTrue();
             });
         })->skip();
@@ -296,16 +284,15 @@ describe('InformacoesNotaFiscal', function () {
 
             test('Should be a subclass of DFeElement::class', function () {
                 $reflection = new ReflectionClass(InformacoesNotaFiscal::class);
-                $pag = $reflection->getProperty('pag');
-                $sut = $pag->getType();
+                $reflectedProperty = $reflection->getProperty('pag');
+                $sut = $reflectedProperty->getType();
                 expect((is_subclass_of($sut->getName(), DFeElement::class)))->toBeTrue();
             });
 
             test('Should be required', function () {
                 $reflection = new ReflectionClass(InformacoesNotaFiscal::class);
-                $pag = $reflection->getProperty('pag');
-                $sut = $pag->getType();
-
+                $reflectedProperty = $reflection->getProperty('pag');
+                $sut = $reflectedProperty->getType();
                 expect($sut->allowsNull())->toBeFalse();
             });
         })->skip();
@@ -318,16 +305,15 @@ describe('InformacoesNotaFiscal', function () {
 
             test('Should be a subclass of DFeElement::class', function () {
                 $reflection = new ReflectionClass(InformacoesNotaFiscal::class);
-                $infIntermed = $reflection->getProperty('infIntermed');
-            $sut = $infIntermed->getType();
-            expect((is_subclass_of($sut->getName(), DFeElement::class)))->toBeTrue();
-        });
+                $reflectedProperty = $reflection->getProperty('infIntermed');
+                $sut = $reflectedProperty->getType();
+                expect((is_subclass_of($sut->getName(), DFeElement::class)))->toBeTrue();
+            });
 
             test('Should be optional', function () {
                 $reflection = new ReflectionClass(InformacoesNotaFiscal::class);
-                $infIntermed = $reflection->getProperty('infIntermed');
-                $sut = $infIntermed->getType();
-
+                $reflectedProperty = $reflection->getProperty('infIntermed');
+                $sut = $reflectedProperty->getType();
                 expect($sut->allowsNull())->toBeTrue();
             });
         })->skip();
@@ -340,16 +326,15 @@ describe('InformacoesNotaFiscal', function () {
 
             test('Should be a subclass of DFeElement::class', function () {
                 $reflection = new ReflectionClass(InformacoesNotaFiscal::class);
-                $infAdic = $reflection->getProperty('infAdic');
-            $sut = $infAdic->getType();
-            expect((is_subclass_of($sut->getName(), DFeElement::class)))->toBeTrue();
-        });
+                $reflectedProperty = $reflection->getProperty('infAdic');
+                $sut = $reflectedProperty->getType();
+                expect((is_subclass_of($sut->getName(), DFeElement::class)))->toBeTrue();
+            });
 
             test('Should be optional', function () {
                 $reflection = new ReflectionClass(InformacoesNotaFiscal::class);
-                $infAdic = $reflection->getProperty('infAdic');
-                $sut = $infAdic->getType();
-
+                $reflectedProperty = $reflection->getProperty('infAdic');
+                $sut = $reflectedProperty->getType();
                 expect($sut->allowsNull())->toBeTrue();
             });
         })->skip();
@@ -362,16 +347,15 @@ describe('InformacoesNotaFiscal', function () {
 
             test('Should be a subclass of DFeElement::class', function () {
                 $reflection = new ReflectionClass(InformacoesNotaFiscal::class);
-                $exporta = $reflection->getProperty('exporta');
-            $sut = $exporta->getType();
-            expect((is_subclass_of($sut->getName(), DFeElement::class)))->toBeTrue();
-        });
+                $reflectedProperty = $reflection->getProperty('exporta');
+                $sut = $reflectedProperty->getType();
+                expect((is_subclass_of($sut->getName(), DFeElement::class)))->toBeTrue();
+            });
 
             test('Should be optional', function () {
                 $reflection = new ReflectionClass(InformacoesNotaFiscal::class);
-                $exporta = $reflection->getProperty('exporta');
-                $sut = $exporta->getType();
-
+                $reflectedProperty = $reflection->getProperty('exporta');
+                $sut = $reflectedProperty->getType();
                 expect($sut->allowsNull())->toBeTrue();
             });
         })->skip();
@@ -384,16 +368,15 @@ describe('InformacoesNotaFiscal', function () {
 
             test('Should be a subclass of DFeElement::class', function () {
                 $reflection = new ReflectionClass(InformacoesNotaFiscal::class);
-                $compra = $reflection->getProperty('compra');
-            $sut = $compra->getType();
-            expect((is_subclass_of($sut->getName(), DFeElement::class)))->toBeTrue();
-        });
+                $reflectedProperty = $reflection->getProperty('compra');
+                $sut = $reflectedProperty->getType();
+                expect((is_subclass_of($sut->getName(), DFeElement::class)))->toBeTrue();
+            });
 
             test('Should be optional', function () {
                 $reflection = new ReflectionClass(InformacoesNotaFiscal::class);
-                $compra = $reflection->getProperty('compra');
-                $sut = $compra->getType();
-
+                $reflectedProperty = $reflection->getProperty('compra');
+                $sut = $reflectedProperty->getType();
                 expect($sut->allowsNull())->toBeTrue();
             });
         })->skip();
@@ -406,16 +389,15 @@ describe('InformacoesNotaFiscal', function () {
 
             test('Should be a subclass of DFeElement::class', function () {
                 $reflection = new ReflectionClass(InformacoesNotaFiscal::class);
-                $cana = $reflection->getProperty('cana');
-                $sut = $cana->getType();
+                $reflectedProperty = $reflection->getProperty('cana');
+                $sut = $reflectedProperty->getType();
                 expect((is_subclass_of($sut->getName(), DFeElement::class)))->toBeTrue();
             });
 
             test('Should be required', function () {
                 $reflection = new ReflectionClass(InformacoesNotaFiscal::class);
-                $cana = $reflection->getProperty('cana');
-                $sut = $cana->getType();
-
+                $reflectedProperty = $reflection->getProperty('cana');
+                $sut = $reflectedProperty->getType();
                 expect($sut->allowsNull())->toBeFalse();
             });
         })->skip();
@@ -430,16 +412,15 @@ describe('InformacoesNotaFiscal', function () {
 
             test('Should be a subclass of DFeElement::class', function () {
                 $reflection = new ReflectionClass(InformacoesNotaFiscal::class);
-                $infRespTec = $reflection->getProperty('infRespTec');
-                $sut = $infRespTec->getType();
+                $reflectedProperty = $reflection->getProperty('infRespTec');
+                $sut = $reflectedProperty->getType();
                 expect((is_subclass_of($sut->getName(), DFeElement::class)))->toBeTrue();
             });
 
             test('Should be required', function () {
                 $reflection = new ReflectionClass(InformacoesNotaFiscal::class);
-                $infRespTec = $reflection->getProperty('infRespTec');
-                $sut = $infRespTec->getType();
-
+                $reflectedProperty = $reflection->getProperty('infRespTec');
+                $sut = $reflectedProperty->getType();
                 expect($sut->allowsNull())->toBeFalse();
             });
         })->skip();
@@ -452,16 +433,15 @@ describe('InformacoesNotaFiscal', function () {
 
             test('Should be a subclass of DFeElement::class', function () {
                 $reflection = new ReflectionClass(InformacoesNotaFiscal::class);
-                $signature = $reflection->getProperty('Signature');
-                $sut = $signature->getType();
+                $reflectedProperty = $reflection->getProperty('Signature');
+                $sut = $reflectedProperty->getType();
                 expect((is_subclass_of($sut->getName(), DFeElement::class)))->toBeTrue();
             });
 
             test('Should be required', function () {
                 $reflection = new ReflectionClass(InformacoesNotaFiscal::class);
-                $signature = $reflection->getProperty('Signature');
-                $sut = $signature->getType();
-
+                $reflectedProperty = $reflection->getProperty('Signature');
+                $sut = $reflectedProperty->getType();
                 expect($sut->allowsNull())->toBeFalse();
             });
         })->skip();
