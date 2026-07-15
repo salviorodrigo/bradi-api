@@ -25,7 +25,7 @@
 			]
 		}
 	},
-	"postCreateCommand": "sudo chown -R $(whoami) . && .devcontainer/setup-git-credentials.sh && composer install --no-interaction && composer dump-autoload --optimize",
-	"postStartCommand": ".devcontainer/setup-git-credentials.sh"
+	"postCreateCommand": "sudo chown -R $(whoami) . && .devcontainer/setup-git-credentials.sh && composer install --no-interaction && composer dump-autoload --optimize && .devcontainer/setup-grumphp-hooks.sh",
+	"postStartCommand": ".devcontainer/setup-git-credentials.sh && .devcontainer/setup-grumphp-hooks.sh"
 	
 }
