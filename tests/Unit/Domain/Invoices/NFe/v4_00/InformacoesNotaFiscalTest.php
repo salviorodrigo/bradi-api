@@ -176,5 +176,27 @@ describe('InformacoesNotaFiscal', function () {
                 expect($sut->allowsNull())->toBeFalse();
             });
         })->skip();
+
+        describe('$pag', function () {
+            test('Should be declared', function () {
+                $sut = new InformacoesNotaFiscal;
+                expect($sut)->toHaveProperty('pag');
+            });
+
+            test('Should be a subclass of DFeElement::class', function () {
+                $reflection = new ReflectionClass(InformacoesNotaFiscal::class);
+                $pag = $reflection->getProperty('pag');
+                $sut = $pag->getType();
+                expect((is_subclass_of($sut->getName(), DFeElement::class)))->toBeTrue();
+            });
+
+            test('Should be required', function () {
+                $reflection = new ReflectionClass(InformacoesNotaFiscal::class);
+                $pag = $reflection->getProperty('pag');
+                $sut = $pag->getType();
+
+                expect($sut->allowsNull())->toBeFalse();
+            });
+        })->skip();
     });
 });
