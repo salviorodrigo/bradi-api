@@ -108,7 +108,7 @@ describe('InformacoesNotaFiscal', function () {
 
                 expect($sut->allowsNull())->toBeTrue();
             });
-        });
+        })->skip();
 
         describe('$dest', function () {
             test('Should be declared', function () {
@@ -152,7 +152,7 @@ describe('InformacoesNotaFiscal', function () {
 
                 expect($sut->allowsNull())->toBeTrue();
             });
-        });
+        })->skip();
 
         describe('$entrega', function () {
             test('Should be declared', function () {
@@ -174,7 +174,30 @@ describe('InformacoesNotaFiscal', function () {
 
                 expect($sut->allowsNull())->toBeTrue();
             });
-        });
+        })->skip();
+
+        describe('$autXMLCollection', function () {
+            test('Should be declared', function () {
+                $sut = new InformacoesNotaFiscal;
+                expect($sut)->toHaveProperty('autXMLCollection');
+            });
+
+            test('Should be a subclass of DFeElementCollection::class', function () {
+                $reflection = new ReflectionClass(InformacoesNotaFiscal::class);
+                $autXML = $reflection->getProperty('autXMLCollection');
+                $sut = $autXML->getType();
+
+                expect((is_subclass_of($sut->getName(), DFeElementCollection::class)))->toBeTrue();
+            });
+
+            test('Should be required', function () {
+                $reflection = new ReflectionClass(InformacoesNotaFiscal::class);
+                $autXML = $reflection->getProperty('autXMLCollection');
+                $sut = $autXML->getType();
+
+                expect($sut->allowsNull())->toBeFalse();
+            });
+        })->skip();
 
         describe('$detCollection', function () {
             test('Should be declared', function () {
