@@ -19,7 +19,7 @@ describe('InformacoesNotaFiscal', function () {
             $sut = new InformacoesNotaFiscal;
             expect(is_subclass_of($sut, DFeElement::class))->toBeTrue();
         });
-        
+
         describe('$versao', function () {
             test('Should be declared', function () {
                 $sut = new InformacoesNotaFiscal;
@@ -55,7 +55,7 @@ describe('InformacoesNotaFiscal', function () {
                 $sut = $reflectedProperty->getType();
                 expect((is_subclass_of($sut->getName(), DFeElement::class)))->toBeTrue();
             });
-            
+
             test('Should be requited', function () {
                 $reflection = new ReflectionClass(InformacoesNotaFiscal::class);
                 $reflectedProperty = $reflection->getProperty('ide');
@@ -317,7 +317,7 @@ describe('InformacoesNotaFiscal', function () {
                 expect($sut->allowsNull())->toBeTrue();
             });
         })->skip();
-        
+
         describe('$infAdic', function () {
             test('Should be declared', function () {
                 $sut = new InformacoesNotaFiscal;
@@ -338,7 +338,7 @@ describe('InformacoesNotaFiscal', function () {
                 expect($sut->allowsNull())->toBeTrue();
             });
         })->skip();
-        
+
         describe('$exporta', function () {
             test('Should be declared', function () {
                 $sut = new InformacoesNotaFiscal;
@@ -359,7 +359,7 @@ describe('InformacoesNotaFiscal', function () {
                 expect($sut->allowsNull())->toBeTrue();
             });
         })->skip();
-        
+
         describe('$compra', function () {
             test('Should be declared', function () {
                 $sut = new InformacoesNotaFiscal;
@@ -401,8 +401,6 @@ describe('InformacoesNotaFiscal', function () {
                 expect($sut->allowsNull())->toBeFalse();
             });
         })->skip();
-
-        
 
         describe('$infRespTec', function () {
             test('Should be declared', function () {
