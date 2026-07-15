@@ -331,6 +331,28 @@ describe('InformacoesNotaFiscal', function () {
                 expect($sut->allowsNull())->toBeTrue();
             });
         })->skip();
+        
+        describe('$exporta', function () {
+            test('Should be declared', function () {
+                $sut = new InformacoesNotaFiscal;
+                expect($sut)->toHaveProperty('exporta');
+            });
+
+            test('Should be a subclass of DFeElement::class', function () {
+                $reflection = new ReflectionClass(InformacoesNotaFiscal::class);
+                $exporta = $reflection->getProperty('exporta');
+            $sut = $exporta->getType();
+            expect((is_subclass_of($sut->getName(), DFeElement::class)))->toBeTrue();
+        });
+
+            test('Should be optional', function () {
+                $reflection = new ReflectionClass(InformacoesNotaFiscal::class);
+                $exporta = $reflection->getProperty('exporta');
+                $sut = $exporta->getType();
+
+                expect($sut->allowsNull())->toBeTrue();
+            });
+        })->skip();
 
         describe('$pag', function () {
             test('Should be declared', function () {
