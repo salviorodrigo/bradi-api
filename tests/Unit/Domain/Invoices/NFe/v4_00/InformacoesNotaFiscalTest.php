@@ -420,6 +420,30 @@ describe('InformacoesNotaFiscal', function () {
             });
         })->skip();
 
+        
+
+        describe('$infRespTec', function () {
+            test('Should be declared', function () {
+                $sut = new InformacoesNotaFiscal;
+                expect($sut)->toHaveProperty('infRespTec');
+            });
+
+            test('Should be a subclass of DFeElement::class', function () {
+                $reflection = new ReflectionClass(InformacoesNotaFiscal::class);
+                $infRespTec = $reflection->getProperty('infRespTec');
+                $sut = $infRespTec->getType();
+                expect((is_subclass_of($sut->getName(), DFeElement::class)))->toBeTrue();
+            });
+
+            test('Should be required', function () {
+                $reflection = new ReflectionClass(InformacoesNotaFiscal::class);
+                $infRespTec = $reflection->getProperty('infRespTec');
+                $sut = $infRespTec->getType();
+
+                expect($sut->allowsNull())->toBeFalse();
+            });
+        })->skip();
+
         describe('$Signature', function () {
             test('Should be declared', function () {
                 $sut = new InformacoesNotaFiscal;
