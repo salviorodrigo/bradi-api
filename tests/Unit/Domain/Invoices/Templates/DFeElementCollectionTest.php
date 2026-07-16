@@ -7,7 +7,6 @@ use BradiApi\Domain\Common\ValueObjects\Result;
 use BradiApi\Domain\Invoices\Templates\DFeElementCollection;
 use BradiApi\Domain\Xml\ValueObjects\Element;
 use BradiApi\Domain\Xml\ValueObjects\ElementList;
-use BradiApi\Tests\Doubles\Domain\Common\FakeValidationService;
 use BradiApi\Tests\Doubles\Domain\Invoices\NFe\FakeDFeElement;
 use BradiApi\Tests\Doubles\Domain\Invoices\NFe\FakeDFeElementCollection;
 use BradiApi\Tests\TestCase;
@@ -21,7 +20,7 @@ describe('DFeElementCollection', function () {
     describe('::parseFromXmlElement()', function () {
         test('Should succeed parsing single Element', function () {
             $candidate = '<FakeTag>first</FakeTag>';
-            $element = new Element(new FakeValidationService);
+            $element = new Element;
             $parsingResult = $element->parse($candidate);
             if ($parsingResult->isFailure()) {
                 $this->fail(json_encode($parsingResult->getError()));
@@ -40,11 +39,11 @@ describe('DFeElementCollection', function () {
         });
 
         test('Should succeed parsing ElementList with many elements', function () {
-            $firstElement = new Element(new FakeValidationService);
+            $firstElement = new Element;
             $firstElement->name = 'FakeTag';
             $firstElement->value = 'first';
 
-            $secondElement = new Element(new FakeValidationService);
+            $secondElement = new Element;
             $secondElement->name = 'FakeTag';
             $secondElement->value = 'second';
 
@@ -62,7 +61,7 @@ describe('DFeElementCollection', function () {
 
         test('Should fail when one parsed element is invalid', function () {
             $candidate = '<root><FakeTag>first</FakeTag><WrongTag>second</WrongTag></root>';
-            $element = new Element(new FakeValidationService);
+            $element = new Element;
 
             $parsingResult = $element->parse($candidate);
             if ($parsingResult->isFailure()) {
@@ -90,7 +89,7 @@ describe('DFeElementCollection', function () {
 
         test('Should throw when BASE_CLASS constant is not defined in child class', function () {
             $candidate = '<FakeTag>first</FakeTag>';
-            $element = new Element(new FakeValidationService);
+            $element = new Element;
             $parsingResult = $element->parse($candidate);
             if ($parsingResult->isFailure()) {
                 $this->fail(json_encode($parsingResult->getError()));
@@ -107,7 +106,7 @@ describe('DFeElementCollection', function () {
 
         test('Should throw when BASE_CLASS is not a subclass of DFeElement', function () {
             $candidate = '<FakeTag>first</FakeTag>';
-            $element = new Element(new FakeValidationService);
+            $element = new Element;
 
             $parsingResult = $element->parse($candidate);
             if ($parsingResult->isFailure()) {

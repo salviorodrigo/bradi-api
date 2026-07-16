@@ -6,7 +6,6 @@ use BradiApi\Domain\Common\Protocols\ApiError;
 use BradiApi\Domain\Common\ValueObjects\Result;
 use BradiApi\Domain\Invoices\NFe\v4_00\ValueObjects\ValorUnitarioComercial;
 use BradiApi\Domain\Xml\ValueObjects\Element;
-use BradiApi\Tests\Doubles\Domain\Common\FakeValidationService;
 use BradiApi\Tests\TestCase;
 
 describe('ValorUnitarioComercial', function () {
@@ -19,7 +18,7 @@ describe('ValorUnitarioComercial', function () {
     describe('::parse()', function () {
         test('Should succeed with dataset :dataset', function ($candidate) {
             $xmlString = $candidate === '' ? '' : '<' . ValorUnitarioComercial::FIELD_NAME . ">{$candidate}</" . ValorUnitarioComercial::FIELD_NAME . '>';
-            $xmlElement = new Element(new FakeValidationService);
+            $xmlElement = new Element;
             $xmlElement->parse($xmlString);
             $sutResponse = $this->sut->parseFromXmlElement($xmlElement);
             expect($sutResponse)->toBeInstanceOf(Result::class);
@@ -33,7 +32,7 @@ describe('ValorUnitarioComercial', function () {
 
         test('Should fail with data set :dataset', function ($candidate) {
             $xmlString = '<' . ValorUnitarioComercial::FIELD_NAME . ">{$candidate}</" . ValorUnitarioComercial::FIELD_NAME . '>';
-            $xmlElement = new Element(new FakeValidationService);
+            $xmlElement = new Element;
             $xmlElement->parse($xmlString);
             $sutResponse = $this->sut->parseFromXmlElement($xmlElement);
             if ($sutResponse->isSuccess()) {
@@ -45,7 +44,7 @@ describe('ValorUnitarioComercial', function () {
 
         test('Should fail if attributes is provided', function ($candidate) {
             $xmlString = '<' . ValorUnitarioComercial::FIELD_NAME . " fake=\"attribute\">{$candidate}</" . ValorUnitarioComercial::FIELD_NAME . '>';
-            $xmlElement = new Element(new FakeValidationService);
+            $xmlElement = new Element;
             $xmlElement->parse($xmlString);
             $sutResponse = $this->sut->parseFromXmlElement($xmlElement);
             expect($sutResponse)->toBeInstanceOf(Result::class);
@@ -57,7 +56,7 @@ describe('ValorUnitarioComercial', function () {
 
         test('Should fail if elements is provided', function ($candidate) {
             $xmlString = '<' . ValorUnitarioComercial::FIELD_NAME . ">{$candidate}<fake>element</fake></" . ValorUnitarioComercial::FIELD_NAME . '>';
-            $xmlElement = new Element(new FakeValidationService);
+            $xmlElement = new Element;
             $xmlElement->parse($xmlString);
             $sutResponse = $this->sut->parseFromXmlElement($xmlElement);
             expect($sutResponse)->toBeInstanceOf(Result::class);

@@ -4,14 +4,13 @@ declare(strict_types=1);
 
 use BradiApi\Domain\Xml\ValueObjects\Attribute;
 use BradiApi\Domain\Xml\ValueObjects\Element;
-use BradiApi\Tests\Doubles\Domain\Common\FakeValidationService;
 use BradiApi\Tests\TestCase;
 
 describe('Element', function () {
     describe('::__toString()', function () {
         beforeEach(function () {
             /** @var TestCase $this */
-            $this->sut = new Element(new FakeValidationService);
+            $this->sut = new Element;
             $this->sut->name = 'tag';
         });
 
@@ -61,7 +60,7 @@ describe('Element', function () {
             test('returns tag with single child', function () {
                 $this->sut->name = 'root';
 
-                $child = new Element(new FakeValidationService);
+                $child = new Element;
                 $child->name = 'item';
                 $child->value = 'value';
 
@@ -73,11 +72,11 @@ describe('Element', function () {
             test('returns tag with multiple children in insertion order', function () {
                 $this->sut->name = 'root';
 
-                $child1 = new Element(new FakeValidationService);
+                $child1 = new Element;
                 $child1->name = 'a';
                 $child1->value = '1';
 
-                $child2 = new Element(new FakeValidationService);
+                $child2 = new Element;
                 $child2->name = 'b';
                 $child2->value = '2';
 
@@ -90,10 +89,10 @@ describe('Element', function () {
             test('returns tag with nested children across multiple levels', function () {
                 $this->sut->name = 'root';
 
-                $middle = new Element(new FakeValidationService);
+                $middle = new Element;
                 $middle->name = 'middle';
 
-                $leaf = new Element(new FakeValidationService);
+                $leaf = new Element;
                 $leaf->name = 'leaf';
                 $leaf->value = 'data';
 
@@ -106,7 +105,7 @@ describe('Element', function () {
             test('child with no value and no grandchildren becomes auto-close', function () {
                 $this->sut->name = 'root';
 
-                $child = new Element(new FakeValidationService);
+                $child = new Element;
                 $child->name = 'empty';
 
                 $this->sut->addChild($child);

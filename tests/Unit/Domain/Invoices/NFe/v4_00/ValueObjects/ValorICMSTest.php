@@ -6,7 +6,6 @@ use BradiApi\Domain\Common\Protocols\ApiError;
 use BradiApi\Domain\Common\ValueObjects\Result;
 use BradiApi\Domain\Invoices\NFe\v4_00\ValueObjects\ValorICMS;
 use BradiApi\Domain\Xml\ValueObjects\Element;
-use BradiApi\Tests\Doubles\Domain\Common\FakeValidationService;
 use BradiApi\Tests\TestCase;
 
 describe('ValorICMS', function () {
@@ -19,7 +18,7 @@ describe('ValorICMS', function () {
     describe('::parse()', function () {
         test('Should succeed with dataset :dataset', function ($candidate) {
             $xmlString = $candidate === '' ? '' : '<' . ValorICMS::FIELD_NAME . ">{$candidate}</" . ValorICMS::FIELD_NAME . '>';
-            $xmlElement = new Element(new FakeValidationService);
+            $xmlElement = new Element;
             $xmlElement->parse($xmlString);
             $sutResponse = $this->sut->parseFromXmlElement($xmlElement);
             expect($sutResponse)->toBeInstanceOf(Result::class);
@@ -33,7 +32,7 @@ describe('ValorICMS', function () {
 
         test('Should fail with data set :dataset', function ($candidate) {
             $xmlString = '<' . ValorICMS::FIELD_NAME . ">{$candidate}</" . ValorICMS::FIELD_NAME . '>';
-            $xmlElement = new Element(new FakeValidationService);
+            $xmlElement = new Element;
             $xmlElement->parse($xmlString);
             $sutResponse = $this->sut->parseFromXmlElement($xmlElement);
             if ($sutResponse->isSuccess()) {
@@ -45,7 +44,7 @@ describe('ValorICMS', function () {
 
         test('Should fail if attributes is provided', function ($candidate) {
             $xmlString = '<' . ValorICMS::FIELD_NAME . " fake=\"attribute\">{$candidate}</" . ValorICMS::FIELD_NAME . '>';
-            $xmlElement = new Element(new FakeValidationService);
+            $xmlElement = new Element;
             $xmlElement->parse($xmlString);
             $sutResponse = $this->sut->parseFromXmlElement($xmlElement);
             expect($sutResponse)->toBeInstanceOf(Result::class);
@@ -57,7 +56,7 @@ describe('ValorICMS', function () {
 
         test('Should fail if elements is provided', function ($candidate) {
             $xmlString = '<' . ValorICMS::FIELD_NAME . ">{$candidate}<fake>element</fake></" . ValorICMS::FIELD_NAME . '>';
-            $xmlElement = new Element(new FakeValidationService);
+            $xmlElement = new Element;
             $xmlElement->parse($xmlString);
             $sutResponse = $this->sut->parseFromXmlElement($xmlElement);
             expect($sutResponse)->toBeInstanceOf(Result::class);

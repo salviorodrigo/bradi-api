@@ -16,13 +16,10 @@ class Element
     public private(set) AttributeList $attributes;
     public private(set) ElementList $children;
 
-    private XmlIterator $iterator;
-
-    public function __construct()
+    public function __construct(private readonly XmlIterator $iterator = new XmlStringIterator)
     {
         $this->attributes = new AttributeList;
         $this->children = new ElementList;
-        $this->iterator = new XmlStringIterator;
     }
 
     public function addChild(Element $child): void

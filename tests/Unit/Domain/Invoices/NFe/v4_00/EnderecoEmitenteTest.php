@@ -6,7 +6,6 @@ use BradiApi\Domain\Common\Protocols\ApiError;
 use BradiApi\Domain\Common\ValueObjects\Result;
 use BradiApi\Domain\Invoices\NFe\v4_00\EnderecoEmitente;
 use BradiApi\Domain\Xml\ValueObjects\Element;
-use BradiApi\Tests\Doubles\Domain\Common\FakeValidationService;
 use BradiApi\Tests\TestCase;
 
 describe('EnderecoEmitente', function () {
@@ -18,7 +17,7 @@ describe('EnderecoEmitente', function () {
 
     describe('::parse()', function () {
         test('Should succeed with dataset :dataset', function ($candidate) {
-            $xmlElement = new Element(new FakeValidationService);
+            $xmlElement = new Element;
             $xmlElement->parse($candidate);
             $sutResponse = $this->sut->parseFromXmlElement($xmlElement);
             expect($sutResponse)->toBeInstanceOf(Result::class);
@@ -31,7 +30,7 @@ describe('EnderecoEmitente', function () {
         })->with(datasets('dfes.nfe.element_tags.' . EnderecoEmitente::FIELD_NAME . '.valid'));
 
         test('Should fail with dataset :dataset', function ($candidate) {
-            $xmlElement = new Element(new FakeValidationService);
+            $xmlElement = new Element;
             $xmlElement->parse($candidate);
             $sutResponse = $this->sut->parseFromXmlElement($xmlElement);
             expect($sutResponse)->toBeInstanceOf(Result::class);
