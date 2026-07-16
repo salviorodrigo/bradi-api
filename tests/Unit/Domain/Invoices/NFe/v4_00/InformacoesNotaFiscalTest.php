@@ -6,20 +6,21 @@ use BradiApi\Domain\Invoices\NFe\v4_00\InformacoesNotaFiscal;
 use BradiApi\Domain\Invoices\Templates\DFeAttribute;
 use BradiApi\Domain\Invoices\Templates\DFeElement;
 use BradiApi\Domain\Invoices\Templates\DFeElementCollection;
+use BradiApi\Domain\Xml\ValueObjects\Element;
 
 describe('InformacoesNotaFiscal', function () {
+    test('Should succeed if InformacoesNotaFiscal is declared', function () {
+        $nameSpace = 'BradiApi\Domain\Invoices\NFe\v4_00';
+        $sut = $nameSpace . '\\InformacoesNotaFiscal';
+        expect(class_exists($sut))->toBeTrue();
+    });
+
+    test('Should succeed if InformacoesNotaFiscal extends DFeElement', function () {
+        $sut = new InformacoesNotaFiscal;
+        expect(is_subclass_of($sut, DFeElement::class))->toBeTrue();
+    });
+
     describe('properties', function () {
-        test('Should succeed if InformacoesNotaFiscal is declared', function () {
-            $nameSpace = 'BradiApi\Domain\Invoices\NFe\v4_00';
-            $sut = $nameSpace . '\\InformacoesNotaFiscal';
-            expect(class_exists($sut))->toBeTrue();
-        });
-
-        test('Should succeed if InformacoesNotaFiscal extends DFeElement', function () {
-            $sut = new InformacoesNotaFiscal;
-            expect(is_subclass_of($sut, DFeElement::class))->toBeTrue();
-        });
-
         describe('$versao', function () {
             test('Should be declared', function () {
                 $sut = new InformacoesNotaFiscal;
@@ -422,26 +423,90 @@ describe('InformacoesNotaFiscal', function () {
                 expect($sut->allowsNull())->toBeFalse();
             });
         })->skip();
+    });
 
-        describe('$Signature', function () {
-            test('Should be declared', function () {
+    describe('methods', function () {
+        describe('parserFromXmlElement', function () {
+            test('Should fail if Id attribute isnt provided', function () {
+                $xmlString = '<infNFe versao="4.00"><ide></ide><emit></emit><det nItem="1"></det><total></total><transp></transp><pag></pag><infAdic></infAdic><infRespTec></infRespTec></infNFe>';
+                $xmlElement = new Element;
+                $xmlElement->parse($xmlString);
                 $sut = new InformacoesNotaFiscal;
-                expect($sut)->toHaveProperty('Signature');
-            });
+                $sutParsingResult = $sut->parseFromXmlElement($xmlElement);
+                expect($sutParsingResult->isFailure())->toBeTrue();
+            })->skip();
 
-            test('Should be a subclass of DFeElement::class', function () {
-                $reflection = new ReflectionClass(InformacoesNotaFiscal::class);
-                $reflectedProperty = $reflection->getProperty('Signature');
-                $sut = $reflectedProperty->getType();
-                expect((is_subclass_of($sut->getName(), DFeElement::class)))->toBeTrue();
-            });
+            test('Should fail if versao attribute isnt provided', function () {
+                $xmlString = '<infNFe Id="NFe11260602393780000102550020009487041538119784"><ide></ide><emit></emit><det nItem="1"></det><total></total><transp></transp><pag></pag><infAdic></infAdic><infRespTec></infRespTec></infNFe>';
+                $xmlElement = new Element;
+                $xmlElement->parse($xmlString);
+                $sut = new InformacoesNotaFiscal;
+                $sutParsingResult = $sut->parseFromXmlElement($xmlElement);
+                expect($sutParsingResult->isFailure())->toBeTrue();
+            })->skip();
 
-            test('Should be required', function () {
-                $reflection = new ReflectionClass(InformacoesNotaFiscal::class);
-                $reflectedProperty = $reflection->getProperty('Signature');
-                $sut = $reflectedProperty->getType();
-                expect($sut->allowsNull())->toBeFalse();
-            });
-        })->skip();
+            test('Should fail if ide tag isnt provided', function () {
+                $xmlString = '<infNFe Id="NFe11260602393780000102550020009487041538119784" versao="4.00"><emit></emit><det nItem="1"></det><total></total><transp></transp><pag></pag><infAdic></infAdic><infRespTec></infRespTec></infNFe>';
+                $xmlElement = new Element;
+                $xmlElement->parse($xmlString);
+                $sut = new InformacoesNotaFiscal;
+                $sutParsingResult = $sut->parseFromXmlElement($xmlElement);
+                expect($sutParsingResult->isFailure())->toBeTrue();
+            })->skip();
+
+            test('Should fail if emit tag isnt provided', function () {
+                $xmlString = '<infNFe Id="NFe11260602393780000102550020009487041538119784" versao="4.00"><ide></ide><det nItem="1"></det><total></total><transp></transp><pag></pag><infAdic></infAdic><infRespTec></infRespTec></infNFe>';
+                $xmlElement = new Element;
+                $xmlElement->parse($xmlString);
+                $sut = new InformacoesNotaFiscal;
+                $sutParsingResult = $sut->parseFromXmlElement($xmlElement);
+                expect($sutParsingResult->isFailure())->toBeTrue();
+            })->skip();
+
+            test('Should fail if det tag isnt provided', function () {
+                $xmlString = '<infNFe Id="NFe11260602393780000102550020009487041538119784" versao="4.00"><ide></ide><emit></emit><total></total><transp></transp><pag></pag><infAdic></infAdic><infRespTec></infRespTec></infNFe>';
+                $xmlElement = new Element;
+                $xmlElement->parse($xmlString);
+                $sut = new InformacoesNotaFiscal;
+                $sutParsingResult = $sut->parseFromXmlElement($xmlElement);
+                expect($sutParsingResult->isFailure())->toBeTrue();
+            })->skip();
+
+            test('Should fail if total tag isnt provided', function () {
+                $xmlString = '<infNFe Id="NFe11260602393780000102550020009487041538119784" versao="4.00"><ide></ide><emit></emit><det nItem="1"></det><transp></transp><pag></pag><infAdic></infAdic><infRespTec></infRespTec></infNFe>';
+                $xmlElement = new Element;
+                $xmlElement->parse($xmlString);
+                $sut = new InformacoesNotaFiscal;
+                $sutParsingResult = $sut->parseFromXmlElement($xmlElement);
+                expect($sutParsingResult->isFailure())->toBeTrue();
+            })->skip();
+
+            test('Should fail if transp tag isnt provided', function () {
+                $xmlString = '<infNFe Id="NFe11260602393780000102550020009487041538119784" versao="4.00"><ide></ide><emit></emit><det nItem="1"></det><total></total><pag></pag><infAdic></infAdic><infRespTec></infRespTec></infNFe>';
+                $xmlElement = new Element;
+                $xmlElement->parse($xmlString);
+                $sut = new InformacoesNotaFiscal;
+                $sutParsingResult = $sut->parseFromXmlElement($xmlElement);
+                expect($sutParsingResult->isFailure())->toBeTrue();
+            })->skip();
+
+            test('Should fail if pag tag isnt provided', function () {
+                $xmlString = '<infNFe Id="NFe11260602393780000102550020009487041538119784" versao="4.00"><ide></ide><emit></emit><det nItem="1"></det><total></total><transp></transp><infAdic></infAdic><infRespTec></infRespTec></infNFe>';
+                $xmlElement = new Element;
+                $xmlElement->parse($xmlString);
+                $sut = new InformacoesNotaFiscal;
+                $sutParsingResult = $sut->parseFromXmlElement($xmlElement);
+                expect($sutParsingResult->isFailure())->toBeTrue();
+            })->skip();
+
+            test('Should fail if unallowed tag is provided', function () {
+                $xmlString = '<infNFe Id="NFe11260602393780000102550020009487041538119784" versao="4.00"><ide></ide><emit></emit><det nItem="1"></det><total></total><transp></transp><pag></pag><infAdic></infAdic><infRespTec></infRespTec><unallowed/></infNFe>';
+                $xmlElement = new Element;
+                $xmlElement->parse($xmlString);
+                $sut = new InformacoesNotaFiscal;
+                $sutParsingResult = $sut->parseFromXmlElement($xmlElement);
+                expect($sutParsingResult->isFailure())->toBeTrue();
+            })->skip();
+        });
     });
 });
