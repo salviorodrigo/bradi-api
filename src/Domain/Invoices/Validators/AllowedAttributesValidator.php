@@ -21,12 +21,12 @@ final class AllowedAttributesValidator implements Validator
             return Result::makeFailure(new InvalidArgumentException('candidate must be an Element instance.'));
         }
 
-        $providedAttributesName = array_keys($candidate->attributes->records);
-        foreach ($providedAttributesName as $providedAttribute) {
-            if (! in_array($providedAttribute, $this->allowedAttributesName)) {
+        $providedAttributes = $candidate->attributes->records;
+        foreach ($providedAttributes as $providedAttribute) {
+            if (! in_array($providedAttribute->name, $this->allowedAttributesName)) {
                 return Result::makeFailure(new InvalidArgumentException(sprintf(
                     'attribute "%s" is not allowed.',
-                    $providedAttribute
+                    $providedAttribute->name
                 )));
             }
         }
