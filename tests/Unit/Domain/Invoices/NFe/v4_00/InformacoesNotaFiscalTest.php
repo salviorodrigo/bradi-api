@@ -517,7 +517,7 @@ describe('InformacoesNotaFiscal', function () {
                 $sut = new ReflectionMethod($informacoesNotaFiscal, 'validateTagElements');
                 $sutResponse = $sut->invoke($informacoesNotaFiscal, $xmlElement);
                 expect($sutResponse->isFailure())->toBeTrue();
-            })->skip();
+            });
         });
     });
 });
