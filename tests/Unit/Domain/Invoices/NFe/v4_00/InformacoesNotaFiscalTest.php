@@ -31,7 +31,6 @@ describe('InformacoesNotaFiscal', function () {
                 $reflection = new ReflectionClass(InformacoesNotaFiscal::class);
                 $reflectedProperty = $reflection->getProperty('versao');
                 $sut = $reflectedProperty->getType();
-
                 expect((is_subclass_of($sut->getName(), DFeAttribute::class)))->toBeTrue();
             });
 
@@ -39,7 +38,6 @@ describe('InformacoesNotaFiscal', function () {
                 $reflection = new ReflectionClass(InformacoesNotaFiscal::class);
                 $reflectedProperty = $reflection->getProperty('versao');
                 $sut = $reflectedProperty->getType();
-
                 expect($sut->allowsNull())->toBeFalse();
             });
         });
@@ -103,7 +101,6 @@ describe('InformacoesNotaFiscal', function () {
                 $reflection = new ReflectionClass(InformacoesNotaFiscal::class);
                 $reflectedProperty = $reflection->getProperty('avulsa');
                 $sut = $reflectedProperty->getType();
-
                 expect($sut->allowsNull())->toBeTrue();
             });
         })->skip();
@@ -146,7 +143,6 @@ describe('InformacoesNotaFiscal', function () {
                 $reflection = new ReflectionClass(InformacoesNotaFiscal::class);
                 $reflectedProperty = $reflection->getProperty('retirada');
                 $sut = $reflectedProperty->getType();
-
                 expect($sut->allowsNull())->toBeTrue();
             });
         })->skip();
