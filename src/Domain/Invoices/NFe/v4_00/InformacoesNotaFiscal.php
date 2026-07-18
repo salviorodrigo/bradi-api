@@ -40,7 +40,7 @@ final class InformacoesNotaFiscal extends DFeElement
     protected function tagAttributesValidators(): array
     {
         return [
-            new RequiredAttributeValidator(['Id']),
+            new RequiredAttributeValidator(['Id', 'versao']),
         ];
     }
 
