@@ -25,7 +25,7 @@ describe('InformacoesNotaFiscal', function () {
             test('Should be declared', function () {
                 $sut = new InformacoesNotaFiscal;
                 expect($sut)->toHaveProperty('versao');
-            })->skip();
+            });
 
             test('Should be a subclass of DFeAttribute::class', function () {
                 $reflection = new ReflectionClass(InformacoesNotaFiscal::class);
