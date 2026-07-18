@@ -7,8 +7,8 @@ grumphp:
     tasks:
         shell:
             scripts:
-                - ['-c', 'composer lint']
-                - ['-c', 'composer test']
+                - ['-c', 'composer lint --dirty']
+                - ['-c', 'composer test:ci']
             triggered_by: ['php']
 
         git_commit_message:
