@@ -446,6 +446,16 @@ describe('InformacoesNotaFiscal', function () {
                 $sutResponse = $sut->invoke($informacoesNotaFiscal, $xmlElement);
                 expect($sutResponse->isFailure())->toBeTrue();
             });
+
+            test('Should fail if unallowed attribute is provided', function () {
+                $xmlString = '<infNFe Id="NFe11260602393780000102550020009487041538119784" versao="4.00" unallowed="value"><ide></ide><emit></emit><det nItem="1"></det><total></total><transp></transp><pag></pag><infAdic></infAdic><infRespTec></infRespTec></infNFe>';
+                $xmlElement = new Element;
+                $xmlElement->parse($xmlString);
+                $informacoesNotaFiscal = new InformacoesNotaFiscal;
+                $sut = new ReflectionMethod($informacoesNotaFiscal, 'validateTagAttributes');
+                $sutResponse = $sut->invoke($informacoesNotaFiscal, $xmlElement);
+                expect($sutResponse->isFailure())->toBeTrue();
+            });
         });
 
         describe('validateTagElements', function () {
