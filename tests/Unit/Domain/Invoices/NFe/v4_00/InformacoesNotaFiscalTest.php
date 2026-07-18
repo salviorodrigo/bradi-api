@@ -477,7 +477,7 @@ describe('InformacoesNotaFiscal', function () {
                 $sut = new ReflectionMethod($informacoesNotaFiscal, 'validateTagElements');
                 $sutResponse = $sut->invoke($informacoesNotaFiscal, $xmlElement);
                 expect($sutResponse->isFailure())->toBeTrue();
-            })->skip();
+            });
 
             test('Should fail if total tag isnt provided', function () {
                 $xmlString = '<infNFe Id="NFe11260602393780000102550020009487041538119784" versao="4.00"><ide></ide><emit></emit><det nItem="1"></det><transp></transp><pag></pag><infAdic></infAdic><infRespTec></infRespTec></infNFe>';
@@ -487,7 +487,7 @@ describe('InformacoesNotaFiscal', function () {
                 $sut = new ReflectionMethod($informacoesNotaFiscal, 'validateTagElements');
                 $sutResponse = $sut->invoke($informacoesNotaFiscal, $xmlElement);
                 expect($sutResponse->isFailure())->toBeTrue();
-            })->skip();
+            });
 
             test('Should fail if transp tag isnt provided', function () {
                 $xmlString = '<infNFe Id="NFe11260602393780000102550020009487041538119784" versao="4.00"><ide></ide><emit></emit><det nItem="1"></det><total></total><pag></pag><infAdic></infAdic><infRespTec></infRespTec></infNFe>';
@@ -497,7 +497,7 @@ describe('InformacoesNotaFiscal', function () {
                 $sut = new ReflectionMethod($informacoesNotaFiscal, 'validateTagElements');
                 $sutResponse = $sut->invoke($informacoesNotaFiscal, $xmlElement);
                 expect($sutResponse->isFailure())->toBeTrue();
-            })->skip();
+            });
 
             test('Should fail if pag tag isnt provided', function () {
                 $xmlString = '<infNFe Id="NFe11260602393780000102550020009487041538119784" versao="4.00"><ide></ide><emit></emit><det nItem="1"></det><total></total><transp></transp><infAdic></infAdic><infRespTec></infRespTec></infNFe>';
@@ -507,7 +507,7 @@ describe('InformacoesNotaFiscal', function () {
                 $sut = new ReflectionMethod($informacoesNotaFiscal, 'validateTagElements');
                 $sutResponse = $sut->invoke($informacoesNotaFiscal, $xmlElement);
                 expect($sutResponse->isFailure())->toBeTrue();
-            })->skip();
+            });
 
             test('Should fail if unallowed tag is provided', function () {
                 $xmlString = '<infNFe Id="NFe11260602393780000102550020009487041538119784" versao="4.00"><ide></ide><emit></emit><det nItem="1"></det><total></total><transp></transp><pag></pag><infAdic></infAdic><infRespTec></infRespTec><unallowed/></infNFe>';
