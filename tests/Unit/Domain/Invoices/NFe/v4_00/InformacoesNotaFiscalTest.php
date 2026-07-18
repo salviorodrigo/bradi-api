@@ -33,7 +33,7 @@ describe('InformacoesNotaFiscal', function () {
                 $sut = $reflectedProperty->getType();
 
                 expect((is_subclass_of($sut->getName(), DFeAttribute::class)))->toBeTrue();
-            })->skip();
+            });
 
             test('Should be requited', function () {
                 $reflection = new ReflectionClass(InformacoesNotaFiscal::class);
