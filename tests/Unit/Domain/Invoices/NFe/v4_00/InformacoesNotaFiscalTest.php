@@ -426,25 +426,29 @@ describe('InformacoesNotaFiscal', function () {
     });
 
     describe('methods', function () {
-        describe('parserFromXmlElement', function () {
+        describe('validateTagAttributes', function () {
             test('Should fail if Id attribute isnt provided', function () {
                 $xmlString = '<infNFe versao="4.00"><ide></ide><emit></emit><det nItem="1"></det><total></total><transp></transp><pag></pag><infAdic></infAdic><infRespTec></infRespTec></infNFe>';
                 $xmlElement = new Element;
                 $xmlElement->parse($xmlString);
-                $sut = new InformacoesNotaFiscal;
-                $sutParsingResult = $sut->parseFromXmlElement($xmlElement);
-                expect($sutParsingResult->isFailure())->toBeTrue();
-            })->skip();
+                $informacoesNotaFiscal = new InformacoesNotaFiscal;
+                $sut = new ReflectionMethod($informacoesNotaFiscal, 'validateTagAttributes');
+                $sutResponse = $sut->invoke($informacoesNotaFiscal, $xmlElement);
+                expect($sutResponse->isFailure())->toBeTrue();
+            });
 
             test('Should fail if versao attribute isnt provided', function () {
                 $xmlString = '<infNFe Id="NFe11260602393780000102550020009487041538119784"><ide></ide><emit></emit><det nItem="1"></det><total></total><transp></transp><pag></pag><infAdic></infAdic><infRespTec></infRespTec></infNFe>';
                 $xmlElement = new Element;
                 $xmlElement->parse($xmlString);
-                $sut = new InformacoesNotaFiscal;
-                $sutParsingResult = $sut->parseFromXmlElement($xmlElement);
-                expect($sutParsingResult->isFailure())->toBeTrue();
+                $informacoesNotaFiscal = new InformacoesNotaFiscal;
+                $sut = new ReflectionMethod($informacoesNotaFiscal, 'validateTagAttributes');
+                $sutResponse = $sut->invoke($informacoesNotaFiscal, $xmlElement);
+                expect($sutResponse->isFailure())->toBeTrue();
             })->skip();
+        });
 
+        describe('validateTagElements', function () {
             test('Should fail if ide tag isnt provided', function () {
                 $xmlString = '<infNFe Id="NFe11260602393780000102550020009487041538119784" versao="4.00"><emit></emit><det nItem="1"></det><total></total><transp></transp><pag></pag><infAdic></infAdic><infRespTec></infRespTec></infNFe>';
                 $xmlElement = new Element;
