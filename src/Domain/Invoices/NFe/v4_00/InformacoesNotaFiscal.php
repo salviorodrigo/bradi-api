@@ -18,6 +18,7 @@ use BradiApi\Domain\Common\Protocols\Validator;
 use BradiApi\Domain\Invoices\NFe\v4_00\ValueObjects\VersaoDocumentoFiscal;
 use BradiApi\Domain\Invoices\Templates\DFeElement;
 use BradiApi\Domain\Invoices\Traits\ValidatesDFeGroupElement;
+use BradiApi\Domain\Invoices\Validators\AllowedAttributesValidator;
 use BradiApi\Domain\Invoices\Validators\AllowedTagsValidator;
 use BradiApi\Domain\Invoices\Validators\RequiredAttributeValidator;
 use BradiApi\Domain\Invoices\Validators\RequiredTagValidator;
@@ -39,6 +40,7 @@ final class InformacoesNotaFiscal extends DFeElement
     {
         return [
             new RequiredAttributeValidator(['Id', 'versao']),
+            new AllowedAttributesValidator(['Id', 'versao']),
         ];
     }
 
