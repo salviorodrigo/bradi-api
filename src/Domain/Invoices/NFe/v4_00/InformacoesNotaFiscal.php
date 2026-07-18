@@ -25,7 +25,7 @@ final class InformacoesNotaFiscal extends DFeElement
     public string $versao;
     public IdentificacaoNF $ide;
     public Emitente $emit;
-    public Destinatario $dest;
+    public ?Destinatario $dest;
     public DetalhamentoItem $det;
 
     /** @return array<Validator> */
