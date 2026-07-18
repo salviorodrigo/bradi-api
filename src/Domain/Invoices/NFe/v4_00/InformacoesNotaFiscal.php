@@ -18,6 +18,7 @@ use BradiApi\Domain\Common\Protocols\Validator;
 use BradiApi\Domain\Invoices\NFe\v4_00\ValueObjects\VersaoDocumentoFiscal;
 use BradiApi\Domain\Invoices\Templates\DFeElement;
 use BradiApi\Domain\Invoices\Validators\HasNoTextContentValidator;
+use BradiApi\Domain\Invoices\Validators\RequiredAttributeValidator;
 
 final class InformacoesNotaFiscal extends DFeElement
 {
@@ -38,7 +39,9 @@ final class InformacoesNotaFiscal extends DFeElement
     /** @return array<Validator> */
     protected function tagAttributesValidators(): array
     {
-        return [];
+        return [
+            new RequiredAttributeValidator(['Id']),
+        ];
     }
 
     /** @return array<Validator> */
