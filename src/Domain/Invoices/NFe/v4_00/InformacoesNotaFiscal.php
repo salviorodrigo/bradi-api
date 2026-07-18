@@ -49,7 +49,7 @@ final class InformacoesNotaFiscal extends DFeElement
     protected function tagElementsValidators(): array
     {
         return [
-            new RequiredTagValidator(['ide']),
+            new RequiredTagValidator(['ide', 'emit']),
         ];
     }
 }
