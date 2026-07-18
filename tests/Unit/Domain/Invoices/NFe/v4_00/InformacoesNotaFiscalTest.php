@@ -126,7 +126,7 @@ describe('InformacoesNotaFiscal', function () {
                 $reflectedProperty = $reflection->getProperty('dest');
                 $sut = $reflectedProperty->getType();
                 expect($sut->allowsNull())->toBeTrue();
-            })->skip();
+            });
         });
 
         describe('$retirada', function () {
