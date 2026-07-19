@@ -218,7 +218,7 @@ describe('DetalhamentoItem', function () {
                 $sut = new ReflectionMethod($detalhamentoItem, 'validateTagElements');
                 $sutResponse = $sut->invoke($detalhamentoItem, $xmlElement);
                 expect($sutResponse->isFailure())->toBeTrue();
-            })->skip();
+            });
         });
     });
 });
