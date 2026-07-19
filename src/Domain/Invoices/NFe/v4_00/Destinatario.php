@@ -34,7 +34,7 @@ final class Destinatario extends DFeElement
     public ?CadastroPJ $CNPJ;
     public ?CadastroPF $CPF;
     public ?Nome $xNome;
-    public ?EnderecoDestinatario $endDest;
+    public ?EnderecoDestinatario $enderDest;
     public IndicadorIEDestinatario $indIEDest;
     public ?InscricaoEstadual $IE;
 
