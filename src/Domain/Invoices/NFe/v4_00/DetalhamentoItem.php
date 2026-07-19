@@ -17,6 +17,7 @@ namespace BradiApi\Domain\Invoices\NFe\v4_00;
 use BradiApi\Domain\Common\Protocols\Validator;
 use BradiApi\Domain\Invoices\Templates\DFeElement;
 use BradiApi\Domain\Invoices\Traits\ValidatesDFeGroupElement;
+use BradiApi\Domain\Invoices\Validators\AllowedAttributesValidator;
 use BradiApi\Domain\Invoices\Validators\RequiredAttributeValidator;
 use BradiApi\Domain\Invoices\Validators\RequiredTagValidator;
 
@@ -42,6 +43,7 @@ final class DetalhamentoItem extends DFeElement
     {
         return [
             new RequiredAttributeValidator(['nItem']),
+            new AllowedAttributesValidator(['nItem', 'infAdProd']),
         ];
     }
 }
