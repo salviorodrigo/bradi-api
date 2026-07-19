@@ -32,7 +32,7 @@ use BradiApi\Domain\Invoices\Templates\DFeElement;
 use BradiApi\Domain\Invoices\Traits\ValidatesDFeGroupElement;
 use BradiApi\Domain\Invoices\Validators\RequiredTagValidator;
 
-final class IdentificacaoNF extends DFeElement
+final class IdentificacaoNotaFiscal extends DFeElement
 {
     use ValidatesDFeGroupElement;
 
