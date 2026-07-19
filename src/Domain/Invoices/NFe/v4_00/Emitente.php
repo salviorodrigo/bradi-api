@@ -34,8 +34,8 @@ final class Emitente extends DFeElement
     public ?CadastroPF $CPF;
     public Nome $xNome;
     public ?NomeFantasia $xFant;
-    public EnderecoEmitente $endEmit;
     public InscricaoEstadual $IE;
+    public EnderecoEmitente $endEmit;
 
     protected function tagElementsValidators(): array
     {
