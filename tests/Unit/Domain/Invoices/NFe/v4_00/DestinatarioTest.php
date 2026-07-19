@@ -292,7 +292,7 @@ describe('Destinatario', function () {
                 $sut = new ReflectionMethod($destinatario, 'validateTagElements');
                 $sutResponse = $sut->invoke($destinatario, $xmlElement);
                 expect($sutResponse->isFailure())->toBeTrue();
-            })->skip();
+            });
         });
     });
 });
