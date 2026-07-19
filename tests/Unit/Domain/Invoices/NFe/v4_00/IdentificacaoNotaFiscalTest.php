@@ -549,6 +549,16 @@ describe('IdentificacaoNotaFiscal', function () {
                 expect($sutResponse->isSuccess())->toBeTrue();
             });
 
+            test('Should succeed if all tags are provided', function () {
+                $xmlString = '<ide><cUF></cUF><cNF></cNF><natOp></natOp><mod></mod><serie></serie><nNF></nNF><dhEmi></dhEmi><dhSaiEnt></dhSaiEnt><tpNF></tpNF><idDest></idDest><cMunFG></cMunFG><tpImp></tpImp><tpEmis></tpEmis><cDV></cDV><tpAmb></tpAmb><finNFe></finNFe><indFinal></indFinal><indPres></indPres><indIntermed></indIntermed><procEmi></procEmi><verProc></verProc><dhCont></dhCont><xJust></xJust></ide>';
+                $xmlElement = new Element;
+                $xmlElement->parse($xmlString);
+                $identificacaoNotaFiscal = new IdentificacaoNotaFiscal;
+                $sut = new ReflectionMethod($identificacaoNotaFiscal, 'validateTagElements');
+                $sutResponse = $sut->invoke($identificacaoNotaFiscal, $xmlElement);
+                expect($sutResponse->isSuccess())->toBeTrue();
+            });
+
             test('Should fail if cUF tag isnt provided', function () {
                 $xmlString = '<ide><cNF></cNF><natOp></natOp><mod></mod><serie></serie><nNF></nNF><dhEmi></dhEmi><tpNF></tpNF><idDest></idDest><cMunFG></cMunFG><tpImp></tpImp><tpEmis></tpEmis><cDV></cDV><tpAmb></tpAmb><finNFe></finNFe><indFinal></indFinal><indPres></indPres><procEmi></procEmi><verProc></verProc></ide>';
                 $xmlElement = new Element;
