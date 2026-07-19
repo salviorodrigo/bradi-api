@@ -423,8 +423,18 @@ describe('InformacoesNotaFiscal', function () {
 
     describe('methods', function () {
         describe('validateTagAttributes', function () {
+            test('Should succeed if all attributes is provided', function () {
+                $xmlString = '<infNFe Id="NFe11260602393780000102550020009487041538119784" versao="4.00"></infNFe>';
+                $xmlElement = new Element;
+                $xmlElement->parse($xmlString);
+                $informacoesNotaFiscal = new InformacoesNotaFiscal;
+                $sut = new ReflectionMethod($informacoesNotaFiscal, 'validateTagAttributes');
+                $sutResponse = $sut->invoke($informacoesNotaFiscal, $xmlElement);
+                expect($sutResponse->isSuccess())->toBeTrue();
+            });
+
             test('Should fail if Id attribute isnt provided', function () {
-                $xmlString = '<infNFe versao="4.00"><ide></ide><emit></emit><det nItem="1"></det><total></total><transp></transp><pag></pag><infAdic></infAdic><infRespTec></infRespTec></infNFe>';
+                $xmlString = '<infNFe versao="4.00"></infNFe>';
                 $xmlElement = new Element;
                 $xmlElement->parse($xmlString);
                 $informacoesNotaFiscal = new InformacoesNotaFiscal;
@@ -434,7 +444,7 @@ describe('InformacoesNotaFiscal', function () {
             });
 
             test('Should fail if versao attribute isnt provided', function () {
-                $xmlString = '<infNFe Id="NFe11260602393780000102550020009487041538119784"><ide></ide><emit></emit><det nItem="1"></det><total></total><transp></transp><pag></pag><infAdic></infAdic><infRespTec></infRespTec></infNFe>';
+                $xmlString = '<infNFe Id="NFe11260602393780000102550020009487041538119784"></infNFe>';
                 $xmlElement = new Element;
                 $xmlElement->parse($xmlString);
                 $informacoesNotaFiscal = new InformacoesNotaFiscal;
@@ -444,7 +454,7 @@ describe('InformacoesNotaFiscal', function () {
             });
 
             test('Should fail if unallowed attribute is provided', function () {
-                $xmlString = '<infNFe Id="NFe11260602393780000102550020009487041538119784" versao="4.00" unallowed="value"><ide></ide><emit></emit><det nItem="1"></det><total></total><transp></transp><pag></pag><infAdic></infAdic><infRespTec></infRespTec></infNFe>';
+                $xmlString = '<infNFe Id="NFe11260602393780000102550020009487041538119784" versao="4.00" unallowed="value"></infNFe>';
                 $xmlElement = new Element;
                 $xmlElement->parse($xmlString);
                 $informacoesNotaFiscal = new InformacoesNotaFiscal;
