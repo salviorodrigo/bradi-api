@@ -22,6 +22,7 @@ use BradiApi\Domain\Invoices\NFe\v4_00\ValueObjects\InscricaoEstadual;
 use BradiApi\Domain\Invoices\NFe\v4_00\ValueObjects\Nome;
 use BradiApi\Domain\Invoices\Templates\DFeElement;
 use BradiApi\Domain\Invoices\Traits\ValidatesDFeGroupElement;
+use BradiApi\Domain\Invoices\Validators\AllowedTagsValidator;
 use BradiApi\Domain\Invoices\Validators\AtLeastOneTagValidator;
 use BradiApi\Domain\Invoices\Validators\RequiredTagValidator;
 
@@ -43,6 +44,7 @@ final class Destinatario extends DFeElement
         return [
             new AtLeastOneTagValidator(['CNPJ', 'CPF', 'idEstrangeiro']),
             new RequiredTagValidator(['indIEDest']),
+            new AllowedTagsValidator(['CNPJ', 'CPF', 'idEstrangeiro', 'xNome', 'enderDest', 'indIEDest', 'IE', 'IM', 'ISUF', 'email']),
         ];
     }
 }
