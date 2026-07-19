@@ -30,6 +30,7 @@ use BradiApi\Domain\Invoices\NFe\v4_00\ValueObjects\TipoEmissao;
 use BradiApi\Domain\Invoices\NFe\v4_00\ValueObjects\TipoNF;
 use BradiApi\Domain\Invoices\Templates\DFeElement;
 use BradiApi\Domain\Invoices\Traits\ValidatesDFeGroupElement;
+use BradiApi\Domain\Invoices\Validators\AllowedTagsValidator;
 use BradiApi\Domain\Invoices\Validators\RequiredTagValidator;
 
 final class IdentificacaoNotaFiscal extends DFeElement
@@ -57,6 +58,7 @@ final class IdentificacaoNotaFiscal extends DFeElement
     {
         return [
             new RequiredTagValidator(['cUF', 'cNF', 'natOp', 'mod', 'serie', 'nNF', 'dhEmi', 'tpNF', 'idDest', 'cMunFG', 'tpImp', 'tpEmis', 'cDV', 'tpAmb', 'finNFe', 'indFinal', 'indPres', 'procEmi', 'verProc']),
+            new AllowedTagsValidator(['cUF', 'cNF', 'natOp', 'mod', 'serie', 'nNF', 'dhEmi', 'dhSaiEnt', 'tpNF', 'idDest', 'cMunFG', 'tpImp', 'tpEmis', 'cDV', 'tpAmb', 'finNFe', 'indFinal', 'indPres', 'indIntermed', 'procEmi', 'verProc', 'dhCont', 'xJust']),
         ];
     }
 }
