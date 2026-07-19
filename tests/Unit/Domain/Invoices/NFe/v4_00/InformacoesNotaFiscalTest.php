@@ -465,6 +465,16 @@ describe('InformacoesNotaFiscal', function () {
         });
 
         describe('validateTagElements', function () {
+            test('Should succeed if all required tags are provided', function () {
+                $xmlString = '<infNFe Id="NFe11260602393780000102550020009487041538119784" versao="4.00"><ide></ide><emit></emit><det nItem="1"></det><total></total><transp></transp><pag></pag><infAdic></infAdic><infRespTec></infRespTec></infNFe>';
+                $xmlElement = new Element;
+                $xmlElement->parse($xmlString);
+                $informacoesNotaFiscal = new InformacoesNotaFiscal;
+                $sut = new ReflectionMethod($informacoesNotaFiscal, 'validateTagElements');
+                $sutResponse = $sut->invoke($informacoesNotaFiscal, $xmlElement);
+                expect($sutResponse->isFailure())->toBeFalse();
+            });
+
             test('Should fail if ide tag isnt provided', function () {
                 $xmlString = '<infNFe Id="NFe11260602393780000102550020009487041538119784" versao="4.00"><emit></emit><det nItem="1"></det><total></total><transp></transp><pag></pag><infAdic></infAdic><infRespTec></infRespTec></infNFe>';
                 $xmlElement = new Element;
