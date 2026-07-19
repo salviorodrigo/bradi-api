@@ -21,7 +21,6 @@ use BradiApi\Domain\Invoices\NFe\v4_00\ValueObjects\Nome;
 use BradiApi\Domain\Invoices\NFe\v4_00\ValueObjects\NomeFantasia;
 use BradiApi\Domain\Invoices\Templates\DFeElement;
 use BradiApi\Domain\Invoices\Traits\ValidatesDFeGroupElement;
-use BradiApi\Domain\Invoices\Validators\AtLeastOneTagValidator;
 use BradiApi\Domain\Invoices\Validators\RequiredTagValidator;
 
 final class Emitente extends DFeElement
@@ -40,8 +39,7 @@ final class Emitente extends DFeElement
     protected function tagElementsValidators(): array
     {
         return [
-            new AtLeastOneTagValidator(['CNPJ', 'CPF']),
-            new RequiredTagValidator(['xNome', 'enderEmit', 'IE', 'CRT']),
+            new RequiredTagValidator(['CNPJ', 'xNome', 'enderEmit', 'IE', 'CRT']),
         ];
     }
 }
