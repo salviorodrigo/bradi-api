@@ -30,12 +30,12 @@ final class Emitente extends DFeElement
 
     public const string FIELD_NAME = 'emit';
 
-    public ?CadastroPJ $CNPJ;
+    public CadastroPJ $CNPJ;
     public ?CadastroPF $CPF;
     public Nome $xNome;
     public ?NomeFantasia $xFant;
     public InscricaoEstadual $IE;
-    public EnderecoEmitente $endEmit;
+    public EnderecoEmitente $enderEmit;
 
     protected function tagElementsValidators(): array
     {
