@@ -262,7 +262,7 @@ describe('Emitente', function () {
                 $sut = new ReflectionMethod($emitente, 'validateTagElements');
                 $sutResponse = $sut->invoke($emitente, $xmlElement);
                 expect($sutResponse->isSuccess())->toBeTrue();
-            })->skip();
+            });
 
             test('Should fail if CNPJ tag isnt provided', function () {
                 $xmlString = '<emit><xNome></xNome><enderEmit></enderEmit><IE></IE><CRT></CRT></emit>';
