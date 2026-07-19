@@ -137,7 +137,7 @@ describe('DetalhamentoItem', function () {
                 $sutResponse = $sut->invoke($detalhamentoItem, $xmlElement);
                 expect($sutResponse->isSuccess())->toBeTrue();
             });
-            
+
             test('Should succeed if all attributes are provided', function () {
                 $xmlString = '<det nItem="1" infAdProd="aValue"></det>';
                 $xmlElement = new Element;
@@ -157,7 +157,7 @@ describe('DetalhamentoItem', function () {
                 $sutResponse = $sut->invoke($detalhamentoItem, $xmlElement);
                 expect($sutResponse->isFailure())->toBeTrue();
             });
-            
+
             test('Should fail if an unallowed attribute is provided', function () {
                 $xmlString = '<det nItem="1" infAdProd="aValue" unallowed="value"></det>';
                 $xmlElement = new Element;
@@ -166,7 +166,7 @@ describe('DetalhamentoItem', function () {
                 $sut = new ReflectionMethod($detalhamentoItem, 'validateTagAttributes');
                 $sutResponse = $sut->invoke($detalhamentoItem, $xmlElement);
                 expect($sutResponse->isFailure())->toBeTrue();
-            })->skip();
+            });
         });
 
         describe('validateTagElements', function () {
