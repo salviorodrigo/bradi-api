@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace BradiApi\Domain\Invoices\Templates;
 
 use BradiApi\Domain\Common\Protocols\ApiError;
+use BradiApi\Domain\Common\Services\ValidationService;
 use BradiApi\Domain\Common\ValueObjects\Result;
 use BradiApi\Domain\Xml\ValueObjects\Element;
 use BradiApi\Domain\Xml\ValueObjects\ElementList;
@@ -12,19 +13,28 @@ use Exception;
 
 abstract class DFeElementCollection
 {
-    private const string BASE_CLASS = '';
+    protected const string BASE_CLASS = '';
 
     /** @var DFeElement[] */
     public array $collection = [];
 
     private DFeElement $baseClass;
+    private ValidationService $validationService;
 
-    final public function __construct(private readonly string $parentFieldURI = '') {}
+    final public function __construct(private readonly string $parentFieldURI = '')
+    {
+        $this->validationService = new ValidationService($this->parentFieldURI, __METHOD__);
+    }
 
     /** @return Result<DFeElement|ApiError> */
     final public function parseFromXmlElement(Element|ElementList $elementOrElementList): Result
     {
         $elements = $this->normalizeElements($elementOrElementList);
+        $validationResult = $this->validateCollection($elements);
+        if ($validationResult->isFailure()) {
+            return $validationResult;
+        }
+
         foreach ($elements as $element) {
             $this->resetBaseClass();
             $dfeElement = $this->baseClass->parseFromXmlElement($element);
@@ -36,6 +46,18 @@ abstract class DFeElementCollection
         }
 
         return Result::makeSuccess($this);
+    }
+
+    abstract protected function collectionValidators(): array;
+
+    final protected function validateCollection(array $elements): Result
+    {
+        $this->validationService->reset();
+        foreach ($this->collectionValidators() as $validator) {
+            $this->validationService->addValidator($validator);
+        }
+
+        return $this->validationService->verify($elements);
     }
 
     private function resetBaseClass(): void

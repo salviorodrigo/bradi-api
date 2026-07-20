@@ -9,4 +9,9 @@ use BradiApi\Domain\Invoices\Templates\DFeElementCollection;
 final class FakeDFeElementCollection extends DFeElementCollection
 {
     public const string BASE_CLASS = FakeDFeElement::class;
+
+    protected function collectionValidators(): array
+    {
+        return [];
+    }
 }
