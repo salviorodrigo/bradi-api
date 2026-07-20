@@ -30,11 +30,6 @@ abstract class DFeElementCollection
     final public function parseFromXmlElement(Element|ElementList $elementOrElementList): Result
     {
         $elements = $this->normalizeElements($elementOrElementList);
-        $validationResult = $this->validateCollection($elements);
-        if ($validationResult->isFailure()) {
-            return $validationResult;
-        }
-
         foreach ($elements as $element) {
             $this->resetBaseClass();
             $dfeElement = $this->baseClass->parseFromXmlElement($element);
@@ -45,19 +40,26 @@ abstract class DFeElementCollection
             $this->collection[] = $dfeElement->getData();
         }
 
+        $validationResult = $this->validateCollection();
+        if ($validationResult->isFailure()) {
+            $this->collection = [];
+
+            return $validationResult;
+        }
+
         return Result::makeSuccess($this);
     }
 
     abstract protected function collectionValidators(): array;
 
-    final protected function validateCollection(array $elements): Result
+    final protected function validateCollection(): Result
     {
         $this->validationService->reset();
         foreach ($this->collectionValidators() as $validator) {
             $this->validationService->addValidator($validator);
         }
 
-        return $this->validationService->verify($elements);
+        return $this->validationService->verify($this);
     }
 
     private function resetBaseClass(): void
