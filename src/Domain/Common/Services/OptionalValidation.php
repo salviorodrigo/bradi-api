@@ -4,17 +4,16 @@ declare(strict_types=1);
 
 namespace BradiApi\Domain\Common\Services;
 
-use BradiApi\Domain\Common\Protocols\ValidationService;
 use BradiApi\Domain\Common\Protocols\Validator;
 use BradiApi\Domain\Common\ValueObjects\Result;
 
-final class OptionalValidation implements ValidationService
+final class OptionalValidation
 {
     public function __construct(
         private readonly ValidationService $validationService
     ) {}
 
-    public function addValidator(Validator $validator): ValidationService
+    public function addValidator(Validator $validator): self
     {
         $this->validationService->addValidator($validator);
 

@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace BradiApi\Domain\Invoices\Templates;
 
 use BradiApi\Domain\Common\Protocols\ApiError;
-use BradiApi\Domain\Common\Protocols\ValidationService as ValidationServiceProtocol;
 use BradiApi\Domain\Common\Protocols\Validator;
 use BradiApi\Domain\Common\Services\ValidationService;
 use BradiApi\Domain\Common\ValueObjects\Result;
@@ -26,12 +25,12 @@ abstract class DFeElement
     public ?string $value;
 
     private ?Element $sourceElement;
-    private ValidationServiceProtocol $validationService;
+    private ValidationService $validationService;
 
     final public function __construct(string $parentFieldURI = '')
     {
         $this->fieldURI = $parentFieldURI === '' ? static::FIELD_NAME : $parentFieldURI . '.' . static::FIELD_NAME;
-        $this->validationService = new ValidationService($this->fieldURI, __METHOD__);
+        $this->validationService = new ValidationService($this->fieldURI);
 
         if (! defined(static::class . '::FIELD_NAME') || static::FIELD_NAME === '') {
             throw new RuntimeException(sprintf(

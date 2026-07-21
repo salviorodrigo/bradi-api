@@ -4,13 +4,13 @@ declare(strict_types=1);
 
 namespace BradiApi\Tests\Doubles\Domain\Common;
 
-use BradiApi\Domain\Common\Protocols\ValidationService;
 use BradiApi\Domain\Common\Protocols\Validator;
+use BradiApi\Domain\Common\Services\ValidationService;
 use BradiApi\Domain\Common\ValueObjects\Result;
 
-final class FakeValidationService implements ValidationService
+final class FakeValidationService extends ValidationService
 {
-    public function addValidator(Validator $validator): ValidationService
+    public function addValidator(Validator $validator): self
     {
         return $this;
     }

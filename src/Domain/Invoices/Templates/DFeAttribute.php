@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace BradiApi\Domain\Invoices\Templates;
 
 use BradiApi\Domain\Common\Protocols\ApiError;
-use BradiApi\Domain\Common\Protocols\ValidationService as ValidationServiceProtocol;
 use BradiApi\Domain\Common\Protocols\Validator;
 use BradiApi\Domain\Common\Services\ValidationService;
 use BradiApi\Domain\Common\ValueObjects\Result;
@@ -24,7 +23,7 @@ abstract class DFeAttribute
     public readonly string $parentTagName;
     public readonly string $fieldURI;
 
-    private ValidationServiceProtocol $validationService;
+    private ValidationService $validationService;
 
     private ?Attribute $sourceAttribute;
 
@@ -40,7 +39,7 @@ abstract class DFeAttribute
         $parents = explode('.', $parentFieldURI);
         $this->parentTagName = array_pop($parents);
         $this->fieldURI = $parentFieldURI . '.' . static::FIELD_NAME;
-        $this->validationService = new ValidationService($this->fieldURI, __METHOD__);
+        $this->validationService = new ValidationService($this->fieldURI);
 
         if (! defined(static::class . '::FIELD_NAME') || static::FIELD_NAME === '') {
             throw new RuntimeException(sprintf(
@@ -84,10 +83,10 @@ abstract class DFeAttribute
         $candidate = new Element;
         $candidate->name = $attribute->parentTagName;
         $candidate->addAttribute($attribute);
-        $service = new ValidationService($this->fieldURI, __METHOD__);
-        $service->addValidator(new RootTagValidator($this->parentTagName));
+        $this->validationService->reset();
+        $this->validationService->addValidator(new RootTagValidator($this->parentTagName));
 
-        return $service->verify($candidate);
+        return $this->validationService->verify($candidate);
     }
 
     /** @return Result<null|ApiError> */
@@ -96,22 +95,22 @@ abstract class DFeAttribute
         $candidate = new Element;
         $candidate->name = $this->parentTagName;
         $candidate->addAttribute($attribute);
-        $service = new ValidationService($this->fieldURI, __METHOD__);
-        $service->addValidator(new RequiredAttributeValidator([static::FIELD_NAME]));
+        $this->validationService->reset();
+        $this->validationService->addValidator(new RequiredAttributeValidator([static::FIELD_NAME]));
 
-        return $service->verify($candidate);
+        return $this->validationService->verify($candidate);
     }
 
     /** @return Result<null|ApiError> */
     final protected function validateAttributeValue(Attribute $attribute): Result
     {
         $candidate = $attribute->value;
-        $service = new ValidationService($this->fieldURI, __METHOD__);
+        $this->validationService->reset();
         foreach ($this->attributeValueValidators() as $validator) {
-            $service->addValidator($validator);
+            $this->validationService->addValidator($validator);
         }
 
-        return $service->verify($candidate);
+        return $this->validationService->verify($candidate);
     }
 
     /** @return Result<null|ApiError> **/
