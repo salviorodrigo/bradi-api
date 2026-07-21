@@ -10,6 +10,7 @@ use BradiApi\Domain\Common\ValueObjects\Result;
 use BradiApi\Domain\Xml\ValueObjects\Element;
 use BradiApi\Domain\Xml\ValueObjects\ElementList;
 use Exception;
+use ReflectionClass;
 
 abstract class DFeElementCollection
 {
@@ -23,13 +24,19 @@ abstract class DFeElementCollection
 
     final public function __construct(private readonly string $parentFieldURI = '')
     {
-        $this->validationService = new ValidationService($this->parentFieldURI, __METHOD__);
+        $this->validationService = new ValidationService($this->parentFieldURI);
     }
 
     /** @return Result<DFeElement|ApiError> */
     final public function parseFromXmlElement(Element|ElementList $elementOrElementList): Result
     {
         $elements = $this->normalizeElements($elementOrElementList);
+        $validationResult = $this->validateCollection($elements);
+        if ($validationResult->isFailure()) {
+            $this->collection = [];
+
+            return $validationResult;
+        }
         foreach ($elements as $element) {
             $this->resetBaseClass();
             $dfeElement = $this->baseClass->parseFromXmlElement($element);
@@ -40,26 +47,19 @@ abstract class DFeElementCollection
             $this->collection[] = $dfeElement->getData();
         }
 
-        $validationResult = $this->validateCollection();
-        if ($validationResult->isFailure()) {
-            $this->collection = [];
-
-            return $validationResult;
-        }
-
         return Result::makeSuccess($this);
     }
 
     abstract protected function collectionValidators(): array;
 
-    final protected function validateCollection(): Result
+    final protected function validateCollection(array $elements): Result
     {
         $this->validationService->reset();
         foreach ($this->collectionValidators() as $validator) {
             $this->validationService->addValidator($validator);
         }
 
-        return $this->validationService->verify($this);
+        return $this->validationService->verify($elements);
     }
 
     private function resetBaseClass(): void
@@ -77,11 +77,20 @@ abstract class DFeElementCollection
 
     private function normalizeElements(Element|ElementList $elementOrElementList): array
     {
+        $elements = [];
         if ($elementOrElementList instanceof Element) {
-            return [$elementOrElementList];
+            $elements[] = $elementOrElementList;
         }
 
-        return $elementOrElementList->records;
+        if ($elementOrElementList instanceof ElementList) {
+            $elements = array_merge($elements, $elementOrElementList->collection);
+        }
+
+        return array_filter($elements, function ($element) {
+            $reflectedBaseClass = new ReflectionClass(static::BASE_CLASS);
+
+            return $element->name == $reflectedBaseClass->getConstant('FIELD_NAME');
+        });
     }
 
     public function __toString()
