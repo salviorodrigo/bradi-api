@@ -24,10 +24,6 @@ final class XmlStringIterator implements XmlIterator
 
     public private(set) mixed $candidate;
 
-    public function __construct(
-        private readonly string $encode = 'UTF-8'
-    ) {}
-
     /** @return string XML string for the specified tag name */
     public function get(string $tagName): string
     {
@@ -56,7 +52,7 @@ final class XmlStringIterator implements XmlIterator
         while ($this->existsTag($tagName, $pointer)) {
             $startPosition = $this->getStartPositionTag($tagName, $pointer);
             $endPosition = $this->getEndPositionTag($tagName, $startPosition);
-            $list[] = iconv_substr($this->candidate, $startPosition, $endPosition - $startPosition, $this->encode);
+            $list[] = substr($this->candidate, $startPosition, $endPosition - $startPosition);
             $pointer = $endPosition;
         }
 
@@ -81,16 +77,11 @@ final class XmlStringIterator implements XmlIterator
             throw new Exception('Candidate not loaded.');
         }
 
-        $startPosition = iconv_strpos($this->candidate, '<', $offset) + 1;
-        $delimites = [' ', '>', '/'];
-        $tagNameLength = array_map(
-            fn ($delimiter) => iconv_strpos($this->candidate, $delimiter, $startPosition, $this->encode), $delimites
-        )
-        |> (fn ($delimitersPosition) => array_filter($delimitersPosition, fn ($position) => $position !== false))
-        |> (fn ($sanitizedPositions) => min($sanitizedPositions))
-        |> (fn ($endPosition) => $endPosition - $startPosition);
+        $startPosition = strpos($this->candidate, '<', $offset) + 1;
+        $tagNameLength = strcspn($this->candidate, ' >/', $startPosition);
+        $tagName = substr($this->candidate, $startPosition, $tagNameLength);
 
-        return iconv_substr($this->candidate, $startPosition, $tagNameLength, $this->encode);
+        return $tagName;
     }
 
     private function getTagValue(): string
@@ -121,11 +112,10 @@ final class XmlStringIterator implements XmlIterator
         $xmlInnerStartPosition = $this->getInnerStartPositionTag();
         $xmlInnerEndPosition = $this->getInnerEndPositionTag();
 
-        return iconv_substr(
+        return substr(
             $this->candidate,
             $xmlInnerStartPosition,
-            $xmlInnerEndPosition - $xmlInnerStartPosition + 1,
-            $this->encode
+            $xmlInnerEndPosition - $xmlInnerStartPosition + 1
         );
     }
 
@@ -150,11 +140,10 @@ final class XmlStringIterator implements XmlIterator
 
             $childStartPosition = $this->getStartPositionTag($childName, $pointer);
             $childEndPosition = $this->getEndPositionTag($childName, $childStartPosition);
-            $childrenList[] = iconv_substr(
+            $childrenList[] = substr(
                 $this->candidate,
                 $childStartPosition,
-                $childEndPosition - $childStartPosition,
-                $this->encode
+                $childEndPosition - $childStartPosition
             );
             $pointer = $childEndPosition;
         }
@@ -174,7 +163,7 @@ final class XmlStringIterator implements XmlIterator
 
         $xmlTag = '<' . $tagName;
 
-        return (bool) iconv_strpos($this->candidate, $xmlTag, $offset, $this->encode);
+        return (bool) strpos($this->candidate, $xmlTag, $offset);
     }
 
     private function getStartPositionTag(string $tagName, int $offset = 0): int
@@ -187,7 +176,7 @@ final class XmlStringIterator implements XmlIterator
             return $this->getInnerEndPositionTag();
         }
         $pattern = '<' . $tagName;
-        $pointer = iconv_strpos($this->candidate, $pattern, $offset, $this->encode);
+        $pointer = strpos($this->candidate, $pattern, $offset);
 
         if (in_array($this->candidate[$pointer + strlen($pattern)], [' ', '>', '/'])) {
             return (int) $pointer;
@@ -203,12 +192,12 @@ final class XmlStringIterator implements XmlIterator
         }
 
         if ($this->isAutoClosedTag($tagName, $offset)) {
-            return (int) iconv_strpos($this->candidate, '/>', $offset, $this->encode) + iconv_strlen('/>', $this->encode);
+            return (int) strpos($this->candidate, '/>', $offset) + strlen('/>');
         }
 
         $xmlTag = '</' . $tagName . '>';
 
-        return (int) iconv_strpos($this->candidate, $xmlTag, $offset, $this->encode) + iconv_strlen($xmlTag, $this->encode);
+        return (int) strpos($this->candidate, $xmlTag, $offset) + strlen($xmlTag);
     }
 
     private function getInnerStartPositionTag(): int
@@ -217,7 +206,7 @@ final class XmlStringIterator implements XmlIterator
             throw new Exception('Candidate not loaded.');
         }
 
-        return (int) iconv_strpos($this->candidate, '>', 0, $this->encode) + 1;
+        return (int) strpos($this->candidate, '>', 0) + 1;
     }
 
     private function getInnerEndPositionTag(): int
@@ -230,7 +219,7 @@ final class XmlStringIterator implements XmlIterator
             return $this->getInnerStartPositionTag();
         }
 
-        return (int) iconv_strrpos($this->candidate, '</', encoding: $this->encode) - 1;
+        return (int) strrpos($this->candidate, '</') - 1;
     }
 
     private function getAttributes(): array
@@ -243,9 +232,9 @@ final class XmlStringIterator implements XmlIterator
             return [];
         }
 
-        return $this->sliceCandidate(0, iconv_strpos($this->candidate, '>', 0, $this->encode))
-            |>(fn ($str) => iconv_substr($str, (iconv_strpos($str, ' ', 0, $this->encode) + 1), strlen($str), $this->encode))
-            |>(fn ($str) => iconv_substr($str, 0, iconv_strrpos($str, '"', $this->encode) + 1, $this->encode))
+        return $this->sliceCandidate(0, strpos($this->candidate, '>', 0))
+            |>(fn ($str) => substr($str, (strpos($str, ' ', 0) + 1), strlen($str)))
+            |>(fn ($str) => substr($str, 0, strrpos($str, '"') + 1))
             |>(fn ($str) => str_replace('"', '', $str))
             |>(fn ($str) => trim($str))
             |>(fn ($str) => explode(' ', $str))
@@ -263,11 +252,10 @@ final class XmlStringIterator implements XmlIterator
             throw new Exception('Candidate not loaded.');
         }
 
-        return (string) iconv_substr(
+        return (string) substr(
             $this->candidate,
             $startPosition,
-            $endPosition - $startPosition + 1,
-            $this->encode
+            $endPosition - $startPosition + 1
         );
     }
 
@@ -278,13 +266,13 @@ final class XmlStringIterator implements XmlIterator
         }
 
         $pattern = '<' . $tagName;
-        $pointer = iconv_strpos($this->candidate, $pattern, $offset);
+        $pointer = strpos($this->candidate, $pattern, $offset);
         if ($pointer === false) {
             throw new Exception("Tag <{$tagName}> not found in candidate.");
         }
 
-        $slashPosition = iconv_strpos($this->candidate, '/', $pointer, $this->encode);
-        $closePosition = iconv_strpos($this->candidate, '>', $pointer, $this->encode);
+        $slashPosition = strpos($this->candidate, '/', $pointer);
+        $closePosition = strpos($this->candidate, '>', $pointer);
 
         return $slashPosition < $closePosition;
     }
@@ -295,8 +283,8 @@ final class XmlStringIterator implements XmlIterator
             throw new Exception('Candidate not loaded.');
         }
 
-        $openTag = $this->sliceCandidate(0, iconv_strpos($this->candidate, '>', 0, $this->encode));
+        $openTag = $this->sliceCandidate(0, strpos($this->candidate, '>', 0));
 
-        return iconv_strpos($openTag, ' ', 0, $this->encode) !== false;
+        return strpos($openTag, ' ', 0) !== false;
     }
 }
