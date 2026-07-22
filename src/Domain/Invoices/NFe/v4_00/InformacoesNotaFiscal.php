@@ -33,7 +33,7 @@ final class InformacoesNotaFiscal extends DFeElement
     public IdentificacaoNotaFiscal $ide;
     public Emitente $emit;
     public ?Destinatario $dest;
-    public DetalhamentoItem $det;
+    public DetalhamentoItemCollection $detCollection;
 
     /** @return array<Validator> */
     protected function tagAttributesValidators(): array
