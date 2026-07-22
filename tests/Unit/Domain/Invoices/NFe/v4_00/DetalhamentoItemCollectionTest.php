@@ -40,6 +40,20 @@ describe('DetalhamentoItemCollection', function () {
                 $sutResponse = $sut->invoke($detalhamentoItem, $xmlElement->children->records);
                 expect($sutResponse->isSuccess())->toBeTrue();
             });
+
+            test('Should fail if a collection with more than 990 elements is provided', function () {
+                $xmlString = '<root>';
+                for ($i = 1; $i <= 991; $i++) {
+                    $xmlString .= '<det nItem="' . $i . '"></det>';
+                }
+                $xmlString .= '</root>';
+                $xmlElement = new Element;
+                $xmlElement->parse($xmlString);
+                $detalhamentoItem = new DetalhamentoItemCollection($xmlElement->name);
+                $sut = new ReflectionMethod($detalhamentoItem, 'validateCollection');
+                $sutResponse = $sut->invoke($detalhamentoItem, $xmlElement->children->records);
+                expect($sutResponse->isFailure())->toBeTrue();
+            });
         });
     });
 });
