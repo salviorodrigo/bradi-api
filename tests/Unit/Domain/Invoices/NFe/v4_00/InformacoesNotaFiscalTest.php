@@ -208,7 +208,7 @@ describe('InformacoesNotaFiscal', function () {
                 $sut = $reflectedProperty->getType();
                 expect($sut->allowsNull())->toBeFalse();
             });
-        })->skip();
+        });
 
         describe('$total', function () {
             test('Should be declared', function () {
