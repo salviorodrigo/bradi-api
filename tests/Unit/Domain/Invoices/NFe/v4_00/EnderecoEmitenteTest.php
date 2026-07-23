@@ -371,5 +371,17 @@ describe('EnderecoEmitente', function () {
                 expect($sutResponse->isFailure())->toBeTrue();
             });
         });
+
+        describe('validateTagValue', function () {
+            test('Should fail if a value is provided', function () {
+                $xmlString = '<enderEmit>aValue<xLgr></xLgr><nro></nro><xBairro></xBairro><cMun></cMun><xMun></xMun><UF></UF><CEP></CEP></enderEmit>';
+                $xmlElement = new Element;
+                $xmlElement->parse($xmlString);
+                $enderecoEmitente = new EnderecoEmitente;
+                $sut = new ReflectionMethod($enderecoEmitente, 'validateTagValue');
+                $sutResponse = $sut->invoke($enderecoEmitente, $xmlElement);
+                expect($sutResponse->isFailure())->toBeTrue();
+            });
+        });
     });
 });
