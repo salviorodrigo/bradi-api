@@ -46,8 +46,8 @@ describe('AliquotaCOFINS', function () {
             })->with([
                 'standard' => '7.60',
                 'with_decimals' => '12.3456',
-                'min' => '0',
-                'max' => '100',
+                'min' => '0.00',
+                'max' => '100.00',
             ]);
 
             test('Should fail if less than 0 is provided', function () {
