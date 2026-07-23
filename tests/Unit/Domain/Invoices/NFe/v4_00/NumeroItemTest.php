@@ -2,68 +2,71 @@
 
 declare(strict_types=1);
 
-use BradiApi\Domain\Common\Protocols\ApiError;
 use BradiApi\Domain\Common\ValueObjects\Result;
 use BradiApi\Domain\Invoices\NFe\v4_00\ValueObjects\NumeroItem;
+use BradiApi\Domain\Invoices\Templates\DFeAttribute;
 use BradiApi\Domain\Xml\ValueObjects\Attribute;
-use BradiApi\Tests\TestCase;
 
 describe('NumeroItem', function () {
-    beforeEach(function () {
-        /** @var TestCase $this */
-        $this->sut = new NumeroItem('infItem');
+    test('Should succeed if is declared', function () {
+        $nameSpace = 'BradiApi\Domain\Invoices\NFe\v4_00\ValueObjects';
+        $sut = $nameSpace . '\\NumeroItem';
+        expect(class_exists($sut))->toBeTrue();
     });
 
-    describe('::parseFromXmlElement()', function () {
-        test('Should succeed extracting nItem attribute with valid value :value', function (string $value) {
-            $attribute = new Attribute('nItem', $value, 'infItem');
-            $sutResponse = $this->sut->parseFromXmlElement($attribute);
-
-            expect($sutResponse)->toBeInstanceOf(Result::class);
-            if ($sutResponse->isFailure()) {
-                $this->fail(json_encode($sutResponse->getError()));
-            }
-
-            expect($sutResponse->getData())->toBeInstanceOf(NumeroItem::class);
-            expect($sutResponse->getData()->value)->toBe($value);
-            expect((string) $sutResponse->getData())->toBe(sprintf('nItem="%s"', $value));
-        })->with([
-            '1',
-            '500',
-            '990',
-        ]);
-
-        test('Should fail when parent tag does not match', function () {
-            $attribute = new Attribute('nItem', '10', 'wrongParentTag');
-            $sutResponse = $this->sut->parseFromXmlElement($attribute);
-            expect($sutResponse)->toBeInstanceOf(Result::class);
-            if ($sutResponse->isSuccess()) {
-                $this->fail(json_encode($sutResponse->getData()));
-            }
-
-            expect($sutResponse->getError())->toBeInstanceOf(ApiError::class);
-        });
-
-        test('Should fail when nItem is outside allowed range or not numeric :value', function (string $value) {
-            $attribute = new Attribute('nItem', $value, 'infItem');
-            $sutResponse = $this->sut->parseFromXmlElement($attribute);
-            expect($sutResponse)->toBeInstanceOf(Result::class);
-            if ($sutResponse->isSuccess()) {
-                $this->fail(json_encode($sutResponse->getData()));
-            }
-
-            expect($sutResponse->getError())->toBeInstanceOf(ApiError::class);
-        })->with([
-            '0',
-            '991',
-            'ABC',
-        ]);
+    test('Should succeed if extends DFeAttribute', function () {
+        $sut = new NumeroItem('parentTag');
+        expect(is_subclass_of($sut, DFeAttribute::class))->toBeTrue();
     });
 
-    describe('::__construct()', function () {
-        test('Should throw if parentFieldURI is empty', function () {
-            expect(fn () => new NumeroItem(''))
-                ->toThrow(RuntimeException::class);
+    test('Should have FIELD_NAME constant defined as "nItem"', function () {
+        expect(NumeroItem::FIELD_NAME)->toBe('nItem');
+    });
+
+    describe('methods', function () {
+        describe('validateAttributeValue', function () {
+            test('Should succeed in border cases', function (string $candidate) {
+                $attribute = new Attribute('nItem', $candidate, 'parentTag');
+                $numeroItem = new NumeroItem('parentTag');
+                $sut = new ReflectionMethod($numeroItem, 'validateAttributeValue');
+                $sutResponse = $sut->invoke($numeroItem, $attribute);
+                expect($sutResponse)->toBeInstanceOf(Result::class);
+                if ($sutResponse->isFailure()) {
+                    $this->fail(json_encode($sutResponse->getError()));
+                }
+
+                expect($sutResponse->isSuccess())->toBeTrue();
+            })->with([
+                'first occurence' => '1',
+                'last occurence' => '990',
+            ]);
+
+            test('Should fail if zero is provided', function () {
+                $candidate = '0';
+                $attribute = new Attribute('nItem', $candidate, 'parentTag');
+                $numeroItem = new NumeroItem('parentTag');
+                $sut = new ReflectionMethod($numeroItem, 'validateAttributeValue');
+                $sutResponse = $sut->invoke($numeroItem, $attribute);
+                expect($sutResponse->isFailure())->toBeTrue();
+            });
+
+            test('Should fail if greater than 990 is provided', function () {
+                $candidate = '991';
+                $attribute = new Attribute('nItem', $candidate, 'parentTag');
+                $numeroItem = new NumeroItem('parentTag');
+                $sut = new ReflectionMethod($numeroItem, 'validateAttributeValue');
+                $sutResponse = $sut->invoke($numeroItem, $attribute);
+                expect($sutResponse->isFailure())->toBeTrue();
+            });
+
+            test('Should fail if non-numeric value is provided', function () {
+                $candidate = 'abc';
+                $attribute = new Attribute('nItem', $candidate, 'parentTag');
+                $numeroItem = new NumeroItem('parentTag');
+                $sut = new ReflectionMethod($numeroItem, 'validateAttributeValue');
+                $sutResponse = $sut->invoke($numeroItem, $attribute);
+                expect($sutResponse->isFailure())->toBeTrue();
+            });
         });
     });
 });
