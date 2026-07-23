@@ -14,6 +14,7 @@ class IsDecimalValidator implements Validator
     public function __construct(
         public readonly int $maxIntegerDigits,
         public readonly int $maxDecimalDigits,
+        public readonly int $minDecimalDigits = 0
     ) {}
 
     public function check(mixed $candidate): Result
@@ -83,6 +84,13 @@ class IsDecimalValidator implements Validator
             return Result::makeFailure(new LengthException(sprintf(
                 'decimal part cannot contain more than %d digits.',
                 $this->maxDecimalDigits
+            )));
+        }
+
+        if (strlen($decimalPart) < $this->minDecimalDigits) {
+            return Result::makeFailure(new LengthException(sprintf(
+                'decimal part must contain at least %d digits.',
+                $this->minDecimalDigits
             )));
         }
 

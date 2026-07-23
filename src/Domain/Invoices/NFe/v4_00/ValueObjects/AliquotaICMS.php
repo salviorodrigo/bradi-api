@@ -31,7 +31,7 @@ final class AliquotaICMS extends DFeElement
     {
         return [
             new NotNullValidator,
-            new IsDecimalValidator(3, 4),
+            new IsDecimalValidator(maxIntegerDigits: 3, maxDecimalDigits: 4, minDecimalDigits: 2),
             new MaxValueValidator(100),
             new MinValueValidator(0),
         ];
