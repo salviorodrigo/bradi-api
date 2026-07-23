@@ -18,12 +18,15 @@ describe('Destinatario', function () {
         expect(is_subclass_of($sut, DFeElement::class))->toBeTrue();
     });
 
-    test('Should succeed if FIELD_NAME is set correctly', function () {
-        $sut = new Destinatario;
-        expect($sut::FIELD_NAME)->toBe('dest');
-    });
-
     describe('properties', function () {
+        describe('FIELD_NAME', function () {
+            test('Should be set correctly', function () {
+                $reflection = new ReflectionClass(Destinatario::class);
+                $reflectedProperty = $reflection->getConstant('FIELD_NAME');
+                expect($reflectedProperty)->toBe('dest');
+            });
+        });
+
         describe('$CNPJ', function () {
             test('Should be declared', function () {
                 $sut = new Destinatario;

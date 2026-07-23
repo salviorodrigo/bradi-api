@@ -19,8 +19,14 @@ describe('NumeroItem', function () {
         expect(is_subclass_of($sut, DFeAttribute::class))->toBeTrue();
     });
 
-    test('Should have FIELD_NAME constant defined as "nItem"', function () {
-        expect(NumeroItem::FIELD_NAME)->toBe('nItem');
+    describe('properties', function () {
+        describe('FIELD_NAME', function () {
+            test('Should be set correctly', function () {
+                $reflection = new ReflectionClass(NumeroItem::class);
+                $reflectedProperty = $reflection->getConstant('FIELD_NAME');
+                expect($reflectedProperty)->toBe('nItem');
+            });
+        });
     });
 
     describe('methods', function () {
