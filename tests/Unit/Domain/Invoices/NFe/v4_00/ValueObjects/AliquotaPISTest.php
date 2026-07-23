@@ -83,6 +83,17 @@ describe('AliquotaPIS', function () {
                 expect($sutResponse->isFailure())->toBeTrue();
             });
 
+            test('Should fail if less than 2 decimal places is provided', function () {
+                $candidate = '12.3';
+                $element = new Element;
+                $element->name = 'pPIS';
+                $element->value = $candidate;
+                $aliquotaPIS = new AliquotaPIS('parentTag');
+                $sut = new ReflectionMethod($aliquotaPIS, 'validateTagValue');
+                $sutResponse = $sut->invoke($aliquotaPIS, $element);
+                expect($sutResponse->isFailure())->toBeTrue();
+            });
+
             test('Should fail if non-numeric value is provided', function () {
                 $candidate = 'abc';
                 $element = new Element;
