@@ -46,8 +46,8 @@ describe('AliquotaICMS', function () {
             })->with([
                 'standard' => '7.60',
                 'with_decimals' => '12.3456',
-                'min' => '0',
-                'max' => '100',
+                'min' => '0.00',
+                'max' => '100.00',
             ]);
 
             test('Should fail if less than 0 is provided', function () {
@@ -63,6 +63,17 @@ describe('AliquotaICMS', function () {
 
             test('Should fail if greater than 100 is provided', function () {
                 $candidate = '100.01';
+                $element = new Element;
+                $element->name = 'pICMS';
+                $element->value = $candidate;
+                $aliquotaICMS = new AliquotaICMS('parentTag');
+                $sut = new ReflectionMethod($aliquotaICMS, 'validateTagValue');
+                $sutResponse = $sut->invoke($aliquotaICMS, $element);
+                expect($sutResponse->isFailure())->toBeTrue();
+            });
+
+            test('Should fail if less than 2 decimal places is provided', function () {
+                $candidate = '12.3';
                 $element = new Element;
                 $element->name = 'pICMS';
                 $element->value = $candidate;
