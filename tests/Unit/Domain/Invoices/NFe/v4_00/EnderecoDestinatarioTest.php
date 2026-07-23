@@ -361,5 +361,17 @@ describe('EnderecoDestinatario', function () {
                 expect($sutResponse->isFailure())->toBeTrue();
             });
         });
+
+        describe('validateTagValue', function () {
+            test('Should fail if a value is provided', function () {
+                $xmlString = '<enderDest>aValue<xLgr></xLgr><nro></nro><xBairro></xBairro><cMun></cMun><xMun></xMun><UF></UF><CEP></CEP></enderDest>';
+                $xmlElement = new Element;
+                $xmlElement->parse($xmlString);
+                $enderecoDestinatario = new EnderecoDestinatario;
+                $sut = new ReflectionMethod($enderecoDestinatario, 'validateTagValue');
+                $sutResponse = $sut->invoke($enderecoDestinatario, $xmlElement);
+                expect($sutResponse->isFailure())->toBeTrue();
+            });
+        });
     });
 });
