@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 use BradiApi\Domain\Common\Protocols\ApiError;
 use BradiApi\Domain\Common\ValueObjects\Result;
-use BradiApi\Domain\Invoices\NFe\v4_00\NumeroItem;
+use BradiApi\Domain\Invoices\NFe\v4_00\ValueObjects\NumeroItem;
 use BradiApi\Domain\Xml\ValueObjects\Attribute;
 use BradiApi\Tests\TestCase;
 

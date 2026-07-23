@@ -12,7 +12,7 @@ declare(strict_types=1);
  * OBS:
  */
 
-namespace BradiApi\Domain\Invoices\NFe\v4_00;
+namespace BradiApi\Domain\Invoices\NFe\v4_00\ValueObjects;
 
 use BradiApi\Domain\Common\Validators\IsNumericValidator;
 use BradiApi\Domain\Common\Validators\MaxValueValidator;
