@@ -7,15 +7,20 @@ use BradiApi\Domain\Invoices\Templates\DFeElement;
 use BradiApi\Domain\Xml\ValueObjects\Element;
 
 describe('Destinatario', function () {
-    test('Should succeed if Destinatario is declared', function () {
+    test('Should succeed if is declared', function () {
         $nameSpace = 'BradiApi\Domain\Invoices\NFe\v4_00';
         $sut = $nameSpace . '\\Destinatario';
         expect(class_exists($sut))->toBeTrue();
     });
 
-    test('Should succeed if Destinatario extends DFeElement', function () {
+    test('Should succeed if extends DFeElement', function () {
         $sut = new Destinatario;
         expect(is_subclass_of($sut, DFeElement::class))->toBeTrue();
+    });
+
+    test('Should succeed if FIELD_NAME is set correctly', function () {
+        $sut = new Destinatario;
+        expect($sut::FIELD_NAME)->toBe('dest');
     });
 
     describe('properties', function () {
