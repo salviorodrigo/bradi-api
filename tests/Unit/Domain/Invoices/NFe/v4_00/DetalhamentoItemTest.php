@@ -20,6 +20,14 @@ describe('DetalhamentoItem', function () {
     });
 
     describe('properties', function () {
+        describe('FIELD_NAME', function () {
+            test('Should be set correctly', function () {
+                $reflection = new ReflectionClass(DetalhamentoItem::class);
+                $reflectedProperty = $reflection->getConstant('FIELD_NAME');
+                expect($reflectedProperty)->toBe('det');
+            });
+        });
+
         describe('$nItem', function () {
             test('Should be declared', function () {
                 $sut = new DetalhamentoItem;

@@ -19,6 +19,14 @@ describe('Emitente', function () {
     });
 
     describe('properties', function () {
+        describe('FIELD_NAME', function () {
+            test('Should be set correctly', function () {
+                $reflection = new ReflectionClass(Emitente::class);
+                $reflectedProperty = $reflection->getConstant('FIELD_NAME');
+                expect($reflectedProperty)->toBe('emit');
+            });
+        });
+
         describe('$CNPJ', function () {
             test('Should be declared', function () {
                 $sut = new Emitente;

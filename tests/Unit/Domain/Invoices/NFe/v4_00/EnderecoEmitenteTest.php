@@ -25,6 +25,14 @@ describe('EnderecoEmitente', function () {
     });
 
     describe('properties', function () {
+        describe('FIELD_NAME', function () {
+            test('Should be set correctly', function () {
+                $reflection = new ReflectionClass(EnderecoEmitente::class);
+                $reflectedProperty = $reflection->getConstant('FIELD_NAME');
+                expect($reflectedProperty)->toBe('enderEmit');
+            });
+        });
+
         describe('$xLgr', function () {
             test('Should be declared', function () {
                 $sut = new EnderecoEmitente;
