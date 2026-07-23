@@ -1,69 +1,123 @@
 <?php
 
 declare(strict_types=1);
-
-use BradiApi\Domain\Common\Protocols\ApiError;
 use BradiApi\Domain\Common\ValueObjects\Result;
 use BradiApi\Domain\Invoices\NFe\v4_00\ValueObjects\AliquotaPIS;
+use BradiApi\Domain\Invoices\Templates\DFeElement;
 use BradiApi\Domain\Xml\ValueObjects\Element;
-use BradiApi\Tests\TestCase;
 
 describe('AliquotaPIS', function () {
 
-    beforeEach(function () {
-        /** @var TestCase $this */
-        $this->sut = new AliquotaPIS('');
+    test('Should succeed if is declared', function () {
+        $nameSpace = 'BradiApi\Domain\Invoices\NFe\v4_00\ValueObjects';
+        $sut = $nameSpace . '\\AliquotaPIS';
+        expect(class_exists($sut))->toBeTrue();
     });
 
-    describe('::parse()', function () {
-        test('Should succeed with dataset :dataset', function ($candidate) {
-            $xmlString = $candidate === '' ? '' : '<' . AliquotaPIS::FIELD_NAME . ">{$candidate}</" . AliquotaPIS::FIELD_NAME . '>';
-            $xmlElement = new Element;
-            $xmlElement->parse($xmlString);
-            $sutResponse = $this->sut->parseFromXmlElement($xmlElement);
-            expect($sutResponse)->toBeInstanceOf(Result::class);
-            if ($sutResponse->isFailure()) {
-                $this->fail(json_encode($sutResponse->getError()));
-            }
-            expect($sutResponse->getData())->toBeInstanceOf(AliquotaPIS::class);
-            expect($sutResponse->getData()->value)->toBe($candidate);
-            expect((string) $sutResponse->getData())->toBe($xmlString);
-        })->with(datasets('dfes.nfe.value_tags.' . AliquotaPIS::FIELD_NAME . '.valid'));
+    test('Should succeed if extends DFeelement', function () {
+        $sut = new AliquotaPIS('parentTag');
+        expect(is_subclass_of($sut, DFeElement::class))->toBeTrue();
+    });
 
-        test('Should fail with data set :dataset', function ($candidate) {
-            $xmlString = '<' . AliquotaPIS::FIELD_NAME . ">{$candidate}</" . AliquotaPIS::FIELD_NAME . '>';
-            $xmlElement = new Element;
-            $xmlElement->parse($xmlString);
-            $sutResponse = $this->sut->parseFromXmlElement($xmlElement);
-            if ($sutResponse->isSuccess()) {
-                $this->fail(json_encode($sutResponse->getData()));
-            }
-            expect($sutResponse)->toBeInstanceOf(Result::class);
-            expect($sutResponse->getError())->toBeInstanceOf(ApiError::class);
-        })->with(datasets('dfes.nfe.value_tags.' . AliquotaPIS::FIELD_NAME . '.invalid'));
+    describe('properties', function () {
+        describe('FIELD_NAME', function () {
+            test('Should be set correctly', function () {
+                $reflection = new ReflectionClass(AliquotaPIS::class);
+                $reflectedProperty = $reflection->getConstant('FIELD_NAME');
+                expect($reflectedProperty)->toBe('pPIS');
+            });
+        });
+    });
 
-        test('Should fail if attributes is provided', function ($candidate) {
-            $xmlString = '<' . AliquotaPIS::FIELD_NAME . " fake=\"attribute\">{$candidate}</" . AliquotaPIS::FIELD_NAME . '>';
-            $xmlElement = new Element;
-            $xmlElement->parse($xmlString);
-            $sutResponse = $this->sut->parseFromXmlElement($xmlElement);
-            expect($sutResponse)->toBeInstanceOf(Result::class);
-            if ($sutResponse->isSuccess()) {
-                $this->fail(json_encode($sutResponse->getData()));
-            }
-            expect($sutResponse->getError())->toBeInstanceOf(ApiError::class);
-        })->with(datasets('dfes.nfe.value_tags.' . AliquotaPIS::FIELD_NAME . '.valid'));
+    describe('methods', function () {
+        describe('validateTagValue', function () {
+            test('Should succeed in border cases', function (string $candidate) {
+                $element = new Element;
+                $element->name = 'pPIS';
+                $element->value = $candidate;
+                $aliquotaPIS = new AliquotaPIS('parentTag');
+                $sut = new ReflectionMethod($aliquotaPIS, 'validateTagValue');
+                $sutResponse = $sut->invoke($aliquotaPIS, $element);
+                expect($sutResponse)->toBeInstanceOf(Result::class);
+                if ($sutResponse->isFailure()) {
+                    $this->fail(json_encode($sutResponse->getError()));
+                }
 
-        test('Should fail if elements is provided', function ($candidate) {
-            $xmlString = '<' . AliquotaPIS::FIELD_NAME . ">{$candidate}<fake>element</fake></" . AliquotaPIS::FIELD_NAME . '>';
-            $xmlElement = new Element;
-            $xmlElement->parse($xmlString);
-            $sutResponse = $this->sut->parseFromXmlElement($xmlElement);
-            expect($sutResponse)->toBeInstanceOf(Result::class);
-            if ($sutResponse->isSuccess()) {
-                $this->fail(json_encode($sutResponse->getData()));
-            }
-            expect($sutResponse->getError())->toBeInstanceOf(ApiError::class);
-        })->with(datasets('dfes.nfe.value_tags.' . AliquotaPIS::FIELD_NAME . '.valid'));
+                expect($sutResponse->isSuccess())->toBeTrue();
+            })->with([
+                'min' => '0.00',
+                'max' => '100.00',
+                'max_decimal_digits' => '12.3456',
+            ]);
+
+            test('Should fail if less than 0 is provided', function () {
+                $candidate = '-0.01';
+                $element = new Element;
+                $element->name = 'pPIS';
+                $element->value = $candidate;
+                $aliquotaPIS = new AliquotaPIS('parentTag');
+                $sut = new ReflectionMethod($aliquotaPIS, 'validateTagValue');
+                $sutResponse = $sut->invoke($aliquotaPIS, $element);
+                expect($sutResponse->isFailure())->toBeTrue();
+            });
+
+            test('Should fail if greater than 100 is provided', function () {
+                $candidate = '100.01';
+                $element = new Element;
+                $element->name = 'pPIS';
+                $element->value = $candidate;
+                $aliquotaPIS = new AliquotaPIS('parentTag');
+                $sut = new ReflectionMethod($aliquotaPIS, 'validateTagValue');
+                $sutResponse = $sut->invoke($aliquotaPIS, $element);
+                expect($sutResponse->isFailure())->toBeTrue();
+            });
+
+            test('Should fail if more than 4 decimal places is provided', function () {
+                $candidate = '12.34567';
+                $element = new Element;
+                $element->name = 'pPIS';
+                $element->value = $candidate;
+                $aliquotaPIS = new AliquotaPIS('parentTag');
+                $sut = new ReflectionMethod($aliquotaPIS, 'validateTagValue');
+                $sutResponse = $sut->invoke($aliquotaPIS, $element);
+                expect($sutResponse->isFailure())->toBeTrue();
+            });
+
+            test('Should fail if non-numeric value is provided', function () {
+                $candidate = 'abc';
+                $element = new Element;
+                $element->name = 'pPIS';
+                $element->value = $candidate;
+                $aliquotaPIS = new AliquotaPIS('parentTag');
+                $sut = new ReflectionMethod($aliquotaPIS, 'validateTagValue');
+                $sutResponse = $sut->invoke($aliquotaPIS, $element);
+                expect($sutResponse->isFailure())->toBeTrue();
+            });
+
+            test('Should fail if a numeric value with spaces is provided', function ($candidate) {
+                $element = new Element;
+                $element->name = 'pPIS';
+                $element->value = $candidate;
+                $aliquotaPIS = new AliquotaPIS('parentTag');
+                $sut = new ReflectionMethod($aliquotaPIS, 'validateTagValue');
+                $sutResponse = $sut->invoke($aliquotaPIS, $element);
+                expect($sutResponse->isFailure())->toBeTrue();
+            })->with([
+                'leading space' => ' 12.34',
+                'trailing space' => '12.34 ',
+                'leading and trailing space' => ' 12.34 ',
+            ]);
+
+            test('Should fail if a value with comma as decimal separator is provided', function () {
+                $candidate = '12,34';
+                $element = new Element;
+                $element->name = 'pPIS';
+                $element->value = $candidate;
+                $aliquotaPIS = new AliquotaPIS('parentTag');
+                $sut = new ReflectionMethod($aliquotaPIS, 'validateTagValue');
+                $sutResponse = $sut->invoke($aliquotaPIS, $element);
+                expect($sutResponse->isFailure())->toBeTrue();
+            });
+        });
     });
 });
