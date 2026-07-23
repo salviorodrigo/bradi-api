@@ -37,7 +37,7 @@ final class EnderecoEmitente extends DFeElement
 
     public Logradouro $xLgr;
     public NumeroEndereco $nro;
-    public ?ComplementoEndereco $Cpl;
+    public ?ComplementoEndereco $xCpl;
     public Bairro $xBairro;
     public CodigoMunicipio $cMun;
     public NomeMunicipio $xMun;
