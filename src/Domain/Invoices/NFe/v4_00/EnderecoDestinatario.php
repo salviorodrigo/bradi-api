@@ -27,6 +27,7 @@ use BradiApi\Domain\Invoices\NFe\v4_00\ValueObjects\SiglaUF;
 use BradiApi\Domain\Invoices\NFe\v4_00\ValueObjects\Telefone;
 use BradiApi\Domain\Invoices\Templates\DFeElement;
 use BradiApi\Domain\Invoices\Traits\ValidatesDFeGroupElement;
+use BradiApi\Domain\Invoices\Validators\AllowedTagsValidator;
 use BradiApi\Domain\Invoices\Validators\RequiredTagValidator;
 
 final class EnderecoDestinatario extends DFeElement
@@ -51,6 +52,7 @@ final class EnderecoDestinatario extends DFeElement
     {
         return [
             new RequiredTagValidator(['xLgr', 'nro', 'xBairro', 'cMun', 'xMun', 'UF']),
+            new AllowedTagsValidator(['xLgr', 'nro', 'xCpl', 'xBairro', 'cMun', 'xMun', 'UF', 'CEP', 'cPais', 'xPais', 'fone']),
         ];
     }
 }
