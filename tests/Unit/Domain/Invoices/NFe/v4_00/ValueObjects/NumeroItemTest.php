@@ -73,6 +73,18 @@ describe('NumeroItem', function () {
                 $sutResponse = $sut->invoke($numeroItem, $attribute);
                 expect($sutResponse->isFailure())->toBeTrue();
             });
+
+            test('Should fail if a numeric value with spaces is provided', function ($candidate) {
+                $attribute = new Attribute('nItem', $candidate, 'parentTag');
+                $numeroItem = new NumeroItem('parentTag');
+                $sut = new ReflectionMethod($numeroItem, 'validateAttributeValue');
+                $sutResponse = $sut->invoke($numeroItem, $attribute);
+                expect($sutResponse->isFailure())->toBeTrue();
+            })->with([
+                'leading space' => ' 123',
+                'trailing space' => '123 ',
+                'leading and trailing space' => ' 123 ',
+            ]);
         });
     });
 });
