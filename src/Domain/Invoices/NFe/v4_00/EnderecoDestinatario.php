@@ -37,12 +37,12 @@ final class EnderecoDestinatario extends DFeElement
 
     public Logradouro $xLgr;
     public NumeroEndereco $nro;
-    public ?ComplementoEndereco $Cpl;
+    public ?ComplementoEndereco $xCpl;
     public Bairro $xBairro;
     public CodigoMunicipio $cMun;
     public NomeMunicipio $xMun;
     public SiglaUF $UF;
-    public CodigoPostal $CEP;
+    public ?CodigoPostal $CEP;
     public ?CodigoPais $cPais;
     public ?NomePais $xPais;
     public ?Telefone $fone;
@@ -50,7 +50,7 @@ final class EnderecoDestinatario extends DFeElement
     protected function tagElementsValidators(): array
     {
         return [
-            new RequiredTagValidator(['xLgr', 'nro', 'xBairro', 'cMun', 'xMun', 'UF', 'CEP']),
+            new RequiredTagValidator(['xLgr', 'nro', 'xBairro', 'cMun', 'xMun', 'UF']),
         ];
     }
 }
