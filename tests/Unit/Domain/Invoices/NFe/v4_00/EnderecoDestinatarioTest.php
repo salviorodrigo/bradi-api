@@ -350,6 +350,16 @@ describe('EnderecoDestinatario', function () {
                 $sutResponse = $sut->invoke($enderecoDestinatario, $xmlElement);
                 expect($sutResponse->isFailure())->toBeTrue();
             });
+
+            test('Should fail if an unallowed tag is provided', function () {
+                $xmlString = '<enderDest><xLgr></xLgr><nro></nro><xBairro></xBairro><cMun></cMun><xMun></xMun><UF></UF><CEP></CEP><unallowedTag></unallowedTag></enderDest>';
+                $xmlElement = new Element;
+                $xmlElement->parse($xmlString);
+                $enderecoDestinatario = new EnderecoDestinatario;
+                $sut = new ReflectionMethod($enderecoDestinatario, 'validateTagElements');
+                $sutResponse = $sut->invoke($enderecoDestinatario, $xmlElement);
+                expect($sutResponse->isFailure())->toBeTrue();
+            });
         });
     });
 });
