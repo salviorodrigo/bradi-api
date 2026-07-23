@@ -8,10 +8,8 @@ use BradiApi\Domain\Common\Protocols\ApiError;
 use BradiApi\Domain\Common\Protocols\Validator;
 use BradiApi\Domain\Common\Services\ValidationService;
 use BradiApi\Domain\Common\ValueObjects\Result;
-use BradiApi\Domain\Invoices\Validators\RequiredAttributeValidator;
-use BradiApi\Domain\Invoices\Validators\RootTagValidator;
+use BradiApi\Domain\Invoices\Validators\AttributeKeyValidator;
 use BradiApi\Domain\Xml\ValueObjects\Attribute;
-use BradiApi\Domain\Xml\ValueObjects\Element;
 use RuntimeException;
 
 abstract class DFeAttribute
@@ -55,7 +53,6 @@ abstract class DFeAttribute
     final public function parseFromXmlElement(Attribute $attribute): Result
     {
         $validationSteps = [
-            fn ($candidate) => $this->validateParentTag($candidate),
             fn ($candidate) => $this->validateAttributeKey($candidate),
             fn ($candidate) => $this->validateAttributeValue($candidate),
         ];
@@ -78,27 +75,13 @@ abstract class DFeAttribute
     /** @return array<Validator> */
     abstract protected function attributeValueValidators(): array;
 
-    final protected function validateParentTag(Attribute $attribute): Result
-    {
-        $candidate = new Element;
-        $candidate->name = $attribute->parentTagName;
-        $candidate->addAttribute($attribute);
-        $this->validationService->reset();
-        $this->validationService->addValidator(new RootTagValidator($this->parentTagName));
-
-        return $this->validationService->verify($candidate);
-    }
-
     /** @return Result<null|ApiError> */
     final protected function validateAttributeKey(Attribute $attribute): Result
     {
-        $candidate = new Element;
-        $candidate->name = $this->parentTagName;
-        $candidate->addAttribute($attribute);
         $this->validationService->reset();
-        $this->validationService->addValidator(new RequiredAttributeValidator([static::FIELD_NAME]));
+        $this->validationService->addValidator(new AttributeKeyValidator(static::FIELD_NAME));
 
-        return $this->validationService->verify($candidate);
+        return $this->validationService->verify($attribute);
     }
 
     /** @return Result<null|ApiError> */
