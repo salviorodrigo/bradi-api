@@ -240,6 +240,16 @@ describe('Produto', function () {
                 expect($sutResponse->isSuccess())->toBeTrue();
             });
 
+            test('Should succeed if all tags is provided', function () {
+                $xmlString = '<prod><cProd/><cEAN/><xProd/><NCM/><NVE/><CEST/><indEscala/><CNPJFab/><cBenef/><EXTIPI/><CFOP/><uCom/><qCom/><vUnCom/><vProd/><cEANTrib/><uTrib/><qTrib/><vUnTrib/><vFrete/><vSeg/><vDesc/><vOutro/><indTot/><DI/><detExport/><xPed/><nItemPed/><nFCI/><rastro/><veicProd/><med/><arma/><comb/><nRECOPI/></prod>';
+                $xmlElement = new Element;
+                $xmlElement->parse($xmlString);
+                $produto = new Produto;
+                $sut = new ReflectionMethod($produto, 'validateTagElements');
+                $sutResponse = $sut->invoke($produto, $xmlElement);
+                expect($sutResponse->isSuccess())->toBeTrue();
+            });
+
             test('Should fail if cProd tag isnt provided', function () {
                 $xmlString = '<prod><cEAN></cEAN><xProd></xProd><NCM></NCM><CFOP></CFOP><uCom></uCom><qCom></qCom><vUnCom></vUnCom><vProd></vProd></prod>';
                 $xmlElement = new Element;
