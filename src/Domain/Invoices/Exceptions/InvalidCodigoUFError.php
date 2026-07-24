@@ -9,7 +9,7 @@ use BradiApi\Domain\Common\ValueObjects\Detail;
 use BradiApi\Domain\Common\ValueObjects\Error;
 use BradiApi\Domain\Common\ValueObjects\Input;
 
-final class InvalidCodigoUFError extends UnprocessableEntityError
+final class InvalidCodigoUnidadeFederativaError extends UnprocessableEntityError
 {
     public function __construct(string $field, string $source, mixed $input)
     {

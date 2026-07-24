@@ -14,8 +14,8 @@ declare(strict_types=1);
 
 namespace BradiApi\Domain\Invoices\NFe\v4_00;
 
-use BradiApi\Domain\Invoices\NFe\v4_00\ValueObjects\CadastroPF;
-use BradiApi\Domain\Invoices\NFe\v4_00\ValueObjects\CadastroPJ;
+use BradiApi\Domain\Invoices\NFe\v4_00\ValueObjects\CodigoPessoaFisica;
+use BradiApi\Domain\Invoices\NFe\v4_00\ValueObjects\CodigoPessoaJuridica;
 use BradiApi\Domain\Invoices\NFe\v4_00\ValueObjects\InscricaoEstadual;
 use BradiApi\Domain\Invoices\NFe\v4_00\ValueObjects\Nome;
 use BradiApi\Domain\Invoices\NFe\v4_00\ValueObjects\NomeFantasia;
@@ -29,8 +29,8 @@ final class Emitente extends DFeElement
 
     public const string FIELD_NAME = 'emit';
 
-    public CadastroPJ $CNPJ;
-    public ?CadastroPF $CPF;
+    public CodigoPessoaJuridica $CNPJ;
+    public ?CodigoPessoaFisica $CPF;
     public Nome $xNome;
     public ?NomeFantasia $xFant;
     public InscricaoEstadual $IE;

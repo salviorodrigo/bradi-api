@@ -30,7 +30,7 @@ namespace BradiApi\Domain\Invoices\NFe\v4_00\ValueObjects;
 use BradiApi\Domain\Common\Validators\IsNumericValidator;
 use BradiApi\Domain\Common\Validators\NotNullValidator;
 use BradiApi\Domain\Common\Validators\StringLengthValidator;
-use BradiApi\Domain\Invoices\NFe\Validators\IsTipoEmissaoValidator;
+use BradiApi\Domain\Invoices\NFe\Validators\IsTipoEmissaoNotaFiscalValidator;
 use BradiApi\Domain\Invoices\Templates\DFeElement;
 use BradiApi\Domain\Invoices\Traits\ValidatesDFeValueElement;
 
@@ -46,7 +46,7 @@ final class TipoEmissao extends DFeElement
             new NotNullValidator,
             new IsNumericValidator,
             new StringLengthValidator(1),
-            new IsTipoEmissaoValidator,
+            new IsTipoEmissaoNotaFiscalValidator,
         ];
     }
 }

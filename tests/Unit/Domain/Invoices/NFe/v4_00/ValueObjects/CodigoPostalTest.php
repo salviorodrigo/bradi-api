@@ -7,7 +7,6 @@ use BradiApi\Domain\Invoices\Templates\DFeElement;
 use BradiApi\Domain\Xml\ValueObjects\Element;
 
 describe('CodigoPostal', function () {
-
     test('Should succeed if is declared', function () {
         $nameSpace = 'BradiApi\Domain\Invoices\NFe\v4_00\ValueObjects';
         $sut = $nameSpace . '\\CodigoPostal';

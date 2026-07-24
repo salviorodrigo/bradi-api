@@ -7,6 +7,7 @@ namespace BradiApi\Domain\Invoices\Validators;
 use BradiApi\Domain\Common\Protocols\Validator;
 use BradiApi\Domain\Common\Validators\IsNumericValidator;
 use BradiApi\Domain\Common\ValueObjects\Result;
+use BradiApi\Domain\Invoices\Enums\UnidadeFederativa;
 use InvalidArgumentException;
 
 final class IsCodigoMunicipioValidator implements Validator
@@ -17,6 +18,11 @@ final class IsCodigoMunicipioValidator implements Validator
         $typeValidationResult = $typeValidator->check($candidate);
         if ($typeValidationResult->isFailure() || ! $this->validateCheckDigit($candidate)) {
             return Result::makeFailure(new InvalidArgumentException('city code is invalid.'));
+        }
+
+        $ufCode = substr($candidate, 0, 2);
+        if (! (bool) UnidadeFederativa::tryFrom($ufCode)) {
+            return Result::makeFailure(new InvalidArgumentException('city code prefix must be a valid cUF according MOC NFe e NFCe (7.0) - Anexo I.'));
         }
 
         return Result::makeSuccess();

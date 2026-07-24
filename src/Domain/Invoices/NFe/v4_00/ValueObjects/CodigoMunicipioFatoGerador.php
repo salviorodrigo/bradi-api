@@ -21,7 +21,6 @@ use BradiApi\Domain\Common\Validators\NotNullValidator;
 use BradiApi\Domain\Common\Validators\StringLengthValidator;
 use BradiApi\Domain\Invoices\Templates\DFeElement;
 use BradiApi\Domain\Invoices\Traits\ValidatesDFeValueElement;
-use BradiApi\Domain\Invoices\Validators\IsCodigoMunicipioUFPrefixValidator;
 use BradiApi\Domain\Invoices\Validators\IsCodigoMunicipioValidator;
 
 final class CodigoMunicipioFatoGerador extends DFeElement
@@ -37,7 +36,6 @@ final class CodigoMunicipioFatoGerador extends DFeElement
             new IsNumericValidator,
             new StringLengthValidator(7),
             new IsCodigoMunicipioValidator,
-            new IsCodigoMunicipioUFPrefixValidator,
         ];
     }
 }

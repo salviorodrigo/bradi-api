@@ -23,7 +23,7 @@ use BradiApi\Domain\Invoices\NFe\v4_00\ValueObjects\Logradouro;
 use BradiApi\Domain\Invoices\NFe\v4_00\ValueObjects\NomeMunicipio;
 use BradiApi\Domain\Invoices\NFe\v4_00\ValueObjects\NomePais;
 use BradiApi\Domain\Invoices\NFe\v4_00\ValueObjects\NumeroEndereco;
-use BradiApi\Domain\Invoices\NFe\v4_00\ValueObjects\SiglaUF;
+use BradiApi\Domain\Invoices\NFe\v4_00\ValueObjects\SiglaUnidadeFederativa;
 use BradiApi\Domain\Invoices\NFe\v4_00\ValueObjects\Telefone;
 use BradiApi\Domain\Invoices\Templates\DFeElement;
 use BradiApi\Domain\Invoices\Traits\ValidatesDFeGroupElement;
@@ -42,7 +42,7 @@ final class EnderecoDestinatario extends DFeElement
     public Bairro $xBairro;
     public CodigoMunicipio $cMun;
     public NomeMunicipio $xMun;
-    public SiglaUF $UF;
+    public SiglaUnidadeFederativa $UF;
     public ?CodigoPostal $CEP;
     public ?CodigoPais $cPais;
     public ?NomePais $xPais;

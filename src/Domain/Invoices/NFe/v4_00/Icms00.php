@@ -18,9 +18,9 @@ namespace BradiApi\Domain\Invoices\NFe\v4_00;
 
 use BradiApi\Domain\Invoices\NFe\v4_00\ValueObjects\AliquotaICMS;
 use BradiApi\Domain\Invoices\NFe\v4_00\ValueObjects\CodigoSituacaoTributaria;
-use BradiApi\Domain\Invoices\NFe\v4_00\ValueObjects\IndOrigem;
-use BradiApi\Domain\Invoices\NFe\v4_00\ValueObjects\ModalidadeBC;
-use BradiApi\Domain\Invoices\NFe\v4_00\ValueObjects\ValorBC;
+use BradiApi\Domain\Invoices\NFe\v4_00\ValueObjects\IndicadorOrigemMercadoria;
+use BradiApi\Domain\Invoices\NFe\v4_00\ValueObjects\ModalidadeBaseDeCalculo;
+use BradiApi\Domain\Invoices\NFe\v4_00\ValueObjects\ValorBaseDeCalculo;
 use BradiApi\Domain\Invoices\NFe\v4_00\ValueObjects\ValorICMS;
 use BradiApi\Domain\Invoices\Templates\DFeElement;
 use BradiApi\Domain\Invoices\Traits\ValidatesDFeGroupElement;
@@ -32,10 +32,10 @@ final class Icms00 extends DFeElement
 
     public const string FIELD_NAME = 'ICMS00';
 
-    public IndOrigem $orig;
+    public IndicadorOrigemMercadoria $orig;
     public CodigoSituacaoTributaria $CST;
-    public ModalidadeBC $modBC;
-    public ValorBC $vBC;
+    public ModalidadeBaseDeCalculo $modBC;
+    public ValorBaseDeCalculo $vBC;
     public AliquotaICMS $pICMS;
     public ValorICMS $vICMS;
 

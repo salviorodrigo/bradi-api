@@ -15,9 +15,9 @@ declare(strict_types=1);
 
 namespace BradiApi\Domain\Invoices\NFe\v4_00;
 
-use BradiApi\Domain\Invoices\NFe\v4_00\ValueObjects\CadastroPF;
-use BradiApi\Domain\Invoices\NFe\v4_00\ValueObjects\CadastroPJ;
-use BradiApi\Domain\Invoices\NFe\v4_00\ValueObjects\IndicadorIEDestinatario;
+use BradiApi\Domain\Invoices\NFe\v4_00\ValueObjects\CodigoPessoaFisica;
+use BradiApi\Domain\Invoices\NFe\v4_00\ValueObjects\CodigoPessoaJuridica;
+use BradiApi\Domain\Invoices\NFe\v4_00\ValueObjects\IndicadorTipoDestinatario;
 use BradiApi\Domain\Invoices\NFe\v4_00\ValueObjects\InscricaoEstadual;
 use BradiApi\Domain\Invoices\NFe\v4_00\ValueObjects\Nome;
 use BradiApi\Domain\Invoices\Templates\DFeElement;
@@ -32,11 +32,11 @@ final class Destinatario extends DFeElement
 
     public const string FIELD_NAME = 'dest';
 
-    public ?CadastroPJ $CNPJ;
-    public ?CadastroPF $CPF;
+    public ?CodigoPessoaJuridica $CNPJ;
+    public ?CodigoPessoaFisica $CPF;
     public ?Nome $xNome;
     public ?EnderecoDestinatario $enderDest;
-    public IndicadorIEDestinatario $indIEDest;
+    public IndicadorTipoDestinatario $indIEDest;
     public ?InscricaoEstadual $IE;
 
     protected function tagElementsValidators(): array
