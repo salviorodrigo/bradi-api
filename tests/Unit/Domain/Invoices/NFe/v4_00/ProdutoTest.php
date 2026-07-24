@@ -338,7 +338,7 @@ describe('Produto', function () {
                 $sut = new ReflectionMethod($produto, 'validateTagElements');
                 $sutResponse = $sut->invoke($produto, $xmlElement);
                 expect($sutResponse->isFailure())->toBeTrue();
-            })->skip();
+            });
         });
 
         describe('validateTagValue', function () {
