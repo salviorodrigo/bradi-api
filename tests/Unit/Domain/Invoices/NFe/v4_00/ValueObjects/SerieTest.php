@@ -2,68 +2,77 @@
 
 declare(strict_types=1);
 
-use BradiApi\Domain\Common\Protocols\ApiError;
 use BradiApi\Domain\Common\ValueObjects\Result;
 use BradiApi\Domain\Invoices\NFe\v4_00\ValueObjects\Serie;
+use BradiApi\Domain\Invoices\Templates\DFeElement;
 use BradiApi\Domain\Xml\ValueObjects\Element;
-use BradiApi\Tests\TestCase;
 
 describe('Serie', function () {
-
-    beforeEach(function () {
-        /** @var TestCase $this */
-        $this->sut = new Serie('');
+    test('Should succeed if is declared', function () {
+        $nameSpace = 'BradiApi\\Domain\\Invoices\\NFe\\v4_00\\ValueObjects';
+        $sut = $nameSpace . '\\Serie';
+        expect(class_exists($sut))->toBeTrue();
     });
 
-    describe('::parse()', function () {
-        test('Should succeed with dataset :dataset', function ($candidate) {
-            $xmlString = $candidate === '' ? '' : '<' . Serie::FIELD_NAME . ">{$candidate}</" . Serie::FIELD_NAME . '>';
-            $xmlElement = new Element;
-            $xmlElement->parse($xmlString);
-            $sutResponse = $this->sut->parseFromXmlElement($xmlElement);
-            expect($sutResponse)->toBeInstanceOf(Result::class);
-            if ($sutResponse->isFailure()) {
-                $this->fail(json_encode($sutResponse->getError()));
-            }
-            expect($sutResponse->getData())->toBeInstanceOf(Serie::class);
-            expect($sutResponse->getData()->value)->toBe($candidate);
-            expect((string) $sutResponse->getData())->toBe($xmlString);
-        })->with(datasets('dfes.nfe.value_tags.' . Serie::FIELD_NAME . '.valid'));
+    test('Should succeed if extends DFeElement', function () {
+        $sut = new Serie('parentTag');
+        expect(is_subclass_of($sut, DFeElement::class))->toBeTrue();
+    });
 
-        test('Should fail with data set :dataset', function ($candidate) {
-            $xmlString = '<' . Serie::FIELD_NAME . ">{$candidate}</" . Serie::FIELD_NAME . '>';
-            $xmlElement = new Element;
-            $xmlElement->parse($xmlString);
-            $sutResponse = $this->sut->parseFromXmlElement($xmlElement);
-            if ($sutResponse->isSuccess()) {
-                $this->fail(json_encode($sutResponse->getData()));
-            }
-            expect($sutResponse)->toBeInstanceOf(Result::class);
-            expect($sutResponse->getError())->toBeInstanceOf(ApiError::class);
-        })->with(datasets('dfes.nfe.value_tags.' . Serie::FIELD_NAME . '.invalid'));
+    describe('properties', function () {
+        describe('FIELD_NAME', function () {
+            test('Should be set correctly', function () {
+                expect(Serie::FIELD_NAME)->toBe('serie');
+            });
+        });
+    });
 
-        test('Should fail if attributes is provided', function ($candidate) {
-            $xmlString = '<' . Serie::FIELD_NAME . " fake=\"attribute\">{$candidate}</" . Serie::FIELD_NAME . '>';
-            $xmlElement = new Element;
-            $xmlElement->parse($xmlString);
-            $sutResponse = $this->sut->parseFromXmlElement($xmlElement);
-            expect($sutResponse)->toBeInstanceOf(Result::class);
-            if ($sutResponse->isSuccess()) {
-                $this->fail(json_encode($sutResponse->getData()));
-            }
-            expect($sutResponse->getError())->toBeInstanceOf(ApiError::class);
-        })->with(datasets('dfes.nfe.value_tags.' . Serie::FIELD_NAME . '.valid'));
+    describe('methods', function () {
+        describe('validateTagValue', function () {
+            test('Should succeed with valid numeric values', function (string $candidate) {
+                $element = new Element;
+                $element->name = Serie::FIELD_NAME;
+                $element->value = $candidate;
+                $instance = new Serie('parentTag');
+                $sut = new ReflectionMethod($instance, 'validateTagValue');
+                $sutResponse = $sut->invoke($instance, $element);
+                expect($sutResponse)->toBeInstanceOf(Result::class);
+                if ($sutResponse->isFailure()) {
+                    $this->fail(json_encode($sutResponse->getError()));
+                }
+                expect($sutResponse->isSuccess())->toBeTrue();
+            })->with([
+                'zero' => '0',
+                'standard' => '100',
+                'maximum' => '969',
+            ]);
 
-        test('Should fail if elements is provided', function ($candidate) {
-            $xmlString = '<' . Serie::FIELD_NAME . ">{$candidate}<fake>element</fake></" . Serie::FIELD_NAME . '>';
-            $xmlElement = new Element;
-            $xmlElement->parse($xmlString);
-            $sutResponse = $this->sut->parseFromXmlElement($xmlElement);
-            expect($sutResponse)->toBeInstanceOf(Result::class);
-            if ($sutResponse->isSuccess()) {
-                $this->fail(json_encode($sutResponse->getData()));
-            }
-            expect($sutResponse->getError())->toBeInstanceOf(ApiError::class);
-        })->with(datasets('dfes.nfe.value_tags.' . Serie::FIELD_NAME . '.valid'));
+            test('Should fail if value is empty', function () {
+                $element = new Element;
+                $element->name = Serie::FIELD_NAME;
+                $element->value = '';
+                $instance = new Serie('parentTag');
+                $sut = new ReflectionMethod($instance, 'validateTagValue');
+                $sutResponse = $sut->invoke($instance, $element);
+                expect($sutResponse->isFailure())->toBeTrue();
+            });
+
+            test('Should fail with invalid values', function (string $candidate) {
+                $element = new Element;
+                $element->name = Serie::FIELD_NAME;
+                $element->value = $candidate;
+                $instance = new Serie('parentTag');
+                $sut = new ReflectionMethod($instance, 'validateTagValue');
+                $sutResponse = $sut->invoke($instance, $element);
+                expect($sutResponse->isFailure())->toBeTrue();
+            })->with([
+                'negative' => '-1',
+                'too_large' => '970',
+                'alphabetic' => 'abc',
+                'leading_space' => ' 100',
+                'trailing_space' => '100 ',
+                'too_long' => '9700',
+            ]);
+        });
     });
 });

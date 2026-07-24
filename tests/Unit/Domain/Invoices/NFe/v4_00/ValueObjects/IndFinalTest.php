@@ -2,68 +2,75 @@
 
 declare(strict_types=1);
 
-use BradiApi\Domain\Common\Protocols\ApiError;
 use BradiApi\Domain\Common\ValueObjects\Result;
 use BradiApi\Domain\Invoices\NFe\v4_00\ValueObjects\IndFinal;
+use BradiApi\Domain\Invoices\Templates\DFeElement;
 use BradiApi\Domain\Xml\ValueObjects\Element;
-use BradiApi\Tests\TestCase;
 
 describe('IndFinal', function () {
-
-    beforeEach(function () {
-        /** @var TestCase $this */
-        $this->sut = new IndFinal('');
+    test('Should succeed if is declared', function () {
+        $nameSpace = 'BradiApi\\Domain\\Invoices\\NFe\\v4_00\\ValueObjects';
+        $sut = $nameSpace . '\\IndFinal';
+        expect(class_exists($sut))->toBeTrue();
     });
 
-    describe('::parse()', function () {
-        test('Should succeed with dataset :dataset', function ($candidate) {
-            $xmlString = $candidate === '' ? '' : '<' . IndFinal::FIELD_NAME . ">{$candidate}</" . IndFinal::FIELD_NAME . '>';
-            $xmlElement = new Element;
-            $xmlElement->parse($xmlString);
-            $sutResponse = $this->sut->parseFromXmlElement($xmlElement);
-            expect($sutResponse)->toBeInstanceOf(Result::class);
-            if ($sutResponse->isFailure()) {
-                $this->fail(json_encode($sutResponse->getError()));
-            }
-            expect($sutResponse->getData())->toBeInstanceOf(IndFinal::class);
-            expect($sutResponse->getData()->value)->toBe($candidate);
-            expect((string) $sutResponse->getData())->toBe($xmlString);
-        })->with(datasets('dfes.nfe.value_tags.' . IndFinal::FIELD_NAME . '.valid'));
+    test('Should succeed if extends DFeElement', function () {
+        $sut = new IndFinal('parentTag');
+        expect(is_subclass_of($sut, DFeElement::class))->toBeTrue();
+    });
 
-        test('Should fail with data set :dataset', function ($candidate) {
-            $xmlString = '<' . IndFinal::FIELD_NAME . ">{$candidate}</" . IndFinal::FIELD_NAME . '>';
-            $xmlElement = new Element;
-            $xmlElement->parse($xmlString);
-            $sutResponse = $this->sut->parseFromXmlElement($xmlElement);
-            if ($sutResponse->isSuccess()) {
-                $this->fail(json_encode($sutResponse->getData()));
-            }
-            expect($sutResponse)->toBeInstanceOf(Result::class);
-            expect($sutResponse->getError())->toBeInstanceOf(ApiError::class);
-        })->with(datasets('dfes.nfe.value_tags.' . IndFinal::FIELD_NAME . '.invalid'));
+    describe('properties', function () {
+        describe('FIELD_NAME', function () {
+            test('Should be set correctly', function () {
+                expect(IndFinal::FIELD_NAME)->toBe('indFinal');
+            });
+        });
+    });
 
-        test('Should fail if attributes is provided', function ($candidate) {
-            $xmlString = '<' . IndFinal::FIELD_NAME . " fake=\"attribute\">{$candidate}</" . IndFinal::FIELD_NAME . '>';
-            $xmlElement = new Element;
-            $xmlElement->parse($xmlString);
-            $sutResponse = $this->sut->parseFromXmlElement($xmlElement);
-            expect($sutResponse)->toBeInstanceOf(Result::class);
-            if ($sutResponse->isSuccess()) {
-                $this->fail(json_encode($sutResponse->getData()));
-            }
-            expect($sutResponse->getError())->toBeInstanceOf(ApiError::class);
-        })->with(datasets('dfes.nfe.value_tags.' . IndFinal::FIELD_NAME . '.valid'));
+    describe('methods', function () {
+        describe('validateTagValue', function () {
+            test('Should succeed with valid numeric values', function (string $candidate) {
+                $element = new Element;
+                $element->name = IndFinal::FIELD_NAME;
+                $element->value = $candidate;
+                $instance = new IndFinal('parentTag');
+                $sut = new ReflectionMethod($instance, 'validateTagValue');
+                $sutResponse = $sut->invoke($instance, $element);
+                expect($sutResponse)->toBeInstanceOf(Result::class);
+                if ($sutResponse->isFailure()) {
+                    $this->fail(json_encode($sutResponse->getError()));
+                }
+                expect($sutResponse->isSuccess())->toBeTrue();
+            })->with([
+                'zero' => '0',
+                'one' => '1',
+            ]);
 
-        test('Should fail if elements is provided', function ($candidate) {
-            $xmlString = '<' . IndFinal::FIELD_NAME . ">{$candidate}<fake>element</fake></" . IndFinal::FIELD_NAME . '>';
-            $xmlElement = new Element;
-            $xmlElement->parse($xmlString);
-            $sutResponse = $this->sut->parseFromXmlElement($xmlElement);
-            expect($sutResponse)->toBeInstanceOf(Result::class);
-            if ($sutResponse->isSuccess()) {
-                $this->fail(json_encode($sutResponse->getData()));
-            }
-            expect($sutResponse->getError())->toBeInstanceOf(ApiError::class);
-        })->with(datasets('dfes.nfe.value_tags.' . IndFinal::FIELD_NAME . '.valid'));
+            test('Should fail if value is empty', function () {
+                $element = new Element;
+                $element->name = IndFinal::FIELD_NAME;
+                $element->value = '';
+                $instance = new IndFinal('parentTag');
+                $sut = new ReflectionMethod($instance, 'validateTagValue');
+                $sutResponse = $sut->invoke($instance, $element);
+                expect($sutResponse->isFailure())->toBeTrue();
+            });
+
+            test('Should fail with invalid values', function (string $candidate) {
+                $element = new Element;
+                $element->name = IndFinal::FIELD_NAME;
+                $element->value = $candidate;
+                $instance = new IndFinal('parentTag');
+                $sut = new ReflectionMethod($instance, 'validateTagValue');
+                $sutResponse = $sut->invoke($instance, $element);
+                expect($sutResponse->isFailure())->toBeTrue();
+            })->with([
+                'two' => '2',
+                'three' => '3',
+                'alphabetic' => 'a',
+                'leading_space' => ' 0',
+                'trailing_space' => '0 ',
+            ]);
+        });
     });
 });

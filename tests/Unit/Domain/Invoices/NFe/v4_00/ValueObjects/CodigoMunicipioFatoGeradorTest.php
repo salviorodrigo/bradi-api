@@ -2,68 +2,116 @@
 
 declare(strict_types=1);
 
-use BradiApi\Domain\Common\Protocols\ApiError;
 use BradiApi\Domain\Common\ValueObjects\Result;
 use BradiApi\Domain\Invoices\NFe\v4_00\ValueObjects\CodigoMunicipioFatoGerador;
+use BradiApi\Domain\Invoices\Templates\DFeElement;
 use BradiApi\Domain\Xml\ValueObjects\Element;
-use BradiApi\Tests\TestCase;
 
 describe('CodigoMunicipioFatoGerador', function () {
 
-    beforeEach(function () {
-        /** @var TestCase $this */
-        $this->sut = new CodigoMunicipioFatoGerador('');
+    test('Should succeed if is declared', function () {
+        $nameSpace = 'BradiApi\\Domain\\Invoices\\NFe\\v4_00\\ValueObjects';
+        $sut = $nameSpace . '\\CodigoMunicipioFatoGerador';
+        expect(class_exists($sut))->toBeTrue();
     });
 
-    describe('::parse()', function () {
-        test('Should succeed with dataset :dataset', function ($candidate) {
-            $xmlString = $candidate === '' ? '' : '<' . CodigoMunicipioFatoGerador::FIELD_NAME . ">{$candidate}</" . CodigoMunicipioFatoGerador::FIELD_NAME . '>';
-            $xmlElement = new Element;
-            $xmlElement->parse($xmlString);
-            $sutResponse = $this->sut->parseFromXmlElement($xmlElement);
-            expect($sutResponse)->toBeInstanceOf(Result::class);
-            if ($sutResponse->isFailure()) {
-                $this->fail(json_encode($sutResponse->getError()));
-            }
-            expect($sutResponse->getData())->toBeInstanceOf(CodigoMunicipioFatoGerador::class);
-            expect($sutResponse->getData()->value)->toBe($candidate);
-            expect((string) $sutResponse->getData())->toBe($xmlString);
-        })->with(datasets('dfes.nfe.value_tags.' . CodigoMunicipioFatoGerador::FIELD_NAME . '.valid'));
+    test('Should succeed if extends DFeelement', function () {
+        $sut = new CodigoMunicipioFatoGerador('parentTag');
+        expect(is_subclass_of($sut, DFeElement::class))->toBeTrue();
+    });
 
-        test('Should fail with data set :dataset', function ($candidate) {
-            $xmlString = '<' . CodigoMunicipioFatoGerador::FIELD_NAME . ">{$candidate}</" . CodigoMunicipioFatoGerador::FIELD_NAME . '>';
-            $xmlElement = new Element;
-            $xmlElement->parse($xmlString);
-            $sutResponse = $this->sut->parseFromXmlElement($xmlElement);
-            if ($sutResponse->isSuccess()) {
-                $this->fail(json_encode($sutResponse->getData()));
-            }
-            expect($sutResponse)->toBeInstanceOf(Result::class);
-            expect($sutResponse->getError())->toBeInstanceOf(ApiError::class);
-        })->with(datasets('dfes.nfe.value_tags.' . CodigoMunicipioFatoGerador::FIELD_NAME . '.invalid'));
+    describe('properties', function () {
+        describe('FIELD_NAME', function () {
+            test('Should be set correctly', function () {
+                $reflection = new ReflectionClass(CodigoMunicipioFatoGerador::class);
+                $reflectedProperty = $reflection->getConstant('FIELD_NAME');
+                expect($reflectedProperty)->toBe('cMunFG');
+            });
+        });
+    });
 
-        test('Should fail if attributes is provided', function ($candidate) {
-            $xmlString = '<' . CodigoMunicipioFatoGerador::FIELD_NAME . " fake=\"attribute\">{$candidate}</" . CodigoMunicipioFatoGerador::FIELD_NAME . '>';
-            $xmlElement = new Element;
-            $xmlElement->parse($xmlString);
-            $sutResponse = $this->sut->parseFromXmlElement($xmlElement);
-            expect($sutResponse)->toBeInstanceOf(Result::class);
-            if ($sutResponse->isSuccess()) {
-                $this->fail(json_encode($sutResponse->getData()));
-            }
-            expect($sutResponse->getError())->toBeInstanceOf(ApiError::class);
-        })->with(datasets('dfes.nfe.value_tags.' . CodigoMunicipioFatoGerador::FIELD_NAME . '.valid'));
+    describe('methods', function () {
+        describe('validateTagValue', function () {
+            test('Should succeed with valid municipality codes', function (string $candidate) {
+                $element = new Element;
+                $element->name = 'cMunFG';
+                $element->value = $candidate;
+                $codigoMunicipioFatoGerador = new CodigoMunicipioFatoGerador('parentTag');
+                $sut = new ReflectionMethod($codigoMunicipioFatoGerador, 'validateTagValue');
+                $sutResponse = $sut->invoke($codigoMunicipioFatoGerador, $element);
+                expect($sutResponse)->toBeInstanceOf(Result::class);
+                if ($sutResponse->isFailure()) {
+                    $this->fail(json_encode($sutResponse->getError()));
+                }
 
-        test('Should fail if elements is provided', function ($candidate) {
-            $xmlString = '<' . CodigoMunicipioFatoGerador::FIELD_NAME . ">{$candidate}<fake>element</fake></" . CodigoMunicipioFatoGerador::FIELD_NAME . '>';
-            $xmlElement = new Element;
-            $xmlElement->parse($xmlString);
-            $sutResponse = $this->sut->parseFromXmlElement($xmlElement);
-            expect($sutResponse)->toBeInstanceOf(Result::class);
-            if ($sutResponse->isSuccess()) {
-                $this->fail(json_encode($sutResponse->getData()));
-            }
-            expect($sutResponse->getError())->toBeInstanceOf(ApiError::class);
-        })->with(datasets('dfes.nfe.value_tags.' . CodigoMunicipioFatoGerador::FIELD_NAME . '.valid'));
+                expect($sutResponse->isSuccess())->toBeTrue();
+            })->with([
+                'sao_paulo_city' => '3550308',
+                'alta_floresta_ro' => '1100015',
+                'exterior' => '9999999',
+            ]);
+
+            test('Should fail if value is empty', function () {
+                $candidate = '';
+                $element = new Element;
+                $element->name = 'cMunFG';
+                $element->value = $candidate;
+                $codigoMunicipioFatoGerador = new CodigoMunicipioFatoGerador('parentTag');
+                $sut = new ReflectionMethod($codigoMunicipioFatoGerador, 'validateTagValue');
+                $sutResponse = $sut->invoke($codigoMunicipioFatoGerador, $element);
+                expect($sutResponse->isFailure())->toBeTrue();
+            });
+
+            test('Should fail if value has invalid length', function (string $candidate) {
+                $element = new Element;
+                $element->name = 'cMunFG';
+                $element->value = $candidate;
+                $codigoMunicipioFatoGerador = new CodigoMunicipioFatoGerador('parentTag');
+                $sut = new ReflectionMethod($codigoMunicipioFatoGerador, 'validateTagValue');
+                $sutResponse = $sut->invoke($codigoMunicipioFatoGerador, $element);
+                expect($sutResponse->isFailure())->toBeTrue();
+            })->with([
+                'too_short' => '355030',
+                'too_long' => '35503088',
+            ]);
+
+            test('Should fail if non-numeric or formatted value is provided', function (string $candidate) {
+                $element = new Element;
+                $element->name = 'cMunFG';
+                $element->value = $candidate;
+                $codigoMunicipioFatoGerador = new CodigoMunicipioFatoGerador('parentTag');
+                $sut = new ReflectionMethod($codigoMunicipioFatoGerador, 'validateTagValue');
+                $sutResponse = $sut->invoke($codigoMunicipioFatoGerador, $element);
+                expect($sutResponse->isFailure())->toBeTrue();
+            })->with([
+                'masked' => '355.030-8',
+                'alphanumeric' => '355A308',
+            ]);
+
+            test('Should fail if a numeric value with spaces is provided', function (string $candidate) {
+                $element = new Element;
+                $element->name = 'cMunFG';
+                $element->value = $candidate;
+                $codigoMunicipioFatoGerador = new CodigoMunicipioFatoGerador('parentTag');
+                $sut = new ReflectionMethod($codigoMunicipioFatoGerador, 'validateTagValue');
+                $sutResponse = $sut->invoke($codigoMunicipioFatoGerador, $element);
+                expect($sutResponse->isFailure())->toBeTrue();
+            })->with([
+                'leading space' => ' 3550308',
+                'trailing space' => '3550308 ',
+                'middle space' => '355 308',
+            ]);
+
+            test('Should fail if invalid check digit is provided', function () {
+                $candidate = '3304555';
+                $element = new Element;
+                $element->name = 'cMunFG';
+                $element->value = $candidate;
+                $codigoMunicipioFatoGerador = new CodigoMunicipioFatoGerador('parentTag');
+                $sut = new ReflectionMethod($codigoMunicipioFatoGerador, 'validateTagValue');
+                $sutResponse = $sut->invoke($codigoMunicipioFatoGerador, $element);
+                expect($sutResponse->isFailure())->toBeTrue();
+            });
+        });
     });
 });

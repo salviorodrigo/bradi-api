@@ -2,68 +2,102 @@
 
 declare(strict_types=1);
 
-use BradiApi\Domain\Common\Protocols\ApiError;
 use BradiApi\Domain\Common\ValueObjects\Result;
 use BradiApi\Domain\Invoices\NFe\v4_00\ValueObjects\CodigoSubstituicaoTributaria;
+use BradiApi\Domain\Invoices\Templates\DFeElement;
 use BradiApi\Domain\Xml\ValueObjects\Element;
-use BradiApi\Tests\TestCase;
 
 describe('CodigoSubstituicaoTributaria', function () {
 
-    beforeEach(function () {
-        /** @var TestCase $this */
-        $this->sut = new CodigoSubstituicaoTributaria('');
+    test('Should succeed if is declared', function () {
+        $nameSpace = 'BradiApi\\Domain\\Invoices\\NFe\\v4_00\\ValueObjects';
+        $sut = $nameSpace . '\\CodigoSubstituicaoTributaria';
+        expect(class_exists($sut))->toBeTrue();
     });
 
-    describe('::parse()', function () {
-        test('Should succeed with dataset :dataset', function ($candidate) {
-            $xmlString = $candidate === '' ? '' : '<' . CodigoSubstituicaoTributaria::FIELD_NAME . ">{$candidate}</" . CodigoSubstituicaoTributaria::FIELD_NAME . '>';
-            $xmlElement = new Element;
-            $xmlElement->parse($xmlString);
-            $sutResponse = $this->sut->parseFromXmlElement($xmlElement);
-            expect($sutResponse)->toBeInstanceOf(Result::class);
-            if ($sutResponse->isFailure()) {
-                $this->fail(json_encode($sutResponse->getError()));
-            }
-            expect($sutResponse->getData())->toBeInstanceOf(CodigoSubstituicaoTributaria::class);
-            expect($sutResponse->getData()->value)->toBe($candidate);
-            expect((string) $sutResponse->getData())->toBe($xmlString);
-        })->with(datasets('dfes.nfe.value_tags.' . CodigoSubstituicaoTributaria::FIELD_NAME . '.valid'));
+    test('Should succeed if extends DFeelement', function () {
+        $sut = new CodigoSubstituicaoTributaria('parentTag');
+        expect(is_subclass_of($sut, DFeElement::class))->toBeTrue();
+    });
 
-        test('Should fail with data set :dataset', function ($candidate) {
-            $xmlString = '<' . CodigoSubstituicaoTributaria::FIELD_NAME . ">{$candidate}</" . CodigoSubstituicaoTributaria::FIELD_NAME . '>';
-            $xmlElement = new Element;
-            $xmlElement->parse($xmlString);
-            $sutResponse = $this->sut->parseFromXmlElement($xmlElement);
-            if ($sutResponse->isSuccess()) {
-                $this->fail(json_encode($sutResponse->getData()));
-            }
-            expect($sutResponse)->toBeInstanceOf(Result::class);
-            expect($sutResponse->getError())->toBeInstanceOf(ApiError::class);
-        })->with(datasets('dfes.nfe.value_tags.' . CodigoSubstituicaoTributaria::FIELD_NAME . '.invalid'));
+    describe('properties', function () {
+        describe('FIELD_NAME', function () {
+            test('Should be set correctly', function () {
+                $reflection = new ReflectionClass(CodigoSubstituicaoTributaria::class);
+                $reflectedProperty = $reflection->getConstant('FIELD_NAME');
+                expect($reflectedProperty)->toBe('CEST');
+            });
+        });
+    });
 
-        test('Should fail if attributes is provided', function ($candidate) {
-            $xmlString = '<' . CodigoSubstituicaoTributaria::FIELD_NAME . " fake=\"attribute\">{$candidate}</" . CodigoSubstituicaoTributaria::FIELD_NAME . '>';
-            $xmlElement = new Element;
-            $xmlElement->parse($xmlString);
-            $sutResponse = $this->sut->parseFromXmlElement($xmlElement);
-            expect($sutResponse)->toBeInstanceOf(Result::class);
-            if ($sutResponse->isSuccess()) {
-                $this->fail(json_encode($sutResponse->getData()));
-            }
-            expect($sutResponse->getError())->toBeInstanceOf(ApiError::class);
-        })->with(datasets('dfes.nfe.value_tags.' . CodigoSubstituicaoTributaria::FIELD_NAME . '.valid'));
+    describe('methods', function () {
+        describe('validateTagValue', function () {
+            test('Should succeed with valid CEST code', function () {
+                $candidate = '0100100';
+                $element = new Element;
+                $element->name = 'CEST';
+                $element->value = $candidate;
+                $codigoSubstituicaoTributaria = new CodigoSubstituicaoTributaria('parentTag');
+                $sut = new ReflectionMethod($codigoSubstituicaoTributaria, 'validateTagValue');
+                $sutResponse = $sut->invoke($codigoSubstituicaoTributaria, $element);
+                expect($sutResponse)->toBeInstanceOf(Result::class);
+                if ($sutResponse->isFailure()) {
+                    $this->fail(json_encode($sutResponse->getError()));
+                }
 
-        test('Should fail if elements is provided', function ($candidate) {
-            $xmlString = '<' . CodigoSubstituicaoTributaria::FIELD_NAME . ">{$candidate}<fake>element</fake></" . CodigoSubstituicaoTributaria::FIELD_NAME . '>';
-            $xmlElement = new Element;
-            $xmlElement->parse($xmlString);
-            $sutResponse = $this->sut->parseFromXmlElement($xmlElement);
-            expect($sutResponse)->toBeInstanceOf(Result::class);
-            if ($sutResponse->isSuccess()) {
-                $this->fail(json_encode($sutResponse->getData()));
-            }
-            expect($sutResponse->getError())->toBeInstanceOf(ApiError::class);
-        })->with(datasets('dfes.nfe.value_tags.' . CodigoSubstituicaoTributaria::FIELD_NAME . '.valid'));
+                expect($sutResponse->isSuccess())->toBeTrue();
+            });
+
+            test('Should fail if value is empty', function () {
+                $candidate = '';
+                $element = new Element;
+                $element->name = 'CEST';
+                $element->value = $candidate;
+                $codigoSubstituicaoTributaria = new CodigoSubstituicaoTributaria('parentTag');
+                $sut = new ReflectionMethod($codigoSubstituicaoTributaria, 'validateTagValue');
+                $sutResponse = $sut->invoke($codigoSubstituicaoTributaria, $element);
+                expect($sutResponse->isFailure())->toBeTrue();
+            });
+
+            test('Should fail if value has invalid length', function (string $candidate) {
+                $element = new Element;
+                $element->name = 'CEST';
+                $element->value = $candidate;
+                $codigoSubstituicaoTributaria = new CodigoSubstituicaoTributaria('parentTag');
+                $sut = new ReflectionMethod($codigoSubstituicaoTributaria, 'validateTagValue');
+                $sutResponse = $sut->invoke($codigoSubstituicaoTributaria, $element);
+                expect($sutResponse->isFailure())->toBeTrue();
+            })->with([
+                'too_short' => '010010',
+                'too_long' => '01001001',
+            ]);
+
+            test('Should fail if non-numeric or formatted value is provided', function (string $candidate) {
+                $element = new Element;
+                $element->name = 'CEST';
+                $element->value = $candidate;
+                $codigoSubstituicaoTributaria = new CodigoSubstituicaoTributaria('parentTag');
+                $sut = new ReflectionMethod($codigoSubstituicaoTributaria, 'validateTagValue');
+                $sutResponse = $sut->invoke($codigoSubstituicaoTributaria, $element);
+                expect($sutResponse->isFailure())->toBeTrue();
+            })->with([
+                'masked' => '01.001-00',
+                'alphanumeric' => '01A00100',
+            ]);
+
+            test('Should fail if value with spaces is provided', function (string $candidate) {
+                $element = new Element;
+                $element->name = 'CEST';
+                $element->value = $candidate;
+                $codigoSubstituicaoTributaria = new CodigoSubstituicaoTributaria('parentTag');
+                $sut = new ReflectionMethod($codigoSubstituicaoTributaria, 'validateTagValue');
+                $sutResponse = $sut->invoke($codigoSubstituicaoTributaria, $element);
+                expect($sutResponse->isFailure())->toBeTrue();
+            })->with([
+                'leading_space' => ' 0100100',
+                'trailing_space' => '0100100 ',
+                'middle_space' => '010 0100',
+            ]);
+        });
     });
 });

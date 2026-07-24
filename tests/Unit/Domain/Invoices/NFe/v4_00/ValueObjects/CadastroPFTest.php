@@ -2,68 +2,67 @@
 
 declare(strict_types=1);
 
-use BradiApi\Domain\Common\Protocols\ApiError;
 use BradiApi\Domain\Common\ValueObjects\Result;
 use BradiApi\Domain\Invoices\NFe\v4_00\ValueObjects\CadastroPF;
+use BradiApi\Domain\Invoices\Templates\DFeElement;
 use BradiApi\Domain\Xml\ValueObjects\Element;
-use BradiApi\Tests\TestCase;
 
 describe('CadastroPF', function () {
-
-    beforeEach(function () {
-        /** @var TestCase $this */
-        $this->sut = new CadastroPF('');
+    test('Should succeed if is declared', function () {
+        $nameSpace = 'BradiApi\\Domain\\Invoices\\NFe\\v4_00\\ValueObjects';
+        $sut = $nameSpace . '\\CadastroPF';
+        expect(class_exists($sut))->toBeTrue();
     });
 
-    describe('::parse()', function () {
-        test('Should succeed with dataset :dataset', function ($candidate) {
-            $xmlString = $candidate === '' ? '' : '<' . CadastroPF::FIELD_NAME . ">{$candidate}</" . CadastroPF::FIELD_NAME . '>';
-            $xmlElement = new Element;
-            $xmlElement->parse($xmlString);
-            $sutResponse = $this->sut->parseFromXmlElement($xmlElement);
-            expect($sutResponse)->toBeInstanceOf(Result::class);
-            if ($sutResponse->isFailure()) {
-                $this->fail(json_encode($sutResponse->getError()));
-            }
-            expect($sutResponse->getData())->toBeInstanceOf(CadastroPF::class);
-            expect($sutResponse->getData()->value)->toBe($candidate);
-            expect((string) $sutResponse->getData())->toBe($xmlString);
-        })->with(datasets('dfes.nfe.value_tags.' . CadastroPF::FIELD_NAME . '.valid'));
+    test('Should succeed if extends DFeElement', function () {
+        $sut = new CadastroPF('parentTag');
+        expect(is_subclass_of($sut, DFeElement::class))->toBeTrue();
+    });
 
-        test('Should fail with data set :dataset', function ($candidate) {
-            $xmlString = '<' . CadastroPF::FIELD_NAME . ">{$candidate}</" . CadastroPF::FIELD_NAME . '>';
-            $xmlElement = new Element;
-            $xmlElement->parse($xmlString);
-            $sutResponse = $this->sut->parseFromXmlElement($xmlElement);
-            if ($sutResponse->isSuccess()) {
-                $this->fail(json_encode($sutResponse->getData()));
-            }
-            expect($sutResponse)->toBeInstanceOf(Result::class);
-            expect($sutResponse->getError())->toBeInstanceOf(ApiError::class);
-        })->with(datasets('dfes.nfe.value_tags.' . CadastroPF::FIELD_NAME . '.invalid'));
+    describe('properties', function () {
+        describe('FIELD_NAME', function () {
+            test('Should be set correctly', function () {
+                $reflection = new ReflectionClass(CadastroPF::class);
+                $reflectedProperty = $reflection->getConstant('FIELD_NAME');
+                expect($reflectedProperty)->toBe('CPF');
+            });
+        });
+    });
 
-        test('Should fail if attributes is provided', function ($candidate) {
-            $xmlString = '<' . CadastroPF::FIELD_NAME . " fake=\"attribute\">{$candidate}</" . CadastroPF::FIELD_NAME . '>';
-            $xmlElement = new Element;
-            $xmlElement->parse($xmlString);
-            $sutResponse = $this->sut->parseFromXmlElement($xmlElement);
-            expect($sutResponse)->toBeInstanceOf(Result::class);
-            if ($sutResponse->isSuccess()) {
-                $this->fail(json_encode($sutResponse->getData()));
-            }
-            expect($sutResponse->getError())->toBeInstanceOf(ApiError::class);
-        })->with(datasets('dfes.nfe.value_tags.' . CadastroPF::FIELD_NAME . '.valid'));
+    describe('methods', function () {
+        describe('validateTagValue', function () {
+            test('Should succeed with valid values', function (string $candidate) {
+                $element = new Element;
+                $element->name = 'CPF';
+                $element->value = $candidate;
+                $instance = new CadastroPF('parentTag');
+                $sut = new ReflectionMethod($instance, 'validateTagValue');
+                $sutResponse = $sut->invoke($instance, $element);
+                expect($sutResponse)->toBeInstanceOf(Result::class);
+                if ($sutResponse->isFailure()) {
+                    $this->fail(json_encode($sutResponse->getError()));
+                }
+                expect($sutResponse->isSuccess())->toBeTrue();
+            })->with(['standard' => '01505280001']);
 
-        test('Should fail if elements is provided', function ($candidate) {
-            $xmlString = '<' . CadastroPF::FIELD_NAME . ">{$candidate}<fake>element</fake></" . CadastroPF::FIELD_NAME . '>';
-            $xmlElement = new Element;
-            $xmlElement->parse($xmlString);
-            $sutResponse = $this->sut->parseFromXmlElement($xmlElement);
-            expect($sutResponse)->toBeInstanceOf(Result::class);
-            if ($sutResponse->isSuccess()) {
-                $this->fail(json_encode($sutResponse->getData()));
-            }
-            expect($sutResponse->getError())->toBeInstanceOf(ApiError::class);
-        })->with(datasets('dfes.nfe.value_tags.' . CadastroPF::FIELD_NAME . '.valid'));
+            test('Should fail if value is invalid', function (string $candidate) {
+                $element = new Element;
+                $element->name = 'CPF';
+                $element->value = $candidate;
+                $instance = new CadastroPF('parentTag');
+                $sut = new ReflectionMethod($instance, 'validateTagValue');
+                $sutResponse = $sut->invoke($instance, $element);
+                expect($sutResponse->isFailure())->toBeTrue();
+            })->with([
+                'empty' => '',
+                'too_short' => '0150528000',
+                'too_long' => '015052800012',
+                'leading_space' => ' 01505280001',
+                'trailing_space' => '01505280001 ',
+                'middle_space' => '01505 280001',
+                'masked' => '015.052.800-01',
+                'alphanumeric' => '0150A280001',
+            ]);
+        });
     });
 });

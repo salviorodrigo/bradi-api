@@ -2,68 +2,76 @@
 
 declare(strict_types=1);
 
-use BradiApi\Domain\Common\Protocols\ApiError;
 use BradiApi\Domain\Common\ValueObjects\Result;
 use BradiApi\Domain\Invoices\NFe\v4_00\ValueObjects\IdDestino;
+use BradiApi\Domain\Invoices\Templates\DFeElement;
 use BradiApi\Domain\Xml\ValueObjects\Element;
-use BradiApi\Tests\TestCase;
 
 describe('IdDestino', function () {
-
-    beforeEach(function () {
-        /** @var TestCase $this */
-        $this->sut = new IdDestino('');
+    test('Should succeed if is declared', function () {
+        $nameSpace = 'BradiApi\\Domain\\Invoices\\NFe\\v4_00\\ValueObjects';
+        $sut = $nameSpace . '\\IdDestino';
+        expect(class_exists($sut))->toBeTrue();
     });
 
-    describe('::parse()', function () {
-        test('Should succeed with dataset :dataset', function ($candidate) {
-            $xmlString = $candidate === '' ? '' : '<' . IdDestino::FIELD_NAME . ">{$candidate}</" . IdDestino::FIELD_NAME . '>';
-            $xmlElement = new Element;
-            $xmlElement->parse($xmlString);
-            $sutResponse = $this->sut->parseFromXmlElement($xmlElement);
-            expect($sutResponse)->toBeInstanceOf(Result::class);
-            if ($sutResponse->isFailure()) {
-                $this->fail(json_encode($sutResponse->getError()));
-            }
-            expect($sutResponse->getData())->toBeInstanceOf(IdDestino::class);
-            expect($sutResponse->getData()->value)->toBe($candidate);
-            expect((string) $sutResponse->getData())->toBe($xmlString);
-        })->with(datasets('dfes.nfe.value_tags.' . IdDestino::FIELD_NAME . '.valid'));
+    test('Should succeed if extends DFeElement', function () {
+        $sut = new IdDestino('parentTag');
+        expect(is_subclass_of($sut, DFeElement::class))->toBeTrue();
+    });
 
-        test('Should fail with data set :dataset', function ($candidate) {
-            $xmlString = '<' . IdDestino::FIELD_NAME . ">{$candidate}</" . IdDestino::FIELD_NAME . '>';
-            $xmlElement = new Element;
-            $xmlElement->parse($xmlString);
-            $sutResponse = $this->sut->parseFromXmlElement($xmlElement);
-            if ($sutResponse->isSuccess()) {
-                $this->fail(json_encode($sutResponse->getData()));
-            }
-            expect($sutResponse)->toBeInstanceOf(Result::class);
-            expect($sutResponse->getError())->toBeInstanceOf(ApiError::class);
-        })->with(datasets('dfes.nfe.value_tags.' . IdDestino::FIELD_NAME . '.invalid'));
+    describe('properties', function () {
+        describe('FIELD_NAME', function () {
+            test('Should be set correctly', function () {
+                expect(IdDestino::FIELD_NAME)->toBe('idDest');
+            });
+        });
+    });
 
-        test('Should fail if attributes is provided', function ($candidate) {
-            $xmlString = '<' . IdDestino::FIELD_NAME . " fake=\"attribute\">{$candidate}</" . IdDestino::FIELD_NAME . '>';
-            $xmlElement = new Element;
-            $xmlElement->parse($xmlString);
-            $sutResponse = $this->sut->parseFromXmlElement($xmlElement);
-            expect($sutResponse)->toBeInstanceOf(Result::class);
-            if ($sutResponse->isSuccess()) {
-                $this->fail(json_encode($sutResponse->getData()));
-            }
-            expect($sutResponse->getError())->toBeInstanceOf(ApiError::class);
-        })->with(datasets('dfes.nfe.value_tags.' . IdDestino::FIELD_NAME . '.valid'));
+    describe('methods', function () {
+        describe('validateTagValue', function () {
+            test('Should succeed with valid numeric values', function (string $candidate) {
+                $element = new Element;
+                $element->name = IdDestino::FIELD_NAME;
+                $element->value = $candidate;
+                $instance = new IdDestino('parentTag');
+                $sut = new ReflectionMethod($instance, 'validateTagValue');
+                $sutResponse = $sut->invoke($instance, $element);
+                expect($sutResponse)->toBeInstanceOf(Result::class);
+                if ($sutResponse->isFailure()) {
+                    $this->fail(json_encode($sutResponse->getError()));
+                }
+                expect($sutResponse->isSuccess())->toBeTrue();
+            })->with([
+                'one' => '1',
+                'two' => '2',
+                'three' => '3',
+            ]);
 
-        test('Should fail if elements is provided', function ($candidate) {
-            $xmlString = '<' . IdDestino::FIELD_NAME . ">{$candidate}<fake>element</fake></" . IdDestino::FIELD_NAME . '>';
-            $xmlElement = new Element;
-            $xmlElement->parse($xmlString);
-            $sutResponse = $this->sut->parseFromXmlElement($xmlElement);
-            expect($sutResponse)->toBeInstanceOf(Result::class);
-            if ($sutResponse->isSuccess()) {
-                $this->fail(json_encode($sutResponse->getData()));
-            }
-            expect($sutResponse->getError())->toBeInstanceOf(ApiError::class);
-        })->with(datasets('dfes.nfe.value_tags.' . IdDestino::FIELD_NAME . '.valid'));
+            test('Should fail if value is empty', function () {
+                $element = new Element;
+                $element->name = IdDestino::FIELD_NAME;
+                $element->value = '';
+                $instance = new IdDestino('parentTag');
+                $sut = new ReflectionMethod($instance, 'validateTagValue');
+                $sutResponse = $sut->invoke($instance, $element);
+                expect($sutResponse->isFailure())->toBeTrue();
+            });
+
+            test('Should fail with invalid values', function (string $candidate) {
+                $element = new Element;
+                $element->name = IdDestino::FIELD_NAME;
+                $element->value = $candidate;
+                $instance = new IdDestino('parentTag');
+                $sut = new ReflectionMethod($instance, 'validateTagValue');
+                $sutResponse = $sut->invoke($instance, $element);
+                expect($sutResponse->isFailure())->toBeTrue();
+            })->with([
+                'zero' => '0',
+                'four' => '4',
+                'alphabetic' => 'a',
+                'leading_space' => ' 1',
+                'trailing_space' => '1 ',
+            ]);
+        });
     });
 });

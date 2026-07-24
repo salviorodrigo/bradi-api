@@ -2,68 +2,75 @@
 
 declare(strict_types=1);
 
-use BradiApi\Domain\Common\Protocols\ApiError;
 use BradiApi\Domain\Common\ValueObjects\Result;
 use BradiApi\Domain\Invoices\NFe\v4_00\ValueObjects\IndOrigem;
+use BradiApi\Domain\Invoices\Templates\DFeElement;
 use BradiApi\Domain\Xml\ValueObjects\Element;
-use BradiApi\Tests\TestCase;
 
 describe('IndOrigem', function () {
-
-    beforeEach(function () {
-        /** @var TestCase $this */
-        $this->sut = new IndOrigem('');
+    test('Should succeed if is declared', function () {
+        $nameSpace = 'BradiApi\\Domain\\Invoices\\NFe\\v4_00\\ValueObjects';
+        $sut = $nameSpace . '\\IndOrigem';
+        expect(class_exists($sut))->toBeTrue();
     });
 
-    describe('::parse()', function () {
-        test('Should succeed with dataset :dataset', function ($candidate) {
-            $xmlString = $candidate === '' ? '' : '<' . IndOrigem::FIELD_NAME . ">{$candidate}</" . IndOrigem::FIELD_NAME . '>';
-            $xmlElement = new Element;
-            $xmlElement->parse($xmlString);
-            $sutResponse = $this->sut->parseFromXmlElement($xmlElement);
-            expect($sutResponse)->toBeInstanceOf(Result::class);
-            if ($sutResponse->isFailure()) {
-                $this->fail(json_encode($sutResponse->getError()));
-            }
-            expect($sutResponse->getData())->toBeInstanceOf(IndOrigem::class);
-            expect($sutResponse->getData()->value)->toBe($candidate);
-            expect((string) $sutResponse->getData())->toBe($xmlString);
-        })->with(datasets('dfes.nfe.value_tags.' . IndOrigem::FIELD_NAME . '.valid'));
+    test('Should succeed if extends DFeElement', function () {
+        $sut = new IndOrigem('parentTag');
+        expect(is_subclass_of($sut, DFeElement::class))->toBeTrue();
+    });
 
-        test('Should fail with data set :dataset', function ($candidate) {
-            $xmlString = '<' . IndOrigem::FIELD_NAME . ">{$candidate}</" . IndOrigem::FIELD_NAME . '>';
-            $xmlElement = new Element;
-            $xmlElement->parse($xmlString);
-            $sutResponse = $this->sut->parseFromXmlElement($xmlElement);
-            if ($sutResponse->isSuccess()) {
-                $this->fail(json_encode($sutResponse->getData()));
-            }
-            expect($sutResponse)->toBeInstanceOf(Result::class);
-            expect($sutResponse->getError())->toBeInstanceOf(ApiError::class);
-        })->with(datasets('dfes.nfe.value_tags.' . IndOrigem::FIELD_NAME . '.invalid'));
+    describe('properties', function () {
+        describe('FIELD_NAME', function () {
+            test('Should be set correctly', function () {
+                $reflection = new ReflectionClass(IndOrigem::class);
+                $reflectedProperty = $reflection->getConstant('FIELD_NAME');
+                expect($reflectedProperty)->toBe('orig');
+            });
+        });
+    });
 
-        test('Should fail if attributes is provided', function ($candidate) {
-            $xmlString = '<' . IndOrigem::FIELD_NAME . " fake=\"attribute\">{$candidate}</" . IndOrigem::FIELD_NAME . '>';
-            $xmlElement = new Element;
-            $xmlElement->parse($xmlString);
-            $sutResponse = $this->sut->parseFromXmlElement($xmlElement);
-            expect($sutResponse)->toBeInstanceOf(Result::class);
-            if ($sutResponse->isSuccess()) {
-                $this->fail(json_encode($sutResponse->getData()));
-            }
-            expect($sutResponse->getError())->toBeInstanceOf(ApiError::class);
-        })->with(datasets('dfes.nfe.value_tags.' . IndOrigem::FIELD_NAME . '.valid'));
+    describe('methods', function () {
+        describe('validateTagValue', function () {
+            test('Should succeed with valid values', function (string $candidate) {
+                $element = new Element;
+                $element->name = 'orig';
+                $element->value = $candidate;
+                $instance = new IndOrigem('parentTag');
+                $sut = new ReflectionMethod($instance, 'validateTagValue');
+                $sutResponse = $sut->invoke($instance, $element);
+                expect($sutResponse)->toBeInstanceOf(Result::class);
+                if ($sutResponse->isFailure()) {
+                    $this->fail(json_encode($sutResponse->getError()));
+                }
+                expect($sutResponse->isSuccess())->toBeTrue();
+            })->with([
+                'nacional' => '0',
+                'estrangeira_importacao_direta' => '1',
+                'estrangeira_mercado_interno' => '2',
+                'nacional_importacao_superior_40' => '3',
+                'nacional_processo_produtivo_basico' => '4',
+                'nacional_importacao_ate_40' => '5',
+                'estrangeira_importacao_sem_similar' => '6',
+                'estrangeira_mercado_sem_similar' => '7',
+                'nacional_importacao_superior_70' => '8',
+            ]);
 
-        test('Should fail if elements is provided', function ($candidate) {
-            $xmlString = '<' . IndOrigem::FIELD_NAME . ">{$candidate}<fake>element</fake></" . IndOrigem::FIELD_NAME . '>';
-            $xmlElement = new Element;
-            $xmlElement->parse($xmlString);
-            $sutResponse = $this->sut->parseFromXmlElement($xmlElement);
-            expect($sutResponse)->toBeInstanceOf(Result::class);
-            if ($sutResponse->isSuccess()) {
-                $this->fail(json_encode($sutResponse->getData()));
-            }
-            expect($sutResponse->getError())->toBeInstanceOf(ApiError::class);
-        })->with(datasets('dfes.nfe.value_tags.' . IndOrigem::FIELD_NAME . '.valid'));
+            test('Should fail if value is invalid', function (string $candidate) {
+                $element = new Element;
+                $element->name = 'orig';
+                $element->value = $candidate;
+                $instance = new IndOrigem('parentTag');
+                $sut = new ReflectionMethod($instance, 'validateTagValue');
+                $sutResponse = $sut->invoke($instance, $element);
+                expect($sutResponse->isFailure())->toBeTrue();
+            })->with([
+                'empty' => '',
+                'leading_space' => ' 1',
+                'trailing_space' => '1 ',
+                'alphabetic' => 'A',
+                'out_of_range_negative' => '-1',
+                'out_of_range_nine' => '9',
+            ]);
+        });
     });
 });

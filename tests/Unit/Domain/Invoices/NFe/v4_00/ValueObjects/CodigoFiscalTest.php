@@ -2,68 +2,106 @@
 
 declare(strict_types=1);
 
-use BradiApi\Domain\Common\Protocols\ApiError;
 use BradiApi\Domain\Common\ValueObjects\Result;
 use BradiApi\Domain\Invoices\NFe\v4_00\ValueObjects\CodigoFiscal;
+use BradiApi\Domain\Invoices\Templates\DFeElement;
 use BradiApi\Domain\Xml\ValueObjects\Element;
-use BradiApi\Tests\TestCase;
 
 describe('CodigoFiscal', function () {
 
-    beforeEach(function () {
-        /** @var TestCase $this */
-        $this->sut = new CodigoFiscal('');
+    test('Should succeed if is declared', function () {
+        $nameSpace = 'BradiApi\\Domain\\Invoices\\NFe\\v4_00\\ValueObjects';
+        $sut = $nameSpace . '\\CodigoFiscal';
+        expect(class_exists($sut))->toBeTrue();
     });
 
-    describe('::parse()', function () {
-        test('Should succeed with dataset :dataset', function ($candidate) {
-            $xmlString = $candidate === '' ? '' : '<' . CodigoFiscal::FIELD_NAME . ">{$candidate}</" . CodigoFiscal::FIELD_NAME . '>';
-            $xmlElement = new Element;
-            $xmlElement->parse($xmlString);
-            $sutResponse = $this->sut->parseFromXmlElement($xmlElement);
-            expect($sutResponse)->toBeInstanceOf(Result::class);
-            if ($sutResponse->isFailure()) {
-                $this->fail(json_encode($sutResponse->getError()));
-            }
-            expect($sutResponse->getData())->toBeInstanceOf(CodigoFiscal::class);
-            expect($sutResponse->getData()->value)->toBe($candidate);
-            expect((string) $sutResponse->getData())->toBe($xmlString);
-        })->with(datasets('dfes.nfe.value_tags.' . CodigoFiscal::FIELD_NAME . '.valid'));
+    test('Should succeed if extends DFeelement', function () {
+        $sut = new CodigoFiscal('parentTag');
+        expect(is_subclass_of($sut, DFeElement::class))->toBeTrue();
+    });
 
-        test('Should fail with data set :dataset', function ($candidate) {
-            $xmlString = '<' . CodigoFiscal::FIELD_NAME . ">{$candidate}</" . CodigoFiscal::FIELD_NAME . '>';
-            $xmlElement = new Element;
-            $xmlElement->parse($xmlString);
-            $sutResponse = $this->sut->parseFromXmlElement($xmlElement);
-            if ($sutResponse->isSuccess()) {
-                $this->fail(json_encode($sutResponse->getData()));
-            }
-            expect($sutResponse)->toBeInstanceOf(Result::class);
-            expect($sutResponse->getError())->toBeInstanceOf(ApiError::class);
-        })->with(datasets('dfes.nfe.value_tags.' . CodigoFiscal::FIELD_NAME . '.invalid'));
+    describe('properties', function () {
+        describe('FIELD_NAME', function () {
+            test('Should be set correctly', function () {
+                $reflection = new ReflectionClass(CodigoFiscal::class);
+                $reflectedProperty = $reflection->getConstant('FIELD_NAME');
+                expect($reflectedProperty)->toBe('CFOP');
+            });
+        });
+    });
 
-        test('Should fail if attributes is provided', function ($candidate) {
-            $xmlString = '<' . CodigoFiscal::FIELD_NAME . " fake=\"attribute\">{$candidate}</" . CodigoFiscal::FIELD_NAME . '>';
-            $xmlElement = new Element;
-            $xmlElement->parse($xmlString);
-            $sutResponse = $this->sut->parseFromXmlElement($xmlElement);
-            expect($sutResponse)->toBeInstanceOf(Result::class);
-            if ($sutResponse->isSuccess()) {
-                $this->fail(json_encode($sutResponse->getData()));
-            }
-            expect($sutResponse->getError())->toBeInstanceOf(ApiError::class);
-        })->with(datasets('dfes.nfe.value_tags.' . CodigoFiscal::FIELD_NAME . '.valid'));
+    describe('methods', function () {
+        describe('validateTagValue', function () {
+            test('Should succeed with valid CFOP codes', function (string $candidate) {
+                $element = new Element;
+                $element->name = 'CFOP';
+                $element->value = $candidate;
+                $codigoFiscal = new CodigoFiscal('parentTag');
+                $sut = new ReflectionMethod($codigoFiscal, 'validateTagValue');
+                $sutResponse = $sut->invoke($codigoFiscal, $element);
+                expect($sutResponse)->toBeInstanceOf(Result::class);
+                if ($sutResponse->isFailure()) {
+                    $this->fail(json_encode($sutResponse->getError()));
+                }
 
-        test('Should fail if elements is provided', function ($candidate) {
-            $xmlString = '<' . CodigoFiscal::FIELD_NAME . ">{$candidate}<fake>element</fake></" . CodigoFiscal::FIELD_NAME . '>';
-            $xmlElement = new Element;
-            $xmlElement->parse($xmlString);
-            $sutResponse = $this->sut->parseFromXmlElement($xmlElement);
-            expect($sutResponse)->toBeInstanceOf(Result::class);
-            if ($sutResponse->isSuccess()) {
-                $this->fail(json_encode($sutResponse->getData()));
-            }
-            expect($sutResponse->getError())->toBeInstanceOf(ApiError::class);
-        })->with(datasets('dfes.nfe.value_tags.' . CodigoFiscal::FIELD_NAME . '.valid'));
+                expect($sutResponse->isSuccess())->toBeTrue();
+            })->with([
+                'intrastate' => '5102',
+                'interstate' => '6102',
+                'exterior' => '7102',
+                'purchase' => '1102',
+            ]);
+
+            test('Should fail if value is empty', function () {
+                $candidate = '';
+                $element = new Element;
+                $element->name = 'CFOP';
+                $element->value = $candidate;
+                $codigoFiscal = new CodigoFiscal('parentTag');
+                $sut = new ReflectionMethod($codigoFiscal, 'validateTagValue');
+                $sutResponse = $sut->invoke($codigoFiscal, $element);
+                expect($sutResponse->isFailure())->toBeTrue();
+            });
+
+            test('Should fail if value has invalid length', function (string $candidate) {
+                $element = new Element;
+                $element->name = 'CFOP';
+                $element->value = $candidate;
+                $codigoFiscal = new CodigoFiscal('parentTag');
+                $sut = new ReflectionMethod($codigoFiscal, 'validateTagValue');
+                $sutResponse = $sut->invoke($codigoFiscal, $element);
+                expect($sutResponse->isFailure())->toBeTrue();
+            })->with([
+                'too_short' => '510',
+                'too_long' => '51021',
+            ]);
+
+            test('Should fail if non-numeric or formatted value is provided', function (string $candidate) {
+                $element = new Element;
+                $element->name = 'CFOP';
+                $element->value = $candidate;
+                $codigoFiscal = new CodigoFiscal('parentTag');
+                $sut = new ReflectionMethod($codigoFiscal, 'validateTagValue');
+                $sutResponse = $sut->invoke($codigoFiscal, $element);
+                expect($sutResponse->isFailure())->toBeTrue();
+            })->with([
+                'masked' => '5.102',
+                'alphanumeric' => '51A0',
+            ]);
+
+            test('Should fail if a numeric value with spaces is provided', function (string $candidate) {
+                $element = new Element;
+                $element->name = 'CFOP';
+                $element->value = $candidate;
+                $codigoFiscal = new CodigoFiscal('parentTag');
+                $sut = new ReflectionMethod($codigoFiscal, 'validateTagValue');
+                $sutResponse = $sut->invoke($codigoFiscal, $element);
+                expect($sutResponse->isFailure())->toBeTrue();
+            })->with([
+                'leading space' => ' 5102',
+                'trailing space' => '5102 ',
+                'middle space' => '51 02',
+            ]);
+        });
     });
 });

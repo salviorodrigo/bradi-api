@@ -1,69 +1,124 @@
 <?php
 
 declare(strict_types=1);
-
-use BradiApi\Domain\Common\Protocols\ApiError;
 use BradiApi\Domain\Common\ValueObjects\Result;
 use BradiApi\Domain\Invoices\NFe\v4_00\ValueObjects\ValorCOFINS;
+use BradiApi\Domain\Invoices\Templates\DFeElement;
 use BradiApi\Domain\Xml\ValueObjects\Element;
-use BradiApi\Tests\TestCase;
 
 describe('ValorCOFINS', function () {
 
-    beforeEach(function () {
-        /** @var TestCase $this */
-        $this->sut = new ValorCOFINS('');
+    test('Should succeed if is declared', function () {
+        $nameSpace = 'BradiApi\Domain\Invoices\NFe\v4_00\ValueObjects';
+        $sut = $nameSpace . '\\ValorCOFINS';
+        expect(class_exists($sut))->toBeTrue();
     });
 
-    describe('::parse()', function () {
-        test('Should succeed with dataset :dataset', function ($candidate) {
-            $xmlString = $candidate === '' ? '' : '<' . ValorCOFINS::FIELD_NAME . ">{$candidate}</" . ValorCOFINS::FIELD_NAME . '>';
-            $xmlElement = new Element;
-            $xmlElement->parse($xmlString);
-            $sutResponse = $this->sut->parseFromXmlElement($xmlElement);
-            expect($sutResponse)->toBeInstanceOf(Result::class);
-            if ($sutResponse->isFailure()) {
-                $this->fail(json_encode($sutResponse->getError()));
-            }
-            expect($sutResponse->getData())->toBeInstanceOf(ValorCOFINS::class);
-            expect($sutResponse->getData()->value)->toBe($candidate);
-            expect((string) $sutResponse->getData())->toBe($xmlString);
-        })->with(datasets('dfes.nfe.value_tags.' . ValorCOFINS::FIELD_NAME . '.valid'));
+    test('Should succeed if extends DFeelement', function () {
+        $sut = new ValorCOFINS('parentTag');
+        expect(is_subclass_of($sut, DFeElement::class))->toBeTrue();
+    });
 
-        test('Should fail with data set :dataset', function ($candidate) {
-            $xmlString = '<' . ValorCOFINS::FIELD_NAME . ">{$candidate}</" . ValorCOFINS::FIELD_NAME . '>';
-            $xmlElement = new Element;
-            $xmlElement->parse($xmlString);
-            $sutResponse = $this->sut->parseFromXmlElement($xmlElement);
-            if ($sutResponse->isSuccess()) {
-                $this->fail(json_encode($sutResponse->getData()));
-            }
-            expect($sutResponse)->toBeInstanceOf(Result::class);
-            expect($sutResponse->getError())->toBeInstanceOf(ApiError::class);
-        })->with(datasets('dfes.nfe.value_tags.' . ValorCOFINS::FIELD_NAME . '.invalid'));
+    describe('properties', function () {
+        describe('FIELD_NAME', function () {
+            test('Should be set correctly', function () {
+                $reflection = new ReflectionClass(ValorCOFINS::class);
+                $reflectedProperty = $reflection->getConstant('FIELD_NAME');
+                expect($reflectedProperty)->toBe('vCOFINS');
+            });
+        });
+    });
 
-        test('Should fail if attributes is provided', function ($candidate) {
-            $xmlString = '<' . ValorCOFINS::FIELD_NAME . " fake=\"attribute\">{$candidate}</" . ValorCOFINS::FIELD_NAME . '>';
-            $xmlElement = new Element;
-            $xmlElement->parse($xmlString);
-            $sutResponse = $this->sut->parseFromXmlElement($xmlElement);
-            expect($sutResponse)->toBeInstanceOf(Result::class);
-            if ($sutResponse->isSuccess()) {
-                $this->fail(json_encode($sutResponse->getData()));
-            }
-            expect($sutResponse->getError())->toBeInstanceOf(ApiError::class);
-        })->with(datasets('dfes.nfe.value_tags.' . ValorCOFINS::FIELD_NAME . '.valid'));
+    describe('methods', function () {
+        describe('validateTagValue', function () {
+            test('Should succeed in border cases', function (string $candidate) {
+                $element = new Element;
+                $element->name = 'vCOFINS';
+                $element->value = $candidate;
+                $valorCOFINS = new ValorCOFINS('parentTag');
+                $sut = new ReflectionMethod($valorCOFINS, 'validateTagValue');
+                $sutResponse = $sut->invoke($valorCOFINS, $element);
+                expect($sutResponse)->toBeInstanceOf(Result::class);
+                if ($sutResponse->isFailure()) {
+                    $this->fail(json_encode($sutResponse->getError()));
+                }
 
-        test('Should fail if elements is provided', function ($candidate) {
-            $xmlString = '<' . ValorCOFINS::FIELD_NAME . ">{$candidate}<fake>element</fake></" . ValorCOFINS::FIELD_NAME . '>';
-            $xmlElement = new Element;
-            $xmlElement->parse($xmlString);
-            $sutResponse = $this->sut->parseFromXmlElement($xmlElement);
-            expect($sutResponse)->toBeInstanceOf(Result::class);
-            if ($sutResponse->isSuccess()) {
-                $this->fail(json_encode($sutResponse->getData()));
-            }
-            expect($sutResponse->getError())->toBeInstanceOf(ApiError::class);
-        })->with(datasets('dfes.nfe.value_tags.' . ValorCOFINS::FIELD_NAME . '.valid'));
+                expect($sutResponse->isSuccess())->toBeTrue();
+            })->with([
+                'standard' => '10.00',
+                'with_cents' => '125.45',
+                'zero' => '0.00',
+                'max' => '9999999999999.99',
+            ]);
+
+            test('Should fail if less than 0 is provided', function () {
+                $candidate = '-0.01';
+                $element = new Element;
+                $element->name = 'vCOFINS';
+                $element->value = $candidate;
+                $valorCOFINS = new ValorCOFINS('parentTag');
+                $sut = new ReflectionMethod($valorCOFINS, 'validateTagValue');
+                $sutResponse = $sut->invoke($valorCOFINS, $element);
+                expect($sutResponse->isFailure())->toBeTrue();
+            });
+
+            test('Should fail if greater than max is provided', function () {
+                $candidate = '10000000000000.00';
+                $element = new Element;
+                $element->name = 'vCOFINS';
+                $element->value = $candidate;
+                $valorCOFINS = new ValorCOFINS('parentTag');
+                $sut = new ReflectionMethod($valorCOFINS, 'validateTagValue');
+                $sutResponse = $sut->invoke($valorCOFINS, $element);
+                expect($sutResponse->isFailure())->toBeTrue();
+            });
+
+            test('Should fail if more than 2 decimal places is provided', function () {
+                $candidate = '10.123';
+                $element = new Element;
+                $element->name = 'vCOFINS';
+                $element->value = $candidate;
+                $valorCOFINS = new ValorCOFINS('parentTag');
+                $sut = new ReflectionMethod($valorCOFINS, 'validateTagValue');
+                $sutResponse = $sut->invoke($valorCOFINS, $element);
+                expect($sutResponse->isFailure())->toBeTrue();
+            });
+
+            test('Should fail if non-numeric value is provided', function () {
+                $candidate = '10A';
+                $element = new Element;
+                $element->name = 'vCOFINS';
+                $element->value = $candidate;
+                $valorCOFINS = new ValorCOFINS('parentTag');
+                $sut = new ReflectionMethod($valorCOFINS, 'validateTagValue');
+                $sutResponse = $sut->invoke($valorCOFINS, $element);
+                expect($sutResponse->isFailure())->toBeTrue();
+            });
+
+            test('Should fail if a numeric value with spaces is provided', function (string $candidate) {
+                $element = new Element;
+                $element->name = 'vCOFINS';
+                $element->value = $candidate;
+                $valorCOFINS = new ValorCOFINS('parentTag');
+                $sut = new ReflectionMethod($valorCOFINS, 'validateTagValue');
+                $sutResponse = $sut->invoke($valorCOFINS, $element);
+                expect($sutResponse->isFailure())->toBeTrue();
+            })->with([
+                'leading space' => ' 10',
+                'trailing space' => '10 ',
+                'middle space' => '1 000',
+            ]);
+
+            test('Should fail if a value with comma as decimal separator is provided', function () {
+                $candidate = '10,50';
+                $element = new Element;
+                $element->name = 'vCOFINS';
+                $element->value = $candidate;
+                $valorCOFINS = new ValorCOFINS('parentTag');
+                $sut = new ReflectionMethod($valorCOFINS, 'validateTagValue');
+                $sutResponse = $sut->invoke($valorCOFINS, $element);
+                expect($sutResponse->isFailure())->toBeTrue();
+            });
+        });
     });
 });

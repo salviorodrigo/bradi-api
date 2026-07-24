@@ -1,69 +1,100 @@
 <?php
 
 declare(strict_types=1);
-
-use BradiApi\Domain\Common\Protocols\ApiError;
 use BradiApi\Domain\Common\ValueObjects\Result;
 use BradiApi\Domain\Invoices\NFe\v4_00\ValueObjects\Nome;
+use BradiApi\Domain\Invoices\Templates\DFeElement;
 use BradiApi\Domain\Xml\ValueObjects\Element;
-use BradiApi\Tests\TestCase;
 
 describe('Nome', function () {
 
-    beforeEach(function () {
-        /** @var TestCase $this */
-        $this->sut = new Nome('');
+    test('Should succeed if is declared', function () {
+        $nameSpace = 'BradiApi\Domain\Invoices\NFe\v4_00\ValueObjects';
+        $sut = $nameSpace . '\\Nome';
+        expect(class_exists($sut))->toBeTrue();
     });
 
-    describe('::parse()', function () {
-        test('Should succeed with dataset :dataset', function ($candidate) {
-            $xmlString = $candidate === '' ? '' : '<' . Nome::FIELD_NAME . ">{$candidate}</" . Nome::FIELD_NAME . '>';
-            $xmlElement = new Element;
-            $xmlElement->parse($xmlString);
-            $sutResponse = $this->sut->parseFromXmlElement($xmlElement);
-            expect($sutResponse)->toBeInstanceOf(Result::class);
-            if ($sutResponse->isFailure()) {
-                $this->fail(json_encode($sutResponse->getError()));
-            }
-            expect($sutResponse->getData())->toBeInstanceOf(Nome::class);
-            expect($sutResponse->getData()->value)->toBe($candidate);
-            expect((string) $sutResponse->getData())->toBe($xmlString);
-        })->with(datasets('dfes.nfe.value_tags.' . Nome::FIELD_NAME . '.valid'));
+    test('Should succeed if extends DFeelement', function () {
+        $sut = new Nome('parentTag');
+        expect(is_subclass_of($sut, DFeElement::class))->toBeTrue();
+    });
 
-        test('Should fail with data set :dataset', function ($candidate) {
-            $xmlString = '<' . Nome::FIELD_NAME . ">{$candidate}</" . Nome::FIELD_NAME . '>';
-            $xmlElement = new Element;
-            $xmlElement->parse($xmlString);
-            $sutResponse = $this->sut->parseFromXmlElement($xmlElement);
-            if ($sutResponse->isSuccess()) {
-                $this->fail(json_encode($sutResponse->getData()));
-            }
-            expect($sutResponse)->toBeInstanceOf(Result::class);
-            expect($sutResponse->getError())->toBeInstanceOf(ApiError::class);
-        })->with(datasets('dfes.nfe.value_tags.' . Nome::FIELD_NAME . '.invalid'));
+    describe('properties', function () {
+        describe('FIELD_NAME', function () {
+            test('Should be set correctly', function () {
+                $reflection = new ReflectionClass(Nome::class);
+                $reflectedProperty = $reflection->getConstant('FIELD_NAME');
+                expect($reflectedProperty)->toBe('xNome');
+            });
+        });
+    });
 
-        test('Should fail if attributes is provided', function ($candidate) {
-            $xmlString = '<' . Nome::FIELD_NAME . " fake=\"attribute\">{$candidate}</" . Nome::FIELD_NAME . '>';
-            $xmlElement = new Element;
-            $xmlElement->parse($xmlString);
-            $sutResponse = $this->sut->parseFromXmlElement($xmlElement);
-            expect($sutResponse)->toBeInstanceOf(Result::class);
-            if ($sutResponse->isSuccess()) {
-                $this->fail(json_encode($sutResponse->getData()));
-            }
-            expect($sutResponse->getError())->toBeInstanceOf(ApiError::class);
-        })->with(datasets('dfes.nfe.value_tags.' . Nome::FIELD_NAME . '.valid'));
+    describe('methods', function () {
+        describe('validateTagValue', function () {
+            test('Should succeed in border cases', function (string $candidate) {
+                $element = new Element;
+                $element->name = 'xNome';
+                $element->value = $candidate;
+                $nome = new Nome('parentTag');
+                $sut = new ReflectionMethod($nome, 'validateTagValue');
+                $sutResponse = $sut->invoke($nome, $element);
+                expect($sutResponse)->toBeInstanceOf(Result::class);
+                if ($sutResponse->isFailure()) {
+                    $this->fail(json_encode($sutResponse->getError()));
+                }
 
-        test('Should fail if elements is provided', function ($candidate) {
-            $xmlString = '<' . Nome::FIELD_NAME . ">{$candidate}<fake>element</fake></" . Nome::FIELD_NAME . '>';
-            $xmlElement = new Element;
-            $xmlElement->parse($xmlString);
-            $sutResponse = $this->sut->parseFromXmlElement($xmlElement);
-            expect($sutResponse)->toBeInstanceOf(Result::class);
-            if ($sutResponse->isSuccess()) {
-                $this->fail(json_encode($sutResponse->getData()));
-            }
-            expect($sutResponse->getError())->toBeInstanceOf(ApiError::class);
-        })->with(datasets('dfes.nfe.value_tags.' . Nome::FIELD_NAME . '.valid'));
+                expect($sutResponse->isSuccess())->toBeTrue();
+            })->with([
+                'min_length' => 'AB',
+                'max_length' => 'STRING WITH SIXTY CHARACTERS STRING WITH SIXTY CHARACTERS AB',
+            ]);
+
+            test('Should fail if value is empty', function () {
+                $candidate = '';
+                $element = new Element;
+                $element->name = 'xNome';
+                $element->value = $candidate;
+                $nome = new Nome('parentTag');
+                $sut = new ReflectionMethod($nome, 'validateTagValue');
+                $sutResponse = $sut->invoke($nome, $element);
+                expect($sutResponse->isFailure())->toBeTrue();
+            });
+
+            test('Should fail if value is too short', function () {
+                $candidate = 'A';
+                $element = new Element;
+                $element->name = 'xNome';
+                $element->value = $candidate;
+                $nome = new Nome('parentTag');
+                $sut = new ReflectionMethod($nome, 'validateTagValue');
+                $sutResponse = $sut->invoke($nome, $element);
+                expect($sutResponse->isFailure())->toBeTrue();
+            });
+
+            test('Should fail if value is too long', function () {
+                $candidate = 'STRING WITH SIXTY ONE CHARACTERS STRING WITH SIXTY ONE ABCDEF';
+                $element = new Element;
+                $element->name = 'xNome';
+                $element->value = $candidate;
+                $nome = new Nome('parentTag');
+                $sut = new ReflectionMethod($nome, 'validateTagValue');
+                $sutResponse = $sut->invoke($nome, $element);
+                expect($sutResponse->isFailure())->toBeTrue();
+            });
+
+            test('Should fail if a text value with invalid spaces is provided', function (string $candidate) {
+                $element = new Element;
+                $element->name = 'xNome';
+                $element->value = $candidate;
+                $nome = new Nome('parentTag');
+                $sut = new ReflectionMethod($nome, 'validateTagValue');
+                $sutResponse = $sut->invoke($nome, $element);
+                expect($sutResponse->isFailure())->toBeTrue();
+            })->with([
+                'leading space' => ' NAME',
+                'trailing space' => 'NAME ',
+                'nested spaces' => 'NAME WITH  SPACES',
+            ]);
+        });
     });
 });

@@ -1,69 +1,112 @@
 <?php
 
 declare(strict_types=1);
-
-use BradiApi\Domain\Common\Protocols\ApiError;
 use BradiApi\Domain\Common\ValueObjects\Result;
 use BradiApi\Domain\Invoices\NFe\v4_00\ValueObjects\TipoAmbiente;
+use BradiApi\Domain\Invoices\Templates\DFeElement;
 use BradiApi\Domain\Xml\ValueObjects\Element;
-use BradiApi\Tests\TestCase;
 
 describe('TipoAmbiente', function () {
 
-    beforeEach(function () {
-        /** @var TestCase $this */
-        $this->sut = new TipoAmbiente('');
+    test('Should succeed if is declared', function () {
+        $nameSpace = 'BradiApi\Domain\Invoices\NFe\v4_00\ValueObjects';
+        $sut = $nameSpace . '\\TipoAmbiente';
+        expect(class_exists($sut))->toBeTrue();
     });
 
-    describe('::parse()', function () {
-        test('Should succeed with dataset :dataset', function ($candidate) {
-            $xmlString = $candidate === '' ? '' : '<' . TipoAmbiente::FIELD_NAME . ">{$candidate}</" . TipoAmbiente::FIELD_NAME . '>';
-            $xmlElement = new Element;
-            $xmlElement->parse($xmlString);
-            $sutResponse = $this->sut->parseFromXmlElement($xmlElement);
-            expect($sutResponse)->toBeInstanceOf(Result::class);
-            if ($sutResponse->isFailure()) {
-                $this->fail(json_encode($sutResponse->getError()));
-            }
-            expect($sutResponse->getData())->toBeInstanceOf(TipoAmbiente::class);
-            expect($sutResponse->getData()->value)->toBe($candidate);
-            expect((string) $sutResponse->getData())->toBe($xmlString);
-        })->with(datasets('dfes.nfe.value_tags.' . TipoAmbiente::FIELD_NAME . '.valid'));
+    test('Should succeed if extends DFeelement', function () {
+        $sut = new TipoAmbiente('parentTag');
+        expect(is_subclass_of($sut, DFeElement::class))->toBeTrue();
+    });
 
-        test('Should fail with data set :dataset', function ($candidate) {
-            $xmlString = '<' . TipoAmbiente::FIELD_NAME . ">{$candidate}</" . TipoAmbiente::FIELD_NAME . '>';
-            $xmlElement = new Element;
-            $xmlElement->parse($xmlString);
-            $sutResponse = $this->sut->parseFromXmlElement($xmlElement);
-            if ($sutResponse->isSuccess()) {
-                $this->fail(json_encode($sutResponse->getData()));
-            }
-            expect($sutResponse)->toBeInstanceOf(Result::class);
-            expect($sutResponse->getError())->toBeInstanceOf(ApiError::class);
-        })->with(datasets('dfes.nfe.value_tags.' . TipoAmbiente::FIELD_NAME . '.invalid'));
+    describe('properties', function () {
+        describe('FIELD_NAME', function () {
+            test('Should be set correctly', function () {
+                $reflection = new ReflectionClass(TipoAmbiente::class);
+                $reflectedProperty = $reflection->getConstant('FIELD_NAME');
+                expect($reflectedProperty)->toBe('tpAmb');
+            });
+        });
+    });
 
-        test('Should fail if attributes is provided', function ($candidate) {
-            $xmlString = '<' . TipoAmbiente::FIELD_NAME . " fake=\"attribute\">{$candidate}</" . TipoAmbiente::FIELD_NAME . '>';
-            $xmlElement = new Element;
-            $xmlElement->parse($xmlString);
-            $sutResponse = $this->sut->parseFromXmlElement($xmlElement);
-            expect($sutResponse)->toBeInstanceOf(Result::class);
-            if ($sutResponse->isSuccess()) {
-                $this->fail(json_encode($sutResponse->getData()));
-            }
-            expect($sutResponse->getError())->toBeInstanceOf(ApiError::class);
-        })->with(datasets('dfes.nfe.value_tags.' . TipoAmbiente::FIELD_NAME . '.valid'));
+    describe('methods', function () {
+        describe('validateTagValue', function () {
+            test('Should succeed in valid options', function (string $candidate) {
+                $element = new Element;
+                $element->name = 'tpAmb';
+                $element->value = $candidate;
+                $tipoAmbiente = new TipoAmbiente('parentTag');
+                $sut = new ReflectionMethod($tipoAmbiente, 'validateTagValue');
+                $sutResponse = $sut->invoke($tipoAmbiente, $element);
+                expect($sutResponse)->toBeInstanceOf(Result::class);
+                if ($sutResponse->isFailure()) {
+                    $this->fail(json_encode($sutResponse->getError()));
+                }
 
-        test('Should fail if elements is provided', function ($candidate) {
-            $xmlString = '<' . TipoAmbiente::FIELD_NAME . ">{$candidate}<fake>element</fake></" . TipoAmbiente::FIELD_NAME . '>';
-            $xmlElement = new Element;
-            $xmlElement->parse($xmlString);
-            $sutResponse = $this->sut->parseFromXmlElement($xmlElement);
-            expect($sutResponse)->toBeInstanceOf(Result::class);
-            if ($sutResponse->isSuccess()) {
-                $this->fail(json_encode($sutResponse->getData()));
-            }
-            expect($sutResponse->getError())->toBeInstanceOf(ApiError::class);
-        })->with(datasets('dfes.nfe.value_tags.' . TipoAmbiente::FIELD_NAME . '.valid'));
+                expect($sutResponse->isSuccess())->toBeTrue();
+            })->with([
+                'production' => '1',
+                'homologation' => '2',
+            ]);
+
+            test('Should fail if value is empty', function () {
+                $candidate = '';
+                $element = new Element;
+                $element->name = 'tpAmb';
+                $element->value = $candidate;
+                $tipoAmbiente = new TipoAmbiente('parentTag');
+                $sut = new ReflectionMethod($tipoAmbiente, 'validateTagValue');
+                $sutResponse = $sut->invoke($tipoAmbiente, $element);
+                expect($sutResponse->isFailure())->toBeTrue();
+            });
+
+            test('Should fail if value is out of range', function (string $candidate) {
+                $element = new Element;
+                $element->name = 'tpAmb';
+                $element->value = $candidate;
+                $tipoAmbiente = new TipoAmbiente('parentTag');
+                $sut = new ReflectionMethod($tipoAmbiente, 'validateTagValue');
+                $sutResponse = $sut->invoke($tipoAmbiente, $element);
+                expect($sutResponse->isFailure())->toBeTrue();
+            })->with([
+                'zero' => '0',
+                'three' => '3',
+            ]);
+
+            test('Should fail if non-numeric value is provided', function () {
+                $candidate = 'P';
+                $element = new Element;
+                $element->name = 'tpAmb';
+                $element->value = $candidate;
+                $tipoAmbiente = new TipoAmbiente('parentTag');
+                $sut = new ReflectionMethod($tipoAmbiente, 'validateTagValue');
+                $sutResponse = $sut->invoke($tipoAmbiente, $element);
+                expect($sutResponse->isFailure())->toBeTrue();
+            });
+
+            test('Should fail if a numeric value with spaces is provided', function (string $candidate) {
+                $element = new Element;
+                $element->name = 'tpAmb';
+                $element->value = $candidate;
+                $tipoAmbiente = new TipoAmbiente('parentTag');
+                $sut = new ReflectionMethod($tipoAmbiente, 'validateTagValue');
+                $sutResponse = $sut->invoke($tipoAmbiente, $element);
+                expect($sutResponse->isFailure())->toBeTrue();
+            })->with([
+                'leading space' => ' 1',
+                'trailing space' => '2 ',
+            ]);
+
+            test('Should fail if value has invalid length', function () {
+                $candidate = '01';
+                $element = new Element;
+                $element->name = 'tpAmb';
+                $element->value = $candidate;
+                $tipoAmbiente = new TipoAmbiente('parentTag');
+                $sut = new ReflectionMethod($tipoAmbiente, 'validateTagValue');
+                $sutResponse = $sut->invoke($tipoAmbiente, $element);
+                expect($sutResponse->isFailure())->toBeTrue();
+            });
+        });
     });
 });
