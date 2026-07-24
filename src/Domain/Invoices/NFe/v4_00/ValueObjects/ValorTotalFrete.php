@@ -5,7 +5,7 @@ declare(strict_types=1);
 /**
  * MOC      7.0
  * #        110
- * ID       I11
+ * ID       I15
  * Campo    vFrete
  * Desc     Valor Total do Frete
  * Tam      13v2

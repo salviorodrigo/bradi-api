@@ -5,7 +5,7 @@ declare(strict_types=1);
 /**
  * MOC      7.0
  * #        110
- * ID       I11
+ * ID       I16
  * Campo    vSeg
  * Desc     Valor Total do Seguro
  * Tam      13v2
