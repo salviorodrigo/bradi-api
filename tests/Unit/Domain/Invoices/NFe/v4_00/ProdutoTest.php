@@ -214,6 +214,90 @@ describe('Produto', function () {
                 expect($sut->allowsNull())->toBeFalse();
             });
         });
+
+        describe('$vFrete', function () {
+            test('Should be declared', function () {
+                $sut = new Produto;
+                expect($sut)->toHaveProperty('vFrete');
+            });
+
+            test('Should be a subclass of DFeElement::class', function () {
+                $reflection = new ReflectionClass(Produto::class);
+                $reflectedProperty = $reflection->getProperty('vFrete');
+                $sut = $reflectedProperty->getType();
+                expect((is_subclass_of($sut->getName(), DFeElement::class)))->toBeTrue();
+            });
+
+            test('Should be optional', function () {
+                $reflection = new ReflectionClass(Produto::class);
+                $reflectedProperty = $reflection->getProperty('vFrete');
+                $sut = $reflectedProperty->getType();
+                expect($sut->allowsNull())->toBeTrue();
+            });
+        });
+
+        describe('$vSeg', function () {
+            test('Should be declared', function () {
+                $sut = new Produto;
+                expect($sut)->toHaveProperty('vSeg');
+            });
+
+            test('Should be a subclass of DFeElement::class', function () {
+                $reflection = new ReflectionClass(Produto::class);
+                $reflectedProperty = $reflection->getProperty('vSeg');
+                $sut = $reflectedProperty->getType();
+                expect((is_subclass_of($sut->getName(), DFeElement::class)))->toBeTrue();
+            });
+
+            test('Should be optional', function () {
+                $reflection = new ReflectionClass(Produto::class);
+                $reflectedProperty = $reflection->getProperty('vSeg');
+                $sut = $reflectedProperty->getType();
+                expect($sut->allowsNull())->toBeTrue();
+            });
+        });
+
+        describe('$vDesc', function () {
+            test('Should be declared', function () {
+                $sut = new Produto;
+                expect($sut)->toHaveProperty('vDesc');
+            });
+
+            test('Should be a subclass of DFeElement::class', function () {
+                $reflection = new ReflectionClass(Produto::class);
+                $reflectedProperty = $reflection->getProperty('vDesc');
+                $sut = $reflectedProperty->getType();
+                expect((is_subclass_of($sut->getName(), DFeElement::class)))->toBeTrue();
+            });
+
+            test('Should be optional', function () {
+                $reflection = new ReflectionClass(Produto::class);
+                $reflectedProperty = $reflection->getProperty('vDesc');
+                $sut = $reflectedProperty->getType();
+                expect($sut->allowsNull())->toBeTrue();
+            });
+        });
+
+        describe('$vOutro', function () {
+            test('Should be declared', function () {
+                $sut = new Produto;
+                expect($sut)->toHaveProperty('vOutro');
+            });
+
+            test('Should be a subclass of DFeElement::class', function () {
+                $reflection = new ReflectionClass(Produto::class);
+                $reflectedProperty = $reflection->getProperty('vOutro');
+                $sut = $reflectedProperty->getType();
+                expect((is_subclass_of($sut->getName(), DFeElement::class)))->toBeTrue();
+            });
+
+            test('Should be optional', function () {
+                $reflection = new ReflectionClass(Produto::class);
+                $reflectedProperty = $reflection->getProperty('vOutro');
+                $sut = $reflectedProperty->getType();
+                expect($sut->allowsNull())->toBeTrue();
+            });
+        });
     });
 
     describe('methods', function () {

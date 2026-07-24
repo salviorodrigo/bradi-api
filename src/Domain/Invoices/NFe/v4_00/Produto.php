@@ -21,7 +21,11 @@ use BradiApi\Domain\Invoices\NFe\v4_00\ValueObjects\CodigoProduto;
 use BradiApi\Domain\Invoices\NFe\v4_00\ValueObjects\DescricaoProduto;
 use BradiApi\Domain\Invoices\NFe\v4_00\ValueObjects\QuantidadeComercial;
 use BradiApi\Domain\Invoices\NFe\v4_00\ValueObjects\UnidadeComercial;
+use BradiApi\Domain\Invoices\NFe\v4_00\ValueObjects\ValorTotalDesconto;
+use BradiApi\Domain\Invoices\NFe\v4_00\ValueObjects\ValorTotalDespesasAcessorias;
+use BradiApi\Domain\Invoices\NFe\v4_00\ValueObjects\ValorTotalFrete;
 use BradiApi\Domain\Invoices\NFe\v4_00\ValueObjects\ValorTotalProduto;
+use BradiApi\Domain\Invoices\NFe\v4_00\ValueObjects\ValorTotalSeguro;
 use BradiApi\Domain\Invoices\NFe\v4_00\ValueObjects\ValorUnitarioComercial;
 use BradiApi\Domain\Invoices\Templates\DFeElement;
 use BradiApi\Domain\Invoices\Traits\ValidatesDFeGroupElement;
@@ -43,6 +47,10 @@ final class Produto extends DFeElement
     public QuantidadeComercial $qCom;
     public ValorUnitarioComercial $vUnCom;
     public ValorTotalProduto $vProd;
+    public ?ValorTotalFrete $vFrete;
+    public ?ValorTotalSeguro $vSeg;
+    public ?ValorTotalDesconto $vDesc;
+    public ?ValorTotalDespesasAcessorias $vOutro;
 
     protected function tagElementsValidators(): array
     {
