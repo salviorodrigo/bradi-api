@@ -261,6 +261,16 @@ describe('Imposto', function () {
                 expect($sutResponse->isSuccess())->toBeTrue();
             });
 
+            test('Should succeed if all tags is provided', function () {
+                $xmlString = '<imposto><vTotTrib/><ICMS/><ICMSUFDest/><IPI/><II/><PIS/><PISST/><COFINS/><COFINSST/><ISSQN/></imposto>';
+                $xmlElement = new Element;
+                $xmlElement->parse($xmlString);
+                $imposto = new Imposto;
+                $sut = new ReflectionMethod($imposto, 'validateTagElements');
+                $sutResponse = $sut->invoke($imposto, $xmlElement);
+                expect($sutResponse->isSuccess())->toBeTrue();
+            });
+
             test('Should fail if ICMS tag isnt provided', function () {
                 $xmlString = '<imposto></imposto>';
                 $xmlElement = new Element;
