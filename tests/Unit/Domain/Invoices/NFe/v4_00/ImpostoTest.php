@@ -289,7 +289,7 @@ describe('Imposto', function () {
                 $sut = new ReflectionMethod($imposto, 'validateTagElements');
                 $sutResponse = $sut->invoke($imposto, $xmlElement);
                 expect($sutResponse->isFailure())->toBeTrue();
-            })->skip();
+            });
         });
 
         describe('validateTagValue', function () {
