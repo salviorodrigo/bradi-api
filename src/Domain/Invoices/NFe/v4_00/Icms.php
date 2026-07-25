@@ -24,7 +24,7 @@ final class Icms extends DFeElement
 
     public const string FIELD_NAME = 'ICMS';
 
-    public Icms00 $ICMS00;
+    public ?Icms00 $ICMS00;
 
     protected function tagElementsValidators(): array
     {
