@@ -16,6 +16,7 @@ namespace BradiApi\Domain\Invoices\NFe\v4_00;
 
 use BradiApi\Domain\Invoices\Templates\DFeElement;
 use BradiApi\Domain\Invoices\Traits\ValidatesDFeGroupElement;
+use BradiApi\Domain\Invoices\Validators\AllowedTagsValidator;
 use BradiApi\Domain\Invoices\Validators\RequiredTagValidator;
 
 final class Imposto extends DFeElement
@@ -30,6 +31,7 @@ final class Imposto extends DFeElement
     {
         return [
             new RequiredTagValidator(['ICMS']),
+            new AllowedTagsValidator(['vTotTrib', 'ICMS', 'ICMSUFDest', 'IPI', 'II', 'PIS', 'PISST', 'COFINS', 'COFINSST', 'ISSQN']),
         ];
     }
 }
