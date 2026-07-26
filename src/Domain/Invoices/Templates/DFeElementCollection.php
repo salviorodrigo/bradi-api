@@ -15,6 +15,7 @@ use ReflectionClass;
 abstract class DFeElementCollection
 {
     protected const string BASE_CLASS = '';
+    protected const string FIELD_NAME = '';
 
     /** @var DFeElement[] */
     public array $collection = [];
@@ -25,6 +26,18 @@ abstract class DFeElementCollection
     final public function __construct(private readonly string $parentFieldURI = '')
     {
         $this->validationService = new ValidationService($this->parentFieldURI);
+
+        if (class_exists(static::BASE_CLASS) === false) {
+            throw new Exception('BASE_CLASS constant must be defined in the child class.');
+        }
+
+        if (is_subclass_of(static::BASE_CLASS, DFeElement::class) === false) {
+            throw new Exception('BASE_CLASS must be a subclass of DFeElement.');
+        }
+
+        if (static::FIELD_NAME === '') {
+            throw new Exception('FIELD_NAME constant must be defined in the child class.');
+        }
     }
 
     /** @return Result<DFeElement|ApiError> */
