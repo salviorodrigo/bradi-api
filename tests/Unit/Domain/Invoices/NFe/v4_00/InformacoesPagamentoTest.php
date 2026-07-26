@@ -113,7 +113,7 @@ describe('InformacoesPagamento', function () {
                 $sut = new ReflectionMethod($targetClass, 'validateTagElements');
                 $sutResponse = $sut->invoke($targetClass, $xmlElement);
                 expect($sutResponse->isFailure())->toBeTrue();
-            })->skip();
+            });
         });
 
         describe('validateTagValue', function () {

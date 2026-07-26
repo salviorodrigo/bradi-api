@@ -15,6 +15,8 @@ namespace BradiApi\Domain\Invoices\NFe\v4_00;
 
 use BradiApi\Domain\Invoices\Templates\DFeElement;
 use BradiApi\Domain\Invoices\Traits\ValidatesDFeGroupElement;
+use BradiApi\Domain\Invoices\Validators\AllowedTagsValidator;
+use BradiApi\Domain\Invoices\Validators\RequiredTagsValidator;
 
 final class InformacoesPagamento extends DFeElement
 {
@@ -24,6 +26,9 @@ final class InformacoesPagamento extends DFeElement
 
     protected function tagElementsValidators(): array
     {
-        return [];
+        return [
+            new RequiredTagsValidator(['detPag']),
+            new AllowedTagsValidator(['detPag', 'vTroco']),
+        ];
     }
 }
