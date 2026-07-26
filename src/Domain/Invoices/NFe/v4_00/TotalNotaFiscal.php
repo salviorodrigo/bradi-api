@@ -25,6 +25,8 @@ final class TotalNotaFiscal extends DFeElement
 
     public const string FIELD_NAME = 'total';
 
+    public IcmsTotalNotaFiscal $ICMSTot;
+
     protected function tagElementsValidators(): array
     {
         return [

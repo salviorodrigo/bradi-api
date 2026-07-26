@@ -33,13 +33,13 @@ describe('TotalNotaFiscal', function () {
                 expect((is_subclass_of($sut->getName(), DFeElement::class)))->toBeTrue();
             });
 
-            test('Should be optional', function () {
+            test('Should be required', function () {
                 $reflection = new ReflectionClass(TotalNotaFiscal::class);
                 $reflectedProperty = $reflection->getProperty('ICMSTot');
                 $sut = $reflectedProperty->getType();
-                expect($sut->allowsNull())->toBeTrue();
+                expect($sut->allowsNull())->toBeFalse();
             });
-        })->skip();
+        });
 
         describe('$ISSQNtot', function () {
             test('Should be declared', function () {
