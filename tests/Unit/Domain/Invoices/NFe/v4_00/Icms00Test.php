@@ -289,14 +289,14 @@ describe('Icms00', function () {
                 expect($sutResponse->isFailure())->toBeTrue();
             });
 
-            test('Should succeed if an unallowed tag is provided', function () {
+            test('Should fail if an unallowed tag is provided', function () {
                 $xmlString = '<ICMS00><unallowed></unallowed><orig></orig><CST></CST><modBC></modBC><vBC></vBC><pICMS></pICMS><vICMS></vICMS></ICMS00>';
                 $xmlElement = new Element;
                 $xmlElement->parse($xmlString);
                 $icms00 = new Icms00;
                 $sut = new ReflectionMethod($icms00, 'validateTagElements');
                 $sutResponse = $sut->invoke($icms00, $xmlElement);
-                expect($sutResponse->isSuccess())->toBeTrue();
+                expect($sutResponse->isFailure())->toBeTrue();
             });
         });
 
