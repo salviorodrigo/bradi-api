@@ -27,6 +27,14 @@ describe('DetalhamentoItemCollection', function () {
                 expect($reflectedProperty)->toBe(DetalhamentoItem::class);
             });
         });
+
+        describe('FIELD_URI', function () {
+            test('Should be a DetalhamentoItem::class', function () {
+                $reflection = new ReflectionClass(DetalhamentoItemCollection::class);
+                $reflectedProperty = $reflection->getConstant('FIELD_NAME');
+                expect($reflectedProperty)->toBe('det');
+            });
+        });
     });
 
     describe('methods', function () {

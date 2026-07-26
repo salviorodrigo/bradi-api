@@ -10,6 +10,7 @@ use BradiApi\Domain\Xml\Validators\MaxDFeCollectionSizeValidator;
 class DetalhamentoItemCollection extends DFeElementCollection
 {
     protected const string BASE_CLASS = DetalhamentoItem::class;
+    protected const string FIELD_NAME = 'det';
 
     protected function collectionValidators(): array
     {
