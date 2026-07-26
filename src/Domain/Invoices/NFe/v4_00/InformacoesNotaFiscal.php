@@ -21,7 +21,7 @@ use BradiApi\Domain\Invoices\Traits\ValidatesDFeGroupElement;
 use BradiApi\Domain\Invoices\Validators\AllowedAttributesValidator;
 use BradiApi\Domain\Invoices\Validators\AllowedTagsValidator;
 use BradiApi\Domain\Invoices\Validators\RequiredAttributeValidator;
-use BradiApi\Domain\Invoices\Validators\RequiredTagValidator;
+use BradiApi\Domain\Invoices\Validators\RequiredTagsValidator;
 
 final class InformacoesNotaFiscal extends DFeElement
 {
@@ -48,7 +48,7 @@ final class InformacoesNotaFiscal extends DFeElement
     protected function tagElementsValidators(): array
     {
         return [
-            new RequiredTagValidator(['ide', 'emit', 'det', 'total', 'transp', 'pag']),
+            new RequiredTagsValidator(['ide', 'emit', 'det', 'total', 'transp', 'pag']),
             new AllowedTagsValidator(['ide', 'emit', 'avulsa', 'dest', 'retirada', 'entrega', 'autXML', 'det', 'total', 'transp', 'cobr', 'pag', 'infIntermed', 'infAdic', 'exporta', 'compra', 'cana', 'infRespTec']),
         ];
     }

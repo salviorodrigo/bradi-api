@@ -30,7 +30,7 @@ use BradiApi\Domain\Invoices\NFe\v4_00\ValueObjects\ValorUnitarioComercial;
 use BradiApi\Domain\Invoices\Templates\DFeElement;
 use BradiApi\Domain\Invoices\Traits\ValidatesDFeGroupElement;
 use BradiApi\Domain\Invoices\Validators\AllowedTagsValidator;
-use BradiApi\Domain\Invoices\Validators\RequiredTagValidator;
+use BradiApi\Domain\Invoices\Validators\RequiredTagsValidator;
 
 final class Produto extends DFeElement
 {
@@ -55,7 +55,7 @@ final class Produto extends DFeElement
     protected function tagElementsValidators(): array
     {
         return [
-            new RequiredTagValidator(['cProd', 'cEAN', 'xProd', 'NCM', 'CFOP', 'uCom', 'qCom', 'vUnCom', 'vProd']),
+            new RequiredTagsValidator(['cProd', 'cEAN', 'xProd', 'NCM', 'CFOP', 'uCom', 'qCom', 'vUnCom', 'vProd']),
             new AllowedTagsValidator(['cProd', 'cEAN', 'xProd', 'NCM', 'NVE', 'CEST', 'indEscala', 'CNPJFab', 'cBenef', 'EXTIPI', 'CFOP', 'uCom', 'qCom', 'vUnCom', 'vProd', 'cEANTrib', 'uTrib', 'qTrib', 'vUnTrib', 'vFrete', 'vSeg', 'vDesc', 'vOutro', 'indTot', 'DI', 'detExport', 'xPed', 'nItemPed', 'nFCI', 'rastro', 'veicProd', 'med', 'arma', 'comb', 'nRECOPI']),
         ];
     }

@@ -9,7 +9,7 @@ use BradiApi\Domain\Common\ValueObjects\Result;
 use BradiApi\Domain\Xml\ValueObjects\Element;
 use InvalidArgumentException;
 
-final class RequiredTagValidator implements Validator
+final class RequiredTagsValidator implements Validator
 {
     public function __construct(
         public readonly array $requiredTagsName,

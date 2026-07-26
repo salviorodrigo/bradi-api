@@ -21,7 +21,7 @@ use BradiApi\Domain\Invoices\Traits\ValidatesDFeGroupElement;
 use BradiApi\Domain\Invoices\Validators\AllowedAttributesValidator;
 use BradiApi\Domain\Invoices\Validators\AllowedTagsValidator;
 use BradiApi\Domain\Invoices\Validators\RequiredAttributeValidator;
-use BradiApi\Domain\Invoices\Validators\RequiredTagValidator;
+use BradiApi\Domain\Invoices\Validators\RequiredTagsValidator;
 
 final class DetalhamentoItem extends DFeElement
 {
@@ -36,7 +36,7 @@ final class DetalhamentoItem extends DFeElement
     protected function tagElementsValidators(): array
     {
         return [
-            new RequiredTagValidator(['prod', 'imposto']),
+            new RequiredTagsValidator(['prod', 'imposto']),
             new AllowedTagsValidator(['prod', 'imposto', 'impostoDevol']),
         ];
     }

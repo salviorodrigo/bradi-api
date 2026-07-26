@@ -25,7 +25,7 @@ use BradiApi\Domain\Invoices\NFe\v4_00\ValueObjects\ValorICMS;
 use BradiApi\Domain\Invoices\Templates\DFeElement;
 use BradiApi\Domain\Invoices\Traits\ValidatesDFeGroupElement;
 use BradiApi\Domain\Invoices\Validators\AllowedTagsValidator;
-use BradiApi\Domain\Invoices\Validators\RequiredTagValidator;
+use BradiApi\Domain\Invoices\Validators\RequiredTagsValidator;
 
 final class Icms00 extends DFeElement
 {
@@ -43,7 +43,7 @@ final class Icms00 extends DFeElement
     protected function tagElementsValidators(): array
     {
         return [
-            new RequiredTagValidator(['orig', 'CST', 'modBC', 'vBC', 'pICMS', 'vICMS']),
+            new RequiredTagsValidator(['orig', 'CST', 'modBC', 'vBC', 'pICMS', 'vICMS']),
             new AllowedTagsValidator(['orig', 'CST', 'modBC', 'vBC', 'pICMS', 'vICMS', 'pFCP', 'vFCP']),
         ];
     }

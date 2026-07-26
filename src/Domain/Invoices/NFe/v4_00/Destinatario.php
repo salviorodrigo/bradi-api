@@ -24,7 +24,7 @@ use BradiApi\Domain\Invoices\Templates\DFeElement;
 use BradiApi\Domain\Invoices\Traits\ValidatesDFeGroupElement;
 use BradiApi\Domain\Invoices\Validators\AllowedTagsValidator;
 use BradiApi\Domain\Invoices\Validators\AtLeastOneTagValidator;
-use BradiApi\Domain\Invoices\Validators\RequiredTagValidator;
+use BradiApi\Domain\Invoices\Validators\RequiredTagsValidator;
 
 final class Destinatario extends DFeElement
 {
@@ -43,7 +43,7 @@ final class Destinatario extends DFeElement
     {
         return [
             new AtLeastOneTagValidator(['CNPJ', 'CPF', 'idEstrangeiro']),
-            new RequiredTagValidator(['indIEDest']),
+            new RequiredTagsValidator(['indIEDest']),
             new AllowedTagsValidator(['CNPJ', 'CPF', 'idEstrangeiro', 'xNome', 'enderDest', 'indIEDest', 'IE', 'IM', 'ISUF', 'email']),
         ];
     }
