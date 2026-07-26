@@ -3,7 +3,6 @@
 declare(strict_types=1);
 
 use BradiApi\Domain\Invoices\NFe\v4_00\InformacoesTransporte;
-use BradiApi\Domain\Invoices\Templates\DFeAttribute;
 use BradiApi\Domain\Invoices\Templates\DFeElement;
 use BradiApi\Domain\Xml\ValueObjects\Element;
 
@@ -34,11 +33,11 @@ describe('InformacoesTransporte', function () {
                 expect($sut)->toHaveProperty('modFrete');
             });
 
-            test('Should be a subclass of DFeAttribute::class', function () {
+            test('Should be a subclass of DFeElement::class', function () {
                 $reflection = new ReflectionClass(InformacoesTransporte::class);
                 $reflectedProperty = $reflection->getProperty('modFrete');
                 $sut = $reflectedProperty->getType();
-                expect((is_subclass_of($sut->getName(), DFeAttribute::class)))->toBeTrue();
+                expect((is_subclass_of($sut->getName(), DFeElement::class)))->toBeTrue();
             });
 
             test('Should be required', function () {
@@ -55,11 +54,11 @@ describe('InformacoesTransporte', function () {
                 expect($sut)->toHaveProperty('transporta');
             });
 
-            test('Should be a subclass of DFeAttribute::class', function () {
+            test('Should be a subclass of DFeElement::class', function () {
                 $reflection = new ReflectionClass(InformacoesTransporte::class);
                 $reflectedProperty = $reflection->getProperty('transporta');
                 $sut = $reflectedProperty->getType();
-                expect((is_subclass_of($sut->getName(), DFeAttribute::class)))->toBeTrue();
+                expect((is_subclass_of($sut->getName(), DFeElement::class)))->toBeTrue();
             });
 
             test('Should be optional', function () {
@@ -76,11 +75,11 @@ describe('InformacoesTransporte', function () {
                 expect($sut)->toHaveProperty('retTransp');
             });
 
-            test('Should be a subclass of DFeAttribute::class', function () {
+            test('Should be a subclass of DFeElement::class', function () {
                 $reflection = new ReflectionClass(InformacoesTransporte::class);
                 $reflectedProperty = $reflection->getProperty('retTransp');
                 $sut = $reflectedProperty->getType();
-                expect((is_subclass_of($sut->getName(), DFeAttribute::class)))->toBeTrue();
+                expect((is_subclass_of($sut->getName(), DFeElement::class)))->toBeTrue();
             });
 
             test('Should be optional', function () {
@@ -97,11 +96,11 @@ describe('InformacoesTransporte', function () {
                 expect($sut)->toHaveProperty('veicTransp');
             });
 
-            test('Should be a subclass of DFeAttribute::class', function () {
+            test('Should be a subclass of DFeElement::class', function () {
                 $reflection = new ReflectionClass(InformacoesTransporte::class);
                 $reflectedProperty = $reflection->getProperty('veicTransp');
                 $sut = $reflectedProperty->getType();
-                expect((is_subclass_of($sut->getName(), DFeAttribute::class)))->toBeTrue();
+                expect((is_subclass_of($sut->getName(), DFeElement::class)))->toBeTrue();
             });
 
             test('Should be optional', function () {
@@ -118,11 +117,11 @@ describe('InformacoesTransporte', function () {
                 expect($sut)->toHaveProperty('reboque');
             });
 
-            test('Should be a subclass of DFeAttribute::class', function () {
+            test('Should be a subclass of DFeElement::class', function () {
                 $reflection = new ReflectionClass(InformacoesTransporte::class);
                 $reflectedProperty = $reflection->getProperty('reboque');
                 $sut = $reflectedProperty->getType();
-                expect((is_subclass_of($sut->getName(), DFeAttribute::class)))->toBeTrue();
+                expect((is_subclass_of($sut->getName(), DFeElement::class)))->toBeTrue();
             });
 
             test('Should be optional', function () {
@@ -139,11 +138,11 @@ describe('InformacoesTransporte', function () {
                 expect($sut)->toHaveProperty('vol');
             });
 
-            test('Should be a subclass of DFeAttribute::class', function () {
+            test('Should be a subclass of DFeElement::class', function () {
                 $reflection = new ReflectionClass(InformacoesTransporte::class);
                 $reflectedProperty = $reflection->getProperty('vol');
                 $sut = $reflectedProperty->getType();
-                expect((is_subclass_of($sut->getName(), DFeAttribute::class)))->toBeTrue();
+                expect((is_subclass_of($sut->getName(), DFeElement::class)))->toBeTrue();
             });
 
             test('Should be optional', function () {
