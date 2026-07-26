@@ -5,7 +5,6 @@ declare(strict_types=1);
 use BradiApi\Domain\Invoices\NFe\v4_00\EnderecoEmitente;
 use BradiApi\Domain\Invoices\Templates\DFeElement;
 use BradiApi\Domain\Xml\ValueObjects\Element;
-use BradiApi\Tests\TestCase;
 
 describe('EnderecoEmitente', function () {
     test('Should succeed if EnderecoEmitente is declared', function () {
@@ -17,11 +16,6 @@ describe('EnderecoEmitente', function () {
     test('Should succeed if EnderecoEmitente extends DFeElement', function () {
         $sut = new EnderecoEmitente;
         expect(is_subclass_of($sut, DFeElement::class))->toBeTrue();
-    });
-
-    beforeEach(function () {
-        /** @var TestCase $this */
-        $this->sut = new EnderecoEmitente;
     });
 
     describe('properties', function () {

@@ -6,7 +6,6 @@ use BradiApi\Domain\Common\Protocols\ApiError;
 use BradiApi\Domain\Invoices\NFe\v4_00\Icms00;
 use BradiApi\Domain\Invoices\Templates\DFeElement;
 use BradiApi\Domain\Xml\ValueObjects\Element;
-use BradiApi\Tests\TestCase;
 
 describe('Icms00', function () {
     test('Should succeed if Icms00 is declared', function () {
@@ -20,12 +19,14 @@ describe('Icms00', function () {
         expect(is_subclass_of($sut, DFeElement::class))->toBeTrue();
     });
 
-    beforeEach(function () {
-        /** @var TestCase $this */
-        $this->sut = new Icms00;
-    });
-
     describe('properties', function () {
+        describe('FIELD_NAME', function () {
+            test('Should be set correctly', function () {
+                $sut = new Icms00;
+                expect($sut::FIELD_NAME)->toBe('ICMS00');
+            });
+        });
+
         describe('$orig', function () {
             test('Should be declared', function () {
                 $sut = new Icms00;

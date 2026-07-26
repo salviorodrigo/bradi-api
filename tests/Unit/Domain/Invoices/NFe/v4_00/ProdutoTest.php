@@ -7,7 +7,6 @@ use BradiApi\Domain\Invoices\NFe\v4_00\Produto;
 use BradiApi\Domain\Invoices\Templates\DFeElement;
 use BradiApi\Domain\Invoices\Templates\DFeElementCollection;
 use BradiApi\Domain\Xml\ValueObjects\Element;
-use BradiApi\Tests\TestCase;
 
 describe('Produto', function () {
     test('Should succeed if Produto is declared', function () {
@@ -21,12 +20,14 @@ describe('Produto', function () {
         expect(is_subclass_of($sut, DFeElement::class))->toBeTrue();
     });
 
-    beforeEach(function () {
-        /** @var TestCase $this */
-        $this->sut = new Produto;
-    });
-
     describe('properties', function () {
+        describe('FIELD_NAME', function () {
+            test('Should be set correctly', function () {
+                $sut = new Produto;
+                expect($sut::FIELD_NAME)->toBe('prod');
+            });
+        });
+
         describe('$cProd', function () {
             test('Should be declared', function () {
                 $sut = new Produto;

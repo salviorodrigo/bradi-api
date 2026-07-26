@@ -6,7 +6,6 @@ use BradiApi\Domain\Common\Protocols\ApiError;
 use BradiApi\Domain\Invoices\NFe\v4_00\IcmsProduto;
 use BradiApi\Domain\Invoices\Templates\DFeElement;
 use BradiApi\Domain\Xml\ValueObjects\Element;
-use BradiApi\Tests\TestCase;
 
 describe('IcmsProduto', function () {
     test('Should succeed if IcmsProduto is declared', function () {
@@ -18,11 +17,6 @@ describe('IcmsProduto', function () {
     test('Should succeed if IcmsProduto extends DFeElement', function () {
         $sut = new IcmsProduto;
         expect(is_subclass_of($sut, DFeElement::class))->toBeTrue();
-    });
-
-    beforeEach(function () {
-        /** @var TestCase $this */
-        $this->sut = new IcmsProduto;
     });
 
     describe('properties', function () {

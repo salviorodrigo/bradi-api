@@ -20,6 +20,13 @@ describe('TotalNotaFiscal', function () {
     });
 
     describe('properties', function () {
+        describe('FIELD_NAME', function () {
+            test('Should be set correctly', function () {
+                $sut = new TotalNotaFiscal;
+                expect($sut::FIELD_NAME)->toBe('total');
+            });
+        });
+
         describe('$ICMSTot', function () {
             test('Should be declared', function () {
                 $sut = new TotalNotaFiscal;

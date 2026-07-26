@@ -6,7 +6,6 @@ use BradiApi\Domain\Common\Protocols\ApiError;
 use BradiApi\Domain\Invoices\NFe\v4_00\Imposto;
 use BradiApi\Domain\Invoices\Templates\DFeElement;
 use BradiApi\Domain\Xml\ValueObjects\Element;
-use BradiApi\Tests\TestCase;
 
 describe('Imposto', function () {
     test('Should succeed if Imposto is declared', function () {
@@ -20,12 +19,14 @@ describe('Imposto', function () {
         expect(is_subclass_of($sut, DFeElement::class))->toBeTrue();
     });
 
-    beforeEach(function () {
-        /** @var TestCase $this */
-        $this->sut = new Imposto;
-    });
-
     describe('properties', function () {
+        describe('FIELD_NAME', function () {
+            test('Should be set correctly', function () {
+                $sut = new Imposto;
+                expect($sut::FIELD_NAME)->toBe('imposto');
+            });
+        });
+
         describe('$vTotTrib', function () {
             test('Should be declared', function () {
                 $sut = new Imposto;
