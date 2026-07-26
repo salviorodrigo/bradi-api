@@ -14,6 +14,15 @@ declare(strict_types=1);
 
 namespace BradiApi\Domain\Invoices\NFe\v4_00;
 
+use BradiApi\Domain\Invoices\NFe\v4_00\ValueObjects\ValorBaseDeCalculo;
+use BradiApi\Domain\Invoices\NFe\v4_00\ValueObjects\ValorCOFINS;
+use BradiApi\Domain\Invoices\NFe\v4_00\ValueObjects\ValorICMS;
+use BradiApi\Domain\Invoices\NFe\v4_00\ValueObjects\ValorPIS;
+use BradiApi\Domain\Invoices\NFe\v4_00\ValueObjects\ValorTotalDesconto;
+use BradiApi\Domain\Invoices\NFe\v4_00\ValueObjects\ValorTotalDespesasAcessorias;
+use BradiApi\Domain\Invoices\NFe\v4_00\ValueObjects\ValorTotalFrete;
+use BradiApi\Domain\Invoices\NFe\v4_00\ValueObjects\ValorTotalProduto;
+use BradiApi\Domain\Invoices\NFe\v4_00\ValueObjects\ValorTotalSeguro;
 use BradiApi\Domain\Invoices\Templates\DFeElement;
 use BradiApi\Domain\Invoices\Traits\ValidatesDFeGroupElement;
 use BradiApi\Domain\Invoices\Validators\AllowedTagsValidator;
@@ -24,6 +33,16 @@ final class IcmsTotalNotaFiscal extends DFeElement
     use ValidatesDFeGroupElement;
 
     public const string FIELD_NAME = 'ICMSTot';
+
+    public ValorBaseDeCalculo $vBC;
+    public ValorICMS $vICMS;
+    public ValorTotalProduto $vProd;
+    public ValorTotalFrete $vFrete;
+    public ValorTotalSeguro $vSeg;
+    public ValorTotalDesconto $vDesc;
+    public ValorPIS $vPIS;
+    public ValorCOFINS $vCOFINS;
+    public ValorTotalDespesasAcessorias $vOutro;
 
     protected function tagElementsValidators(): array
     {

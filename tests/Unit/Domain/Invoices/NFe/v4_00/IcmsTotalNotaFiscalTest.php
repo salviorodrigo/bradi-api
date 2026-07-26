@@ -19,7 +19,498 @@ describe('IcmsTotalNotaFiscal', function () {
         expect(is_subclass_of($sut, DFeElement::class))->toBeTrue();
     });
 
-    describe('properties', function () {})->skip();
+    describe('properties', function () {
+        describe('FIELD_NAME', function () {
+            test('Should be set correctly', function () {
+                $reflection = new ReflectionClass(IcmsTotalNotaFiscal::class);
+                $reflectedProperty = $reflection->getConstant('FIELD_NAME');
+                expect($reflectedProperty)->toBe('ICMSTot');
+            });
+        });
+
+        describe('$vBC', function () {
+            test('Should be declared', function () {
+                $sut = new IcmsTotalNotaFiscal;
+                expect($sut)->toHaveProperty('vBC');
+            });
+
+            test('Should be a subclass of DFeElement::class', function () {
+                $reflection = new ReflectionClass(IcmsTotalNotaFiscal::class);
+                $reflectedProperty = $reflection->getProperty('vBC');
+                $sut = $reflectedProperty->getType();
+                expect((is_subclass_of($sut->getName(), DFeElement::class)))->toBeTrue();
+            });
+
+            test('Should be required', function () {
+                $reflection = new ReflectionClass(IcmsTotalNotaFiscal::class);
+                $reflectedProperty = $reflection->getProperty('vBC');
+                $sut = $reflectedProperty->getType();
+                expect($sut->allowsNull())->toBeFalse();
+            });
+        });
+
+        describe('$vICMS', function () {
+            test('Should be declared', function () {
+                $sut = new IcmsTotalNotaFiscal;
+                expect($sut)->toHaveProperty('vICMS');
+            });
+
+            test('Should be a subclass of DFeElement::class', function () {
+                $reflection = new ReflectionClass(IcmsTotalNotaFiscal::class);
+                $reflectedProperty = $reflection->getProperty('vICMS');
+                $sut = $reflectedProperty->getType();
+                expect((is_subclass_of($sut->getName(), DFeElement::class)))->toBeTrue();
+            });
+
+            test('Should be required', function () {
+                $reflection = new ReflectionClass(IcmsTotalNotaFiscal::class);
+                $reflectedProperty = $reflection->getProperty('vICMS');
+                $sut = $reflectedProperty->getType();
+                expect($sut->allowsNull())->toBeFalse();
+            });
+        });
+
+        describe('$vICMSDeson', function () {
+            test('Should be declared', function () {
+                $sut = new IcmsTotalNotaFiscal;
+                expect($sut)->toHaveProperty('vICMSDeson');
+            });
+
+            test('Should be a subclass of DFeElement::class', function () {
+                $reflection = new ReflectionClass(IcmsTotalNotaFiscal::class);
+                $reflectedProperty = $reflection->getProperty('vICMSDeson');
+                $sut = $reflectedProperty->getType();
+                expect((is_subclass_of($sut->getName(), DFeElement::class)))->toBeTrue();
+            });
+
+            test('Should be required', function () {
+                $reflection = new ReflectionClass(IcmsTotalNotaFiscal::class);
+                $reflectedProperty = $reflection->getProperty('vICMSDeson');
+                $sut = $reflectedProperty->getType();
+                expect($sut->allowsNull())->toBeFalse();
+            });
+        })->skip();
+
+        describe('$vFCPUFDest', function () {
+            test('Should be declared', function () {
+                $sut = new IcmsTotalNotaFiscal;
+                expect($sut)->toHaveProperty('vFCPUFDest');
+            });
+
+            test('Should be a subclass of DFeElement::class', function () {
+                $reflection = new ReflectionClass(IcmsTotalNotaFiscal::class);
+                $reflectedProperty = $reflection->getProperty('vFCPUFDest');
+                $sut = $reflectedProperty->getType();
+                expect((is_subclass_of($sut->getName(), DFeElement::class)))->toBeTrue();
+            });
+
+            test('Should be optional', function () {
+                $reflection = new ReflectionClass(IcmsTotalNotaFiscal::class);
+                $reflectedProperty = $reflection->getProperty('vFCPUFDest');
+                $sut = $reflectedProperty->getType();
+                expect($sut->allowsNull())->toBeTrue();
+            });
+        })->skip();
+
+        describe('$vICMSUFDest', function () {
+            test('Should be declared', function () {
+                $sut = new IcmsTotalNotaFiscal;
+                expect($sut)->toHaveProperty('vICMSUFDest');
+            });
+
+            test('Should be a subclass of DFeElement::class', function () {
+                $reflection = new ReflectionClass(IcmsTotalNotaFiscal::class);
+                $reflectedProperty = $reflection->getProperty('vICMSUFDest');
+                $sut = $reflectedProperty->getType();
+                expect((is_subclass_of($sut->getName(), DFeElement::class)))->toBeTrue();
+            });
+
+            test('Should be optional', function () {
+                $reflection = new ReflectionClass(IcmsTotalNotaFiscal::class);
+                $reflectedProperty = $reflection->getProperty('vICMSUFDest');
+                $sut = $reflectedProperty->getType();
+                expect($sut->allowsNull())->toBeTrue();
+            });
+        })->skip();
+
+        describe('$vICMSUFRemet', function () {
+            test('Should be declared', function () {
+                $sut = new IcmsTotalNotaFiscal;
+                expect($sut)->toHaveProperty('vICMSUFRemet');
+            });
+
+            test('Should be a subclass of DFeElement::class', function () {
+                $reflection = new ReflectionClass(IcmsTotalNotaFiscal::class);
+                $reflectedProperty = $reflection->getProperty('vICMSUFRemet');
+                $sut = $reflectedProperty->getType();
+                expect((is_subclass_of($sut->getName(), DFeElement::class)))->toBeTrue();
+            });
+
+            test('Should be optional', function () {
+                $reflection = new ReflectionClass(IcmsTotalNotaFiscal::class);
+                $reflectedProperty = $reflection->getProperty('vICMSUFRemet');
+                $sut = $reflectedProperty->getType();
+                expect($sut->allowsNull())->toBeFalse();
+            });
+        })->skip();
+
+        describe('$vFCP', function () {
+            test('Should be declared', function () {
+                $sut = new IcmsTotalNotaFiscal;
+                expect($sut)->toHaveProperty('vFCP');
+            });
+
+            test('Should be a subclass of DFeElement::class', function () {
+                $reflection = new ReflectionClass(IcmsTotalNotaFiscal::class);
+                $reflectedProperty = $reflection->getProperty('vFCP');
+                $sut = $reflectedProperty->getType();
+                expect((is_subclass_of($sut->getName(), DFeElement::class)))->toBeTrue();
+            });
+
+            test('Should be required', function () {
+                $reflection = new ReflectionClass(IcmsTotalNotaFiscal::class);
+                $reflectedProperty = $reflection->getProperty('vFCP');
+                $sut = $reflectedProperty->getType();
+                expect($sut->allowsNull())->toBeFalse();
+            });
+        })->skip();
+
+        describe('$vBCST', function () {
+            test('Should be declared', function () {
+                $sut = new IcmsTotalNotaFiscal;
+                expect($sut)->toHaveProperty('vBCST');
+            });
+
+            test('Should be a subclass of DFeElement::class', function () {
+                $reflection = new ReflectionClass(IcmsTotalNotaFiscal::class);
+                $reflectedProperty = $reflection->getProperty('vBCST');
+                $sut = $reflectedProperty->getType();
+                expect((is_subclass_of($sut->getName(), DFeElement::class)))->toBeTrue();
+            });
+
+            test('Should be required', function () {
+                $reflection = new ReflectionClass(IcmsTotalNotaFiscal::class);
+                $reflectedProperty = $reflection->getProperty('vBCST');
+                $sut = $reflectedProperty->getType();
+                expect($sut->allowsNull())->toBeFalse();
+            });
+        })->skip();
+
+        describe('$vST', function () {
+            test('Should be declared', function () {
+                $sut = new IcmsTotalNotaFiscal;
+                expect($sut)->toHaveProperty('vST');
+            });
+
+            test('Should be a subclass of DFeElement::class', function () {
+                $reflection = new ReflectionClass(IcmsTotalNotaFiscal::class);
+                $reflectedProperty = $reflection->getProperty('vST');
+                $sut = $reflectedProperty->getType();
+                expect((is_subclass_of($sut->getName(), DFeElement::class)))->toBeTrue();
+            });
+
+            test('Should be required', function () {
+                $reflection = new ReflectionClass(IcmsTotalNotaFiscal::class);
+                $reflectedProperty = $reflection->getProperty('vST');
+                $sut = $reflectedProperty->getType();
+                expect($sut->allowsNull())->toBeFalse();
+            });
+        })->skip();
+
+        describe('$vFCPST', function () {
+            test('Should be declared', function () {
+                $sut = new IcmsTotalNotaFiscal;
+                expect($sut)->toHaveProperty('vFCPST');
+            });
+
+            test('Should be a subclass of DFeElement::class', function () {
+                $reflection = new ReflectionClass(IcmsTotalNotaFiscal::class);
+                $reflectedProperty = $reflection->getProperty('vFCPST');
+                $sut = $reflectedProperty->getType();
+                expect((is_subclass_of($sut->getName(), DFeElement::class)))->toBeTrue();
+            });
+
+            test('Should be required', function () {
+                $reflection = new ReflectionClass(IcmsTotalNotaFiscal::class);
+                $reflectedProperty = $reflection->getProperty('vFCPST');
+                $sut = $reflectedProperty->getType();
+                expect($sut->allowsNull())->toBeFalse();
+            });
+        })->skip();
+
+        describe('$vFCPSTRet', function () {
+            test('Should be declared', function () {
+                $sut = new IcmsTotalNotaFiscal;
+                expect($sut)->toHaveProperty('vFCPSTRet');
+            });
+
+            test('Should be a subclass of DFeElement::class', function () {
+                $reflection = new ReflectionClass(IcmsTotalNotaFiscal::class);
+                $reflectedProperty = $reflection->getProperty('vFCPSTRet');
+                $sut = $reflectedProperty->getType();
+                expect((is_subclass_of($sut->getName(), DFeElement::class)))->toBeTrue();
+            });
+
+            test('Should be required', function () {
+                $reflection = new ReflectionClass(IcmsTotalNotaFiscal::class);
+                $reflectedProperty = $reflection->getProperty('vFCPSTRet');
+                $sut = $reflectedProperty->getType();
+                expect($sut->allowsNull())->toBeFalse();
+            });
+        })->skip();
+
+        describe('$vProd', function () {
+            test('Should be declared', function () {
+                $sut = new IcmsTotalNotaFiscal;
+                expect($sut)->toHaveProperty('vProd');
+            });
+
+            test('Should be a subclass of DFeElement::class', function () {
+                $reflection = new ReflectionClass(IcmsTotalNotaFiscal::class);
+                $reflectedProperty = $reflection->getProperty('vProd');
+                $sut = $reflectedProperty->getType();
+                expect((is_subclass_of($sut->getName(), DFeElement::class)))->toBeTrue();
+            });
+
+            test('Should be required', function () {
+                $reflection = new ReflectionClass(IcmsTotalNotaFiscal::class);
+                $reflectedProperty = $reflection->getProperty('vProd');
+                $sut = $reflectedProperty->getType();
+                expect($sut->allowsNull())->toBeFalse();
+            });
+        });
+
+        describe('$vFrete', function () {
+            test('Should be declared', function () {
+                $sut = new IcmsTotalNotaFiscal;
+                expect($sut)->toHaveProperty('vFrete');
+            });
+
+            test('Should be a subclass of DFeElement::class', function () {
+                $reflection = new ReflectionClass(IcmsTotalNotaFiscal::class);
+                $reflectedProperty = $reflection->getProperty('vFrete');
+                $sut = $reflectedProperty->getType();
+                expect((is_subclass_of($sut->getName(), DFeElement::class)))->toBeTrue();
+            });
+
+            test('Should be required', function () {
+                $reflection = new ReflectionClass(IcmsTotalNotaFiscal::class);
+                $reflectedProperty = $reflection->getProperty('vFrete');
+                $sut = $reflectedProperty->getType();
+                expect($sut->allowsNull())->toBeFalse();
+            });
+        });
+
+        describe('$vSeg', function () {
+            test('Should be declared', function () {
+                $sut = new IcmsTotalNotaFiscal;
+                expect($sut)->toHaveProperty('vSeg');
+            });
+
+            test('Should be a subclass of DFeElement::class', function () {
+                $reflection = new ReflectionClass(IcmsTotalNotaFiscal::class);
+                $reflectedProperty = $reflection->getProperty('vSeg');
+                $sut = $reflectedProperty->getType();
+                expect((is_subclass_of($sut->getName(), DFeElement::class)))->toBeTrue();
+            });
+
+            test('Should be required', function () {
+                $reflection = new ReflectionClass(IcmsTotalNotaFiscal::class);
+                $reflectedProperty = $reflection->getProperty('vSeg');
+                $sut = $reflectedProperty->getType();
+                expect($sut->allowsNull())->toBeFalse();
+            });
+        });
+
+        describe('$vDesc', function () {
+            test('Should be declared', function () {
+                $sut = new IcmsTotalNotaFiscal;
+                expect($sut)->toHaveProperty('vDesc');
+            });
+
+            test('Should be a subclass of DFeElement::class', function () {
+                $reflection = new ReflectionClass(IcmsTotalNotaFiscal::class);
+                $reflectedProperty = $reflection->getProperty('vDesc');
+                $sut = $reflectedProperty->getType();
+                expect((is_subclass_of($sut->getName(), DFeElement::class)))->toBeTrue();
+            });
+
+            test('Should be required', function () {
+                $reflection = new ReflectionClass(IcmsTotalNotaFiscal::class);
+                $reflectedProperty = $reflection->getProperty('vDesc');
+                $sut = $reflectedProperty->getType();
+                expect($sut->allowsNull())->toBeFalse();
+            });
+        });
+
+        describe('$vII', function () {
+            test('Should be declared', function () {
+                $sut = new IcmsTotalNotaFiscal;
+                expect($sut)->toHaveProperty('vII');
+            });
+
+            test('Should be a subclass of DFeElement::class', function () {
+                $reflection = new ReflectionClass(IcmsTotalNotaFiscal::class);
+                $reflectedProperty = $reflection->getProperty('vII');
+                $sut = $reflectedProperty->getType();
+                expect((is_subclass_of($sut->getName(), DFeElement::class)))->toBeTrue();
+            });
+
+            test('Should be required', function () {
+                $reflection = new ReflectionClass(IcmsTotalNotaFiscal::class);
+                $reflectedProperty = $reflection->getProperty('vII');
+                $sut = $reflectedProperty->getType();
+                expect($sut->allowsNull())->toBeFalse();
+            });
+        })->skip();
+
+        describe('$vIPI', function () {
+            test('Should be declared', function () {
+                $sut = new IcmsTotalNotaFiscal;
+                expect($sut)->toHaveProperty('vIPI');
+            });
+
+            test('Should be a subclass of DFeElement::class', function () {
+                $reflection = new ReflectionClass(IcmsTotalNotaFiscal::class);
+                $reflectedProperty = $reflection->getProperty('vIPI');
+                $sut = $reflectedProperty->getType();
+                expect((is_subclass_of($sut->getName(), DFeElement::class)))->toBeTrue();
+            });
+
+            test('Should be required', function () {
+                $reflection = new ReflectionClass(IcmsTotalNotaFiscal::class);
+                $reflectedProperty = $reflection->getProperty('vIPI');
+                $sut = $reflectedProperty->getType();
+                expect($sut->allowsNull())->toBeFalse();
+            });
+        })->skip();
+
+        describe('$vIPIDevol', function () {
+            test('Should be declared', function () {
+                $sut = new IcmsTotalNotaFiscal;
+                expect($sut)->toHaveProperty('vIPIDevol');
+            });
+
+            test('Should be a subclass of DFeElement::class', function () {
+                $reflection = new ReflectionClass(IcmsTotalNotaFiscal::class);
+                $reflectedProperty = $reflection->getProperty('vIPIDevol');
+                $sut = $reflectedProperty->getType();
+                expect((is_subclass_of($sut->getName(), DFeElement::class)))->toBeTrue();
+            });
+
+            test('Should be required', function () {
+                $reflection = new ReflectionClass(IcmsTotalNotaFiscal::class);
+                $reflectedProperty = $reflection->getProperty('vIPIDevol');
+                $sut = $reflectedProperty->getType();
+                expect($sut->allowsNull())->toBeFalse();
+            });
+        })->skip();
+
+        describe('$vPIS', function () {
+            test('Should be declared', function () {
+                $sut = new IcmsTotalNotaFiscal;
+                expect($sut)->toHaveProperty('vPIS');
+            });
+
+            test('Should be a subclass of DFeElement::class', function () {
+                $reflection = new ReflectionClass(IcmsTotalNotaFiscal::class);
+                $reflectedProperty = $reflection->getProperty('vPIS');
+                $sut = $reflectedProperty->getType();
+                expect((is_subclass_of($sut->getName(), DFeElement::class)))->toBeTrue();
+            });
+
+            test('Should be required', function () {
+                $reflection = new ReflectionClass(IcmsTotalNotaFiscal::class);
+                $reflectedProperty = $reflection->getProperty('vPIS');
+                $sut = $reflectedProperty->getType();
+                expect($sut->allowsNull())->toBeFalse();
+            });
+        });
+
+        describe('$vCOFINS', function () {
+            test('Should be declared', function () {
+                $sut = new IcmsTotalNotaFiscal;
+                expect($sut)->toHaveProperty('vCOFINS');
+            });
+
+            test('Should be a subclass of DFeElement::class', function () {
+                $reflection = new ReflectionClass(IcmsTotalNotaFiscal::class);
+                $reflectedProperty = $reflection->getProperty('vCOFINS');
+                $sut = $reflectedProperty->getType();
+                expect((is_subclass_of($sut->getName(), DFeElement::class)))->toBeTrue();
+            });
+
+            test('Should be required', function () {
+                $reflection = new ReflectionClass(IcmsTotalNotaFiscal::class);
+                $reflectedProperty = $reflection->getProperty('vCOFINS');
+                $sut = $reflectedProperty->getType();
+                expect($sut->allowsNull())->toBeFalse();
+            });
+        });
+
+        describe('$vOutro', function () {
+            test('Should be declared', function () {
+                $sut = new IcmsTotalNotaFiscal;
+                expect($sut)->toHaveProperty('vOutro');
+            });
+
+            test('Should be a subclass of DFeElement::class', function () {
+                $reflection = new ReflectionClass(IcmsTotalNotaFiscal::class);
+                $reflectedProperty = $reflection->getProperty('vOutro');
+                $sut = $reflectedProperty->getType();
+                expect((is_subclass_of($sut->getName(), DFeElement::class)))->toBeTrue();
+            });
+
+            test('Should be required', function () {
+                $reflection = new ReflectionClass(IcmsTotalNotaFiscal::class);
+                $reflectedProperty = $reflection->getProperty('vOutro');
+                $sut = $reflectedProperty->getType();
+                expect($sut->allowsNull())->toBeFalse();
+            });
+        });
+
+        describe('$vNF', function () {
+            test('Should be declared', function () {
+                $sut = new IcmsTotalNotaFiscal;
+                expect($sut)->toHaveProperty('vNF');
+            });
+
+            test('Should be a subclass of DFeElement::class', function () {
+                $reflection = new ReflectionClass(IcmsTotalNotaFiscal::class);
+                $reflectedProperty = $reflection->getProperty('vNF');
+                $sut = $reflectedProperty->getType();
+                expect((is_subclass_of($sut->getName(), DFeElement::class)))->toBeTrue();
+            });
+
+            test('Should be required', function () {
+                $reflection = new ReflectionClass(IcmsTotalNotaFiscal::class);
+                $reflectedProperty = $reflection->getProperty('vNF');
+                $sut = $reflectedProperty->getType();
+                expect($sut->allowsNull())->toBeFalse();
+            });
+        })->skip();
+
+        describe('$vTotTrib', function () {
+            test('Should be declared', function () {
+                $sut = new IcmsTotalNotaFiscal;
+                expect($sut)->toHaveProperty('vTotTrib');
+            });
+
+            test('Should be a subclass of DFeElement::class', function () {
+                $reflection = new ReflectionClass(IcmsTotalNotaFiscal::class);
+                $reflectedProperty = $reflection->getProperty('vTotTrib');
+                $sut = $reflectedProperty->getType();
+                expect((is_subclass_of($sut->getName(), DFeElement::class)))->toBeTrue();
+            });
+
+            test('Should be required', function () {
+                $reflection = new ReflectionClass(IcmsTotalNotaFiscal::class);
+                $reflectedProperty = $reflection->getProperty('vTotTrib');
+                $sut = $reflectedProperty->getType();
+                expect($sut->allowsNull())->toBeFalse();
+            });
+        })->skip();
+    });
 
     describe('methods', function () {
         describe('validateTagAttributes', function () {
