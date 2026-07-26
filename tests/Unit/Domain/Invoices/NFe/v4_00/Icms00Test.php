@@ -151,6 +151,48 @@ describe('Icms00', function () {
                 expect($sut->allowsNull())->toBeFalse();
             });
         });
+
+        describe('$pFCP', function () {
+            test('Should be declared', function () {
+                $sut = new Icms00;
+                expect($sut)->toHaveProperty('pFCP');
+            });
+
+            test('Should be a subclass of DFeElement::class', function () {
+                $reflection = new ReflectionClass(Icms00::class);
+                $reflectedProperty = $reflection->getProperty('pFCP');
+                $sut = $reflectedProperty->getType();
+                expect((is_subclass_of($sut->getName(), DFeElement::class)))->toBeTrue();
+            });
+
+            test('Should be optional', function () {
+                $reflection = new ReflectionClass(Icms00::class);
+                $reflectedProperty = $reflection->getProperty('pFCP');
+                $sut = $reflectedProperty->getType();
+                expect($sut->allowsNull())->toBeTrue();
+            });
+        })->skip();
+
+        describe('$vFCP', function () {
+            test('Should be declared', function () {
+                $sut = new Icms00;
+                expect($sut)->toHaveProperty('vFCP');
+            });
+
+            test('Should be a subclass of DFeElement::class', function () {
+                $reflection = new ReflectionClass(Icms00::class);
+                $reflectedProperty = $reflection->getProperty('vFCP');
+                $sut = $reflectedProperty->getType();
+                expect((is_subclass_of($sut->getName(), DFeElement::class)))->toBeTrue();
+            });
+
+            test('Should be optional', function () {
+                $reflection = new ReflectionClass(Icms00::class);
+                $reflectedProperty = $reflection->getProperty('vFCP');
+                $sut = $reflectedProperty->getType();
+                expect($sut->allowsNull())->toBeTrue();
+            });
+        })->skip();
     });
 
     describe('methods', function () {
@@ -169,6 +211,16 @@ describe('Icms00', function () {
         describe('validateTagElements', function () {
             test('Should succeed if all required tags is provided', function () {
                 $xmlString = '<ICMS00><orig></orig><CST></CST><modBC></modBC><vBC></vBC><pICMS></pICMS><vICMS></vICMS></ICMS00>';
+                $xmlElement = new Element;
+                $xmlElement->parse($xmlString);
+                $icms00 = new Icms00;
+                $sut = new ReflectionMethod($icms00, 'validateTagElements');
+                $sutResponse = $sut->invoke($icms00, $xmlElement);
+                expect($sutResponse->isSuccess())->toBeTrue();
+            });
+
+            test('Should succeed if all  tags is provided', function () {
+                $xmlString = '<ICMS00><orig></orig><CST></CST><modBC></modBC><vBC></vBC><pICMS></pICMS><vICMS></vICMS><pFCP/><vFCP/></ICMS00>';
                 $xmlElement = new Element;
                 $xmlElement->parse($xmlString);
                 $icms00 = new Icms00;
