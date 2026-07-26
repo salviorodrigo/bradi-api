@@ -105,6 +105,16 @@ describe('InformacoesPagamento', function () {
                 expect($sutResponse->isFailure())->toBeFalse();
             });
 
+            test('Should fail if detPag tag is missing', function () {
+                $xmlString = '<pag><vTroco/></pag>';
+                $xmlElement = new Element;
+                $xmlElement->parse($xmlString);
+                $targetClass = new InformacoesPagamento;
+                $sut = new ReflectionMethod($targetClass, 'validateTagElements');
+                $sutResponse = $sut->invoke($targetClass, $xmlElement);
+                expect($sutResponse->isFailure())->toBeTrue();
+            });
+
             test('Should fail if unallowed tag is provided', function () {
                 $xmlString = '<pag><unallowed/><detPag/><vTroco/></pag>';
                 $xmlElement = new Element;
