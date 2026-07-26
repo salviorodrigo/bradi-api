@@ -173,9 +173,9 @@ describe('InformacoesTransporte', function () {
                 $xmlString = '<transp><modFrete/></transp>';
                 $xmlElement = new Element;
                 $xmlElement->parse($xmlString);
-                $InformacoesTransporte = new InformacoesTransporte;
-                $sut = new ReflectionMethod($InformacoesTransporte, 'validateTagElements');
-                $sutResponse = $sut->invoke($InformacoesTransporte, $xmlElement);
+                $targetClass = new InformacoesTransporte;
+                $sut = new ReflectionMethod($targetClass, 'validateTagElements');
+                $sutResponse = $sut->invoke($targetClass, $xmlElement);
                 expect($sutResponse->isFailure())->toBeFalse();
             });
 
@@ -183,19 +183,29 @@ describe('InformacoesTransporte', function () {
                 $xmlString = '<transp><modFrete/><transporta/><retTransp/><veicTransp/><reboque/><vol/></transp>';
                 $xmlElement = new Element;
                 $xmlElement->parse($xmlString);
-                $InformacoesTransporte = new InformacoesTransporte;
-                $sut = new ReflectionMethod($InformacoesTransporte, 'validateTagElements');
-                $sutResponse = $sut->invoke($InformacoesTransporte, $xmlElement);
+                $targetClass = new InformacoesTransporte;
+                $sut = new ReflectionMethod($targetClass, 'validateTagElements');
+                $sutResponse = $sut->invoke($targetClass, $xmlElement);
                 expect($sutResponse->isFailure())->toBeFalse();
+            });
+
+            test('Should fail if modFrete tag is missing', function () {
+                $xmlString = '<transp><transporta/><retTransp/><veicTransp/><reboque/><vol/></transp>';
+                $xmlElement = new Element;
+                $xmlElement->parse($xmlString);
+                $targetClass = new InformacoesTransporte;
+                $sut = new ReflectionMethod($targetClass, 'validateTagElements');
+                $sutResponse = $sut->invoke($targetClass, $xmlElement);
+                expect($sutResponse->isFailure())->toBeTrue();
             });
 
             test('Should fail if unallowed tag is provided', function () {
                 $xmlString = '<transp><unallowed/><modFrete/><transporta/><retTransp/><veicTransp/><reboque/><vol/></transp>';
                 $xmlElement = new Element;
                 $xmlElement->parse($xmlString);
-                $InformacoesTransporte = new InformacoesTransporte;
-                $sut = new ReflectionMethod($InformacoesTransporte, 'validateTagElements');
-                $sutResponse = $sut->invoke($InformacoesTransporte, $xmlElement);
+                $targetClass = new InformacoesTransporte;
+                $sut = new ReflectionMethod($targetClass, 'validateTagElements');
+                $sutResponse = $sut->invoke($targetClass, $xmlElement);
                 expect($sutResponse->isFailure())->toBeTrue();
             });
         });
