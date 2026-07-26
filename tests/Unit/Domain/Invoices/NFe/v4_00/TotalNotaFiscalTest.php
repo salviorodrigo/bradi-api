@@ -118,6 +118,16 @@ describe('TotalNotaFiscal', function () {
                 expect($sutResponse->isSuccess())->toBeTrue();
             });
 
+            test('Should fail if an ICMSTot tag isn\'t provided', function () {
+                $xmlString = '<total><ISSQNtot/><retTrib/></total>';
+                $xmlElement = new Element;
+                $xmlElement->parse($xmlString);
+                $targetClass = new TotalNotaFiscal;
+                $sut = new ReflectionMethod($targetClass, 'validateTagElements');
+                $sutResponse = $sut->invoke($targetClass, $xmlElement);
+                expect($sutResponse->isFailure())->toBeTrue();
+            });
+
             test('Should fail if an unallowed tag is provided', function () {
                 $xmlString = '<total><unallowedTag/><ICMSTot/><ISSQNtot/><retTrib/></total>';
                 $xmlElement = new Element;
