@@ -16,6 +16,8 @@ namespace BradiApi\Domain\Invoices\NFe\v4_00;
 
 use BradiApi\Domain\Invoices\Templates\DFeElement;
 use BradiApi\Domain\Invoices\Traits\ValidatesDFeGroupElement;
+use BradiApi\Domain\Invoices\Validators\AllowedTagsValidator;
+use BradiApi\Domain\Invoices\Validators\RequiredTagsValidator;
 
 final class IcmsTotalNotaFiscal extends DFeElement
 {
@@ -25,6 +27,11 @@ final class IcmsTotalNotaFiscal extends DFeElement
 
     protected function tagElementsValidators(): array
     {
-        return [];
+        return [
+            new RequiredTagsValidator(['vBC', 'vICMS', 'vICMSDeson', 'vFCP', 'vBCST', 'vST', 'vFCPST', 'vFCPSTRet', 'vProd', 'vFrete', 'vSeg', 'vDesc', 'vII', 'vIPI', 'vIPIDevol', 'vPIS', 'vCOFINS', 'vOutro', 'vNF',
+            ]),
+            new AllowedTagsValidator(['vBC', 'vICMS', 'vICMSDeson', 'vFCPUFDest', 'vICMSUFDest', 'vICMSUFRemet', 'vFCP', 'vBCST', 'vST', 'vFCPST', 'vFCPSTRet', 'vProd', 'vFrete', 'vSeg', 'vDesc', 'vII', 'vIPI', 'vIPIDevol', 'vPIS', 'vCOFINS', 'vOutro', 'vNF', 'vTotTrib',
+            ]),
+        ];
     }
 }
