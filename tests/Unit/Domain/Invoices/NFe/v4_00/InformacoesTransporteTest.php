@@ -197,7 +197,7 @@ describe('InformacoesTransporte', function () {
                 $sut = new ReflectionMethod($InformacoesTransporte, 'validateTagElements');
                 $sutResponse = $sut->invoke($InformacoesTransporte, $xmlElement);
                 expect($sutResponse->isFailure())->toBeTrue();
-            })->skip();
+            });
         });
 
         describe('validateTagValue', function () {
