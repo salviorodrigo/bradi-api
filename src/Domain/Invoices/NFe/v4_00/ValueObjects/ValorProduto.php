@@ -23,7 +23,7 @@ use BradiApi\Domain\Common\Validators\NotNullValidator;
 use BradiApi\Domain\Invoices\Templates\DFeElement;
 use BradiApi\Domain\Invoices\Traits\ValidatesDFeValueElement;
 
-final class ValorTotalProduto extends DFeElement
+final class ValorProduto extends DFeElement
 {
     use ValidatesDFeValueElement;
 

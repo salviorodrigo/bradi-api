@@ -18,7 +18,7 @@ use BradiApi\Domain\Invoices\Templates\DFeElement;
 use BradiApi\Domain\Invoices\Traits\ValidatesDFeGroupElement;
 use BradiApi\Domain\Invoices\Validators\AtLeastOneTagValidator;
 
-final class Icms extends DFeElement
+final class IcmsProduto extends DFeElement
 {
     use ValidatesDFeGroupElement;
 

@@ -2,28 +2,28 @@
 
 declare(strict_types=1);
 use BradiApi\Domain\Common\ValueObjects\Result;
-use BradiApi\Domain\Invoices\NFe\v4_00\ValueObjects\ValorTotalProduto;
+use BradiApi\Domain\Invoices\NFe\v4_00\ValueObjects\ValorDespesasAcessorias;
 use BradiApi\Domain\Invoices\Templates\DFeElement;
 use BradiApi\Domain\Xml\ValueObjects\Element;
 
-describe('ValorTotalProduto', function () {
+describe('ValorDespesasAcessorias', function () {
     test('Should succeed if is declared', function () {
         $nameSpace = 'BradiApi\Domain\Invoices\NFe\v4_00\ValueObjects';
-        $sut = $nameSpace . '\\ValorTotalProduto';
+        $sut = $nameSpace . '\\ValorDespesasAcessorias';
         expect(class_exists($sut))->toBeTrue();
     });
 
-    test('Should succeed if extends DFeelement', function () {
-        $sut = new ValorTotalProduto('parentTag');
+    test('Should succeed if extends DFeElement', function () {
+        $sut = new ValorDespesasAcessorias('parentTag');
         expect(is_subclass_of($sut, DFeElement::class))->toBeTrue();
     });
 
     describe('properties', function () {
         describe('FIELD_NAME', function () {
             test('Should be set correctly', function () {
-                $reflection = new ReflectionClass(ValorTotalProduto::class);
+                $reflection = new ReflectionClass(ValorDespesasAcessorias::class);
                 $reflectedProperty = $reflection->getConstant('FIELD_NAME');
-                expect($reflectedProperty)->toBe('vProd');
+                expect($reflectedProperty)->toBe('vOutro');
             });
         });
     });
@@ -32,11 +32,11 @@ describe('ValorTotalProduto', function () {
         describe('validateTagValue', function () {
             test('Should succeed in border cases', function (string $candidate) {
                 $element = new Element;
-                $element->name = 'vProd';
+                $element->name = 'vOutro';
                 $element->value = $candidate;
-                $valorTotalProduto = new ValorTotalProduto('parentTag');
-                $sut = new ReflectionMethod($valorTotalProduto, 'validateTagValue');
-                $sutResponse = $sut->invoke($valorTotalProduto, $element);
+                $targetClass = new ValorDespesasAcessorias('parentTag');
+                $sut = new ReflectionMethod($targetClass, 'validateTagValue');
+                $sutResponse = $sut->invoke($targetClass, $element);
                 expect($sutResponse)->toBeInstanceOf(Result::class);
                 if ($sutResponse->isFailure()) {
                     $this->fail(json_encode($sutResponse->getError()));
@@ -53,54 +53,54 @@ describe('ValorTotalProduto', function () {
             test('Should fail if less than minimum is provided', function () {
                 $candidate = '0.00';
                 $element = new Element;
-                $element->name = 'vProd';
+                $element->name = 'vOutro';
                 $element->value = $candidate;
-                $valorTotalProduto = new ValorTotalProduto('parentTag');
-                $sut = new ReflectionMethod($valorTotalProduto, 'validateTagValue');
-                $sutResponse = $sut->invoke($valorTotalProduto, $element);
+                $targetClass = new ValorDespesasAcessorias('parentTag');
+                $sut = new ReflectionMethod($targetClass, 'validateTagValue');
+                $sutResponse = $sut->invoke($targetClass, $element);
                 expect($sutResponse->isFailure())->toBeTrue();
             });
 
             test('Should fail if greater than max is provided', function () {
                 $candidate = '10000000000000.00';
                 $element = new Element;
-                $element->name = 'vProd';
+                $element->name = 'vOutro';
                 $element->value = $candidate;
-                $valorTotalProduto = new ValorTotalProduto('parentTag');
-                $sut = new ReflectionMethod($valorTotalProduto, 'validateTagValue');
-                $sutResponse = $sut->invoke($valorTotalProduto, $element);
+                $targetClass = new ValorDespesasAcessorias('parentTag');
+                $sut = new ReflectionMethod($targetClass, 'validateTagValue');
+                $sutResponse = $sut->invoke($targetClass, $element);
                 expect($sutResponse->isFailure())->toBeTrue();
             });
 
             test('Should fail if more than 2 decimal places is provided', function () {
                 $candidate = '10.123';
                 $element = new Element;
-                $element->name = 'vProd';
+                $element->name = 'vOutro';
                 $element->value = $candidate;
-                $valorTotalProduto = new ValorTotalProduto('parentTag');
-                $sut = new ReflectionMethod($valorTotalProduto, 'validateTagValue');
-                $sutResponse = $sut->invoke($valorTotalProduto, $element);
+                $targetClass = new ValorDespesasAcessorias('parentTag');
+                $sut = new ReflectionMethod($targetClass, 'validateTagValue');
+                $sutResponse = $sut->invoke($targetClass, $element);
                 expect($sutResponse->isFailure())->toBeTrue();
             });
 
             test('Should fail if non-numeric value is provided', function () {
                 $candidate = '10A';
                 $element = new Element;
-                $element->name = 'vProd';
+                $element->name = 'vOutro';
                 $element->value = $candidate;
-                $valorTotalProduto = new ValorTotalProduto('parentTag');
-                $sut = new ReflectionMethod($valorTotalProduto, 'validateTagValue');
-                $sutResponse = $sut->invoke($valorTotalProduto, $element);
+                $targetClass = new ValorDespesasAcessorias('parentTag');
+                $sut = new ReflectionMethod($targetClass, 'validateTagValue');
+                $sutResponse = $sut->invoke($targetClass, $element);
                 expect($sutResponse->isFailure())->toBeTrue();
             });
 
             test('Should fail if a numeric value with spaces is provided', function (string $candidate) {
                 $element = new Element;
-                $element->name = 'vProd';
+                $element->name = 'vOutro';
                 $element->value = $candidate;
-                $valorTotalProduto = new ValorTotalProduto('parentTag');
-                $sut = new ReflectionMethod($valorTotalProduto, 'validateTagValue');
-                $sutResponse = $sut->invoke($valorTotalProduto, $element);
+                $targetClass = new ValorDespesasAcessorias('parentTag');
+                $sut = new ReflectionMethod($targetClass, 'validateTagValue');
+                $sutResponse = $sut->invoke($targetClass, $element);
                 expect($sutResponse->isFailure())->toBeTrue();
             })->with([
                 'leading space' => ' 10',
@@ -111,11 +111,11 @@ describe('ValorTotalProduto', function () {
             test('Should fail if a value with comma as decimal separator is provided', function () {
                 $candidate = '10,50';
                 $element = new Element;
-                $element->name = 'vProd';
+                $element->name = 'vOutro';
                 $element->value = $candidate;
-                $valorTotalProduto = new ValorTotalProduto('parentTag');
-                $sut = new ReflectionMethod($valorTotalProduto, 'validateTagValue');
-                $sutResponse = $sut->invoke($valorTotalProduto, $element);
+                $targetClass = new ValorDespesasAcessorias('parentTag');
+                $sut = new ReflectionMethod($targetClass, 'validateTagValue');
+                $sutResponse = $sut->invoke($targetClass, $element);
                 expect($sutResponse->isFailure())->toBeTrue();
             });
         });

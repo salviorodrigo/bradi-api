@@ -16,19 +16,19 @@ namespace BradiApi\Domain\Invoices\NFe\v4_00;
 
 use BradiApi\Domain\Invoices\NFe\v4_00\ValueObjects\ValorBaseDeCalculo;
 use BradiApi\Domain\Invoices\NFe\v4_00\ValueObjects\ValorCOFINS;
+use BradiApi\Domain\Invoices\NFe\v4_00\ValueObjects\ValorDesconto;
+use BradiApi\Domain\Invoices\NFe\v4_00\ValueObjects\ValorDespesasAcessorias;
+use BradiApi\Domain\Invoices\NFe\v4_00\ValueObjects\ValorFrete;
 use BradiApi\Domain\Invoices\NFe\v4_00\ValueObjects\ValorICMS;
 use BradiApi\Domain\Invoices\NFe\v4_00\ValueObjects\ValorPIS;
-use BradiApi\Domain\Invoices\NFe\v4_00\ValueObjects\ValorTotalDesconto;
-use BradiApi\Domain\Invoices\NFe\v4_00\ValueObjects\ValorTotalDespesasAcessorias;
-use BradiApi\Domain\Invoices\NFe\v4_00\ValueObjects\ValorTotalFrete;
-use BradiApi\Domain\Invoices\NFe\v4_00\ValueObjects\ValorTotalProduto;
-use BradiApi\Domain\Invoices\NFe\v4_00\ValueObjects\ValorTotalSeguro;
+use BradiApi\Domain\Invoices\NFe\v4_00\ValueObjects\ValorProduto;
+use BradiApi\Domain\Invoices\NFe\v4_00\ValueObjects\ValorSeguro;
 use BradiApi\Domain\Invoices\Templates\DFeElement;
 use BradiApi\Domain\Invoices\Traits\ValidatesDFeGroupElement;
 use BradiApi\Domain\Invoices\Validators\AllowedTagsValidator;
 use BradiApi\Domain\Invoices\Validators\RequiredTagsValidator;
 
-final class IcmsTotalNotaFiscal extends DFeElement
+final class IcmsNotaFiscal extends DFeElement
 {
     use ValidatesDFeGroupElement;
 
@@ -36,13 +36,13 @@ final class IcmsTotalNotaFiscal extends DFeElement
 
     public ValorBaseDeCalculo $vBC;
     public ValorICMS $vICMS;
-    public ValorTotalProduto $vProd;
-    public ValorTotalFrete $vFrete;
-    public ValorTotalSeguro $vSeg;
-    public ValorTotalDesconto $vDesc;
+    public ValorProduto $vProd;
+    public ValorFrete $vFrete;
+    public ValorSeguro $vSeg;
+    public ValorDesconto $vDesc;
     public ValorPIS $vPIS;
     public ValorCOFINS $vCOFINS;
-    public ValorTotalDespesasAcessorias $vOutro;
+    public ValorDespesasAcessorias $vOutro;
 
     protected function tagElementsValidators(): array
     {

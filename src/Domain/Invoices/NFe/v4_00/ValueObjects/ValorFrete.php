@@ -5,12 +5,12 @@ declare(strict_types=1);
 /**
  * MOC      7.0
  * #        110
- * ID       I17a
- * Campo    vOutro
- * Desc     Valor Total das Despesas Acessórias
+ * ID       I15
+ * Campo    vFrete
+ * Desc     Valor Total do Frete
  * Tam      13v2
  * OBS:
- * Valor Total das Despesas Acessórias
+ * Valor Total do Frete
  */
 
 namespace BradiApi\Domain\Invoices\NFe\v4_00\ValueObjects;
@@ -22,11 +22,11 @@ use BradiApi\Domain\Common\Validators\NotNullValidator;
 use BradiApi\Domain\Invoices\Templates\DFeElement;
 use BradiApi\Domain\Invoices\Traits\ValidatesDFeValueElement;
 
-final class ValorTotalDespesasAcessorias extends DFeElement
+final class ValorFrete extends DFeElement
 {
     use ValidatesDFeValueElement;
 
-    public const string FIELD_NAME = 'vOutro';
+    public const string FIELD_NAME = 'vFrete';
 
     protected function tagValueValidators(): array
     {

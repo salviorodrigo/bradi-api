@@ -25,7 +25,7 @@ final class Imposto extends DFeElement
 
     public const string FIELD_NAME = 'imposto';
 
-    public Icms $ICMS;
+    public IcmsProduto $ICMS;
 
     protected function tagElementsValidators(): array
     {

@@ -2,26 +2,26 @@
 
 declare(strict_types=1);
 use BradiApi\Domain\Common\ValueObjects\Result;
-use BradiApi\Domain\Invoices\NFe\v4_00\ValueObjects\ValorTotalSeguro;
+use BradiApi\Domain\Invoices\NFe\v4_00\ValueObjects\ValorSeguro;
 use BradiApi\Domain\Invoices\Templates\DFeElement;
 use BradiApi\Domain\Xml\ValueObjects\Element;
 
-describe('ValorTotalSeguro', function () {
+describe('ValorSeguro', function () {
     test('Should succeed if is declared', function () {
         $nameSpace = 'BradiApi\Domain\Invoices\NFe\v4_00\ValueObjects';
-        $sut = $nameSpace . '\\ValorTotalSeguro';
+        $sut = $nameSpace . '\\ValorSeguro';
         expect(class_exists($sut))->toBeTrue();
     });
 
     test('Should succeed if extends DFeElement', function () {
-        $sut = new ValorTotalSeguro('parentTag');
+        $sut = new ValorSeguro('parentTag');
         expect(is_subclass_of($sut, DFeElement::class))->toBeTrue();
     });
 
     describe('properties', function () {
         describe('FIELD_NAME', function () {
             test('Should be set correctly', function () {
-                $reflection = new ReflectionClass(ValorTotalSeguro::class);
+                $reflection = new ReflectionClass(ValorSeguro::class);
                 $reflectedProperty = $reflection->getConstant('FIELD_NAME');
                 expect($reflectedProperty)->toBe('vSeg');
             });
@@ -34,7 +34,7 @@ describe('ValorTotalSeguro', function () {
                 $element = new Element;
                 $element->name = 'vSeg';
                 $element->value = $candidate;
-                $targetClass = new ValorTotalSeguro('parentTag');
+                $targetClass = new ValorSeguro('parentTag');
                 $sut = new ReflectionMethod($targetClass, 'validateTagValue');
                 $sutResponse = $sut->invoke($targetClass, $element);
                 expect($sutResponse)->toBeInstanceOf(Result::class);
@@ -55,7 +55,7 @@ describe('ValorTotalSeguro', function () {
                 $element = new Element;
                 $element->name = 'vSeg';
                 $element->value = $candidate;
-                $targetClass = new ValorTotalSeguro('parentTag');
+                $targetClass = new ValorSeguro('parentTag');
                 $sut = new ReflectionMethod($targetClass, 'validateTagValue');
                 $sutResponse = $sut->invoke($targetClass, $element);
                 expect($sutResponse->isFailure())->toBeTrue();
@@ -66,7 +66,7 @@ describe('ValorTotalSeguro', function () {
                 $element = new Element;
                 $element->name = 'vSeg';
                 $element->value = $candidate;
-                $targetClass = new ValorTotalSeguro('parentTag');
+                $targetClass = new ValorSeguro('parentTag');
                 $sut = new ReflectionMethod($targetClass, 'validateTagValue');
                 $sutResponse = $sut->invoke($targetClass, $element);
                 expect($sutResponse->isFailure())->toBeTrue();
@@ -77,7 +77,7 @@ describe('ValorTotalSeguro', function () {
                 $element = new Element;
                 $element->name = 'vSeg';
                 $element->value = $candidate;
-                $targetClass = new ValorTotalSeguro('parentTag');
+                $targetClass = new ValorSeguro('parentTag');
                 $sut = new ReflectionMethod($targetClass, 'validateTagValue');
                 $sutResponse = $sut->invoke($targetClass, $element);
                 expect($sutResponse->isFailure())->toBeTrue();
@@ -88,7 +88,7 @@ describe('ValorTotalSeguro', function () {
                 $element = new Element;
                 $element->name = 'vSeg';
                 $element->value = $candidate;
-                $targetClass = new ValorTotalSeguro('parentTag');
+                $targetClass = new ValorSeguro('parentTag');
                 $sut = new ReflectionMethod($targetClass, 'validateTagValue');
                 $sutResponse = $sut->invoke($targetClass, $element);
                 expect($sutResponse->isFailure())->toBeTrue();
@@ -98,7 +98,7 @@ describe('ValorTotalSeguro', function () {
                 $element = new Element;
                 $element->name = 'vSeg';
                 $element->value = $candidate;
-                $targetClass = new ValorTotalSeguro('parentTag');
+                $targetClass = new ValorSeguro('parentTag');
                 $sut = new ReflectionMethod($targetClass, 'validateTagValue');
                 $sutResponse = $sut->invoke($targetClass, $element);
                 expect($sutResponse->isFailure())->toBeTrue();
@@ -113,7 +113,7 @@ describe('ValorTotalSeguro', function () {
                 $element = new Element;
                 $element->name = 'vSeg';
                 $element->value = $candidate;
-                $targetClass = new ValorTotalSeguro('parentTag');
+                $targetClass = new ValorSeguro('parentTag');
                 $sut = new ReflectionMethod($targetClass, 'validateTagValue');
                 $sutResponse = $sut->invoke($targetClass, $element);
                 expect($sutResponse->isFailure())->toBeTrue();
