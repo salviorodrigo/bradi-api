@@ -237,7 +237,7 @@ describe('InformacoesNotaFiscal', function () {
                 $sut = $reflectedProperty->getType();
                 expect($sut->allowsNull())->toBeFalse();
             });
-        })->skip();
+        });
 
         describe('$transp', function () {
             test('Should be declared', function () {
@@ -258,7 +258,7 @@ describe('InformacoesNotaFiscal', function () {
                 $sut = $reflectedProperty->getType();
                 expect($sut->allowsNull())->toBeFalse();
             });
-        })->skip();
+        });
 
         describe('$cobr', function () {
             test('Should be declared', function () {
@@ -559,6 +559,18 @@ describe('InformacoesNotaFiscal', function () {
                 $xmlElement->parse($xmlString);
                 $informacoesNotaFiscal = new InformacoesNotaFiscal;
                 $sut = new ReflectionMethod($informacoesNotaFiscal, 'validateTagElements');
+                $sutResponse = $sut->invoke($informacoesNotaFiscal, $xmlElement);
+                expect($sutResponse->isFailure())->toBeTrue();
+            });
+        });
+
+        describe('validateTagValue', function () {
+            test('Should fail if a value is provided', function () {
+                $xmlString = '<infNFe Id="NFe11260602393780000102550020009487041538119784" versao="4.00">value</infNFe>';
+                $xmlElement = new Element;
+                $xmlElement->parse($xmlString);
+                $informacoesNotaFiscal = new InformacoesNotaFiscal;
+                $sut = new ReflectionMethod($informacoesNotaFiscal, 'validateTagValue');
                 $sutResponse = $sut->invoke($informacoesNotaFiscal, $xmlElement);
                 expect($sutResponse->isFailure())->toBeTrue();
             });

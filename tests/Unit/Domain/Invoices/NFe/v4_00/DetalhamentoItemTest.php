@@ -228,5 +228,17 @@ describe('DetalhamentoItem', function () {
                 expect($sutResponse->isFailure())->toBeTrue();
             });
         });
+
+        describe('validateTagValue', function () {
+            test('Should fail if a value is provided', function () {
+                $xmlString = '<det nItem="1">value</det>';
+                $xmlElement = new Element;
+                $xmlElement->parse($xmlString);
+                $detalhamentoItem = new DetalhamentoItem;
+                $sut = new ReflectionMethod($detalhamentoItem, 'validateTagValue');
+                $sutResponse = $sut->invoke($detalhamentoItem, $xmlElement);
+                expect($sutResponse->isFailure())->toBeTrue();
+            });
+        });
     });
 });

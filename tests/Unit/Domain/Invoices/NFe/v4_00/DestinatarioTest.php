@@ -302,5 +302,17 @@ describe('Destinatario', function () {
                 expect($sutResponse->isFailure())->toBeTrue();
             });
         });
+
+        describe('validateTagValue', function () {
+            test('Should fail if a value is provided', function () {
+                $xmlString = '<dest>value</dest>';
+                $xmlElement = new Element;
+                $xmlElement->parse($xmlString);
+                $destinatario = new Destinatario;
+                $sut = new ReflectionMethod($destinatario, 'validateTagValue');
+                $sutResponse = $sut->invoke($destinatario, $xmlElement);
+                expect($sutResponse->isFailure())->toBeTrue();
+            });
+        });
     });
 });

@@ -332,5 +332,17 @@ describe('Emitente', function () {
                 expect($sutResponse->isFailure())->toBeTrue();
             })->skip();
         });
+
+        describe('validateTagValue', function () {
+            test('Should fail if a value is provided', function () {
+                $xmlString = '<emit>value</emit>';
+                $xmlElement = new Element;
+                $xmlElement->parse($xmlString);
+                $emitente = new Emitente;
+                $sut = new ReflectionMethod($emitente, 'validateTagValue');
+                $sutResponse = $sut->invoke($emitente, $xmlElement);
+                expect($sutResponse->isFailure())->toBeTrue();
+            });
+        });
     });
 });
