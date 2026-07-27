@@ -46,7 +46,7 @@ describe('InformacoesTransporte', function () {
                 $sut = $reflectedProperty->getType();
                 expect($sut->allowsNull())->toBeFalse();
             });
-        })->skip();
+        });
 
         describe('$transporta', function () {
             test('Should be declared', function () {
