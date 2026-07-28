@@ -29,6 +29,32 @@ describe('DataHoraSaidaEntrada', function () {
     });
 
     describe('methods', function () {
+        describe('validateTagAttributes', function () {
+            test('Should fail if some attribute is provided', function () {
+                $targetClass = new DataHoraSaidaEntrada('parentTag');
+                $fieldName = (new ReflectionClass($targetClass))->getConstant('FIELD_NAME');
+                $xmlString = "<{$fieldName} attribute=\"aValue\"></{$fieldName}>";
+                $xmlElement = new Element;
+                $xmlElement->parse($xmlString);
+                $sut = new ReflectionMethod($targetClass, 'validateTagAttributes');
+                $sutResponse = $sut->invoke($targetClass, $xmlElement);
+                expect($sutResponse->isFailure())->toBeTrue();
+            });
+        });
+
+        describe('validateTagElements', function () {
+            test('Should fail if some element is provided', function () {
+                $targetClass = new DataHoraSaidaEntrada('parentTag');
+                $fieldName = (new ReflectionClass($targetClass))->getConstant('FIELD_NAME');
+                $xmlString = "<{$fieldName}><unallowed/></{$fieldName}>";
+                $xmlElement = new Element;
+                $xmlElement->parse($xmlString);
+                $sut = new ReflectionMethod($targetClass, 'validateTagElements');
+                $sutResponse = $sut->invoke($targetClass, $xmlElement);
+                expect($sutResponse->isFailure())->toBeTrue();
+            });
+        });
+
         describe('validateTagValue', function () {
             test('Should succeed in valid format', function () {
                 $candidate = '2026-03-01T14:30:00-03:00';
