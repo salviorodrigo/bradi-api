@@ -46,7 +46,7 @@ describe('DetalhamentoPagamento', function () {
                 $sut = $reflectedProperty->getType();
                 expect($sut->allowsNull())->toBeTrue();
             });
-        })->skip();
+        });
 
         describe('$tPag', function () {
             test('Should be declared', function () {
