@@ -90,6 +90,17 @@ describe('IndicadorPagamento', function () {
                 $sutResponse = $sut->invoke($targetClass, $xmlElement);
                 expect($sutResponse->isFailure())->toBeTrue();
             });
+
+            test('Should fail if a string value is provided', function () {
+                $candidate = 'a';
+                $xmlString = "<indPag>{$candidate}</indPag>";
+                $xmlElement = new Element;
+                $xmlElement->parse($xmlString);
+                $targetClass = new IndicadorPagamento;
+                $sut = new ReflectionMethod($targetClass, 'validateTagValue');
+                $sutResponse = $sut->invoke($targetClass, $xmlElement);
+                expect($sutResponse->isFailure())->toBeTrue();
+            });
         });
     });
 });
