@@ -26,6 +26,90 @@ describe('DetalhamentoPagamento', function () {
                 expect($reflectedProperty)->toBe('detPag');
             });
         });
+
+        describe('$indPag', function () {
+            test('Should be declared', function () {
+                $sut = new DetalhamentoPagamento;
+                expect($sut)->toHaveProperty('indPag');
+            });
+
+            test('Should be a subclass of DFeElement::class', function () {
+                $reflection = new ReflectionClass(DetalhamentoPagamento::class);
+                $reflectedProperty = $reflection->getProperty('indPag');
+                $sut = $reflectedProperty->getType();
+                expect((is_subclass_of($sut->getName(), DFeElement::class)))->toBeTrue();
+            });
+
+            test('Should be optional', function () {
+                $reflection = new ReflectionClass(DetalhamentoPagamento::class);
+                $reflectedProperty = $reflection->getProperty('indPag');
+                $sut = $reflectedProperty->getType();
+                expect($sut->allowsNull())->toBeTrue();
+            });
+        })->skip();
+
+        describe('$tPag', function () {
+            test('Should be declared', function () {
+                $sut = new DetalhamentoPagamento;
+                expect($sut)->toHaveProperty('tPag');
+            });
+
+            test('Should be a subclass of DFeElement::class', function () {
+                $reflection = new ReflectionClass(DetalhamentoPagamento::class);
+                $reflectedProperty = $reflection->getProperty('tPag');
+                $sut = $reflectedProperty->getType();
+                expect((is_subclass_of($sut->getName(), DFeElement::class)))->toBeTrue();
+            });
+
+            test('Should be required', function () {
+                $reflection = new ReflectionClass(DetalhamentoPagamento::class);
+                $reflectedProperty = $reflection->getProperty('tPag');
+                $sut = $reflectedProperty->getType();
+                expect($sut->allowsNull())->toBeFalse();
+            });
+        })->skip();
+
+        describe('$vPag', function () {
+            test('Should be declared', function () {
+                $sut = new DetalhamentoPagamento;
+                expect($sut)->toHaveProperty('vPag');
+            });
+
+            test('Should be a subclass of DFeElement::class', function () {
+                $reflection = new ReflectionClass(DetalhamentoPagamento::class);
+                $reflectedProperty = $reflection->getProperty('vPag');
+                $sut = $reflectedProperty->getType();
+                expect((is_subclass_of($sut->getName(), DFeElement::class)))->toBeTrue();
+            });
+
+            test('Should be required', function () {
+                $reflection = new ReflectionClass(DetalhamentoPagamento::class);
+                $reflectedProperty = $reflection->getProperty('vPag');
+                $sut = $reflectedProperty->getType();
+                expect($sut->allowsNull())->toBeFalse();
+            });
+        })->skip();
+
+        describe('$card', function () {
+            test('Should be declared', function () {
+                $sut = new DetalhamentoPagamento;
+                expect($sut)->toHaveProperty('card');
+            });
+
+            test('Should be a subclass of DFeElement::class', function () {
+                $reflection = new ReflectionClass(DetalhamentoPagamento::class);
+                $reflectedProperty = $reflection->getProperty('card');
+                $sut = $reflectedProperty->getType();
+                expect((is_subclass_of($sut->getName(), DFeElement::class)))->toBeTrue();
+            });
+
+            test('Should be optional', function () {
+                $reflection = new ReflectionClass(DetalhamentoPagamento::class);
+                $reflectedProperty = $reflection->getProperty('card');
+                $sut = $reflectedProperty->getType();
+                expect($sut->allowsNull())->toBeTrue();
+            });
+        })->skip();
     });
 
     describe('methods', function () {
@@ -43,7 +127,17 @@ describe('DetalhamentoPagamento', function () {
 
         describe('validateTagElements', function () {
             test('Should succeed if all required tags are provided', function () {
-                $xmlString = '<detPag><detPag></detPag>';
+                $xmlString = '<detPag><tPag/><vPag/></detPag>';
+                $xmlElement = new Element;
+                $xmlElement->parse($xmlString);
+                $targetClass = new DetalhamentoPagamento;
+                $sut = new ReflectionMethod($targetClass, 'validateTagElements');
+                $sutResponse = $sut->invoke($targetClass, $xmlElement);
+                expect($sutResponse->isSuccess())->toBeTrue();
+            });
+
+            test('Should succeed if all tags are provided', function () {
+                $xmlString = '<detPag><indPag/><tPag/><vPag/><card/></detPag>';
                 $xmlElement = new Element;
                 $xmlElement->parse($xmlString);
                 $targetClass = new DetalhamentoPagamento;
@@ -53,7 +147,7 @@ describe('DetalhamentoPagamento', function () {
             });
 
             test('Should fail if unallowed tag is provided', function () {
-                $xmlString = '<detPag><unallowed></unallowed></detPag>';
+                $xmlString = '<detPag><unallowed/><indPag/><tPag/><vPag/><card/>/detPag>';
                 $xmlElement = new Element;
                 $xmlElement->parse($xmlString);
                 $targetClass = new DetalhamentoPagamento;
