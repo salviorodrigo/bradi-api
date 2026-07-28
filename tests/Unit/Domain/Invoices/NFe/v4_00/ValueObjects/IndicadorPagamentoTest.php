@@ -79,6 +79,17 @@ describe('IndicadorPagamento', function () {
                 'negativo' => '-1',
                 'two' => '2',
             ]);
+
+            test('Should fail if float inside range value is provided', function () {
+                $candidate = '0.5';
+                $xmlString = "<indPag>{$candidate}</indPag>";
+                $xmlElement = new Element;
+                $xmlElement->parse($xmlString);
+                $targetClass = new IndicadorPagamento;
+                $sut = new ReflectionMethod($targetClass, 'validateTagValue');
+                $sutResponse = $sut->invoke($targetClass, $xmlElement);
+                expect($sutResponse->isFailure())->toBeTrue();
+            });
         });
     });
 });
