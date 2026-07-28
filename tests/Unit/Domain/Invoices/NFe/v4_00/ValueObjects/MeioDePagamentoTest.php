@@ -80,6 +80,17 @@ describe('MeioDePagamento', function () {
                 'Sem pagamento' => '90',
                 'Outros' => '99',
             ]);
+
+            test('Should fail if a non numeric value is provided', function () {
+                $candidate = 'iaValue';
+                $xmlString = "<tPag>{$candidate}</tPag>";
+                $xmlElement = new Element;
+                $xmlElement->parse($xmlString);
+                $targetClass = new MeioDePagamento('parentTag');
+                $sut = new ReflectionMethod($targetClass, 'validateTagValue');
+                $sutResponse = $sut->invoke($targetClass, $xmlElement);
+                expect($sutResponse->isFailure())->toBeTrue();
+            });
         });
     });
 });
