@@ -21,7 +21,7 @@ use BradiApi\Domain\Common\Validators\MinValueValidator;
 use BradiApi\Domain\Invoices\Templates\DFeElement;
 use BradiApi\Domain\Invoices\Traits\ValidatesDFeValueElement;
 
-class IndicadorPagamento extends DFeElement
+class FormaPagamento extends DFeElement
 {
     use ValidatesDFeValueElement;
 
