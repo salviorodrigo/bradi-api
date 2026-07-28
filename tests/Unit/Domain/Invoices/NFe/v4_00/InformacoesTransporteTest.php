@@ -214,9 +214,9 @@ describe('InformacoesTransporte', function () {
                 $xmlString = '<transp>value</transp>';
                 $xmlElement = new Element;
                 $xmlElement->parse($xmlString);
-                $transp = new InformacoesTransporte;
-                $sut = new ReflectionMethod($transp, 'validateTagValue');
-                $sutResponse = $sut->invoke($transp, $xmlElement);
+                $targetClass = new InformacoesTransporte;
+                $sut = new ReflectionMethod($targetClass, 'validateTagValue');
+                $sutResponse = $sut->invoke($targetClass, $xmlElement);
                 expect($sutResponse->isFailure())->toBeTrue();
             });
         });

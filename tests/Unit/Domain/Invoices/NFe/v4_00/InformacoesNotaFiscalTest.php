@@ -435,9 +435,9 @@ describe('InformacoesNotaFiscal', function () {
                 $xmlString = '<infNFe Id="NFe11260602393780000102550020009487041538119784" versao="4.00"></infNFe>';
                 $xmlElement = new Element;
                 $xmlElement->parse($xmlString);
-                $informacoesNotaFiscal = new InformacoesNotaFiscal;
-                $sut = new ReflectionMethod($informacoesNotaFiscal, 'validateTagAttributes');
-                $sutResponse = $sut->invoke($informacoesNotaFiscal, $xmlElement);
+                $targetClass = new InformacoesNotaFiscal;
+                $sut = new ReflectionMethod($targetClass, 'validateTagAttributes');
+                $sutResponse = $sut->invoke($targetClass, $xmlElement);
                 expect($sutResponse->isSuccess())->toBeTrue();
             });
 
@@ -445,9 +445,9 @@ describe('InformacoesNotaFiscal', function () {
                 $xmlString = '<infNFe versao="4.00"></infNFe>';
                 $xmlElement = new Element;
                 $xmlElement->parse($xmlString);
-                $informacoesNotaFiscal = new InformacoesNotaFiscal;
-                $sut = new ReflectionMethod($informacoesNotaFiscal, 'validateTagAttributes');
-                $sutResponse = $sut->invoke($informacoesNotaFiscal, $xmlElement);
+                $targetClass = new InformacoesNotaFiscal;
+                $sut = new ReflectionMethod($targetClass, 'validateTagAttributes');
+                $sutResponse = $sut->invoke($targetClass, $xmlElement);
                 expect($sutResponse->isFailure())->toBeTrue();
             });
 
@@ -455,9 +455,9 @@ describe('InformacoesNotaFiscal', function () {
                 $xmlString = '<infNFe Id="NFe11260602393780000102550020009487041538119784"></infNFe>';
                 $xmlElement = new Element;
                 $xmlElement->parse($xmlString);
-                $informacoesNotaFiscal = new InformacoesNotaFiscal;
-                $sut = new ReflectionMethod($informacoesNotaFiscal, 'validateTagAttributes');
-                $sutResponse = $sut->invoke($informacoesNotaFiscal, $xmlElement);
+                $targetClass = new InformacoesNotaFiscal;
+                $sut = new ReflectionMethod($targetClass, 'validateTagAttributes');
+                $sutResponse = $sut->invoke($targetClass, $xmlElement);
                 expect($sutResponse->isFailure())->toBeTrue();
             });
 
@@ -465,9 +465,9 @@ describe('InformacoesNotaFiscal', function () {
                 $xmlString = '<infNFe Id="NFe11260602393780000102550020009487041538119784" versao="4.00" unallowed="value"></infNFe>';
                 $xmlElement = new Element;
                 $xmlElement->parse($xmlString);
-                $informacoesNotaFiscal = new InformacoesNotaFiscal;
-                $sut = new ReflectionMethod($informacoesNotaFiscal, 'validateTagAttributes');
-                $sutResponse = $sut->invoke($informacoesNotaFiscal, $xmlElement);
+                $targetClass = new InformacoesNotaFiscal;
+                $sut = new ReflectionMethod($targetClass, 'validateTagAttributes');
+                $sutResponse = $sut->invoke($targetClass, $xmlElement);
                 expect($sutResponse->isFailure())->toBeTrue();
             });
         });
@@ -477,9 +477,9 @@ describe('InformacoesNotaFiscal', function () {
                 $xmlString = '<infNFe Id="NFe11260602393780000102550020009487041538119784" versao="4.00"><ide></ide><emit></emit><det nItem="1"></det><total></total><transp></transp><pag></pag><infAdic></infAdic><infRespTec></infRespTec></infNFe>';
                 $xmlElement = new Element;
                 $xmlElement->parse($xmlString);
-                $informacoesNotaFiscal = new InformacoesNotaFiscal;
-                $sut = new ReflectionMethod($informacoesNotaFiscal, 'validateTagElements');
-                $sutResponse = $sut->invoke($informacoesNotaFiscal, $xmlElement);
+                $targetClass = new InformacoesNotaFiscal;
+                $sut = new ReflectionMethod($targetClass, 'validateTagElements');
+                $sutResponse = $sut->invoke($targetClass, $xmlElement);
                 expect($sutResponse->isFailure())->toBeFalse();
             });
 
@@ -487,9 +487,9 @@ describe('InformacoesNotaFiscal', function () {
                 $xmlString = '<infNFe Id="NFe11260602393780000102550020009487041538119784" versao="4.00"><ide></ide><emit></emit><avulsa></avulsa><dest></dest><retirada></retirada><entrega></entrega><autXML></autXML><det nItem="1"></det><total></total><transp></transp><cobr></cobr><pag></pag><infIntermed></infIntermed><infAdic></infAdic><exporta></exporta><compra></compra><cana></cana><infRespTec></infRespTec></infNFe>';
                 $xmlElement = new Element;
                 $xmlElement->parse($xmlString);
-                $informacoesNotaFiscal = new InformacoesNotaFiscal;
-                $sut = new ReflectionMethod($informacoesNotaFiscal, 'validateTagElements');
-                $sutResponse = $sut->invoke($informacoesNotaFiscal, $xmlElement);
+                $targetClass = new InformacoesNotaFiscal;
+                $sut = new ReflectionMethod($targetClass, 'validateTagElements');
+                $sutResponse = $sut->invoke($targetClass, $xmlElement);
                 expect($sutResponse->isFailure())->toBeFalse();
             });
 
@@ -497,9 +497,9 @@ describe('InformacoesNotaFiscal', function () {
                 $xmlString = '<infNFe Id="NFe11260602393780000102550020009487041538119784" versao="4.00"><emit></emit><det nItem="1"></det><total></total><transp></transp><pag></pag><infAdic></infAdic><infRespTec></infRespTec></infNFe>';
                 $xmlElement = new Element;
                 $xmlElement->parse($xmlString);
-                $informacoesNotaFiscal = new InformacoesNotaFiscal;
-                $sut = new ReflectionMethod($informacoesNotaFiscal, 'validateTagElements');
-                $sutResponse = $sut->invoke($informacoesNotaFiscal, $xmlElement);
+                $targetClass = new InformacoesNotaFiscal;
+                $sut = new ReflectionMethod($targetClass, 'validateTagElements');
+                $sutResponse = $sut->invoke($targetClass, $xmlElement);
                 expect($sutResponse->isFailure())->toBeTrue();
             });
 
@@ -507,9 +507,9 @@ describe('InformacoesNotaFiscal', function () {
                 $xmlString = '<infNFe Id="NFe11260602393780000102550020009487041538119784" versao="4.00"><ide></ide><det nItem="1"></det><total></total><transp></transp><pag></pag><infAdic></infAdic><infRespTec></infRespTec></infNFe>';
                 $xmlElement = new Element;
                 $xmlElement->parse($xmlString);
-                $informacoesNotaFiscal = new InformacoesNotaFiscal;
-                $sut = new ReflectionMethod($informacoesNotaFiscal, 'validateTagElements');
-                $sutResponse = $sut->invoke($informacoesNotaFiscal, $xmlElement);
+                $targetClass = new InformacoesNotaFiscal;
+                $sut = new ReflectionMethod($targetClass, 'validateTagElements');
+                $sutResponse = $sut->invoke($targetClass, $xmlElement);
                 expect($sutResponse->isFailure())->toBeTrue();
             });
 
@@ -517,9 +517,9 @@ describe('InformacoesNotaFiscal', function () {
                 $xmlString = '<infNFe Id="NFe11260602393780000102550020009487041538119784" versao="4.00"><ide></ide><emit></emit><total></total><transp></transp><pag></pag><infAdic></infAdic><infRespTec></infRespTec></infNFe>';
                 $xmlElement = new Element;
                 $xmlElement->parse($xmlString);
-                $informacoesNotaFiscal = new InformacoesNotaFiscal;
-                $sut = new ReflectionMethod($informacoesNotaFiscal, 'validateTagElements');
-                $sutResponse = $sut->invoke($informacoesNotaFiscal, $xmlElement);
+                $targetClass = new InformacoesNotaFiscal;
+                $sut = new ReflectionMethod($targetClass, 'validateTagElements');
+                $sutResponse = $sut->invoke($targetClass, $xmlElement);
                 expect($sutResponse->isFailure())->toBeTrue();
             });
 
@@ -527,9 +527,9 @@ describe('InformacoesNotaFiscal', function () {
                 $xmlString = '<infNFe Id="NFe11260602393780000102550020009487041538119784" versao="4.00"><ide></ide><emit></emit><det nItem="1"></det><transp></transp><pag></pag><infAdic></infAdic><infRespTec></infRespTec></infNFe>';
                 $xmlElement = new Element;
                 $xmlElement->parse($xmlString);
-                $informacoesNotaFiscal = new InformacoesNotaFiscal;
-                $sut = new ReflectionMethod($informacoesNotaFiscal, 'validateTagElements');
-                $sutResponse = $sut->invoke($informacoesNotaFiscal, $xmlElement);
+                $targetClass = new InformacoesNotaFiscal;
+                $sut = new ReflectionMethod($targetClass, 'validateTagElements');
+                $sutResponse = $sut->invoke($targetClass, $xmlElement);
                 expect($sutResponse->isFailure())->toBeTrue();
             });
 
@@ -537,9 +537,9 @@ describe('InformacoesNotaFiscal', function () {
                 $xmlString = '<infNFe Id="NFe11260602393780000102550020009487041538119784" versao="4.00"><ide></ide><emit></emit><det nItem="1"></det><total></total><pag></pag><infAdic></infAdic><infRespTec></infRespTec></infNFe>';
                 $xmlElement = new Element;
                 $xmlElement->parse($xmlString);
-                $informacoesNotaFiscal = new InformacoesNotaFiscal;
-                $sut = new ReflectionMethod($informacoesNotaFiscal, 'validateTagElements');
-                $sutResponse = $sut->invoke($informacoesNotaFiscal, $xmlElement);
+                $targetClass = new InformacoesNotaFiscal;
+                $sut = new ReflectionMethod($targetClass, 'validateTagElements');
+                $sutResponse = $sut->invoke($targetClass, $xmlElement);
                 expect($sutResponse->isFailure())->toBeTrue();
             });
 
@@ -547,9 +547,9 @@ describe('InformacoesNotaFiscal', function () {
                 $xmlString = '<infNFe Id="NFe11260602393780000102550020009487041538119784" versao="4.00"><ide></ide><emit></emit><det nItem="1"></det><total></total><transp></transp><infAdic></infAdic><infRespTec></infRespTec></infNFe>';
                 $xmlElement = new Element;
                 $xmlElement->parse($xmlString);
-                $informacoesNotaFiscal = new InformacoesNotaFiscal;
-                $sut = new ReflectionMethod($informacoesNotaFiscal, 'validateTagElements');
-                $sutResponse = $sut->invoke($informacoesNotaFiscal, $xmlElement);
+                $targetClass = new InformacoesNotaFiscal;
+                $sut = new ReflectionMethod($targetClass, 'validateTagElements');
+                $sutResponse = $sut->invoke($targetClass, $xmlElement);
                 expect($sutResponse->isFailure())->toBeTrue();
             });
 
@@ -557,9 +557,9 @@ describe('InformacoesNotaFiscal', function () {
                 $xmlString = '<infNFe Id="NFe11260602393780000102550020009487041538119784" versao="4.00"><ide></ide><emit></emit><det nItem="1"></det><total></total><transp></transp><pag></pag><infAdic></infAdic><infRespTec></infRespTec><unallowed/></infNFe>';
                 $xmlElement = new Element;
                 $xmlElement->parse($xmlString);
-                $informacoesNotaFiscal = new InformacoesNotaFiscal;
-                $sut = new ReflectionMethod($informacoesNotaFiscal, 'validateTagElements');
-                $sutResponse = $sut->invoke($informacoesNotaFiscal, $xmlElement);
+                $targetClass = new InformacoesNotaFiscal;
+                $sut = new ReflectionMethod($targetClass, 'validateTagElements');
+                $sutResponse = $sut->invoke($targetClass, $xmlElement);
                 expect($sutResponse->isFailure())->toBeTrue();
             });
         });
@@ -569,9 +569,9 @@ describe('InformacoesNotaFiscal', function () {
                 $xmlString = '<infNFe Id="NFe11260602393780000102550020009487041538119784" versao="4.00">value</infNFe>';
                 $xmlElement = new Element;
                 $xmlElement->parse($xmlString);
-                $informacoesNotaFiscal = new InformacoesNotaFiscal;
-                $sut = new ReflectionMethod($informacoesNotaFiscal, 'validateTagValue');
-                $sutResponse = $sut->invoke($informacoesNotaFiscal, $xmlElement);
+                $targetClass = new InformacoesNotaFiscal;
+                $sut = new ReflectionMethod($targetClass, 'validateTagValue');
+                $sutResponse = $sut->invoke($targetClass, $xmlElement);
                 expect($sutResponse->isFailure())->toBeTrue();
             });
         });

@@ -244,9 +244,9 @@ describe('Emitente', function () {
                 $xmlString = '<emit attribute="value"><CNPJ></CNPJ><xNome></xNome><enderEmit></enderEmit><IE></IE><CRT></CRT></emit>';
                 $xmlElement = new Element;
                 $xmlElement->parse($xmlString);
-                $identificacaoNotaFiscal = new Emitente;
-                $sut = new ReflectionMethod($identificacaoNotaFiscal, 'validateTagAttributes');
-                $sutResponse = $sut->invoke($identificacaoNotaFiscal, $xmlElement);
+                $targetClass = new Emitente;
+                $sut = new ReflectionMethod($targetClass, 'validateTagAttributes');
+                $sutResponse = $sut->invoke($targetClass, $xmlElement);
                 expect($sutResponse->isFailure())->toBeTrue();
             });
         });
@@ -256,9 +256,9 @@ describe('Emitente', function () {
                 $xmlString = '<emit><CNPJ></CNPJ><xNome></xNome><enderEmit></enderEmit><IE></IE><CRT></CRT></emit>';
                 $xmlElement = new Element;
                 $xmlElement->parse($xmlString);
-                $emitente = new Emitente;
-                $sut = new ReflectionMethod($emitente, 'validateTagElements');
-                $sutResponse = $sut->invoke($emitente, $xmlElement);
+                $targetClass = new Emitente;
+                $sut = new ReflectionMethod($targetClass, 'validateTagElements');
+                $sutResponse = $sut->invoke($targetClass, $xmlElement);
                 expect($sutResponse->isSuccess())->toBeTrue();
             });
 
@@ -266,9 +266,9 @@ describe('Emitente', function () {
                 $xmlString = '<emit><CNPJ></CNPJ><CPF></CPF><xNome></xNome><xFant></xFant><enderEmit></enderEmit><IE></IE><IEST></IEST><CRT></CRT><IM></IM><CNAE></CNAE></emit>';
                 $xmlElement = new Element;
                 $xmlElement->parse($xmlString);
-                $emitente = new Emitente;
-                $sut = new ReflectionMethod($emitente, 'validateTagElements');
-                $sutResponse = $sut->invoke($emitente, $xmlElement);
+                $targetClass = new Emitente;
+                $sut = new ReflectionMethod($targetClass, 'validateTagElements');
+                $sutResponse = $sut->invoke($targetClass, $xmlElement);
                 expect($sutResponse->isSuccess())->toBeTrue();
             });
 
@@ -276,9 +276,9 @@ describe('Emitente', function () {
                 $xmlString = '<emit><xNome></xNome><enderEmit></enderEmit><IE></IE><CRT></CRT></emit>';
                 $xmlElement = new Element;
                 $xmlElement->parse($xmlString);
-                $emitente = new Emitente;
-                $sut = new ReflectionMethod($emitente, 'validateTagElements');
-                $sutResponse = $sut->invoke($emitente, $xmlElement);
+                $targetClass = new Emitente;
+                $sut = new ReflectionMethod($targetClass, 'validateTagElements');
+                $sutResponse = $sut->invoke($targetClass, $xmlElement);
                 expect($sutResponse->isFailure())->toBeTrue();
             });
 
@@ -286,9 +286,9 @@ describe('Emitente', function () {
                 $xmlString = '<emit><CNPJ></CNPJ><enderEmit></enderEmit><IE></IE><CRT></CRT></emit>';
                 $xmlElement = new Element;
                 $xmlElement->parse($xmlString);
-                $emitente = new Emitente;
-                $sut = new ReflectionMethod($emitente, 'validateTagElements');
-                $sutResponse = $sut->invoke($emitente, $xmlElement);
+                $targetClass = new Emitente;
+                $sut = new ReflectionMethod($targetClass, 'validateTagElements');
+                $sutResponse = $sut->invoke($targetClass, $xmlElement);
                 expect($sutResponse->isFailure())->toBeTrue();
             });
 
@@ -296,9 +296,9 @@ describe('Emitente', function () {
                 $xmlString = '<emit><CNPJ></CNPJ><xNome></xNome><IE></IE><CRT></CRT></emit>';
                 $xmlElement = new Element;
                 $xmlElement->parse($xmlString);
-                $emitente = new Emitente;
-                $sut = new ReflectionMethod($emitente, 'validateTagElements');
-                $sutResponse = $sut->invoke($emitente, $xmlElement);
+                $targetClass = new Emitente;
+                $sut = new ReflectionMethod($targetClass, 'validateTagElements');
+                $sutResponse = $sut->invoke($targetClass, $xmlElement);
                 expect($sutResponse->isFailure())->toBeTrue();
             });
 
@@ -306,9 +306,9 @@ describe('Emitente', function () {
                 $xmlString = '<emit><CNPJ></CNPJ><xNome></xNome><enderEmit></enderEmit><CRT></CRT></emit>';
                 $xmlElement = new Element;
                 $xmlElement->parse($xmlString);
-                $emitente = new Emitente;
-                $sut = new ReflectionMethod($emitente, 'validateTagElements');
-                $sutResponse = $sut->invoke($emitente, $xmlElement);
+                $targetClass = new Emitente;
+                $sut = new ReflectionMethod($targetClass, 'validateTagElements');
+                $sutResponse = $sut->invoke($targetClass, $xmlElement);
                 expect($sutResponse->isFailure())->toBeTrue();
             });
 
@@ -316,9 +316,9 @@ describe('Emitente', function () {
                 $xmlString = '<emit><CNPJ></CNPJ><xNome></xNome><enderEmit></enderEmit><IE></IE></emit>';
                 $xmlElement = new Element;
                 $xmlElement->parse($xmlString);
-                $emitente = new Emitente;
-                $sut = new ReflectionMethod($emitente, 'validateTagElements');
-                $sutResponse = $sut->invoke($emitente, $xmlElement);
+                $targetClass = new Emitente;
+                $sut = new ReflectionMethod($targetClass, 'validateTagElements');
+                $sutResponse = $sut->invoke($targetClass, $xmlElement);
                 expect($sutResponse->isFailure())->toBeTrue();
             });
 
@@ -326,9 +326,9 @@ describe('Emitente', function () {
                 $xmlString = '<emit><unallowed></unallowed><CNPJ></CNPJ><CPF></CPF><xNome></xNome><xFant></xFant><enderEmit></enderEmit><IE></IE><IEST></IEST><CRT></CRT><IM></IM><CNAE></CNAE></emit>';
                 $xmlElement = new Element;
                 $xmlElement->parse($xmlString);
-                $emitente = new Emitente;
-                $sut = new ReflectionMethod($emitente, 'validateTagElements');
-                $sutResponse = $sut->invoke($emitente, $xmlElement);
+                $targetClass = new Emitente;
+                $sut = new ReflectionMethod($targetClass, 'validateTagElements');
+                $sutResponse = $sut->invoke($targetClass, $xmlElement);
                 expect($sutResponse->isFailure())->toBeTrue();
             })->skip();
         });
@@ -338,9 +338,9 @@ describe('Emitente', function () {
                 $xmlString = '<emit>value</emit>';
                 $xmlElement = new Element;
                 $xmlElement->parse($xmlString);
-                $emitente = new Emitente;
-                $sut = new ReflectionMethod($emitente, 'validateTagValue');
-                $sutResponse = $sut->invoke($emitente, $xmlElement);
+                $targetClass = new Emitente;
+                $sut = new ReflectionMethod($targetClass, 'validateTagValue');
+                $sutResponse = $sut->invoke($targetClass, $xmlElement);
                 expect($sutResponse->isFailure())->toBeTrue();
             });
         });

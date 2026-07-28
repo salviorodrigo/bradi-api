@@ -244,9 +244,9 @@ describe('Destinatario', function () {
                 $xmlString = '<dest attribute="value"><CNPJ></CNPJ><xNome></xNome><enderEmit></enderEmit><IE></IE><CRT></CRT></dest>';
                 $xmlElement = new Element;
                 $xmlElement->parse($xmlString);
-                $identificacaoNotaFiscal = new Destinatario;
-                $sut = new ReflectionMethod($identificacaoNotaFiscal, 'validateTagAttributes');
-                $sutResponse = $sut->invoke($identificacaoNotaFiscal, $xmlElement);
+                $targetClass = new Destinatario;
+                $sut = new ReflectionMethod($targetClass, 'validateTagAttributes');
+                $sutResponse = $sut->invoke($targetClass, $xmlElement);
                 expect($sutResponse->isFailure())->toBeTrue();
             });
         });
@@ -256,9 +256,9 @@ describe('Destinatario', function () {
                 $xmlString = '<dest><CNPJ></CNPJ><indIEDest></indIEDest></dest>';
                 $xmlElement = new Element;
                 $xmlElement->parse($xmlString);
-                $destinatario = new Destinatario;
-                $sut = new ReflectionMethod($destinatario, 'validateTagElements');
-                $sutResponse = $sut->invoke($destinatario, $xmlElement);
+                $targetClass = new Destinatario;
+                $sut = new ReflectionMethod($targetClass, 'validateTagElements');
+                $sutResponse = $sut->invoke($targetClass, $xmlElement);
                 expect($sutResponse->isSuccess())->toBeTrue();
             });
 
@@ -266,9 +266,9 @@ describe('Destinatario', function () {
                 $xmlString = '<dest><CNPJ></CNPJ><xNome></xNome><indIEDest></indIEDest><IE></IE><ISUF></ISUF><IM></IM><email></email><enderDest></enderDest></dest>';
                 $xmlElement = new Element;
                 $xmlElement->parse($xmlString);
-                $destinatario = new Destinatario;
-                $sut = new ReflectionMethod($destinatario, 'validateTagElements');
-                $sutResponse = $sut->invoke($destinatario, $xmlElement);
+                $targetClass = new Destinatario;
+                $sut = new ReflectionMethod($targetClass, 'validateTagElements');
+                $sutResponse = $sut->invoke($targetClass, $xmlElement);
                 expect($sutResponse->isSuccess())->toBeTrue();
             });
 
@@ -276,9 +276,9 @@ describe('Destinatario', function () {
                 $xmlString = '<dest><indIEDest></indIEDest></dest>';
                 $xmlElement = new Element;
                 $xmlElement->parse($xmlString);
-                $destinatario = new Destinatario;
-                $sut = new ReflectionMethod($destinatario, 'validateTagElements');
-                $sutResponse = $sut->invoke($destinatario, $xmlElement);
+                $targetClass = new Destinatario;
+                $sut = new ReflectionMethod($targetClass, 'validateTagElements');
+                $sutResponse = $sut->invoke($targetClass, $xmlElement);
                 expect($sutResponse->isFailure())->toBeTrue();
             });
 
@@ -286,9 +286,9 @@ describe('Destinatario', function () {
                 $xmlString = '<dest><CNPJ></CNPJ></dest>';
                 $xmlElement = new Element;
                 $xmlElement->parse($xmlString);
-                $destinatario = new Destinatario;
-                $sut = new ReflectionMethod($destinatario, 'validateTagElements');
-                $sutResponse = $sut->invoke($destinatario, $xmlElement);
+                $targetClass = new Destinatario;
+                $sut = new ReflectionMethod($targetClass, 'validateTagElements');
+                $sutResponse = $sut->invoke($targetClass, $xmlElement);
                 expect($sutResponse->isFailure())->toBeTrue();
             });
 
@@ -296,9 +296,9 @@ describe('Destinatario', function () {
                 $xmlString = '<dest><unallowed></unallowed><CNPJ></CNPJ><indIEDest></indIEDest></dest>';
                 $xmlElement = new Element;
                 $xmlElement->parse($xmlString);
-                $destinatario = new Destinatario;
-                $sut = new ReflectionMethod($destinatario, 'validateTagElements');
-                $sutResponse = $sut->invoke($destinatario, $xmlElement);
+                $targetClass = new Destinatario;
+                $sut = new ReflectionMethod($targetClass, 'validateTagElements');
+                $sutResponse = $sut->invoke($targetClass, $xmlElement);
                 expect($sutResponse->isFailure())->toBeTrue();
             });
         });
@@ -308,9 +308,9 @@ describe('Destinatario', function () {
                 $xmlString = '<dest>value</dest>';
                 $xmlElement = new Element;
                 $xmlElement->parse($xmlString);
-                $destinatario = new Destinatario;
-                $sut = new ReflectionMethod($destinatario, 'validateTagValue');
-                $sutResponse = $sut->invoke($destinatario, $xmlElement);
+                $targetClass = new Destinatario;
+                $sut = new ReflectionMethod($targetClass, 'validateTagValue');
+                $sutResponse = $sut->invoke($targetClass, $xmlElement);
                 expect($sutResponse->isFailure())->toBeTrue();
             });
         });

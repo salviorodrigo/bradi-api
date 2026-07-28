@@ -140,9 +140,9 @@ describe('DetalhamentoItem', function () {
                 $xmlString = '<det nItem="1"></det>';
                 $xmlElement = new Element;
                 $xmlElement->parse($xmlString);
-                $detalhamentoItem = new DetalhamentoItem;
-                $sut = new ReflectionMethod($detalhamentoItem, 'validateTagAttributes');
-                $sutResponse = $sut->invoke($detalhamentoItem, $xmlElement);
+                $targetClass = new DetalhamentoItem;
+                $sut = new ReflectionMethod($targetClass, 'validateTagAttributes');
+                $sutResponse = $sut->invoke($targetClass, $xmlElement);
                 expect($sutResponse->isSuccess())->toBeTrue();
             });
 
@@ -182,9 +182,9 @@ describe('DetalhamentoItem', function () {
                 $xmlString = '<det nItem="1"><prod></prod><imposto></imposto></det>';
                 $xmlElement = new Element;
                 $xmlElement->parse($xmlString);
-                $detalhamentoItem = new DetalhamentoItem;
-                $sut = new ReflectionMethod($detalhamentoItem, 'validateTagElements');
-                $sutResponse = $sut->invoke($detalhamentoItem, $xmlElement);
+                $targetClass = new DetalhamentoItem;
+                $sut = new ReflectionMethod($targetClass, 'validateTagElements');
+                $sutResponse = $sut->invoke($targetClass, $xmlElement);
                 expect($sutResponse->isSuccess())->toBeTrue();
             });
 
@@ -192,9 +192,9 @@ describe('DetalhamentoItem', function () {
                 $xmlString = '<det nItem="1"><prod></prod><imposto></imposto><impostoDevol></impostoDevol></det>';
                 $xmlElement = new Element;
                 $xmlElement->parse($xmlString);
-                $detalhamentoItem = new DetalhamentoItem;
-                $sut = new ReflectionMethod($detalhamentoItem, 'validateTagElements');
-                $sutResponse = $sut->invoke($detalhamentoItem, $xmlElement);
+                $targetClass = new DetalhamentoItem;
+                $sut = new ReflectionMethod($targetClass, 'validateTagElements');
+                $sutResponse = $sut->invoke($targetClass, $xmlElement);
                 expect($sutResponse->isSuccess())->toBeTrue();
             });
 
@@ -202,9 +202,9 @@ describe('DetalhamentoItem', function () {
                 $xmlString = '<det nItem="1"><imposto></imposto></det>';
                 $xmlElement = new Element;
                 $xmlElement->parse($xmlString);
-                $detalhamentoItem = new DetalhamentoItem;
-                $sut = new ReflectionMethod($detalhamentoItem, 'validateTagElements');
-                $sutResponse = $sut->invoke($detalhamentoItem, $xmlElement);
+                $targetClass = new DetalhamentoItem;
+                $sut = new ReflectionMethod($targetClass, 'validateTagElements');
+                $sutResponse = $sut->invoke($targetClass, $xmlElement);
                 expect($sutResponse->isFailure())->toBeTrue();
             });
 
@@ -212,9 +212,9 @@ describe('DetalhamentoItem', function () {
                 $xmlString = '<det nItem="1"><prod></prod></det>';
                 $xmlElement = new Element;
                 $xmlElement->parse($xmlString);
-                $detalhamentoItem = new DetalhamentoItem;
-                $sut = new ReflectionMethod($detalhamentoItem, 'validateTagElements');
-                $sutResponse = $sut->invoke($detalhamentoItem, $xmlElement);
+                $targetClass = new DetalhamentoItem;
+                $sut = new ReflectionMethod($targetClass, 'validateTagElements');
+                $sutResponse = $sut->invoke($targetClass, $xmlElement);
                 expect($sutResponse->isFailure())->toBeTrue();
             });
 
@@ -222,9 +222,9 @@ describe('DetalhamentoItem', function () {
                 $xmlString = '<det nItem="1"><prod></prod><imposto></imposto><unallowed></unallowed></det>';
                 $xmlElement = new Element;
                 $xmlElement->parse($xmlString);
-                $detalhamentoItem = new DetalhamentoItem;
-                $sut = new ReflectionMethod($detalhamentoItem, 'validateTagElements');
-                $sutResponse = $sut->invoke($detalhamentoItem, $xmlElement);
+                $targetClass = new DetalhamentoItem;
+                $sut = new ReflectionMethod($targetClass, 'validateTagElements');
+                $sutResponse = $sut->invoke($targetClass, $xmlElement);
                 expect($sutResponse->isFailure())->toBeTrue();
             });
         });
@@ -234,9 +234,9 @@ describe('DetalhamentoItem', function () {
                 $xmlString = '<det nItem="1">value</det>';
                 $xmlElement = new Element;
                 $xmlElement->parse($xmlString);
-                $detalhamentoItem = new DetalhamentoItem;
-                $sut = new ReflectionMethod($detalhamentoItem, 'validateTagValue');
-                $sutResponse = $sut->invoke($detalhamentoItem, $xmlElement);
+                $targetClass = new DetalhamentoItem;
+                $sut = new ReflectionMethod($targetClass, 'validateTagValue');
+                $sutResponse = $sut->invoke($targetClass, $xmlElement);
                 expect($sutResponse->isFailure())->toBeTrue();
             });
         });
