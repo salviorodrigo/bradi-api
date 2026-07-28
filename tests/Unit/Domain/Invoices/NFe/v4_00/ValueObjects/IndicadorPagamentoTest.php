@@ -66,6 +66,19 @@ describe('IndicadorPagamento', function () {
                 'Pagamento a vista' => '0',
                 'Pagamento a prazo' => '1',
             ]);
+
+            test('Should fail if an out-of-range value is provided', function ($candidate) {
+                $xmlString = "<indPag>{$candidate}</indPag>";
+                $xmlElement = new Element;
+                $xmlElement->parse($xmlString);
+                $targetClass = new IndicadorPagamento;
+                $sut = new ReflectionMethod($targetClass, 'validateTagValue');
+                $sutResponse = $sut->invoke($targetClass, $xmlElement);
+                expect($sutResponse->isFailure())->toBeTrue();
+            })->with([
+                'negativo' => '-1',
+                'two' => '2',
+            ]);
         });
     });
 });
