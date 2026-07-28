@@ -91,6 +91,27 @@ describe('MeioDePagamento', function () {
                 $sutResponse = $sut->invoke($targetClass, $xmlElement);
                 expect($sutResponse->isFailure())->toBeTrue();
             });
+
+            test('Should fail if out-of-range value is provided', function ($candidate) {
+                $xmlString = "<tPag>{$candidate}</tPag>";
+                $xmlElement = new Element;
+                $xmlElement->parse($xmlString);
+                $targetClass = new MeioDePagamento('parentTag');
+                $sut = new ReflectionMethod($targetClass, 'validateTagValue');
+                $sutResponse = $sut->invoke($targetClass, $xmlElement);
+                expect($sutResponse->isFailure())->toBeTrue();
+            })->with([
+                'one digit' => '1',
+                'zero zero' => '00',
+                'six' => '06',
+                'nine' => '09',
+                'fourteen' => '14',
+                'twenty' => '20',
+                'eighty nine' => '89',
+                'ninety one' => '91',
+                'ninety eight' => '98',
+                'greater than maximum' => '100',
+            ]);
         });
     });
 });

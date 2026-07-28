@@ -30,6 +30,8 @@ declare(strict_types=1);
 namespace BradiApi\Domain\Invoices\NFe\v4_00\ValueObjects;
 
 use BradiApi\Domain\Common\Validators\IsNumericValidator;
+use BradiApi\Domain\Common\Validators\StringLengthValidator;
+use BradiApi\Domain\Invoices\NFe\Validators\IsMeioDePagamentoValidator;
 use BradiApi\Domain\Invoices\Templates\DFeElement;
 use BradiApi\Domain\Invoices\Traits\ValidatesDFeValueElement;
 
@@ -43,6 +45,8 @@ class MeioDePagamento extends DFeElement
     {
         return [
             new IsNumericValidator(allowLeadingZeros: true),
+            new StringLengthValidator(2),
+            new IsMeioDePagamentoValidator,
         ];
     }
 }
