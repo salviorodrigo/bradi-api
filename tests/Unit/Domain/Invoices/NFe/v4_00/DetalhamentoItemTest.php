@@ -55,11 +55,11 @@ describe('DetalhamentoItem', function () {
                 expect($sut)->toHaveProperty('infAdProd');
             });
 
-            test('Should be a subclass of DFeAttribute::class', function () {
+            test('Should be a subclass of DFeElement::class', function () {
                 $reflection = new ReflectionClass(DetalhamentoItem::class);
                 $reflectedProperty = $reflection->getProperty('infAdProd');
                 $sut = $reflectedProperty->getType();
-                expect((is_subclass_of($sut->getName(), DFeAttribute::class)))->toBeTrue();
+                expect((is_subclass_of($sut->getName(), DFeElement::class)))->toBeTrue();
             });
 
             test('Should be optional', function () {
