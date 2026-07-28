@@ -53,6 +53,19 @@ describe('IndicadorPagamento', function () {
             });
         });
 
-        describe('tagValueValidators', function () {});
+        describe('tagValueValidators', function () {
+            test('Should succeed if a valid value is provided', function ($candidate) {
+                $xmlString = "<indPag>{$candidate}</indPag>";
+                $xmlElement = new Element;
+                $xmlElement->parse($xmlString);
+                $targetClass = new IndicadorPagamento;
+                $sut = new ReflectionMethod($targetClass, 'validateTagValue');
+                $sutResponse = $sut->invoke($targetClass, $xmlElement);
+                expect($sutResponse->isSuccess())->toBeTrue();
+            })->with([
+                'Pagamento a vista' => '0',
+                'Pagamento a prazo' => '1',
+            ]);
+        });
     });
 });
