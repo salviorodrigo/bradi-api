@@ -2,6 +2,16 @@
 
 declare(strict_types=1);
 
+/**
+ * MOC      7.0
+ * ID       YA01b
+ * Campo    indPag
+ * Desc     Indicador da Forma de Pagamento
+ * Tam      0-1
+ * OBS:
+ * 0= Pagamento à Vista 1= Pagamento à Prazo
+ */
+
 namespace BradiApi\Domain\Invoices\NFe\v4_00\ValueObjects;
 
 use BradiApi\Domain\Common\Validators\IsIntegerValidator;
