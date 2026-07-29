@@ -9,6 +9,7 @@ use BradiApi\Domain\Common\Validators\IsXmlStringValidator;
 use BradiApi\Domain\Common\ValueObjects\Result;
 use BradiApi\Domain\Xml\Protocols\XmlIterator;
 use Exception;
+use Generator;
 
 final class XmlStringIterator implements XmlIterator
 {
@@ -19,8 +20,8 @@ final class XmlStringIterator implements XmlIterator
     /** @param array<string,string> $attributes List of $attributeName => $attributeValue */
     public array $attributes { get => $this->getAttributes(); }
 
-    /** @param array<string> List of child XML strings */
-    public array $children { get => $this->getChildren(); }
+    /** @param iterable<string> List of child XML strings */
+    public iterable $children { get => $this->getChildren(); }
 
     public private(set) mixed $candidate;
 
@@ -31,13 +32,11 @@ final class XmlStringIterator implements XmlIterator
             throw new Exception('Candidate not loaded.');
         }
 
-        $xmlTags = $this->list($tagName);
-
-        return $xmlTags[0] ?? '';
+        return $this->list($tagName)->current() ?? '';
     }
 
-    /** @return array<string> List of XML strings for the specified tag name */
-    public function list(string $tagName): array
+    /** @return iterable<string> List of XML strings for the specified tag name */
+    public function list(string $tagName): Generator
     {
         if (! isset($this->candidate)) {
             throw new Exception('Candidate not loaded.');
@@ -47,16 +46,13 @@ final class XmlStringIterator implements XmlIterator
             return [];
         }
 
-        $list = [];
         $pointer = 0;
         while ($this->existsTag($tagName, $pointer)) {
             $startPosition = $this->getStartPositionTag($tagName, $pointer);
             $endPosition = $this->getEndPositionTag($tagName, $startPosition);
-            $list[] = substr($this->candidate, $startPosition, $endPosition - $startPosition);
+            yield substr($this->candidate, $startPosition, $endPosition - $startPosition);
             $pointer = $endPosition;
         }
-
-        return $list;
     }
 
     /** @return Result<XmlIterator|ApiError> */
@@ -119,7 +115,7 @@ final class XmlStringIterator implements XmlIterator
         );
     }
 
-    private function getChildren(): array
+    private function getChildren(): Generator
     {
         if (! isset($this->candidate)) {
             throw new Exception('Candidate not loaded.');
@@ -140,15 +136,13 @@ final class XmlStringIterator implements XmlIterator
 
             $childStartPosition = $this->getStartPositionTag($childName, $pointer);
             $childEndPosition = $this->getEndPositionTag($childName, $childStartPosition);
-            $childrenList[] = substr(
+            yield substr(
                 $this->candidate,
                 $childStartPosition,
                 $childEndPosition - $childStartPosition
             );
             $pointer = $childEndPosition;
         }
-
-        return $childrenList;
     }
 
     private function existsTag(string $tagName, int $offset = 0): bool

@@ -20,12 +20,13 @@ interface XmlIterator
     /** @param array<string,string> $attributes List of $attributeName => $attributeValue */
     public array $attributes {get; }
 
-    /** @return array<string> List of child XML strings */
-    public array $children {get; }
+    /** @return iterable<string> List of child XML strings */
+    public iterable $children {get; }
 
     public function get(string $tagName): string;
 
-    public function list(string $tagName): array;
+    /** @return iterable<string> List of child XML strings */
+    public function list(string $tagName): iterable;
 
     /** @return Result<XmlIterator|ApiError> */
     public function loadFrom(mixed $candidate): Result;
