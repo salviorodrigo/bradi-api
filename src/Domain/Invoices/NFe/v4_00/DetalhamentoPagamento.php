@@ -14,6 +14,8 @@ declare(strict_types=1);
 namespace BradiApi\Domain\Invoices\NFe\v4_00;
 
 use BradiApi\Domain\Invoices\NFe\v4_00\ValueObjects\FormaPagamento;
+use BradiApi\Domain\Invoices\NFe\v4_00\ValueObjects\MeioDePagamento;
+use BradiApi\Domain\Invoices\NFe\v4_00\ValueObjects\ValorPagamento;
 use BradiApi\Domain\Invoices\Templates\DFeElement;
 use BradiApi\Domain\Invoices\Traits\ValidatesDFeGroupElement;
 
@@ -24,6 +26,8 @@ final class DetalhamentoPagamento extends DFeElement
     public const string FIELD_NAME = 'detPag';
 
     public ?FormaPagamento $indPag;
+    public MeioDePagamento $tPag;
+    public ValorPagamento $vPag;
 
     protected function tagElementsValidators(): array
     {

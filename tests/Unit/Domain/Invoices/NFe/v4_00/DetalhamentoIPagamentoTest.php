@@ -67,7 +67,7 @@ describe('DetalhamentoPagamento', function () {
                 $sut = $reflectedProperty->getType();
                 expect($sut->allowsNull())->toBeFalse();
             });
-        })->skip();
+        });
 
         describe('$vPag', function () {
             test('Should be declared', function () {
@@ -88,7 +88,7 @@ describe('DetalhamentoPagamento', function () {
                 $sut = $reflectedProperty->getType();
                 expect($sut->allowsNull())->toBeFalse();
             });
-        })->skip();
+        });
 
         describe('$card', function () {
             test('Should be declared', function () {
