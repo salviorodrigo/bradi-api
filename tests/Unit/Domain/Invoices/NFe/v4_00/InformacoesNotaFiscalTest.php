@@ -300,7 +300,7 @@ describe('InformacoesNotaFiscal', function () {
                 $sut = $reflectedProperty->getType();
                 expect($sut->allowsNull())->toBeFalse();
             });
-        })->skip();
+        });
 
         describe('$infIntermed', function () {
             test('Should be declared', function () {
