@@ -34,5 +34,10 @@ describe('DFeAttribute', function () {
             expect(fn () => (string) new FakeDFeAttribute('infNFe'))
                 ->toThrow(RuntimeException::class);
         });
+
+        test('Should return the attribute as a string on success', function () {
+            $this->sut->value = 'ABC123';
+            expect((string) $this->sut)->toBe('fakeAttr="ABC123"');
+        });
     });
 });
