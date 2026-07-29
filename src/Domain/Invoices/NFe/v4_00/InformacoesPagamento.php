@@ -24,6 +24,8 @@ final class InformacoesPagamento extends DFeElement
 
     public const string FIELD_NAME = 'pag';
 
+    public DetalhamentoPagamentoCollection $detPag;
+
     protected function tagElementsValidators(): array
     {
         return [

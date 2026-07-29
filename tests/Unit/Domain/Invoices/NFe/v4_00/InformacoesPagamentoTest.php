@@ -47,7 +47,7 @@ describe('InformacoesPagamento', function () {
                 $sut = $reflectedProperty->getType();
                 expect($sut->allowsNull())->toBeFalse();
             });
-        })->skip();
+        });
 
         describe('$vTroco', function () {
             test('Should be declared', function () {
