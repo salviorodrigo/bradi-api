@@ -13,6 +13,7 @@ declare(strict_types=1);
 
 namespace BradiApi\Domain\Invoices\NFe\v4_00;
 
+use BradiApi\Domain\Invoices\NFe\v4_00\ValueObjects\ValorTroco;
 use BradiApi\Domain\Invoices\Templates\DFeElement;
 use BradiApi\Domain\Invoices\Traits\ValidatesDFeGroupElement;
 use BradiApi\Domain\Invoices\Validators\AllowedTagsValidator;
@@ -25,6 +26,7 @@ final class InformacoesPagamento extends DFeElement
     public const string FIELD_NAME = 'pag';
 
     public DetalhamentoPagamentoCollection $detPag;
+    public ?ValorTroco $vTroco;
 
     protected function tagElementsValidators(): array
     {

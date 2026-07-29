@@ -62,13 +62,13 @@ describe('InformacoesPagamento', function () {
                 expect((is_subclass_of($sut->getName(), DFeElement::class)))->toBeTrue();
             });
 
-            test('Should be required', function () {
+            test('Should be optional', function () {
                 $reflection = new ReflectionClass(InformacoesPagamento::class);
                 $reflectedProperty = $reflection->getProperty('vTroco');
                 $sut = $reflectedProperty->getType();
-                expect($sut->allowsNull())->toBeFalse();
+                expect($sut->allowsNull())->toBeTrue();
             });
-        })->skip();
+        });
     });
 
     describe('methods', function () {
