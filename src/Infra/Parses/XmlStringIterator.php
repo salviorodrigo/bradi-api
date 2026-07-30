@@ -157,7 +157,7 @@ final class XmlStringIterator implements XmlIterator
 
         $xmlTag = '<' . $tagName;
 
-        return (bool) strpos($this->candidate, $xmlTag, $offset);
+        return strpos($this->candidate, $xmlTag, $offset) !== false;
     }
 
     private function getStartPositionTag(string $tagName, int $offset = 0): int
@@ -185,13 +185,46 @@ final class XmlStringIterator implements XmlIterator
             throw new Exception('Candidate not loaded.');
         }
 
-        if ($this->isAutoClosedTag($tagName, $offset)) {
-            return (int) strpos($this->candidate, '/>', $offset) + strlen('/>');
+        $startPosition = $this->getStartPositionTag($tagName, $offset);
+
+        if ($this->isAutoClosedTag($tagName, $startPosition)) {
+            return $this->getPositionAfterTagOpen($startPosition);
         }
 
-        $xmlTag = '</' . $tagName . '>';
+        return $this->getPositionAfterMatchingCloseTag($tagName, $startPosition);
+    }
 
-        return (int) strpos($this->candidate, $xmlTag, $offset) + strlen($xmlTag);
+    private function getPositionAfterMatchingCloseTag(string $tagName, int $startPosition): int
+    {
+        $closingTag = '</' . $tagName . '>';
+        $pointer = $this->getPositionAfterTagOpen($startPosition);
+        $openDepth = 1;
+
+        while ($openDepth > 0) {
+            $nextOpenPosition = $this->getNextStartPositionTag($tagName, $pointer);
+            $nextClosePosition = strpos($this->candidate, $closingTag, $pointer);
+            if ($nextClosePosition === false) {
+                throw new Exception("Closing tag </{$tagName}> not found.");
+            }
+
+            $opensBeforeCloses = $nextOpenPosition !== false && $nextOpenPosition < $nextClosePosition;
+            if ($opensBeforeCloses) {
+                $openDepth += $this->isAutoClosedTag($tagName, $nextOpenPosition) ? 0 : 1;
+                $pointer = $this->getPositionAfterTagOpen($nextOpenPosition);
+
+                continue;
+            }
+
+            $openDepth--;
+            $pointer = $nextClosePosition + strlen($closingTag);
+        }
+
+        return $pointer;
+    }
+
+    private function getPositionAfterTagOpen(int $offset): int
+    {
+        return (int) strpos($this->candidate, '>', $offset) + 1;
     }
 
     private function getInnerStartPositionTag(): int
@@ -259,16 +292,45 @@ final class XmlStringIterator implements XmlIterator
             throw new Exception('Candidate not loaded.');
         }
 
-        $pattern = '<' . $tagName;
-        $pointer = strpos($this->candidate, $pattern, $offset);
-        if ($pointer === false) {
+        $openTag = $this->getOpenTag($tagName, $offset);
+
+        return preg_match('/\/\s*>$/', $openTag) === 1;
+    }
+
+    private function getOpenTag(string $tagName, int $offset = 0): string
+    {
+        $startPosition = strpos($this->candidate, '<' . $tagName, $offset);
+        if ($startPosition === false) {
             throw new Exception("Tag <{$tagName}> not found in candidate.");
         }
 
-        $slashPosition = strpos($this->candidate, '/', $pointer);
-        $closePosition = strpos($this->candidate, '>', $pointer);
+        $closePosition = strpos($this->candidate, '>', $startPosition);
+        if ($closePosition === false) {
+            throw new Exception("Tag <{$tagName}> is not properly closed.");
+        }
 
-        return $slashPosition < $closePosition;
+        return substr($this->candidate, $startPosition, $closePosition - $startPosition + 1);
+    }
+
+    private function getNextStartPositionTag(string $tagName, int $offset): int|false
+    {
+        if (! isset($this->candidate)) {
+            throw new Exception('Candidate not loaded.');
+        }
+
+        $pattern = '<' . $tagName;
+        $pointer = $offset;
+
+        while (($position = strpos($this->candidate, $pattern, $pointer)) !== false) {
+            $charAfterTagName = $this->candidate[$position + strlen($pattern)] ?? '';
+            if (in_array($charAfterTagName, [' ', '>', '/'], true)) {
+                return $position;
+            }
+
+            $pointer = $position + strlen($pattern);
+        }
+
+        return false;
     }
 
     private function hasAttributes(): bool

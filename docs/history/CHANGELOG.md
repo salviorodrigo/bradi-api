@@ -14,6 +14,26 @@ Guia de uso: consulte `docs/history/README.md`.
 
 ---
 
+## 2026-07-29
+
+### Added
+
+- Escopo: Tests/Infra
+- Descricao: Criada a suite unitaria dedicada para `XmlStringIterator` cobrindo contrato publico (`loadFrom`, `get`, `list` e propriedades computadas), fluxos de erro com candidato nao carregado e cenarios de regressao para parsing textual de XML.
+- Arquivos:
+  - `tests/Unit/Infra/Parses/XmlStringIteratorTest.php`
+- Impacto: aumenta cobertura de componente critico de parsing e reduz risco de regressao silenciosa em iteracao de tags, atributos e conteudo interno.
+- Evidencia: execucao de `./vendor/bin/pest tests/Unit/Infra/Parses/XmlStringIteratorTest.php` com 20 testes aprovados.
+
+### Fixed
+
+- Escopo: Infra/Parses
+- Descricao: Corrigidos dois bugs no `XmlStringIterator`: deteccao incorreta de tag autocontida quando havia `/` em valor de atributo e fechamento incorreto em tags aninhadas com mesmo nome; tambem ajustada verificacao de existencia de tag quando encontrada na posicao zero da string.
+- Arquivos:
+  - `src/Infra/Parses/XmlStringIterator.php`
+- Impacto: melhora a robustez do parser para XMLs com atributos contendo caminho (`c:/...`) e para estruturas aninhadas homonimas, preservando compatibilidade da API publica.
+- Evidencia: regressao validada pela suite de `XmlStringIterator` e pelo teste consumidor `./vendor/bin/pest tests/Unit/Domain/Xml/ValueObjects/ElementTest.php`.
+
 ## 2026-07-11
 
 ### Docs
