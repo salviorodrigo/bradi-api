@@ -11,6 +11,9 @@ use BradiApi\Tests\Doubles\Domain\Invoices\NFe\FakeDFeElement;
 use BradiApi\Tests\Doubles\Domain\Invoices\NFe\FakeDFeGroupWithAttribute;
 use BradiApi\Tests\TestCase;
 
+// Todo: Test if all properties of DFeElement child have a set method that ensure sourceElement is updated with new data
+// Todo: Ensure that DFeElements erase or create child data of sourceElement when property is optional
+
 describe('DFeElement', function () {
     beforeEach(function () {
         /** @var TestCase $this */
