@@ -108,6 +108,8 @@ abstract class DFeElementCollection
 
     public function __toString()
     {
-        throw new Exception('Not implemented');
+        return array_reduce($this->collection, function ($xmlString, $element) {
+            return $xmlString . (string) $element;
+        }, '');
     }
 }
