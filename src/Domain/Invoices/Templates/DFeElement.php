@@ -22,7 +22,15 @@ abstract class DFeElement
 
     public readonly string $fieldURI;
 
-    public ?string $value;
+    public ?string $value {
+        set(?string $value) {
+            $escapedValue = htmlspecialchars($value, ENT_XML1 | ENT_QUOTES, 'UTF-8');
+            $this->value = $escapedValue;
+            if (isset($this->sourceElement)) {
+                $this->sourceElement->value = $escapedValue;
+            }
+        }
+    }
 
     private ?Element $sourceElement;
     private ValidationService $validationService;
@@ -239,13 +247,11 @@ abstract class DFeElement
                     continue;
                 }
 
-                $attributeInstance = new Attribute(
+                $this->sourceElement->addAttribute(new Attribute(
                     $attribute['propertyName'],
                     $this->{$attribute['propertyName']}->value,
                     static::FIELD_NAME
-                );
-
-                $this->sourceElement->addAttribute($attributeInstance);
+                ));
             }
 
             foreach ($elementsList as $element) {

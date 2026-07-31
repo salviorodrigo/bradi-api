@@ -121,9 +121,8 @@ describe('DFeElement', function () {
                 $this->sut->parseFromXmlElement($element);
                 $this->sut->value = 'updated';
 
-                // sourceElement is memoized during parsing, so later direct changes are ignored
                 expect((string) $this->sut)->toBe('<FakeTag>updated</FakeTag>');
-            })->skip();
+            });
 
             test('Should serialize group with child DFeElement', function () {
                 $child = new FakeDFeElement;
