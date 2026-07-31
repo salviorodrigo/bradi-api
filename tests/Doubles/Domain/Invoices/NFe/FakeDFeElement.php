@@ -11,6 +11,8 @@ final class FakeDFeElement extends DFeElement
 {
     public const string FIELD_NAME = 'FakeTag';
 
+    public ?FakeDFeElement $childElement;
+
     /** @return array<Validator> */
     protected function tagValueValidators(): array
     {

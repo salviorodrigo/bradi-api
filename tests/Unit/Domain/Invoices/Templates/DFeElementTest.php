@@ -13,6 +13,7 @@ use BradiApi\Tests\TestCase;
 
 // Todo: Test if all properties of DFeElement child have a set method that ensure sourceElement is updated with new data
 // Todo: Ensure that DFeElements erase or create child data of sourceElement when property is optional
+// Todo: Ensure that root xml string is updated when a child DFeAttribute value is updated
 
 describe('DFeElement', function () {
     beforeEach(function () {
@@ -126,6 +127,16 @@ describe('DFeElement', function () {
 
                 expect((string) $this->sut)->toBe('<FakeTag>updated</FakeTag>');
             });
+
+            test('Should return updated parent xml string after changing value of child DFeElement', function () {
+                $element = new Element;
+                $element->parse('<FakeTag><FakeTag>hello</FakeTag></FakeTag>');
+
+                $this->sut->parseFromXmlElement($element);
+                $this->sut->childElement->value = 'updated';
+
+                expect((string) $this->sut)->toBe('<FakeTag><FakeTag>updated</FakeTag></FakeTag>');
+            })->only();
 
             test('Should serialize group with child DFeElement', function () {
                 $child = new FakeDFeElement;

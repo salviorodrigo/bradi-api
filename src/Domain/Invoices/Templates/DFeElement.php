@@ -154,11 +154,12 @@ abstract class DFeElement
 
         foreach ($optionalElements as $element) {
             $concreteElement = new $element['class']($this->fieldURI);
-            if (! isset($xmlElement->{$concreteElement::class::FIELD_NAME})) {
+            $xmlChildElement = $xmlElement->{$concreteElement::class::FIELD_NAME};
+            if (! isset($xmlChildElement)) {
                 continue;
             }
 
-            $parsingResult = $concreteElement->parseFromXmlElement($xmlElement->{$concreteElement::class::FIELD_NAME});
+            $parsingResult = $concreteElement->parseFromXmlElement($xmlChildElement);
             if ($parsingResult->isFailure()) {
                 $parserErrorBag[] = $parsingResult->getError();
 
