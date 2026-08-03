@@ -28,6 +28,30 @@ describe('AttributeList', function () {
         });
     });
 
+    describe('::set()', function () {
+        test('appends when no attribute with the same name exists', function () {
+            $sut = new AttributeList;
+            $sut->add(new Attribute('id', '10', 'item'));
+
+            $sut->set(new Attribute('status', 'ok', 'item'));
+
+            expect($sut->records)->toHaveCount(2);
+            expect($sut->status?->value)->toBe('ok');
+        });
+
+        test('overwrites the value keeping the original position', function () {
+            $sut = new AttributeList;
+            $sut->add(new Attribute('id', '10', 'item'));
+            $sut->add(new Attribute('status', 'ok', 'item'));
+
+            $sut->set(new Attribute('id', '20', 'item'));
+
+            expect($sut->records)->toHaveCount(2);
+            expect($sut->records[0]->name)->toBe('id');
+            expect($sut->records[0]->value)->toBe('20');
+        });
+    });
+
     describe('::exists()', function () {
         test('returns true when an attribute with given name exists', function () {
             $sut = new AttributeList;

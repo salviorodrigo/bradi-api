@@ -251,4 +251,50 @@ describe('Element', function () {
             });
         });
     });
+
+    describe('children and attributes manipulation', function () {
+        beforeEach(function () {
+            /** @var TestCase $this */
+            $this->sut = new Element;
+            $this->sut->parse('<root a="1"><first>1</first><second>2</second></root>');
+        });
+
+        test('indexOfChild locates a child by identity', function () {
+            $second = $this->sut->children->records[1];
+
+            expect($this->sut->indexOfChild($second))->toBe(1);
+        });
+
+        test('insertChildAt places the child at the given position', function () {
+            $middle = new Element;
+            $middle->name = 'middle';
+            $middle->value = 'x';
+
+            $this->sut->insertChildAt(1, $middle);
+
+            expect((string) $this->sut)->toBe('<root a="1"><first>1</first><middle>x</middle><second>2</second></root>');
+        });
+
+        test('replaceChild swaps the child keeping its position', function () {
+            $replacement = new Element;
+            $replacement->name = 'first';
+            $replacement->value = 'new';
+
+            $this->sut->replaceChild($this->sut->children->records[0], $replacement);
+
+            expect((string) $this->sut)->toBe('<root a="1"><first>new</first><second>2</second></root>');
+        });
+
+        test('removeChild drops the child from the serialized xml', function () {
+            $this->sut->removeChild($this->sut->children->records[0]);
+
+            expect((string) $this->sut)->toBe('<root a="1"><second>2</second></root>');
+        });
+
+        test('setAttribute overwrites an existing attribute in place', function () {
+            $this->sut->setAttribute(new Attribute('a', '9', 'root'));
+
+            expect((string) $this->sut)->toBe('<root a="9"><first>1</first><second>2</second></root>');
+        });
+    });
 });

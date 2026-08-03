@@ -22,6 +22,20 @@ final class AttributeList
         $this->records[] = $attribute;
     }
 
+    // Upsert overwriting in place: keeping the original position preserves
+    // attributes the DFe model does not manage (e.g. infNFe "Id") across re-serializations.
+    public function set(Attribute $attribute): void
+    {
+        $index = array_find_key($this->records, fn (Attribute $record) => $record->name === $attribute->name);
+        if ($index === null) {
+            $this->records[] = $attribute;
+
+            return;
+        }
+
+        $this->records[$index] = $attribute;
+    }
+
     public function exists(string $attributeName): bool
     {
         return array_find($this->records, fn (Attribute $existingAttribute) => $existingAttribute->name === $attributeName) !== null;

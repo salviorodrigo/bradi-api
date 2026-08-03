@@ -32,6 +32,31 @@ class Element
         $this->attributes->add($attribute);
     }
 
+    public function setAttribute(Attribute $attribute): void
+    {
+        $this->attributes->set($attribute);
+    }
+
+    public function indexOfChild(Element $child): ?int
+    {
+        return $this->children->indexOf($child);
+    }
+
+    public function insertChildAt(int $index, Element $child): void
+    {
+        $this->children->insertAt($index, $child);
+    }
+
+    public function replaceChild(Element $current, Element $replacement): void
+    {
+        $this->children->replace($current, $replacement);
+    }
+
+    public function removeChild(Element $child): void
+    {
+        $this->children->remove($child);
+    }
+
     public function parse(mixed $rawData): Result
     {
         $loaderResponse = $this->iterator->loadFrom($rawData);

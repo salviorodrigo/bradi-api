@@ -30,6 +30,40 @@ final class ElementList
         $this->records[] = $child;
     }
 
+    public function indexOf(Element $element): ?int
+    {
+        return array_find_key($this->records, fn (Element $record) => $record === $element);
+    }
+
+    public function insertAt(int $index, Element $element): void
+    {
+        if ($this->exists($element)) {
+            throw new InvalidArgumentException('The same Element instance is already present in this list.');
+        }
+
+        array_splice($this->records, max(0, min($index, count($this->records))), 0, [$element]);
+    }
+
+    public function replace(Element $current, Element $replacement): void
+    {
+        $index = $this->indexOf($current);
+        if ($index === null) {
+            throw new InvalidArgumentException("Element \"{$current->name}\" is not in this list.");
+        }
+
+        $this->records[$index] = $replacement;
+    }
+
+    public function remove(Element $element): void
+    {
+        $index = $this->indexOf($element);
+        if ($index === null) {
+            throw new InvalidArgumentException("Element \"{$element->name}\" is not in this list.");
+        }
+
+        array_splice($this->records, $index, 1);
+    }
+
     // Identity comparison: structurally equal siblings are legal in a DFe
     // (e.g. repeated <detPag> with the same content), only the same instance is a duplicate.
     private function exists(Element $element): bool
