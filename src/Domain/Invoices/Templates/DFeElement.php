@@ -22,12 +22,12 @@ abstract class DFeElement
 
     public readonly string $fieldURI;
 
+    // Raw value: sanitization belongs to the XML layer (Element::__toString escapes on output).
     public ?string $value {
         set(?string $value) {
-            $escapedValue = htmlspecialchars($value, ENT_XML1 | ENT_QUOTES, 'UTF-8');
-            $this->value = $escapedValue;
+            $this->value = $value;
             if (isset($this->sourceElement)) {
-                $this->sourceElement->value = $escapedValue;
+                $this->sourceElement->value = $value;
             }
         }
     }
@@ -227,8 +227,7 @@ abstract class DFeElement
         $this->sourceElement->name = static::FIELD_NAME;
 
         if (isset($this->value)) {
-            $escapedValue = htmlspecialchars($this->value, ENT_XML1 | ENT_QUOTES, 'UTF-8');
-            $this->sourceElement->value = $escapedValue;
+            $this->sourceElement->value = $this->value;
         }
 
         $propsMetadata = $this->listChildElements();

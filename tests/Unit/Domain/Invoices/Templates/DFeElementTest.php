@@ -138,6 +138,13 @@ describe('DFeElement', function () {
                 expect((string) $this->sut)->toBe('<FakeTag><FakeTag>updated</FakeTag></FakeTag>');
             });
 
+            test('Should escape special characters exactly once and keep value readable as assigned', function () {
+                $this->sut->value = 'A&B';
+
+                expect((string) $this->sut)->toBe('<FakeTag>A&amp;B</FakeTag>');
+                expect($this->sut->value)->toBe('A&B');
+            });
+
             test('Should serialize group with child DFeElement', function () {
                 $child = new FakeDFeElement;
                 $child->value = 'childValue';
