@@ -25,14 +25,16 @@ final class ElementList
     public function add(Element $child): void
     {
         if ($this->exists($child)) {
-            throw new InvalidArgumentException('Elements cannot be duplicated.');
+            throw new InvalidArgumentException('The same Element instance is already present in this list.');
         }
         $this->records[] = $child;
     }
 
+    // Identity comparison: structurally equal siblings are legal in a DFe
+    // (e.g. repeated <detPag> with the same content), only the same instance is a duplicate.
     private function exists(Element $element): bool
     {
-        return array_find($this->records, fn (Element $existingElement) => $existingElement == $element) !== null;
+        return array_find($this->records, fn (Element $existingElement) => $existingElement === $element) !== null;
     }
 
     public function __get(string $name): ElementList|Element|null

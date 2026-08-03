@@ -33,7 +33,22 @@ describe('ElementList', function () {
             expect($sut->records[0])->toBe($child);
         });
 
-        test('throws when trying to add a duplicated element', function () {
+        test('throws when trying to add the same element instance twice', function () {
+            $sut = new ElementList;
+
+            $child = new Element;
+            $child->name = 'item';
+            $child->value = 'a';
+
+            $sut->add($child);
+
+            expect(fn () => $sut->add($child))
+                ->toThrow(InvalidArgumentException::class, 'The same Element instance is already present in this list.');
+        });
+
+        test('accepts structurally identical elements from distinct instances', function () {
+            // Regression: repeated identical siblings are legal in a DFe (e.g. two equal <detPag>),
+            // and Element::parse() feeds every child through add().
             $sut = new ElementList;
 
             $child = new Element;
@@ -45,9 +60,9 @@ describe('ElementList', function () {
             $sameValueChild->value = 'a';
 
             $sut->add($child);
+            $sut->add($sameValueChild);
 
-            expect(fn () => $sut->add($sameValueChild))
-                ->toThrow(InvalidArgumentException::class, 'Elements cannot be duplicated.');
+            expect($sut->records)->toHaveCount(2);
         });
     });
 
