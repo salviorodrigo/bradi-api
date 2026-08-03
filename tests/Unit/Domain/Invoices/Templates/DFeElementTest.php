@@ -136,7 +136,7 @@ describe('DFeElement', function () {
                 $this->sut->childElement->value = 'updated';
 
                 expect((string) $this->sut)->toBe('<FakeTag><FakeTag>updated</FakeTag></FakeTag>');
-            })->only();
+            });
 
             test('Should serialize group with child DFeElement', function () {
                 $child = new FakeDFeElement;
