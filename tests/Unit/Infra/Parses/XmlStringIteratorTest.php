@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 use BradiApi\Infra\Parses\XmlStringIterator;
 use BradiApi\Tests\TestCase;
-use Exception;
 
 describe('XmlStringIterator', function () {
     describe('::loadFrom()', function () {

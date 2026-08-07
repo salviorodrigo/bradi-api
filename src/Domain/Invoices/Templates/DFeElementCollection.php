@@ -20,6 +20,14 @@ abstract class DFeElementCollection
     /** @var DFeElement[] */
     public array $collection = [];
 
+    /**
+     * Source nodes of the repeated tag, one per item and in the same order.
+     * Repeated tags cannot be linked by name, so position is the link.
+     *
+     * @var Element[]
+     */
+    private array $sourceCollection = [];
+
     private DFeElement $baseClass;
     private ValidationService $validationService;
 
@@ -41,23 +49,26 @@ abstract class DFeElementCollection
     }
 
     /** @return Result<DFeElement|ApiError> */
-    final public function parseFromXmlElement(Element|ElementList $elementOrElementList): Result
+    final public function parse(Element|ElementList $elementOrElementList): Result
     {
         $elements = $this->normalizeElements($elementOrElementList);
         $validationResult = $this->validateCollection($elements);
         if ($validationResult->isFailure()) {
             $this->collection = [];
+            $this->sourceCollection = [];
 
             return $validationResult;
         }
+
         foreach ($elements as $element) {
             $this->resetBaseClass();
-            $dfeElement = $this->baseClass->parseFromXmlElement($element);
+            $dfeElement = $this->baseClass->parse($element);
             if ($dfeElement->isFailure()) {
                 return $dfeElement;
             }
 
             $this->collection[] = $dfeElement->getData();
+            $this->sourceCollection[] = $element;
         }
 
         return Result::makeSuccess($this);
@@ -106,10 +117,8 @@ abstract class DFeElementCollection
         });
     }
 
-    public function __toString()
+    public function __toString(): string
     {
-        return array_reduce($this->collection, function ($xmlString, $element) {
-            return $xmlString . (string) $element;
-        }, '');
+        throw new Exception('Method not implemented.');
     }
 }

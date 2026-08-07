@@ -102,75 +102,6 @@ describe('ElementList', function () {
         });
     });
 
-    describe('::insertAt()', function () {
-        test('inserts at the given position keeping the remaining order', function () {
-            $first = new Element;
-            $first->name = 'first';
-            $last = new Element;
-            $last->name = 'last';
-            $middle = new Element;
-            $middle->name = 'middle';
-
-            $sut = new ElementList([$first, $last]);
-            $sut->insertAt(1, $middle);
-
-            expect(array_map(fn (Element $element) => $element->name, $sut->records))
-                ->toBe(['first', 'middle', 'last']);
-        });
-
-        test('appends when the index is beyond the last position', function () {
-            $first = new Element;
-            $first->name = 'first';
-            $extra = new Element;
-            $extra->name = 'extra';
-
-            $sut = new ElementList([$first]);
-            $sut->insertAt(10, $extra);
-
-            expect(array_map(fn (Element $element) => $element->name, $sut->records))
-                ->toBe(['first', 'extra']);
-        });
-
-        test('throws when the instance is already present', function () {
-            $child = new Element;
-            $child->name = 'item';
-
-            $sut = new ElementList([$child]);
-
-            expect(fn () => $sut->insertAt(0, $child))
-                ->toThrow(InvalidArgumentException::class, 'The same Element instance is already present in this list.');
-        });
-    });
-
-    describe('::replace()', function () {
-        test('replaces an element keeping its position', function () {
-            $first = new Element;
-            $first->name = 'first';
-            $second = new Element;
-            $second->name = 'second';
-            $replacement = new Element;
-            $replacement->name = 'replacement';
-
-            $sut = new ElementList([$first, $second]);
-            $sut->replace($first, $replacement);
-
-            expect(array_map(fn (Element $element) => $element->name, $sut->records))
-                ->toBe(['replacement', 'second']);
-        });
-
-        test('throws when the replaced element is not in the list', function () {
-            $absent = new Element;
-            $absent->name = 'absent';
-            $replacement = new Element;
-            $replacement->name = 'replacement';
-
-            $sut = new ElementList;
-
-            expect(fn () => $sut->replace($absent, $replacement))
-                ->toThrow(InvalidArgumentException::class, 'Element "absent" is not in this list.');
-        });
-    });
-
     describe('::remove()', function () {
         test('removes an element and keeps records as a packed list', function () {
             $first = new Element;
@@ -186,16 +117,6 @@ describe('ElementList', function () {
             expect(array_keys($sut->records))->toBe([0, 1]);
             expect(array_map(fn (Element $element) => $element->name, $sut->records))
                 ->toBe(['first', 'third']);
-        });
-
-        test('throws when the removed element is not in the list', function () {
-            $absent = new Element;
-            $absent->name = 'absent';
-
-            $sut = new ElementList;
-
-            expect(fn () => $sut->remove($absent))
-                ->toThrow(InvalidArgumentException::class, 'Element "absent" is not in this list.');
         });
     });
 

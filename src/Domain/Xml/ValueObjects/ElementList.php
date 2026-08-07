@@ -22,12 +22,16 @@ final class ElementList
         $this->records = $records;
     }
 
-    public function add(Element $child): void
+    public function add(Element|ElementList $child): void
     {
-        if ($this->exists($child)) {
-            throw new InvalidArgumentException('The same Element instance is already present in this list.');
+        $normalizedChildren = $child instanceof ElementList ? $child->records : [$child];
+        foreach ($normalizedChildren as $normalizedChild) {
+            if ($this->exists($normalizedChild)) {
+                throw new InvalidArgumentException('The same Element instance is already present in this list.');
+            }
         }
-        $this->records[] = $child;
+
+        $this->records = array_merge($this->records, $normalizedChildren);
     }
 
     public function indexOf(Element $element): ?int
@@ -35,40 +39,17 @@ final class ElementList
         return array_find_key($this->records, fn (Element $record) => $record === $element);
     }
 
-    public function insertAt(int $index, Element $element): void
-    {
-        if ($this->exists($element)) {
-            throw new InvalidArgumentException('The same Element instance is already present in this list.');
-        }
-
-        array_splice($this->records, max(0, min($index, count($this->records))), 0, [$element]);
-    }
-
-    public function replace(Element $current, Element $replacement): void
-    {
-        $index = $this->indexOf($current);
-        if ($index === null) {
-            throw new InvalidArgumentException("Element \"{$current->name}\" is not in this list.");
-        }
-
-        $this->records[$index] = $replacement;
-    }
-
     public function remove(Element $element): void
     {
-        $index = $this->indexOf($element);
-        if ($index === null) {
-            throw new InvalidArgumentException("Element \"{$element->name}\" is not in this list.");
+        if ($this->exists($element)) {
+            unset($this->records[$this->indexOf($element)]);
+            $this->records = array_values($this->records);
         }
-
-        array_splice($this->records, $index, 1);
     }
 
-    // Identity comparison: structurally equal siblings are legal in a DFe
-    // (e.g. repeated <detPag> with the same content), only the same instance is a duplicate.
-    private function exists(Element $element): bool
+    public function exists(Element $element): bool
     {
-        return array_find($this->records, fn (Element $existingElement) => $existingElement === $element) !== null;
+        return $this->indexOf($element) !== null;
     }
 
     public function __get(string $name): ElementList|Element|null

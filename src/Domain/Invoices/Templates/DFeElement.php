@@ -8,6 +8,7 @@ use BradiApi\Domain\Common\Protocols\ApiError;
 use BradiApi\Domain\Common\Protocols\Validator;
 use BradiApi\Domain\Common\Services\ValidationService;
 use BradiApi\Domain\Common\ValueObjects\Result;
+use BradiApi\Domain\Invoices\DTOs\DFeElementPropertyMetadata;
 use BradiApi\Domain\Invoices\Validators\RootTagValidator;
 use BradiApi\Domain\Xml\ValueObjects\Attribute;
 use BradiApi\Domain\Xml\ValueObjects\Element;
@@ -18,21 +19,31 @@ use RuntimeException;
 
 abstract class DFeElement
 {
-    public const string FIELD_NAME = '';
+    public const ?string FIELD_NAME = null;
+    public const array CHILD_ELEMENTS__ON_SEQUENCE = [];
+    public const array CHILD_ATTRIBUTES__ON_SEQUENCE = [];
 
     public readonly string $fieldURI;
 
-    // Raw value: sanitization belongs to the XML layer (Element::__toString escapes on output).
     public ?string $value {
         set(?string $value) {
             $this->value = $value;
-            if (isset($this->sourceElement)) {
-                $this->sourceElement->value = $value;
+            if (isset($this->source)) {
+                $this->source->value = $value;
             }
         }
     }
 
-    private ?Element $sourceElement;
+    private ?Element $source {
+        get {
+            if (! isset($this->source)) {
+                $this->initSource();
+            }
+
+            return $this->source;
+        }
+    }
+
     private ValidationService $validationService;
 
     final public function __construct(string $parentFieldURI = '')
@@ -49,7 +60,7 @@ abstract class DFeElement
     }
 
     /** @return Result<DFeElement|ApiError> */
-    final public function parseFromXmlElement(Element $element): Result
+    final public function parse(Element $element): Result
     {
         $validationSteps = [
             fn ($candidate) => $this->validateRootTag($candidate),
@@ -65,12 +76,17 @@ abstract class DFeElement
             }
         }
 
-        $hydrateResult = $this->hydrateFromXmlElement($element);
+        $hydrateResult = $this->hydrate($element);
         if ($hydrateResult->isFailure()) {
             return $hydrateResult;
         }
 
         return Result::makeSuccess($this);
+    }
+
+    final public function getSource(): ?Element
+    {
+        return $this->source;
     }
 
     /** @return array<Validator> */
@@ -87,6 +103,7 @@ abstract class DFeElement
     {
         $this->validationService->reset();
         $this->validationService->addValidator(new RootTagValidator(static::FIELD_NAME));
+        // TODO: validates sequence of child elements.
 
         return $this->validationService->verify($element);
     }
@@ -126,47 +143,25 @@ abstract class DFeElement
     }
 
     /** @return Result<null|ApiError> **/
-    private function hydrateFromXmlElement(Element $xmlElement): Result
+    private function hydrate(Element $xmlElement): Result
     {
         if (isset($xmlElement->value)) {
             $this->value = $xmlElement->value;
         }
 
         $propsMetadata = $this->listChildElements();
-        [$requiredElements, $optionalElements] = array_reduce($propsMetadata, function (array $carry, array $element) {
-            $element['isOptional'] ? $carry[1][] = $element : $carry[0][] = $element;
-
-            return $carry;
-        }, [[], []]);
-
         $parserErrorBag = [];
-        foreach ($requiredElements as $element) {
-            $concreteElement = new $element['class']($this->fieldURI);
-            $parsingResult = $concreteElement->parseFromXmlElement($xmlElement->{$concreteElement::class::FIELD_NAME});
-            if ($parsingResult->isFailure()) {
-                $parserErrorBag[] = $parsingResult->getError();
+        foreach ($propsMetadata as $dfeChild) {
+            if ($xmlElement->isSet($dfeChild->class::FIELD_NAME)) {
+                $concreteElement = new $dfeChild->class($this->fieldURI);
+                $parsingResult = $concreteElement->parse($xmlElement->{$concreteElement::class::FIELD_NAME});
+                if ($parsingResult->isFailure()) {
+                    $parserErrorBag[] = $parsingResult->getError();
 
-                continue;
+                    continue;
+                }
+                $this->{$dfeChild->name} = $parsingResult->getData();
             }
-
-            $this->{$element['propertyName']} = $parsingResult->getData();
-        }
-
-        foreach ($optionalElements as $element) {
-            $concreteElement = new $element['class']($this->fieldURI);
-            $xmlChildElement = $xmlElement->{$concreteElement::class::FIELD_NAME};
-            if (! isset($xmlChildElement)) {
-                continue;
-            }
-
-            $parsingResult = $concreteElement->parseFromXmlElement($xmlChildElement);
-            if ($parsingResult->isFailure()) {
-                $parserErrorBag[] = $parsingResult->getError();
-
-                continue;
-            }
-
-            $this->{$element['propertyName']} = $parsingResult->getData();
         }
 
         if (count($parserErrorBag) > 0) {
@@ -178,12 +173,50 @@ abstract class DFeElement
             return Result::makeFailure($parsingError);
         }
 
-        $this->sourceElement = $xmlElement;
+        $this->source = $xmlElement;
 
         return Result::makeSuccess();
     }
 
-    /** @return array<array{parentClass: string, class:string,propertyName:string,isOptional:bool,isSet:bool}> */
+    private function sync(): void
+    {
+        if (! isset($this->source)) {
+            if (! isset($this->value) && ! $this->hasChildData()) {
+                return;
+            }
+
+            $this->initSource();
+        }
+
+        $propsMetadata = $this->listChildElements();
+        foreach ($propsMetadata as $property) {
+            if (! $property->isSet) {
+                if ($this->source->isSet($property->class::FIELD_NAME)) {
+                    $this->source->remove($this->source->{$property->class::FIELD_NAME});
+                }
+
+                continue;
+            }
+
+            if (! $this->source->isSet($property->class::FIELD_NAME)) {
+                $this->source->add($this->{$property->name}->getSource());
+
+                continue;
+            }
+
+            if ($this->source->{$property->class::FIELD_NAME} !== $this->{$property->name}->getSource()) {
+                $this->source->replace(
+                    $this->source->{$property->class::FIELD_NAME},
+                    $this->{$property->name}->getSource()
+                );
+            }
+        }
+
+        // $this->resolverChildElementsSequence();
+        // $this->resolverChildAttributesSequence();
+    }
+
+    /** @return array<DFeElementPropertyMetadata> */
     private function listChildElements(): array
     {
         $elementsList = [];
@@ -199,79 +232,56 @@ abstract class DFeElement
             }
 
             $elementClass = new ReflectionClass($propertyType->getName());
+            if (is_a($elementClass->getName(), Element::class, true) || is_a($elementClass->getName(), Attribute::class, true)) {
+                continue;
+            }
+
             $parentClass = $elementClass->getParentClass();
             $allowedClasses = [DFeElement::class, DFeAttribute::class];
             if (! array_reduce($allowedClasses, fn (bool $carry, string $allowedClass) => $carry || is_a($parentClass->getName(), $allowedClass, true), false)) {
                 continue;
             }
 
-            $elementsList[] = [
-                'parentClass' => $parentClass->getName(),
-                'class' => $elementClass->getName(),
-                'propertyName' => $property->getName(),
-                'isOptional' => $propertyType->allowsNull(),
-                'isSet' => isset($this->{$property->getName()}),
-            ];
+            $elementsList[] = new DFeElementPropertyMetadata(
+                parentClass: $parentClass->getName(),
+                class: $elementClass->getName(),
+                name: $property->getName(),
+                isOptional: $propertyType->allowsNull(),
+                isSet: isset($this->{$property->getName()}),
+            );
         }
 
         return $elementsList;
     }
 
+    private function hasChildData(): bool
+    {
+        $propsMetadata = $this->listChildElements();
+
+        return array_reduce($propsMetadata, fn (bool $carry, DFeElementPropertyMetadata $property) => $carry || $property->isSet, false);
+    }
+
+    private function initSource(): void
+    {
+        if (! $this->hasChildData() && ! isset($this->value)) {
+            $this->source = null;
+
+            return;
+        }
+
+        $this->source = new Element;
+        $this->source->name = static::FIELD_NAME;
+        if (isset($this->value)) {
+            $this->source->value = $this->value;
+        }
+
+        $this->sync();
+    }
+
     final public function __toString(): string
     {
-        if (isset($this->sourceElement)) {
-            return (string) $this->sourceElement;
-        }
+        $this->sync();
 
-        $this->sourceElement = new Element;
-        $this->sourceElement->name = static::FIELD_NAME;
-
-        if (isset($this->value)) {
-            $this->sourceElement->value = $this->value;
-        }
-
-        $propsMetadata = $this->listChildElements();
-        if (! empty($propsMetadata)) {
-            $elementsList = array_filter($propsMetadata, fn (array $element) => $element['parentClass'] === DFeElement::class);
-            $attributesList = array_filter($propsMetadata, fn (array $element) => $element['parentClass'] === DFeAttribute::class);
-
-            foreach ($attributesList as $attribute) {
-                if (! isset($this->{$attribute['propertyName']}) && ! $attribute['isOptional']) {
-                    throw new RuntimeException(sprintf(
-                        'Required attribute "%s" not initialized.',
-                        $attribute['propertyName']
-                    ));
-                }
-
-                if (! isset($this->{$attribute['propertyName']})) {
-                    continue;
-                }
-
-                $this->sourceElement->addAttribute(new Attribute(
-                    $attribute['propertyName'],
-                    $this->{$attribute['propertyName']}->value,
-                    static::FIELD_NAME
-                ));
-            }
-
-            foreach ($elementsList as $element) {
-                if (! isset($this->{$element['propertyName']}) && ! $element['isOptional']) {
-                    throw new RuntimeException(sprintf(
-                        'Required element "%s" not initialized.',
-                        $element['propertyName']
-                    ));
-                }
-
-                if (! isset($this->{$element['propertyName']})) {
-                    continue;
-                }
-
-                $elementInstance = new Element;
-                $elementInstance->parse((string) $this->{$element['propertyName']});
-                $this->sourceElement->addChild($elementInstance);
-            }
-        }
-
-        return (string) $this->sourceElement;
+        return isset($this->source) ? (string) $this->source : '';
     }
 }

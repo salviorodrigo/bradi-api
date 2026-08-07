@@ -52,7 +52,7 @@ describe('Element', function () {
             $this->sut = new Element;
             $this->sut->name = 'root';
 
-            $this->sut->addAttribute(new Attribute('id', '42', 'root'));
+            $this->sut->add(new Attribute('id', '42', 'root'));
 
             $singleChild = new Element;
             $singleChild->name = 'single';
@@ -66,9 +66,9 @@ describe('Element', function () {
             $multiChildB->name = 'multi';
             $multiChildB->value = 'b';
 
-            $this->sut->addChild($singleChild);
-            $this->sut->addChild($multiChildA);
-            $this->sut->addChild($multiChildB);
+            $this->sut->add($singleChild);
+            $this->sut->add($multiChildA);
+            $this->sut->add($multiChildB);
         });
 
         test('returns attribute when name matches an existing attribute', function () {
@@ -111,14 +111,14 @@ describe('Element', function () {
             });
 
             test('returns auto-close tag with attribute when no value and no children', function () {
-                $this->sut->addAttribute(new Attribute('id', '1', 'tag'));
+                $this->sut->add(new Attribute('id', '1', 'tag'));
 
                 expect((string) $this->sut)->toBe('<tag id="1"/>');
             });
 
             test('returns auto-close tag with multiple attributes', function () {
-                $this->sut->addAttribute(new Attribute('id', '1', 'tag'));
-                $this->sut->addAttribute(new Attribute('status', 'active', 'tag'));
+                $this->sut->add(new Attribute('id', '1', 'tag'));
+                $this->sut->add(new Attribute('status', 'active', 'tag'));
 
                 expect((string) $this->sut)->toBe('<tag id="1" status="active"/>');
             });
@@ -133,15 +133,15 @@ describe('Element', function () {
 
             test('returns tag with value and attribute', function () {
                 $this->sut->value = 'content';
-                $this->sut->addAttribute(new Attribute('id', '1', 'tag'));
+                $this->sut->add(new Attribute('id', '1', 'tag'));
 
                 expect((string) $this->sut)->toBe('<tag id="1">content</tag>');
             });
 
             test('returns tag with value and multiple attributes', function () {
                 $this->sut->value = 'content';
-                $this->sut->addAttribute(new Attribute('id', '1', 'tag'));
-                $this->sut->addAttribute(new Attribute('type', 'A', 'tag'));
+                $this->sut->add(new Attribute('id', '1', 'tag'));
+                $this->sut->add(new Attribute('type', 'A', 'tag'));
 
                 expect((string) $this->sut)->toBe('<tag id="1" type="A">content</tag>');
             });
@@ -155,7 +155,7 @@ describe('Element', function () {
                 $child->name = 'item';
                 $child->value = 'value';
 
-                $this->sut->addChild($child);
+                $this->sut->add($child);
 
                 expect((string) $this->sut)->toBe('<root><item>value</item></root>');
             });
@@ -171,8 +171,8 @@ describe('Element', function () {
                 $child2->name = 'b';
                 $child2->value = '2';
 
-                $this->sut->addChild($child1);
-                $this->sut->addChild($child2);
+                $this->sut->add($child1);
+                $this->sut->add($child2);
 
                 expect((string) $this->sut)->toBe('<root><a>1</a><b>2</b></root>');
             });
@@ -187,8 +187,8 @@ describe('Element', function () {
                 $leaf->name = 'leaf';
                 $leaf->value = 'data';
 
-                $middle->addChild($leaf);
-                $this->sut->addChild($middle);
+                $middle->add($leaf);
+                $this->sut->add($middle);
 
                 expect((string) $this->sut)->toBe('<root><middle><leaf>data</leaf></middle></root>');
             });
@@ -199,7 +199,7 @@ describe('Element', function () {
                 $child = new Element;
                 $child->name = 'empty';
 
-                $this->sut->addChild($child);
+                $this->sut->add($child);
 
                 expect((string) $this->sut)->toBe('<root><empty/></root>');
             });
@@ -225,13 +225,13 @@ describe('Element', function () {
             });
 
             test('escapes double quotes in attribute value', function () {
-                $this->sut->addAttribute(new Attribute('ref', 'say "hi"', 'tag'));
+                $this->sut->add(new Attribute('ref', 'say "hi"', 'tag'));
 
                 expect((string) $this->sut)->toBe('<tag ref="say &quot;hi&quot;"/>');
             });
 
             test('escapes ampersand in attribute value', function () {
-                $this->sut->addAttribute(new Attribute('ref', 'A&B', 'tag'));
+                $this->sut->add(new Attribute('ref', 'A&B', 'tag'));
 
                 expect((string) $this->sut)->toBe('<tag ref="A&amp;B"/>');
             });
@@ -249,52 +249,6 @@ describe('Element', function () {
 
                 expect((string) $this->sut)->toBe('<tag/>');
             });
-        });
-    });
-
-    describe('children and attributes manipulation', function () {
-        beforeEach(function () {
-            /** @var TestCase $this */
-            $this->sut = new Element;
-            $this->sut->parse('<root a="1"><first>1</first><second>2</second></root>');
-        });
-
-        test('indexOfChild locates a child by identity', function () {
-            $second = $this->sut->children->records[1];
-
-            expect($this->sut->indexOfChild($second))->toBe(1);
-        });
-
-        test('insertChildAt places the child at the given position', function () {
-            $middle = new Element;
-            $middle->name = 'middle';
-            $middle->value = 'x';
-
-            $this->sut->insertChildAt(1, $middle);
-
-            expect((string) $this->sut)->toBe('<root a="1"><first>1</first><middle>x</middle><second>2</second></root>');
-        });
-
-        test('replaceChild swaps the child keeping its position', function () {
-            $replacement = new Element;
-            $replacement->name = 'first';
-            $replacement->value = 'new';
-
-            $this->sut->replaceChild($this->sut->children->records[0], $replacement);
-
-            expect((string) $this->sut)->toBe('<root a="1"><first>new</first><second>2</second></root>');
-        });
-
-        test('removeChild drops the child from the serialized xml', function () {
-            $this->sut->removeChild($this->sut->children->records[0]);
-
-            expect((string) $this->sut)->toBe('<root a="1"><second>2</second></root>');
-        });
-
-        test('setAttribute overwrites an existing attribute in place', function () {
-            $this->sut->setAttribute(new Attribute('a', '9', 'root'));
-
-            expect((string) $this->sut)->toBe('<root a="9"><first>1</first><second>2</second></root>');
         });
     });
 });

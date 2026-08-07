@@ -23,7 +23,15 @@ abstract class DFeAttribute
 
     private ValidationService $validationService;
 
-    private ?Attribute $sourceAttribute;
+    private ?Attribute $source {
+        get {
+            if (! isset($this->source)) {
+                $this->initializeSourceAttribute();
+            }
+
+            return $this->source;
+        }
+    }
 
     final public function __construct(string $parentFieldURI)
     {
@@ -50,7 +58,7 @@ abstract class DFeAttribute
     /**
      * @return Result<DFeAttribute|ApiError>
      */
-    final public function parseFromXmlElement(Attribute $attribute): Result
+    final public function parse(Attribute $attribute): Result
     {
         $validationSteps = [
             fn ($candidate) => $this->validateAttributeKey($candidate),
@@ -64,12 +72,17 @@ abstract class DFeAttribute
             }
         }
 
-        $hydrateResult = $this->hydrateFromXmlElement($attribute);
+        $hydrateResult = $this->hydrate($attribute);
         if ($hydrateResult->isFailure()) {
             return $hydrateResult;
         }
 
         return Result::makeSuccess($this);
+    }
+
+    final public function getSource(): Attribute
+    {
+        return $this->source;
     }
 
     /** @return array<Validator> */
@@ -97,20 +110,16 @@ abstract class DFeAttribute
     }
 
     /** @return Result<null|ApiError> **/
-    private function hydrateFromXmlElement(Attribute $attribute): Result
+    private function hydrate(Attribute $attribute): Result
     {
-        $this->sourceAttribute = $attribute;
+        $this->source = $attribute;
         $this->value = $attribute->value;
 
         return Result::makeSuccess();
     }
 
-    final public function __toString(): string
+    private function initializeSourceAttribute(): void
     {
-        if (isset($this->sourceAttribute)) {
-            return (string) $this->sourceAttribute;
-        }
-
         if (! isset($this->value)) {
             throw new RuntimeException(sprintf(
                 'Property "%s::$value" must be initialized before serialization.',
@@ -119,8 +128,11 @@ abstract class DFeAttribute
         }
 
         $escapedValue = htmlspecialchars($this->value, ENT_XML1 | ENT_QUOTES, 'UTF-8');
-        $this->sourceAttribute = new Attribute(static::FIELD_NAME, $escapedValue, $this->parentTagName);
+        $this->source = new Attribute(static::FIELD_NAME, $escapedValue, $this->parentTagName);
+    }
 
-        return (string) $this;
+    final public function __toString(): string
+    {
+        return (string) $this->source;
     }
 }

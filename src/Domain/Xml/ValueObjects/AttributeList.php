@@ -15,36 +15,33 @@ final class AttributeList
 
     public function add(Attribute $attribute): void
     {
-        if ($this->exists($attribute->name)) {
+        if ($this->exists($attribute)) {
             throw new InvalidArgumentException("Attribute with name '{$attribute->name}' already exists.");
         }
 
         $this->records[] = $attribute;
     }
 
-    // Upsert overwriting in place: keeping the original position preserves
-    // attributes the DFe model does not manage (e.g. infNFe "Id") across re-serializations.
-    public function set(Attribute $attribute): void
+    public function remove(Attribute $attribute): void
     {
-        $index = array_find_key($this->records, fn (Attribute $record) => $record->name === $attribute->name);
-        if ($index === null) {
-            $this->records[] = $attribute;
-
-            return;
+        if ($this->exists($attribute)) {
+            unset($this->records[$this->indexOf($attribute)]);
+            $this->records = array_values($this->records);
         }
-
-        $this->records[$index] = $attribute;
     }
 
-    public function exists(string $attributeName): bool
+    public function indexOf(Attribute $attribute): ?int
     {
-        return array_find($this->records, fn (Attribute $existingAttribute) => $existingAttribute->name === $attributeName) !== null;
+        return array_find_key($this->records, fn (Attribute $record) => $record->name === $attribute->name);
+    }
+
+    public function exists(Attribute $attribute): bool
+    {
+        return $this->indexOf($attribute) !== null;
     }
 
     public function __get(string $name): ?Attribute
     {
-        $attribute = array_find($this->records, fn (Attribute $attribute) => $attribute->name === $name);
-
-        return $attribute ?? null;
+        return array_find($this->records, fn (Attribute $attribute) => $attribute->name === $name);
     }
 }

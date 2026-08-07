@@ -13,7 +13,7 @@ final class FakeDFeGroupWithAttribute extends DFeElement
 
     public FakeDFeAttribute $fakeAttr;
     public FakeDFeElement $fakeChild;
-    public ?FakeDFeElement $fakeOptionalChild;
+    public ?FakeOtherDFeElement $fakeOptionalChild;
 
     /** @return array<Validator> */
     protected function tagValueValidators(): array

@@ -16,7 +16,7 @@ describe('DFeElementCollection', function () {
         $this->sut = new FakeDFeElementCollection('infNFe');
     });
 
-    describe('::parseFromXmlElement()', function () {
+    describe('::parse()', function () {
         test('Should succeed parsing single Element', function () {
             $candidate = '<FakeTag>first</FakeTag>';
             $element = new Element;
@@ -25,7 +25,7 @@ describe('DFeElementCollection', function () {
                 $this->fail(json_encode($parsingResult->getError()));
             }
 
-            $parsingResponse = $this->sut->parseFromXmlElement($parsingResult->getData());
+            $parsingResponse = $this->sut->parse($parsingResult->getData());
             expect($parsingResponse)->toBeInstanceOf(Result::class);
             if ($parsingResponse->isFailure()) {
                 $this->fail(json_encode($parsingResponse->getError()));
@@ -46,7 +46,7 @@ describe('DFeElementCollection', function () {
             $secondElement->name = 'FakeTag';
             $secondElement->value = 'second';
 
-            $parsingResponse = $this->sut->parseFromXmlElement(new ElementList([$firstElement, $secondElement]));
+            $parsingResponse = $this->sut->parse(new ElementList([$firstElement, $secondElement]));
             expect($parsingResponse)->toBeInstanceOf(Result::class);
             if ($parsingResponse->isFailure()) {
                 $this->fail(json_encode($parsingResponse->getError()));
@@ -68,7 +68,7 @@ describe('DFeElementCollection', function () {
             }
 
             $elements = $parsingResult->getData()->children->records;
-            $parsingResponse = $this->sut->parseFromXmlElement(new ElementList($elements));
+            $parsingResponse = $this->sut->parse(new ElementList($elements));
             expect($parsingResponse)->toBeInstanceOf(Result::class);
             if ($parsingResponse->isSuccess()) {
                 $this->fail(json_encode($parsingResponse->getData()));
@@ -78,7 +78,7 @@ describe('DFeElementCollection', function () {
         })->skip();
 
         test('Should succeed with empty ElementList', function () {
-            $parsingResponse = $this->sut->parseFromXmlElement(new ElementList);
+            $parsingResponse = $this->sut->parse(new ElementList);
             expect($parsingResponse)->toBeInstanceOf(Result::class);
             if ($parsingResponse->isFailure()) {
                 $this->fail(json_encode($parsingResponse->getError()));
@@ -98,7 +98,7 @@ describe('DFeElementCollection', function () {
              * {
              *   public const string BASE_CLASS = '';
              * };
-             * expect(fn () => $sut->parseFromXmlElement($parsingResult->getData()))
+             * expect(fn () => $sut->parse($parsingResult->getData()))
              *    ->toThrow(Exception::class, 'BASE_CLASS constant must be defined in the child class.');
             */
         })->skip();
@@ -117,9 +117,42 @@ describe('DFeElementCollection', function () {
              * {
              *   public const string BASE_CLASS = '';
              * };
-             * expect(fn () => $sut->parseFromXmlElement($parsingResult->getData()))
+             * expect(fn () => $sut->parse($parsingResult->getData()))
              *    ->toThrow(Exception::class, 'BASE_CLASS must be a subclass of DFeElement.');
              */
         })->skip();
     });
+
+    describe('::__toString()', function () {
+        beforeEach(function () {
+            /** @var TestCase $this */
+            $element = new Element;
+            $element->parse('<FakeTag>first</FakeTag>');
+            $this->sut->parse($element);
+        });
+
+        test('Should serialize every item of the collection in order', function () {
+            expect((string) $this->sut)->toBe('<FakeTag>first</FakeTag>');
+        });
+
+        test('Should reflect a value changed on a parsed item', function () {
+            $this->sut->collection[0]->value = 'updated';
+
+            expect((string) $this->sut)->toBe('<FakeTag>updated</FakeTag>');
+        });
+
+        test('Should reflect an item appended to the collection', function () {
+            $appended = new FakeDFeElement('infNFe');
+            $appended->value = 'second';
+            $this->sut->collection[] = $appended;
+
+            expect((string) $this->sut)->toBe('<FakeTag>first</FakeTag><FakeTag>second</FakeTag>');
+        });
+
+        test('Should reflect an item removed from the collection', function () {
+            $this->sut->collection = [];
+
+            expect((string) $this->sut)->toBe('');
+        });
+    })->skip();
 });

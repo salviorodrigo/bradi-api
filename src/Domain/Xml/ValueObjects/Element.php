@@ -7,6 +7,7 @@ namespace BradiApi\Domain\Xml\ValueObjects;
 use BradiApi\Domain\Common\ValueObjects\Result;
 use BradiApi\Domain\Xml\Protocols\XmlIterator;
 use BradiApi\Infra\Parses\XmlStringIterator;
+use InvalidArgumentException;
 
 class Element
 {
@@ -22,39 +23,35 @@ class Element
         $this->children = new ElementList;
     }
 
-    public function addChild(Element $child): void
+    public function add(Attribute|Element|ElementList $child): void
     {
-        $this->children->add($child);
+        match ($child::class) {
+            Attribute::class => $this->attributes->add($child),
+            default => $this->children->add($child),
+        };
     }
 
-    public function addAttribute(Attribute $attribute): void
+    public function remove(Attribute|Element $target): void
     {
-        $this->attributes->add($attribute);
+        match ($target::class) {
+            Attribute::class => $this->attributes->remove($target),
+            default => $this->children->remove($target),
+        };
     }
 
-    public function setAttribute(Attribute $attribute): void
+    public function replace(Element|Attribute $oldChild, Element|Attribute $newChild): void
     {
-        $this->attributes->set($attribute);
+        if ($oldChild::class !== $newChild::class) {
+            throw new InvalidArgumentException('Cannot replace an Element with an Attribute or vice versa.');
+        }
+
+        $this->remove($oldChild);
+        $this->add($newChild);
     }
 
-    public function indexOfChild(Element $child): ?int
+    public function isSet(string $childName): bool
     {
-        return $this->children->indexOf($child);
-    }
-
-    public function insertChildAt(int $index, Element $child): void
-    {
-        $this->children->insertAt($index, $child);
-    }
-
-    public function replaceChild(Element $current, Element $replacement): void
-    {
-        $this->children->replace($current, $replacement);
-    }
-
-    public function removeChild(Element $child): void
-    {
-        $this->children->remove($child);
+        return ! is_null($this->{$childName});
     }
 
     public function parse(mixed $rawData): Result
@@ -67,13 +64,13 @@ class Element
         $this->name = $this->iterator->name;
         $this->value = $this->iterator->value;
         foreach ($this->iterator->attributes as $attributeName => $attributeValue) {
-            $this->addAttribute(new Attribute($attributeName, $attributeValue, $this->name));
+            $this->add(new Attribute($attributeName, $attributeValue, $this->name));
         }
 
-        foreach ($this->iterator->children as $child) {
-            $childElement = new Element;
-            $childElement->parse($child);
-            $this->addChild($childElement);
+        foreach ($this->iterator->children as $target) {
+            $targetElement = new Element;
+            $targetElement->parse($target);
+            $this->add($targetElement);
         }
 
         return Result::makeSuccess($this);
@@ -81,11 +78,7 @@ class Element
 
     public function __get(string $name): Attribute|ElementList|Element|null
     {
-        if ($this->attributes->exists($name)) {
-            return $this->attributes->$name;
-        }
-
-        return $this->children->$name;
+        return $this->attributes->$name ?? $this->children->$name;
     }
 
     public function __toString(): string
@@ -104,8 +97,8 @@ class Element
 
         $xmlString .= '>';
         $xmlString .= htmlspecialchars($this->value ?? '', ENT_XML1, 'UTF-8');
-        foreach ($this->children->records as $child) {
-            $xmlString .= (string) $child;
+        foreach ($this->children->records as $target) {
+            $xmlString .= (string) $target;
         }
 
         $xmlString .= '</' . $this->name . '>';

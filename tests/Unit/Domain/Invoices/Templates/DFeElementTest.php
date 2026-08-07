@@ -11,8 +11,7 @@ use BradiApi\Tests\Doubles\Domain\Invoices\NFe\FakeDFeElement;
 use BradiApi\Tests\Doubles\Domain\Invoices\NFe\FakeDFeGroupWithAttribute;
 use BradiApi\Tests\TestCase;
 
-// Todo: Test if all properties of DFeElement child have a set method that ensure sourceElement is updated with new data
-// Todo: Ensure that DFeElements erase or create child data of sourceElement when property is optional
+// Todo: Test if all properties of DFeElement child have a set method that ensure source is updated with new data
 // Todo: Ensure that root xml string is updated when a child DFeAttribute value is updated
 
 describe('DFeElement', function () {
@@ -40,7 +39,7 @@ describe('DFeElement', function () {
         describe('construct()', function () {
             test('Should not throw when parent field URI is empty', function () {
                 expect(fn () => new FakeDFeElement(''))
-                    ->not->toThrow(RuntimeException::class);
+                    ->not->toThrow(Error::class);
             });
 
             test('Should throw when FIELD_NAME is not defined in the child class', function () {
@@ -63,16 +62,16 @@ describe('DFeElement', function () {
                     {
                         return [];
                     }
-                })->toThrow(RuntimeException::class);
+                })->toThrow(Error::class);
             });
         });
 
-        describe('parseFromXmlElement()', function () {
+        describe('parse()', function () {
             test('Should set value property correctly', function () {
                 $element = new Element;
                 $element->parse('<FakeTag>hello</FakeTag>');
 
-                $this->sut->parseFromXmlElement($element);
+                $this->sut->parse($element);
 
                 expect($this->sut->value)->toBe('hello');
             });
@@ -81,7 +80,7 @@ describe('DFeElement', function () {
                 $element = new Element;
                 $element->parse('<FakeTag>hello</FakeTag>');
 
-                $parsingResponse = $this->sut->parseFromXmlElement($element);
+                $parsingResponse = $this->sut->parse($element);
 
                 expect($parsingResponse)->toBeInstanceOf(Result::class);
                 expect($parsingResponse->isSuccess())->toBeTrue();
@@ -92,7 +91,7 @@ describe('DFeElement', function () {
                 $element = new Element;
                 $element->parse('<WrongTag>hello</WrongTag>');
 
-                $parsingResponse = $this->sut->parseFromXmlElement($element);
+                $parsingResponse = $this->sut->parse($element);
 
                 expect($parsingResponse)->toBeInstanceOf(Result::class);
                 expect($parsingResponse->isFailure())->toBeTrue();
@@ -103,7 +102,7 @@ describe('DFeElement', function () {
                 $element->parse('<FakeGroup fakeAttr="ABC123"><FakeTag>childValue</FakeTag></FakeGroup>');
 
                 $sut = new FakeDFeGroupWithAttribute;
-                $parsingResponse = $sut->parseFromXmlElement($element);
+                $parsingResponse = $sut->parse($element);
 
                 expect($parsingResponse->isSuccess())->toBeTrue();
                 expect($sut->fakeAttr->value)->toBe('ABC123');
@@ -122,7 +121,7 @@ describe('DFeElement', function () {
                 $element = new Element;
                 $element->parse('<FakeTag>hello</FakeTag>');
 
-                $this->sut->parseFromXmlElement($element);
+                $this->sut->parse($element);
                 $this->sut->value = 'updated';
 
                 expect((string) $this->sut)->toBe('<FakeTag>updated</FakeTag>');
@@ -132,10 +131,52 @@ describe('DFeElement', function () {
                 $element = new Element;
                 $element->parse('<FakeTag><FakeTag>hello</FakeTag></FakeTag>');
 
-                $this->sut->parseFromXmlElement($element);
+                $this->sut->parse($element);
                 $this->sut->childElement->value = 'updated';
 
                 expect((string) $this->sut)->toBe('<FakeTag><FakeTag>updated</FakeTag></FakeTag>');
+            });
+
+            test('Should replace child tag when the child property receives another DFeElement instance', function () {
+                $element = new Element;
+                $element->parse('<FakeTag><FakeTag>hello</FakeTag></FakeTag>');
+                $this->sut->parse($element);
+
+                $replacement = new FakeDFeElement;
+                $replacement->value = 'other';
+                $this->sut->childElement = $replacement;
+
+                expect((string) $this->sut)->toBe('<FakeTag><FakeTag>other</FakeTag></FakeTag>');
+            });
+
+            test('Should remove child tag when an optional child property is set to null', function () {
+                $element = new Element;
+                $element->parse('<FakeTag><FakeTag>hello</FakeTag></FakeTag>');
+                $this->sut->parse($element);
+                $this->sut->childElement = null;
+
+                expect((string) $this->sut)->toBe('<FakeTag/>');
+            });
+
+            test('Should keep tags that are not mapped as properties when a mapped child changes', function () {
+                $element = new Element;
+                $element->parse('<FakeGroup fakeAttr="ABC123"><FakeTag>childValue</FakeTag><unmapped>keep</unmapped></FakeGroup>');
+
+                $sut = new FakeDFeGroupWithAttribute;
+                $sut->parse($element);
+                $sut->fakeChild->value = 'updated';
+
+                expect((string) $sut)->toBe('<FakeGroup fakeAttr="ABC123"><FakeTag>updated</FakeTag><unmapped>keep</unmapped></FakeGroup>');
+            });
+
+            test('Should return the same xml string when serialized twice', function () {
+                $element = new Element;
+                $element->parse('<FakeGroup fakeAttr="ABC123"><FakeTag>childValue</FakeTag></FakeGroup>');
+
+                $sut = new FakeDFeGroupWithAttribute;
+                $sut->parse($element);
+
+                expect((string) $sut)->toBe((string) $sut);
             });
 
             test('Should escape special characters exactly once and keep value readable as assigned', function () {
@@ -162,6 +203,7 @@ describe('DFeElement', function () {
                 $attr->value = 'ABC123';
 
                 $child = new FakeDFeElement('x');
+                $child->value = 'childValue';
 
                 $sut = new FakeDFeGroupWithAttribute;
                 $sut->fakeAttr = $attr;
@@ -171,6 +213,8 @@ describe('DFeElement', function () {
 
                 expect($result)->toStartWith('<FakeGroup fakeAttr="ABC123">');
             });
+
+            // TEST: should remove xml tags when it has no value or child data
 
             test('Should skip optional child when not initialized', function () {
                 $attr = new FakeDFeAttribute('FakeDFeGroupWithAttribute');
@@ -206,20 +250,10 @@ describe('DFeElement', function () {
                 expect($result)->toBe('<FakeGroup fakeAttr="attrValue"><FakeTag>childValue</FakeTag></FakeGroup>');
             });
 
-            test('Should throw RuntimeException when required DFeElement property is not initialized', function () {
-                $sut = new FakeDFeGroupWithAttribute;
-                $sut->fakeAttr = new FakeDFeAttribute('FakeDFeGroupWithAttribute');
-                $sut->fakeAttr->value = 'attrValue';
-                // fakeChild intentionally not initialized
-
-                expect(fn () => (string) $sut)->toThrow(RuntimeException::class);
-            });
-
-            test('Should throw RuntimeException when required DFeAttribute property is not initialized', function () {
+            test('Should throw Error when required DFeAttribute property is not initialized', function () {
                 $sut = new FakeDFeGroupWithAttribute;
                 // fakeAttr intentionally not initialized
-
-                expect(fn () => (string) $sut)->toThrow(RuntimeException::class);
+                expect(fn () => $sut->fakeAttr)->toThrow(Error::class);
             });
         });
     });

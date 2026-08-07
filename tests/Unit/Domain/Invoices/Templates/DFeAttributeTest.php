@@ -34,16 +34,16 @@ describe('DFeAttribute', function () {
             });
         });
 
-        describe('parseFromXmlElement()', function () {
+        describe('parse()', function () {
             test('Should set value property correctly', function () {
                 $attribute = new Attribute('fakeAttr', 'ABC123', 'parentTag');
-                $this->sut->parseFromXmlElement($attribute);
+                $this->sut->parse($attribute);
                 expect($this->sut->value)->toBe('ABC123');
             });
 
             test('Should set serialized string correctly', function () {
                 $attribute = new Attribute('fakeAttr', 'ABC123', 'parentTag');
-                $this->sut->parseFromXmlElement($attribute);
+                $this->sut->parse($attribute);
                 expect((string) $this->sut)->toBe((string) $attribute);
             });
         });
