@@ -96,7 +96,7 @@ class Element
         }
 
         $xmlString .= '>';
-        $xmlString .= htmlspecialchars($this->value ?? '', ENT_XML1, 'UTF-8');
+        $xmlString .= $this->value ?? '';
         foreach ($this->children->records as $target) {
             $xmlString .= (string) $target;
         }

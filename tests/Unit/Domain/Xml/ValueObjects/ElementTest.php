@@ -570,35 +570,44 @@ describe('Element', function () {
                 });
             });
 
-            describe('special character escaping', function () {
-                test('Should escape ampersand in value', function () {
+            describe('special characters', function () {
+                test('Should not escape ampersand in value', function () {
                     $this->sut->value = 'A&B';
+
+                    expect((string) $this->sut)->toBe('<tag>A&B</tag>');
+                });
+
+                test('Should not escape less-than in value', function () {
+                    $this->sut->value = '5<3';
+
+                    expect((string) $this->sut)->toBe('<tag>5<3</tag>');
+                });
+
+                test('Should not escape greater-than in value', function () {
+                    $this->sut->value = '5>3';
+
+                    expect((string) $this->sut)->toBe('<tag>5>3</tag>');
+                });
+
+                test('Should not escape double quotes in attribute value', function () {
+                    $this->sut->add(new Attribute('ref', 'say "hi"', 'tag'));
+
+                    expect((string) $this->sut)->toBe('<tag ref="say "hi""/>');
+                });
+
+                test('Should keep an already escaped value unchanged', function () {
+                    $this->sut->value = 'A&amp;B';
 
                     expect((string) $this->sut)->toBe('<tag>A&amp;B</tag>');
                 });
 
-                test('Should escape less-than in value', function () {
-                    $this->sut->value = '5<3';
+                test('Should return the source xml untouched after a parse round-trip', function () {
+                    $candidate = '<root ref="A&amp;B"><tag>5&lt;3</tag></root>';
 
-                    expect((string) $this->sut)->toBe('<tag>5&lt;3</tag>');
-                });
+                    $sut = new Element;
+                    $sut->parse($candidate);
 
-                test('Should escape greater-than in value', function () {
-                    $this->sut->value = '5>3';
-
-                    expect((string) $this->sut)->toBe('<tag>5&gt;3</tag>');
-                });
-
-                test('Should escape double quotes in attribute value', function () {
-                    $this->sut->add(new Attribute('ref', 'say "hi"', 'tag'));
-
-                    expect((string) $this->sut)->toBe('<tag ref="say &quot;hi&quot;"/>');
-                });
-
-                test('Should escape ampersand in attribute value', function () {
-                    $this->sut->add(new Attribute('ref', 'A&B', 'tag'));
-
-                    expect((string) $this->sut)->toBe('<tag ref="A&amp;B"/>');
+                    expect((string) $sut)->toBe($candidate);
                 });
             });
 

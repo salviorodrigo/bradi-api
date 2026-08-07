@@ -179,10 +179,10 @@ describe('DFeElement', function () {
                 expect((string) $sut)->toBe((string) $sut);
             });
 
-            test('Should escape special characters exactly once and keep value readable as assigned', function () {
+            test('Should serialize special characters verbatim and keep value readable as assigned', function () {
                 $this->sut->value = 'A&B';
 
-                expect((string) $this->sut)->toBe('<FakeTag>A&amp;B</FakeTag>');
+                expect((string) $this->sut)->toBe('<FakeTag>A&B</FakeTag>');
                 expect($this->sut->value)->toBe('A&B');
             });
 

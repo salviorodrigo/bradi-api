@@ -127,8 +127,7 @@ abstract class DFeAttribute
             ));
         }
 
-        $escapedValue = htmlspecialchars($this->value, ENT_XML1 | ENT_QUOTES, 'UTF-8');
-        $this->source = new Attribute(static::FIELD_NAME, $escapedValue, $this->parentTagName);
+        $this->source = new Attribute(static::FIELD_NAME, $this->value, $this->parentTagName);
     }
 
     final public function __toString(): string
