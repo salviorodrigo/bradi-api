@@ -8,9 +8,7 @@ use InvalidArgumentException;
 
 final class AttributeList
 {
-    /**
-     * @param  array<Attribute>  $records  indexed by $attribute->name
-     */
+    /** @var array<int,Attribute> Lista compacta; nomes sao unicos, garantido por add() */
     public array $records = [];
 
     public function add(Attribute $attribute): void

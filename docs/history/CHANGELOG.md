@@ -46,6 +46,15 @@ Guia de uso: consulte `docs/history/README.md`.
 - Impacto: apenas testes; nenhuma alteracao em `src/`. Fixa o contrato da camada que escapa valores de atributo antes da serializacao XML.
 - Evidencia: `./vendor/bin/pest tests/Unit/Domain/Xml/ValueObjects/AttributeTest.php` passou de 5 para 27 testes aprovados (41 assercoes); suite completa com 1689 aprovados e `composer lint` sem apontamentos.
 
+- Escopo: Tests/Domain
+- Descricao: Reescrita da suite unitaria de `AttributeList` no mesmo padrao, repondo a cobertura removida em `a29faed` (os blocos `::set()` e `::exists()` foram deletados; `set()` deixou de existir, mas `exists()` permaneceu com nova assinatura e ficou sem teste). Passam a ter teste direto `remove()`, `indexOf()`, `exists()` e a propriedade `$records`, incluindo a semantica de busca por nome — e nao por identidade de instancia, ao contrario do `ElementList` —, que e o que permite ao `Element::replace()` trocar um atributo por outra instancia homonima. Aplicada tambem passe de consistencia no `AttributeTest`: `isPromoted()`/`isReadOnly()` saiu de um `foreach` em `methods > __construct()` para um teste por propriedade em `properties`, e removido o `beforeEach` que era sombreado por `$sut` locais.
+- Arquivos:
+  - `tests/Unit/Domain/Xml/ValueObjects/AttributeListTest.php`
+  - `tests/Unit/Domain/Xml/ValueObjects/AttributeTest.php`
+  - `src/Domain/Xml/ValueObjects/AttributeList.php`
+- Impacto: cobre a cadeia `Element::remove()`/`Element::replace()` -> `AttributeList::remove()`, da qual `DFeElement::sync()` depende para reconciliar atributos na serializacao. Em `src/` apenas o docblock de `$records`, que declarava `@param ... indexed by $attribute->name` sendo que `add()` faz `$this->records[] = $attribute` (lista compacta); corrigido para `@var` com a garantia real.
+- Evidencia: `AttributeListTest` passou de 4 para 21 testes aprovados e `AttributeTest` de 24 para 26; suite completa com 1706 aprovados (2130 assercoes) e `composer lint` sem apontamentos.
+
 ## 2026-07-29
 
 ### Added

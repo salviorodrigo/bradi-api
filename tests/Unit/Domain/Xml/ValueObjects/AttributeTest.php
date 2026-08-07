@@ -3,7 +3,6 @@
 declare(strict_types=1);
 
 use BradiApi\Domain\Xml\ValueObjects\Attribute;
-use BradiApi\Tests\TestCase;
 
 describe('Attribute', function () {
     test('Should succeed if is declared', function () {
@@ -30,6 +29,13 @@ describe('Attribute', function () {
                 $sut = $reflection->getProperty('name')->getType();
                 expect($sut->allowsNull())->toBeFalse();
             });
+
+            test('Should be a promoted readonly property', function () {
+                $reflection = new ReflectionClass(Attribute::class);
+                $sut = $reflection->getProperty('name');
+                expect($sut->isPromoted())->toBeTrue();
+                expect($sut->isReadOnly())->toBeTrue();
+            });
         });
 
         describe('$value', function () {
@@ -48,6 +54,13 @@ describe('Attribute', function () {
                 $reflection = new ReflectionClass(Attribute::class);
                 $sut = $reflection->getProperty('value')->getType();
                 expect($sut->allowsNull())->toBeFalse();
+            });
+
+            test('Should be a promoted readonly property', function () {
+                $reflection = new ReflectionClass(Attribute::class);
+                $sut = $reflection->getProperty('value');
+                expect($sut->isPromoted())->toBeTrue();
+                expect($sut->isReadOnly())->toBeTrue();
             });
         });
 
@@ -68,6 +81,13 @@ describe('Attribute', function () {
                 $sut = $reflection->getProperty('parentTagName')->getType();
                 expect($sut->allowsNull())->toBeFalse();
             });
+
+            test('Should be a promoted readonly property', function () {
+                $reflection = new ReflectionClass(Attribute::class);
+                $sut = $reflection->getProperty('parentTagName');
+                expect($sut->isPromoted())->toBeTrue();
+                expect($sut->isReadOnly())->toBeTrue();
+            });
         });
     });
 
@@ -79,16 +99,6 @@ describe('Attribute', function () {
                 expect($sut->name)->toBe('id');
                 expect($sut->value)->toBe('123');
                 expect($sut->parentTagName)->toBe('item');
-            });
-
-            test('Should promote every argument as a readonly property', function () {
-                $reflection = new ReflectionClass(Attribute::class);
-
-                foreach (['name', 'value', 'parentTagName'] as $propertyName) {
-                    $sut = $reflection->getProperty($propertyName);
-                    expect($sut->isPromoted())->toBeTrue();
-                    expect($sut->isReadOnly())->toBeTrue();
-                }
             });
 
             test('Should require all three arguments', function () {
@@ -109,17 +119,16 @@ describe('Attribute', function () {
 
         describe('__toString()', function () {
             describe('plain values', function () {
-                beforeEach(function () {
-                    /** @var TestCase $this */
-                    $this->sut = new Attribute('id', '123', 'item');
-                });
-
                 test('Should serialize attribute name and value', function () {
-                    expect((string) $this->sut)->toBe('id="123"');
+                    $sut = new Attribute('id', '123', 'item');
+
+                    expect((string) $sut)->toBe('id="123"');
                 });
 
                 test('Should not render the parent tag name', function () {
-                    expect((string) $this->sut)->not->toContain('item');
+                    $sut = new Attribute('id', '123', 'item');
+
+                    expect((string) $sut)->not->toContain('item');
                 });
 
                 test('Should serialize an empty value as an empty pair of quotes', function () {
