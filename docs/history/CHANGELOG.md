@@ -14,6 +14,17 @@ Guia de uso: consulte `docs/history/README.md`.
 
 ---
 
+## 2026-08-07
+
+### Changed
+
+- Escopo: Tests/Domain
+- Descricao: Reescrita da suite unitaria de `Element` com secoes `properties` e `methods`), repondo a cobertura perdida na consolidacao da API publica feita em `a29faed` (`addAttribute`/`addChild`/`insertAt`/`set` -> `add`/`remove`/`replace`). Passam a ter teste direto `__construct()`, `add()`, `remove()`, `replace()` e `isSet()` — os quatro metodos usados por `DFeElement::sync()` para reconciliar o `source` na serializacao —, alem de novos casos de `parse()` para tag autocontida (com e sem espaco final) e tags aninhadas homonimas.
+- Arquivos:
+  - `tests/Unit/Domain/Xml/ValueObjects/ElementTest.php`
+- Impacto: apenas testes; nenhuma alteracao em `src/`. Reduz risco de regressao silenciosa na reconciliacao de filhos e atributos do `DFeElement`.
+- Evidencia: `./vendor/bin/pest tests/Unit/Domain/Xml/ValueObjects/ElementTest.php` passou de 23 para 63 testes aprovados (121 assercoes); suite completa com 1669 aprovados e `composer lint` sem apontamentos.
+
 ## 2026-07-29
 
 ### Added
