@@ -94,3 +94,38 @@ Uma contribuicao so esta pronta quando:
 - docs/history/CHANGELOG.md
 - docs/history/DECISIONS.md
 - docs/history/adr/ADR-0000-template.md
+
+## Dev Container + SSH
+
+O dev container publica SSH na porta 2222 em modo dev (sem autenticacao forte).
+
+Quando o servidor SSH roda no WSL e o app cliente roda no Windows, a confianca de host e validada no ambiente Windows.
+
+Configuracao basica de conexao para qualquer aplicativo com suporte a SSH:
+
+- Host: 127.0.0.1 (preferivel no Windows)
+- Porta: 2222
+- Usuario: vscode
+- Metodo de autenticacao: senha
+- Senha: vazia (pressione Enter se solicitado)
+
+Passos recomendados:
+
+1. No Windows, rode um teste SSH manual para registrar o host como confiavel.
+2. No app cliente SSH, preencha host, porta e usuario com os valores acima.
+3. Se o cliente solicitar senha, envie vazio (Enter).
+
+Comandos de validacao no Windows (PowerShell):
+
+- ssh -o StrictHostKeyChecking=accept-new -p 2222 vscode@127.0.0.1
+
+Se o teste acima conectar, o host foi adicionado como confiavel e o app tende a conectar normalmente.
+
+Se aparecer erro de verificacao de host (fingerprint), limpe a entrada antiga e tente novamente:
+
+- ssh-keygen -R [localhost]:2222
+- ssh-keygen -R [127.0.0.1]:2222
+
+Observacao de seguranca:
+
+- Esta configuracao e intencionalmente insegura e deve ser usada apenas para desenvolvimento local.
