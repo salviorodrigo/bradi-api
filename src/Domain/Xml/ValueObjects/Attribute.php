@@ -14,6 +14,6 @@ class Attribute
 
     public function __toString(): string
     {
-        return $this->name . '="' . htmlspecialchars($this->value, ENT_QUOTES | ENT_XML1, 'UTF-8') . '"';
+        return $this->name . '="' . $this->value . '"';
     }
 }

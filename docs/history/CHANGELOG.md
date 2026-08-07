@@ -16,6 +16,20 @@ Guia de uso: consulte `docs/history/README.md`.
 
 ## 2026-08-07
 
+### Removed
+
+- Escopo: Domain/Xml, Domain/Invoices
+- Descricao: Removido o escape de XML (`htmlspecialchars`) de `Attribute::__toString()`, `Element::__toString()` e `DFeAttribute::initializeSourceAttribute()`. Valores de tag e de atributo passam a ser serializados verbatim; escapar/desescapar e responsabilidade dos sanitizadores da borda, nao regra de dominio.
+- Arquivos:
+  - `src/Domain/Xml/ValueObjects/Attribute.php`
+  - `src/Domain/Xml/ValueObjects/Element.php`
+  - `src/Domain/Invoices/Templates/DFeAttribute.php`
+  - `tests/Unit/Domain/Xml/ValueObjects/AttributeTest.php`
+  - `tests/Unit/Domain/Xml/ValueObjects/ElementTest.php`
+  - `tests/Unit/Domain/Invoices/Templates/DFeElementTest.php`
+- Impacto: corrige escape duplo em dois pontos. Em `DFeAttribute` o valor era escapado na montagem do `Attribute` e novamente na serializacao (`A&B` virava `A&amp;amp;B`); em `Element`/`Attribute` o valor vindo do parsing ja chegava escapado como no XML de origem e era escapado outra vez no round-trip (`A&amp;B` virava `A&amp;amp;B`). Breaking change para quem dependia do escape automatico: a partir daqui o valor cru precisa ser sanitizado antes de chegar ao dominio.
+- Evidencia: round-trip `parse -> __toString` passou a devolver o XML de origem byte a byte (`<root ref="A&amp;B"><tag>5&lt;3</tag></root>`); suite completa com 1687 aprovados (2107 assercoes) e `composer lint` sem apontamentos.
+
 ### Changed
 
 - Escopo: Tests/Domain
@@ -24,6 +38,13 @@ Guia de uso: consulte `docs/history/README.md`.
   - `tests/Unit/Domain/Xml/ValueObjects/ElementTest.php`
 - Impacto: apenas testes; nenhuma alteracao em `src/`. Reduz risco de regressao silenciosa na reconciliacao de filhos e atributos do `DFeElement`.
 - Evidencia: `./vendor/bin/pest tests/Unit/Domain/Xml/ValueObjects/ElementTest.php` passou de 23 para 63 testes aprovados (121 assercoes); suite completa com 1669 aprovados e `composer lint` sem apontamentos.
+
+- Escopo: Tests/Domain
+- Descricao: Reescrita da suite unitaria de `Attribute` com secoes `properties` e `methods`). Passam a ter teste direto as tres propriedades promovidas (`$name`, `$value`, `$parentTagName`) quanto a tipo, obrigatoriedade e imutabilidade (`readonly`), o contrato do construtor (tres argumentos obrigatorios, valor vazio aceito) e novos casos de `__toString()`: valor vazio, decimal, caracteres nao-ascii preservados, escape combinado e ausencia do nome da tag pai na serializacao.
+- Arquivos:
+  - `tests/Unit/Domain/Xml/ValueObjects/AttributeTest.php`
+- Impacto: apenas testes; nenhuma alteracao em `src/`. Fixa o contrato da camada que escapa valores de atributo antes da serializacao XML.
+- Evidencia: `./vendor/bin/pest tests/Unit/Domain/Xml/ValueObjects/AttributeTest.php` passou de 5 para 27 testes aprovados (41 assercoes); suite completa com 1689 aprovados e `composer lint` sem apontamentos.
 
 ## 2026-07-29
 
