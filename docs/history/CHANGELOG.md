@@ -33,27 +33,16 @@ Guia de uso: consulte `docs/history/README.md`.
 ### Changed
 
 - Escopo: Tests/Domain
-- Descricao: Reescrita da suite unitaria de `Element` com secoes `properties` e `methods`), repondo a cobertura perdida na consolidacao da API publica feita em `a29faed` (`addAttribute`/`addChild`/`insertAt`/`set` -> `add`/`remove`/`replace`). Passam a ter teste direto `__construct()`, `add()`, `remove()`, `replace()` e `isSet()` — os quatro metodos usados por `DFeElement::sync()` para reconciliar o `source` na serializacao —, alem de novos casos de `parse()` para tag autocontida (com e sem espaco final) e tags aninhadas homonimas.
+- Descricao: Reescrita e padronizacao das suites unitarias de `Element`, `Attribute`, `AttributeList` e `ElementList` (secoes `properties` e `methods`), com reposicao de cobertura do contrato publico atual, reforco dos cenarios de reconciliacao usados por `DFeElement::sync()` e ajustes pontuais de consistencia em testes/docblocks.
 - Arquivos:
   - `tests/Unit/Domain/Xml/ValueObjects/ElementTest.php`
-- Impacto: apenas testes; nenhuma alteracao em `src/`. Reduz risco de regressao silenciosa na reconciliacao de filhos e atributos do `DFeElement`.
-- Evidencia: `./vendor/bin/pest tests/Unit/Domain/Xml/ValueObjects/ElementTest.php` passou de 23 para 63 testes aprovados (121 assercoes); suite completa com 1669 aprovados e `composer lint` sem apontamentos.
-
-- Escopo: Tests/Domain
-- Descricao: Reescrita da suite unitaria de `Attribute` com secoes `properties` e `methods`). Passam a ter teste direto as tres propriedades promovidas (`$name`, `$value`, `$parentTagName`) quanto a tipo, obrigatoriedade e imutabilidade (`readonly`), o contrato do construtor (tres argumentos obrigatorios, valor vazio aceito) e novos casos de `__toString()`: valor vazio, decimal, caracteres nao-ascii preservados, escape combinado e ausencia do nome da tag pai na serializacao.
-- Arquivos:
   - `tests/Unit/Domain/Xml/ValueObjects/AttributeTest.php`
-- Impacto: apenas testes; nenhuma alteracao em `src/`. Fixa o contrato da camada que escapa valores de atributo antes da serializacao XML.
-- Evidencia: `./vendor/bin/pest tests/Unit/Domain/Xml/ValueObjects/AttributeTest.php` passou de 5 para 27 testes aprovados (41 assercoes); suite completa com 1689 aprovados e `composer lint` sem apontamentos.
-
-- Escopo: Tests/Domain
-- Descricao: Reescrita da suite unitaria de `AttributeList` no mesmo padrao, repondo a cobertura removida em `a29faed` (os blocos `::set()` e `::exists()` foram deletados; `set()` deixou de existir, mas `exists()` permaneceu com nova assinatura e ficou sem teste). Passam a ter teste direto `remove()`, `indexOf()`, `exists()` e a propriedade `$records`, incluindo a semantica de busca por nome — e nao por identidade de instancia, ao contrario do `ElementList` —, que e o que permite ao `Element::replace()` trocar um atributo por outra instancia homonima. Aplicada tambem passe de consistencia no `AttributeTest`: `isPromoted()`/`isReadOnly()` saiu de um `foreach` em `methods > __construct()` para um teste por propriedade em `properties`, e removido o `beforeEach` que era sombreado por `$sut` locais.
-- Arquivos:
   - `tests/Unit/Domain/Xml/ValueObjects/AttributeListTest.php`
-  - `tests/Unit/Domain/Xml/ValueObjects/AttributeTest.php`
+  - `tests/Unit/Domain/Xml/ValueObjects/ElementListTest.php`
   - `src/Domain/Xml/ValueObjects/AttributeList.php`
-- Impacto: cobre a cadeia `Element::remove()`/`Element::replace()` -> `AttributeList::remove()`, da qual `DFeElement::sync()` depende para reconciliar atributos na serializacao. Em `src/` apenas o docblock de `$records`, que declarava `@param ... indexed by $attribute->name` sendo que `add()` faz `$this->records[] = $attribute` (lista compacta); corrigido para `@var` com a garantia real.
-- Evidencia: `AttributeListTest` passou de 4 para 21 testes aprovados e `AttributeTest` de 24 para 26; suite completa com 1706 aprovados (2130 assercoes) e `composer lint` sem apontamentos.
+  - `src/Domain/Xml/ValueObjects/ElementList.php`
+- Impacto: reduz risco de regressao no pacote `Domain/Xml/ValueObjects`; em `src/`, apenas correcao de docblocks de `$records` (`@param` -> `@var`), sem mudanca de comportamento.
+- Evidencia: suites atualizadas com aumento de cobertura (`ElementTest` 63, `AttributeTest` 27, `AttributeListTest` 21, `ElementListTest` 27), com `composer lint` e suite completa verdes.
 
 ## 2026-07-29
 

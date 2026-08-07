@@ -8,9 +8,7 @@ use InvalidArgumentException;
 
 final class ElementList
 {
-    /**
-     * @param  array<Element>  $records
-     */
+    /** @param  array<Element>  $records */
     public array $records;
 
     public function __construct(array $records = [])
