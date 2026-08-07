@@ -2,17 +2,15 @@
 
 declare(strict_types=1);
 
-use BradiApi\Domain\Common\Protocols\Validator;
 use BradiApi\Domain\Common\ValueObjects\Result;
 use BradiApi\Domain\Invoices\Templates\DFeElement;
 use BradiApi\Domain\Xml\ValueObjects\Element;
 use BradiApi\Tests\Doubles\Domain\Invoices\NFe\FakeDFeAttribute;
 use BradiApi\Tests\Doubles\Domain\Invoices\NFe\FakeDFeElement;
+use BradiApi\Tests\Doubles\Domain\Invoices\NFe\FakeDFeElementWithEmptyFieldName;
+use BradiApi\Tests\Doubles\Domain\Invoices\NFe\FakeDFeElementWithoutFieldName;
 use BradiApi\Tests\Doubles\Domain\Invoices\NFe\FakeDFeGroupWithAttribute;
 use BradiApi\Tests\TestCase;
-
-// Todo: Test if all properties of DFeElement child have a set method that ensure source is updated with new data
-// Todo: Ensure that root xml string is updated when a child DFeAttribute value is updated
 
 describe('DFeElement', function () {
     beforeEach(function () {
@@ -20,49 +18,84 @@ describe('DFeElement', function () {
         $this->sut = new FakeDFeElement;
     });
 
+    test('Should succeed if is declared', function () {
+        $nameSpace = 'BradiApi\Domain\Invoices\Templates';
+        $sut = $nameSpace . '\\DFeElement';
+        expect(class_exists($sut))->toBeTrue();
+    });
+
+    test('Should be declared as abstract', function () {
+        $sut = new ReflectionClass(DFeElement::class);
+        expect($sut->isAbstract())->toBeTrue();
+    });
+
     describe('properties', function () {
-        test('Should have the correct field name', function () {
-            expect(FakeDFeElement::FIELD_NAME)->toBe('FakeTag');
+        describe('FIELD_NAME', function () {
+            test('Should have the correct field name', function () {
+                expect(FakeDFeElement::FIELD_NAME)->toBe('FakeTag');
+            });
         });
 
-        test('Should build field URI from field name when no parent is provided', function () {
-            expect($this->sut->fieldURI)->toBe('FakeTag');
+        describe('$fieldURI', function () {
+            test('Should build field URI from field name when no parent is provided', function () {
+                expect($this->sut->fieldURI)->toBe('FakeTag');
+            });
+
+            test('Should build field URI by prefixing the parent field URI', function () {
+                $sut = new FakeDFeElement('parentTag');
+                expect($sut->fieldURI)->toBe('parentTag.FakeTag');
+            });
+
+            test('Should be a readonly string', function () {
+                $reflection = new ReflectionClass(DFeElement::class);
+                $sut = $reflection->getProperty('fieldURI');
+                expect($sut->getType()->getName())->toBe('string');
+                expect($sut->isReadOnly())->toBeTrue();
+            });
         });
 
-        test('Should build field URI by prefixing the parent field URI', function () {
-            $sut = new FakeDFeElement('parentTag');
-            expect($sut->fieldURI)->toBe('parentTag.FakeTag');
+        describe('$value', function () {
+            test('Should be declared', function () {
+                expect($this->sut)->toHaveProperty('value');
+            });
+
+            test('Should be a nullable string', function () {
+                $reflection = new ReflectionClass(DFeElement::class);
+                $sut = $reflection->getProperty('value')->getType();
+                expect($sut->getName())->toBe('string');
+                expect($sut->allowsNull())->toBeTrue();
+            });
+
+            test('Should propagate the assigned value to the parsed source element', function () {
+                $element = new Element;
+                $element->parse('<FakeTag>hello</FakeTag>');
+                $this->sut->parse($element);
+
+                $this->sut->value = 'changed';
+
+                expect($this->sut->getSource()->value)->toBe('changed');
+                expect($element->value)->toBe('changed');
+            });
         });
     });
 
     describe('methods', function () {
-        describe('construct()', function () {
+        describe('__construct()', function () {
             test('Should not throw when parent field URI is empty', function () {
                 expect(fn () => new FakeDFeElement(''))
                     ->not->toThrow(Error::class);
             });
 
-            test('Should throw when FIELD_NAME is not defined in the child class', function () {
-                expect(fn () => new class extends DFeElement
-                {
-                    /** @return array<Validator> */
-                    protected function tagValueValidators(): array
-                    {
-                        return [];
-                    }
+            // Sao dois caminhos distintos: com FIELD_NAME herdando null, a atribuicao de
+            // $fieldURI estoura antes do guard clause, que so e alcancado com FIELD_NAME = ''.
+            test('Should throw a TypeError when FIELD_NAME is not defined', function () {
+                expect(fn () => new FakeDFeElementWithoutFieldName)
+                    ->toThrow(TypeError::class, 'Cannot assign null to property');
+            });
 
-                    /** @return array<Validator> */
-                    protected function tagAttributesValidators(): array
-                    {
-                        return [];
-                    }
-
-                    /** @return array<Validator> */
-                    protected function tagElementsValidators(): array
-                    {
-                        return [];
-                    }
-                })->toThrow(Error::class);
+            test('Should throw a RuntimeException when FIELD_NAME is empty', function () {
+                expect(fn () => new FakeDFeElementWithEmptyFieldName)
+                    ->toThrow(RuntimeException::class, 'must define a constant "FIELD_NAME"');
             });
         });
 
@@ -110,7 +143,42 @@ describe('DFeElement', function () {
             });
         });
 
+        describe('getSource()', function () {
+            test('Should return null when there is no value and no child data', function () {
+                expect($this->sut->getSource())->toBeNull();
+            });
+
+            test('Should return an element named after FIELD_NAME once a value is assigned', function () {
+                $this->sut->value = 'hello';
+
+                $source = $this->sut->getSource();
+
+                expect($source)->toBeInstanceOf(Element::class);
+                expect($source->name)->toBe('FakeTag');
+                expect($source->value)->toBe('hello');
+            });
+
+            test('Should return the very element instance given to parse', function () {
+                $element = new Element;
+                $element->parse('<FakeTag>hello</FakeTag>');
+
+                $this->sut->parse($element);
+
+                expect($this->sut->getSource())->toBe($element);
+            });
+
+            test('Should return the same instance across calls', function () {
+                $this->sut->value = 'hello';
+
+                expect($this->sut->getSource())->toBe($this->sut->getSource());
+            });
+        });
+
         describe('__toString()', function () {
+            test('Should return an empty string when there is no value and no child data', function () {
+                expect((string) $this->sut)->toBe('');
+            });
+
             test('Should serialize xml string from cache when already set', function () {
                 $this->sut->value = 'hello';
 
@@ -213,8 +281,6 @@ describe('DFeElement', function () {
 
                 expect($result)->toStartWith('<FakeGroup fakeAttr="ABC123">');
             });
-
-            // TEST: should remove xml tags when it has no value or child data
 
             test('Should skip optional child when not initialized', function () {
                 $attr = new FakeDFeAttribute('FakeDFeGroupWithAttribute');

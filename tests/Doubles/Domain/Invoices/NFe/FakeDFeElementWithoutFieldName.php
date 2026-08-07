@@ -7,13 +7,12 @@ namespace BradiApi\Tests\Doubles\Domain\Invoices\NFe;
 use BradiApi\Domain\Common\Protocols\Validator;
 use BradiApi\Domain\Invoices\Templates\DFeElement;
 
-final class FakeDFeSequenceGroup extends DFeElement
+/**
+ * Filha invalida de proposito: nao declara FIELD_NAME, entao herda o null de DFeElement.
+ * Instanciar lanca TypeError na atribuicao de $fieldURI, antes do guard clause do construtor.
+ */
+final class FakeDFeElementWithoutFieldName extends DFeElement
 {
-    public const string FIELD_NAME = 'FakeSeq';
-
-    public ?FakeDFeElement $first;
-    public ?FakeOtherDFeElement $second;
-
     /** @return array<Validator> */
     protected function tagValueValidators(): array
     {
