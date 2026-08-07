@@ -86,11 +86,9 @@ describe('DFeElement', function () {
                     ->not->toThrow(Error::class);
             });
 
-            // Sao dois caminhos distintos: com FIELD_NAME herdando null, a atribuicao de
-            // $fieldURI estoura antes do guard clause, que so e alcancado com FIELD_NAME = ''.
-            test('Should throw a TypeError when FIELD_NAME is not defined', function () {
+            test('Should throw a RuntimeException when FIELD_NAME is not defined', function () {
                 expect(fn () => new FakeDFeElementWithoutFieldName)
-                    ->toThrow(TypeError::class, 'Cannot assign null to property');
+                    ->toThrow(RuntimeException::class, 'must define a constant "FIELD_NAME"');
             });
 
             test('Should throw a RuntimeException when FIELD_NAME is empty', function () {

@@ -8,8 +8,8 @@ use BradiApi\Domain\Common\Protocols\Validator;
 use BradiApi\Domain\Invoices\Templates\DFeElement;
 
 /**
- * Filha invalida de proposito: declara FIELD_NAME vazio. E o unico caminho que alcanca
- * o guard clause do construtor de DFeElement e lanca a RuntimeException.
+ * Filha invalida de proposito: declara FIELD_NAME vazio.
+ * Instanciar deve ser barrado pelo guard clause do construtor.
  */
 final class FakeDFeElementWithEmptyFieldName extends DFeElement
 {
