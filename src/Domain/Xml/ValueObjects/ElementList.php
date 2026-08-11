@@ -32,6 +32,25 @@ final class ElementList
         $this->records = array_merge($this->records, $normalizedChildren);
     }
 
+    /** @param  array<string>  $names */
+    public function sortByNames(array $names): void
+    {
+        if ($names === []) {
+            return;
+        }
+
+        if (! array_all($names, fn ($name) => is_string($name) && $name !== '')) {
+            throw new InvalidArgumentException('All sequence names must be non-empty strings.');
+        }
+
+        $positionByName = array_flip(array_values(array_unique($names)));
+        usort(
+            $this->records,
+            fn (Element $first, Element $second) => ($positionByName[$first->name] ?? PHP_INT_MAX)
+                <=> ($positionByName[$second->name] ?? PHP_INT_MAX)
+        );
+    }
+
     public function indexOf(Element $element): ?int
     {
         return array_find_key($this->records, fn (Element $record) => $record === $element);

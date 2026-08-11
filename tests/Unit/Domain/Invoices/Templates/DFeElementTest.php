@@ -10,6 +10,9 @@ use BradiApi\Tests\Doubles\Domain\Invoices\NFe\FakeDFeElement;
 use BradiApi\Tests\Doubles\Domain\Invoices\NFe\FakeDFeElementWithEmptyFieldName;
 use BradiApi\Tests\Doubles\Domain\Invoices\NFe\FakeDFeElementWithoutFieldName;
 use BradiApi\Tests\Doubles\Domain\Invoices\NFe\FakeDFeGroupWithAttribute;
+use BradiApi\Tests\Doubles\Domain\Invoices\NFe\FakeDFeSequenceGroup;
+use BradiApi\Tests\Doubles\Domain\Invoices\NFe\FakeOtherDFeAttribute;
+use BradiApi\Tests\Doubles\Domain\Invoices\NFe\FakeOtherDFeElement;
 use BradiApi\Tests\TestCase;
 
 describe('DFeElement', function () {
@@ -33,6 +36,18 @@ describe('DFeElement', function () {
         describe('FIELD_NAME', function () {
             test('Should have the correct field name', function () {
                 expect(FakeDFeElement::FIELD_NAME)->toBe('FakeTag');
+            });
+        });
+
+        describe('CHILD_ELEMENTS_ON_SEQUENCE and CHILD_ATTRIBUTES_ON_SEQUENCE', function () {
+            test('Should default to no declared sequence', function () {
+                expect(FakeDFeElement::CHILD_ELEMENTS_ON_SEQUENCE)->toBe([]);
+                expect(FakeDFeElement::CHILD_ATTRIBUTES_ON_SEQUENCE)->toBe([]);
+            });
+
+            test('Should expose the sequence declared by the concrete class', function () {
+                expect(FakeDFeSequenceGroup::CHILD_ELEMENTS_ON_SEQUENCE)->toBe(['FakeTag', 'FakeOther']);
+                expect(FakeDFeSequenceGroup::CHILD_ATTRIBUTES_ON_SEQUENCE)->toBe(['fakeAttr', 'otherAttr']);
             });
         });
 
@@ -126,6 +141,24 @@ describe('DFeElement', function () {
 
                 expect($parsingResponse)->toBeInstanceOf(Result::class);
                 expect($parsingResponse->isFailure())->toBeTrue();
+            });
+
+            test('Should return a failure Result when child tags are out of the declared sequence', function () {
+                $element = new Element;
+                $element->parse('<FakeSeq><FakeOther>secondValue</FakeOther><FakeTag>firstValue</FakeTag></FakeSeq>');
+
+                $parsingResponse = (new FakeDFeSequenceGroup)->parse($element);
+
+                expect($parsingResponse->isFailure())->toBeTrue();
+            });
+
+            test('Should succeed when child tags follow the declared sequence', function () {
+                $element = new Element;
+                $element->parse('<FakeSeq><FakeTag>firstValue</FakeTag><FakeOther>secondValue</FakeOther></FakeSeq>');
+
+                $parsingResponse = (new FakeDFeSequenceGroup)->parse($element);
+
+                expect($parsingResponse->isSuccess())->toBeTrue();
             });
 
             test('Should hydrate child element and attribute of a group', function () {
@@ -336,6 +369,84 @@ describe('DFeElement', function () {
                 $sut = new FakeDFeGroupWithAttribute;
                 // fakeAttr intentionally not initialized
                 expect(fn () => $sut->fakeAttr)->toThrow(Error::class);
+            });
+        });
+
+        describe('child sequence', function () {
+            beforeEach(function () {
+                /** @var TestCase $this */
+                $this->sut = new FakeDFeSequenceGroup;
+            });
+
+            test('Should serialize children and attributes on sequence when built from scratch', function () {
+                $second = new FakeOtherDFeElement;
+                $second->value = 'secondValue';
+                $otherAttr = new FakeOtherDFeAttribute('FakeSeq');
+                $otherAttr->value = 'otherValue';
+                $first = new FakeDFeElement;
+                $first->value = 'firstValue';
+                $fakeAttr = new FakeDFeAttribute('FakeSeq');
+                $fakeAttr->value = 'fakeValue';
+
+                $this->sut->second = $second;
+                $this->sut->otherAttr = $otherAttr;
+                $this->sut->first = $first;
+                $this->sut->fakeAttr = $fakeAttr;
+
+                expect((string) $this->sut)->toBe(
+                    '<FakeSeq fakeAttr="fakeValue" otherAttr="otherValue"><FakeTag>firstValue</FakeTag><FakeOther>secondValue</FakeOther></FakeSeq>'
+                );
+            });
+
+            test('Should reorder attributes parsed out of sequence', function () {
+                $element = new Element;
+                $element->parse('<FakeSeq otherAttr="otherValue" fakeAttr="fakeValue"><FakeTag>firstValue</FakeTag><FakeOther>secondValue</FakeOther></FakeSeq>');
+
+                $this->sut->parse($element);
+
+                expect((string) $this->sut)->toBe(
+                    '<FakeSeq fakeAttr="fakeValue" otherAttr="otherValue"><FakeTag>firstValue</FakeTag><FakeOther>secondValue</FakeOther></FakeSeq>'
+                );
+            });
+
+            test('Should place a child assigned after parse on its sequence position', function () {
+                $element = new Element;
+                $element->parse('<FakeSeq><FakeOther>secondValue</FakeOther></FakeSeq>');
+                $this->sut->parse($element);
+
+                $first = new FakeDFeElement;
+                $first->value = 'firstValue';
+                $this->sut->first = $first;
+
+                expect((string) $this->sut)->toBe(
+                    '<FakeSeq><FakeTag>firstValue</FakeTag><FakeOther>secondValue</FakeOther></FakeSeq>'
+                );
+            });
+
+            test('Should keep tags that are not on the sequence at the end', function () {
+                $element = new Element;
+                $element->parse('<FakeSeq><unmapped>keep</unmapped><FakeTag>firstValue</FakeTag><FakeOther>secondValue</FakeOther></FakeSeq>');
+
+                $this->sut->parse($element);
+
+                expect((string) $this->sut)->toBe(
+                    '<FakeSeq><FakeTag>firstValue</FakeTag><FakeOther>secondValue</FakeOther><unmapped>keep</unmapped></FakeSeq>'
+                );
+            });
+
+            test('Should keep insertion order when the class declares no sequence', function () {
+                $element = new Element;
+                $element->parse('<FakeGroup fakeAttr="ABC123"><FakeTag>childValue</FakeTag></FakeGroup>');
+                $sut = new FakeDFeGroupWithAttribute;
+                $sut->parse($element);
+
+                $optionalChild = new FakeOtherDFeElement;
+                $optionalChild->value = 'later';
+                $sut->fakeOptionalChild = $optionalChild;
+
+                expect((string) $sut)->toBe(
+                    '<FakeGroup fakeAttr="ABC123"><FakeTag>childValue</FakeTag><FakeOther>later</FakeOther></FakeGroup>'
+                );
             });
         });
     });

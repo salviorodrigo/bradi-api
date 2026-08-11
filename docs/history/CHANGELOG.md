@@ -14,6 +14,28 @@ Guia de uso: consulte `docs/history/README.md`.
 
 ---
 
+## 2026-08-11
+
+### Added
+
+- Escopo: Domain/Xml, Domain/Invoices, Tests
+- Descricao: `DFeElement` passa a respeitar a sequencia de tags declarada pela classe concreta em `CHILD_ELEMENTS_ON_SEQUENCE` e `CHILD_ATTRIBUTES_ON_SEQUENCE` (nomes de tag/atributo, no estilo de `RequiredTagsValidator`). Na saida, `sync()` ordena o `Element` de origem via o novo `Element::sort()`, fachada sobre `ElementList::sortByNames()` e `AttributeList::sortByNames()`. Na entrada, `validateRootTag()` recusa tags filhas fora de ordem via o novo `TagsSequenceValidator`, resolvendo o TODO que existia no metodo. A constante `CHILD_ELEMENTS__ON_SEQUENCE` foi renomeada (underscore duplo era typo, sem consumidor).
+- Arquivos:
+  - `src/Domain/Invoices/Validators/TagsSequenceValidator.php`
+  - `tests/Unit/Domain/Invoices/Validators/TagsSequenceValidatorTest.php`
+  - `src/Domain/Xml/ValueObjects/Element.php`
+  - `src/Domain/Xml/ValueObjects/ElementList.php`
+  - `src/Domain/Xml/ValueObjects/AttributeList.php`
+  - `src/Domain/Invoices/Templates/DFeElement.php`
+  - `tests/Unit/Domain/Xml/ValueObjects/ElementTest.php`
+  - `tests/Doubles/Domain/Invoices/NFe/FakeDFeSequenceGroup.php`
+  - `tests/Doubles/Domain/Invoices/NFe/FakeOtherDFeAttribute.php`
+  - `tests/Unit/Domain/Xml/ValueObjects/ElementListTest.php`
+  - `tests/Unit/Domain/Xml/ValueObjects/AttributeListTest.php`
+  - `tests/Unit/Domain/Invoices/Templates/DFeElementTest.php`
+- Impacto: o layout do DFe declara cada grupo como `xs:sequence`, entao a ordem das tags e parte do contrato com a SEFAZ. Antes, uma tag atribuida apos o parse (ex.: um `xFant` opcional) era anexada no fim e gerava XML fora de sequencia. Breaking change no parse: XML com tags fora de ordem passa a devolver `Result` de falha em vez de ser aceito. A ordenacao e estavel (irmas homonimas como `det` preservam a ordem de leitura) e tags fora da sequencia nao sao perdidas nem recusadas, apenas vao para o fim - rejeita-las e papel de `AllowedTagsValidator`. Atributos sao ordenados na saida, mas nao validados, por a ordem nao ser significativa no XML. Constante vazia (padrao) nao altera nada, e nenhuma classe NFe declara sequencia ainda.
+- Evidencia: `composer test:ci` com 1786 aprovados (2246 assercoes) e `composer lint` sem apontamentos; com a ordenacao desativada, 4 dos 5 testes de `child sequence` falham (o quinto e a regressao de "sem sequencia declarada").
+
 ## 2026-08-07
 
 ### Removed

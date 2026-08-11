@@ -311,6 +311,52 @@ describe('Element', function () {
             });
         });
 
+        describe('sort()', function () {
+            beforeEach(function () {
+                /** @var TestCase $this */
+                $this->sut = new Element;
+                $this->sut->name = 'root';
+                $this->sut->add(new Attribute('type', 'A', 'root'));
+                $this->sut->add(new Attribute('id', '42', 'root'));
+                foreach (['third', 'first', 'second'] as $name) {
+                    $child = new Element;
+                    $child->name = $name;
+                    $this->sut->add($child);
+                }
+
+                $this->childNames = fn () => array_map(fn (Element $child) => $child->name, $this->sut->children->records);
+                $this->attributeNames = fn () => array_map(fn (Attribute $attribute) => $attribute->name, $this->sut->attributes->records);
+            });
+
+            test('Should reorder children and attributes following the given sequences', function () {
+                $this->sut->sort(['first', 'second', 'third'], ['id', 'type']);
+
+                expect(($this->childNames)())->toBe(['first', 'second', 'third']);
+                expect(($this->attributeNames)())->toBe(['id', 'type']);
+            });
+
+            test('Should reorder only the children when no attribute sequence is given', function () {
+                $this->sut->sort(childNames: ['first', 'second', 'third']);
+
+                expect(($this->childNames)())->toBe(['first', 'second', 'third']);
+                expect(($this->attributeNames)())->toBe(['type', 'id']);
+            });
+
+            test('Should reorder only the attributes when no child sequence is given', function () {
+                $this->sut->sort(attributeNames: ['id', 'type']);
+
+                expect(($this->attributeNames)())->toBe(['id', 'type']);
+                expect(($this->childNames)())->toBe(['third', 'first', 'second']);
+            });
+
+            test('Should do nothing when both sequences are empty', function () {
+                $this->sut->sort();
+
+                expect(($this->childNames)())->toBe(['third', 'first', 'second']);
+                expect(($this->attributeNames)())->toBe(['type', 'id']);
+            });
+        });
+
         describe('isSet()', function () {
             beforeEach(function () {
                 /** @var TestCase $this */

@@ -10,6 +10,7 @@ use BradiApi\Domain\Common\Services\ValidationService;
 use BradiApi\Domain\Common\ValueObjects\Result;
 use BradiApi\Domain\Invoices\DTOs\DFeElementPropertyMetadata;
 use BradiApi\Domain\Invoices\Validators\RootTagValidator;
+use BradiApi\Domain\Invoices\Validators\TagsSequenceValidator;
 use BradiApi\Domain\Xml\ValueObjects\Attribute;
 use BradiApi\Domain\Xml\ValueObjects\Element;
 use ReflectionClass;
@@ -20,7 +21,7 @@ use RuntimeException;
 abstract class DFeElement
 {
     public const ?string FIELD_NAME = null;
-    public const array CHILD_ELEMENTS__ON_SEQUENCE = [];
+    public const array CHILD_ELEMENTS_ON_SEQUENCE = [];
     public const array CHILD_ATTRIBUTES_ON_SEQUENCE = [];
 
     public readonly string $fieldURI;
@@ -97,7 +98,7 @@ abstract class DFeElement
     {
         $this->validationService->reset();
         $this->validationService->addValidator(new RootTagValidator(static::FIELD_NAME));
-        // TODO: validates sequence of child elements.
+        $this->validationService->addValidator(new TagsSequenceValidator(static::CHILD_ELEMENTS_ON_SEQUENCE));
 
         return $this->validationService->verify($element);
     }
@@ -227,12 +228,19 @@ abstract class DFeElement
             }
         }
 
-        // $this->resolverChildElementsSequence();
-        // $this->resolverChildAttributesSequence();
+        $this->resolveSourceSequence();
 
         if ($this->source->value !== $this->value) {
             $this->source->value = $this->value;
         }
+    }
+
+    private function resolveSourceSequence(): void
+    {
+        $this->source->sort(
+            childNames: static::CHILD_ELEMENTS_ON_SEQUENCE,
+            attributeNames: static::CHILD_ATTRIBUTES_ON_SEQUENCE,
+        );
     }
 
     /** @return array<DFeElementPropertyMetadata> */

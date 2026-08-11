@@ -165,6 +165,66 @@ describe('AttributeList', function () {
             });
         });
 
+        describe('sortByNames()', function () {
+            beforeEach(function () {
+                /** @var TestCase $this */
+                $this->sut = new AttributeList;
+                $this->sut->add(new Attribute('type', 'A'));
+                $this->sut->add(new Attribute('status', 'ok'));
+                $this->sut->add(new Attribute('id', '10'));
+            });
+
+            test('Should reorder records following the given sequence', function () {
+                $this->sut->sortByNames(['id', 'status', 'type']);
+
+                expect(array_map(fn (Attribute $attribute) => $attribute->name, $this->sut->records))
+                    ->toBe(['id', 'status', 'type']);
+            });
+
+            test('Should push names absent from the sequence to the end keeping their relative order', function () {
+                $this->sut->sortByNames(['id']);
+
+                expect(array_map(fn (Attribute $attribute) => $attribute->name, $this->sut->records))
+                    ->toBe(['id', 'type', 'status']);
+            });
+
+            test('Should ignore sequence names with no matching attribute', function () {
+                $this->sut->sortByNames(['unknown', 'id', 'status', 'type']);
+
+                expect(array_map(fn (Attribute $attribute) => $attribute->name, $this->sut->records))
+                    ->toBe(['id', 'status', 'type']);
+            });
+
+            test('Should keep records as a packed list', function () {
+                $this->sut->sortByNames(['id', 'status', 'type']);
+
+                expect(array_keys($this->sut->records))->toBe([0, 1, 2]);
+            });
+
+            test('Should preserve the attribute instances', function () {
+                $expected = $this->sut->id;
+
+                $this->sut->sortByNames(['id', 'status', 'type']);
+
+                expect($this->sut->records[0])->toBe($expected);
+            });
+
+            test('Should do nothing when the sequence is empty', function () {
+                $this->sut->sortByNames([]);
+
+                expect(array_map(fn (Attribute $attribute) => $attribute->name, $this->sut->records))
+                    ->toBe(['type', 'status', 'id']);
+            });
+
+            test('Should throw when any sequence name is not a non-empty string', function () {
+                expect(fn () => $this->sut->sortByNames(['id', 10]))
+                    ->toThrow(InvalidArgumentException::class, 'All sequence names must be non-empty strings.');
+
+                expect(fn () => $this->sut->sortByNames(['id', '']))
+                    ->toThrow(InvalidArgumentException::class, 'All sequence names must be non-empty strings.');
+            });
+        });
+
         describe('__get()', function () {
             beforeEach(function () {
                 /** @var TestCase $this */

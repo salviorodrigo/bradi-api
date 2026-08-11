@@ -265,6 +265,113 @@ describe('ElementList', function () {
             });
         });
 
+        describe('sortByNames()', function () {
+            beforeEach(function () {
+                /** @var TestCase $this */
+                $this->makeElement = function (string $name, ?string $value = null): Element {
+                    $element = new Element;
+                    $element->name = $name;
+                    $element->value = $value;
+
+                    return $element;
+                };
+            });
+
+            test('Should reorder records following the given sequence', function () {
+                $sut = new ElementList([
+                    ($this->makeElement)('third'),
+                    ($this->makeElement)('first'),
+                    ($this->makeElement)('second'),
+                ]);
+
+                $sut->sortByNames(['first', 'second', 'third']);
+
+                expect(array_map(fn (Element $element) => $element->name, $sut->records))
+                    ->toBe(['first', 'second', 'third']);
+            });
+
+            test('Should push names absent from the sequence to the end keeping their relative order', function () {
+                $sut = new ElementList([
+                    ($this->makeElement)('unmapped'),
+                    ($this->makeElement)('first'),
+                    ($this->makeElement)('alsoUnmapped'),
+                ]);
+
+                $sut->sortByNames(['first']);
+
+                expect(array_map(fn (Element $element) => $element->name, $sut->records))
+                    ->toBe(['first', 'unmapped', 'alsoUnmapped']);
+            });
+
+            test('Should preserve the relative order of homonymous siblings', function () {
+                $sut = new ElementList([
+                    ($this->makeElement)('multi', 'a'),
+                    ($this->makeElement)('single'),
+                    ($this->makeElement)('multi', 'b'),
+                ]);
+
+                $sut->sortByNames(['multi', 'single']);
+
+                expect(array_map(fn (Element $element) => $element->value, $sut->records))
+                    ->toBe(['a', 'b', null]);
+            });
+
+            test('Should ignore sequence names with no matching element', function () {
+                $sut = new ElementList([
+                    ($this->makeElement)('second'),
+                    ($this->makeElement)('first'),
+                ]);
+
+                $sut->sortByNames(['absent', 'first', 'second']);
+
+                expect(array_map(fn (Element $element) => $element->name, $sut->records))
+                    ->toBe(['first', 'second']);
+            });
+
+            test('Should keep records as a packed list', function () {
+                $sut = new ElementList([
+                    ($this->makeElement)('third'),
+                    ($this->makeElement)('first'),
+                    ($this->makeElement)('second'),
+                ]);
+
+                $sut->sortByNames(['first', 'second', 'third']);
+
+                expect(array_keys($sut->records))->toBe([0, 1, 2]);
+            });
+
+            test('Should preserve the element instances', function () {
+                $first = ($this->makeElement)('first');
+                $sut = new ElementList([($this->makeElement)('second'), $first]);
+
+                $sut->sortByNames(['first', 'second']);
+
+                expect($sut->records[0])->toBe($first);
+            });
+
+            test('Should do nothing when the sequence is empty', function () {
+                $sut = new ElementList([
+                    ($this->makeElement)('third'),
+                    ($this->makeElement)('first'),
+                ]);
+
+                $sut->sortByNames([]);
+
+                expect(array_map(fn (Element $element) => $element->name, $sut->records))
+                    ->toBe(['third', 'first']);
+            });
+
+            test('Should throw when any sequence name is not a non-empty string', function () {
+                $sut = new ElementList([($this->makeElement)('first')]);
+
+                expect(fn () => $sut->sortByNames(['first', 10]))
+                    ->toThrow(InvalidArgumentException::class, 'All sequence names must be non-empty strings.');
+
+                expect(fn () => $sut->sortByNames(['first', '']))
+                    ->toThrow(InvalidArgumentException::class, 'All sequence names must be non-empty strings.');
+            });
+        });
+
         describe('__get()', function () {
             beforeEach(function () {
                 $single = new Element;

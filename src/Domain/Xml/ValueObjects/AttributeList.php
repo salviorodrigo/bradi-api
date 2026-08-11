@@ -28,6 +28,25 @@ final class AttributeList
         }
     }
 
+    /** @param  array<string>  $names */
+    public function sortByNames(array $names): void
+    {
+        if ($names === []) {
+            return;
+        }
+
+        if (! array_all($names, fn ($name) => is_string($name) && $name !== '')) {
+            throw new InvalidArgumentException('All sequence names must be non-empty strings.');
+        }
+
+        $positionByName = array_flip(array_values(array_unique($names)));
+        usort(
+            $this->records,
+            fn (Attribute $first, Attribute $second) => ($positionByName[$first->name] ?? PHP_INT_MAX)
+                <=> ($positionByName[$second->name] ?? PHP_INT_MAX)
+        );
+    }
+
     public function indexOf(Attribute $attribute): ?int
     {
         return array_find_key($this->records, fn (Attribute $record) => $record->name === $attribute->name);

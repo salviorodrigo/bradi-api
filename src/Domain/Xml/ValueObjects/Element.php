@@ -49,6 +49,16 @@ class Element
         $this->add($newChild);
     }
 
+    /**
+     * @param  array<string>  $childNames
+     * @param  array<string>  $attributeNames
+     */
+    public function sort(array $childNames = [], array $attributeNames = []): void
+    {
+        $this->children->sortByNames($childNames);
+        $this->attributes->sortByNames($attributeNames);
+    }
+
     public function isSet(string $childName): bool
     {
         return ! is_null($this->{$childName});
