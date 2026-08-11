@@ -17,7 +17,7 @@ abstract class DFeElementCollection
     protected const string BASE_CLASS = '';
     protected const string FIELD_NAME = '';
 
-    /** @var DFeElement[] */
+    /** @var array<DFeElement> */
     public array $collection = [];
 
     /** @var array<Element> */
@@ -101,7 +101,7 @@ abstract class DFeElementCollection
         }
 
         if ($elementOrElementList instanceof ElementList) {
-            $elements = array_merge($elements, $elementOrElementList->collection);
+            $elements = array_merge($elements, $elementOrElementList->records);
         }
 
         return array_filter($elements, function ($element) {
