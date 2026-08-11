@@ -45,6 +45,17 @@ Guia de uso: consulte `docs/history/README.md`.
 - Impacto: nenhum em comportamento. O double sobrescrevia `addValidator()`, `verify()` e `reset()` para sempre devolver sucesso; manter uma implementacao alternativa de `ValidationService` sem consumidor so criava risco de ela divergir do contrato real sem ninguem perceber.
 - Evidencia: `grep -rn FakeValidationService` sem ocorrencias fora do proprio arquivo; `composer test` com 2270 aprovados (3146 assercoes) apos a remocao.
 
+### Removed
+
+- Escopo: Build, Tests, Docs
+- Descricao: Removida a dependencia `mockery/mockery` de `require-dev` (e a transitiva `hamcrest/hamcrest-php`), nunca usada por nenhum teste. A decisao de manter doubles manuais em `tests/Doubles/` foi formalizada em ADR-0003.
+- Arquivos:
+  - `composer.json`
+  - `docs/history/adr/ADR-0003-doubles-manuais-sem-mockery.md`
+  - `docs/history/DECISIONS.md`
+- Impacto: nenhum em comportamento; a suite nunca chamou `Mockery::mock()`. Mockery nao seria utilizavel aqui mesmo se quisessemos: nao gera property hooks do PHP 8.4+, entao nao consegue implementar os protocolos do dominio (`XmlIterator` declara seis propriedades virtuais e o mock falha com fatal error de metodos abstratos), e nao sobrescreve constantes de classe nem propriedades tipadas, que sao o mecanismo pelo qual `DFeElement` descobre filhos via reflexao. Reintroduzir a biblioteca exige `composer require --dev mockery/mockery` e revisitar a ADR.
+- Evidencia: `composer why mockery/mockery` apontava apenas o proprio projeto; `grep -rn Mockery` sem ocorrencias fora de `vendor/`; `composer test` com 2270 aprovados (3146 assercoes) apos a remocao.
+
 ## 2026-08-07
 
 ### Removed

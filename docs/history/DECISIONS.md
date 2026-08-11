@@ -14,3 +14,4 @@ Guia de uso: consulte `docs/history/README.md`.
 
 1. [ADR-0001 - Governanca XP com agentes de IA](adr/ADR-0001-governanca-xp-agentes.md) - Accepted - 2026-07-10
 2. [ADR-0002 - Fluxo Assistido de Correcao de Testes e Commits Segmentados](adr/ADR-0002-fluxo-assistido-correcao-testes.md) - Accepted - 2026-07-11
+3. [ADR-0003 - Doubles Manuais em `tests/Doubles` no Lugar de Mockery](adr/ADR-0003-doubles-manuais-sem-mockery.md) - Accepted - 2026-08-11
