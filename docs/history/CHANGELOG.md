@@ -56,6 +56,18 @@ Guia de uso: consulte `docs/history/README.md`.
 - Impacto: nenhum em comportamento; a suite nunca chamou `Mockery::mock()`. Mockery nao seria utilizavel aqui mesmo se quisessemos: nao gera property hooks do PHP 8.4+, entao nao consegue implementar os protocolos do dominio (`XmlIterator` declara seis propriedades virtuais e o mock falha com fatal error de metodos abstratos), e nao sobrescreve constantes de classe nem propriedades tipadas, que sao o mecanismo pelo qual `DFeElement` descobre filhos via reflexao. Reintroduzir a biblioteca exige `composer require --dev mockery/mockery` e revisitar a ADR.
 - Evidencia: `composer why mockery/mockery` apontava apenas o proprio projeto; `grep -rn Mockery` sem ocorrencias fora de `vendor/`; `composer test` com 2270 aprovados (3146 assercoes) apos a remocao.
 
+### Added
+
+- Escopo: Tests/Domain
+- Descricao: Criadas as suites unitarias dos 46 validadores que nao tinham nenhuma cobertura, e ampliada a de `IsUuidV7Validator`, que so exercia o caminho de sucesso. Cobrem `check()` em caminho feliz, limites e entradas invalidas (tipo errado, vazio, `null`), com assercao da mensagem de erro, que e o contrato exposto pela API. Padrao dos arquivos existentes: `describe(<Classe>)` -> `Should succeed if is declared` -> `describe('methods')` -> `describe('check()')`, com datasets nomeados em `->with([...])`; os datasets compartilhados de CPF/CNPJ sao reaproveitados pelo helper `datasets()`.
+- Arquivos:
+  - `tests/Unit/Domain/Common/Validators/` (16 arquivos)
+  - `tests/Unit/Domain/Invoices/Validators/` (17 arquivos)
+  - `tests/Unit/Domain/Invoices/NFe/Validators/` (13 arquivos)
+  - `tests/Unit/Domain/Xml/Validators/MaxDFeCollectionSizeValidatorTest.php`
+- Impacto: cobertura de validadores sai de 2 de 48 para 48 de 48. Nenhuma mudanca em `src/`: os testes descrevem o comportamento atual. Tres defeitos encontrados no processo ficaram deliberadamente fora dos testes, para nao consagrar comportamento errado: `RequiredParamValidator::check(null)` lanca `Error` (`isEmptyNULL` inexistente) em vez de devolver falha, `NotNullValidator`/`RequiredParamValidator` lancam `Error` para escalares como `int` e `bool`, e `IsCodigoNotaFiscalValidator` recusa cNF com zeros a esquerda (`00045678`) porque `validateType()` usa `IsNumericValidator` sem `allowLeadingZeros`, contrariando o proprio `validateStructure()`.
+- Evidencia: `composer test:ci` com 2282 aprovados (3172 assercoes), sendo 496 novos, e `composer lint` sem apontamentos.
+
 ## 2026-08-07
 
 ### Removed
