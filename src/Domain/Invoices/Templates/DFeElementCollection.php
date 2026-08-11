@@ -68,6 +68,17 @@ abstract class DFeElementCollection
         return Result::makeSuccess($this);
     }
 
+    final public function toString(): string
+    {
+        $this->sync();
+
+        return array_reduce(
+            $this->sourceCollection,
+            fn (string $xmlString, Element $source) => $xmlString . (string) $source,
+            ''
+        );
+    }
+
     abstract protected function collectionValidators(): array;
 
     final protected function validateCollection(array $elements): Result
@@ -78,6 +89,19 @@ abstract class DFeElementCollection
         }
 
         return $this->validationService->verify($elements);
+    }
+
+    private function sync(): void
+    {
+        $this->sourceCollection = [];
+        foreach ($this->collection as $element) {
+            $source = $element->toXML();
+            if ($source === null) {
+                continue;
+            }
+
+            $this->sourceCollection[] = $source;
+        }
     }
 
     private function resetBaseClass(): void
@@ -111,8 +135,8 @@ abstract class DFeElementCollection
         });
     }
 
-    public function __toString(): string
+    final public function __toString(): string
     {
-        throw new Exception('Method not implemented.');
+        return $this->toString();
     }
 }

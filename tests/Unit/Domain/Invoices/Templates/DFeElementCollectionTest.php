@@ -202,6 +202,65 @@ describe('DFeElementCollection', function () {
         });
     });
 
+    describe('::toString()', function () use ($makeElement) {
+        beforeEach(function () {
+            /** @var TestCase $this */
+            $element = new Element;
+            $element->parse('<FakeTag>first</FakeTag>');
+            $this->sut->parse($element);
+        });
+
+        test('Should serialize every item of the collection in order', function () {
+            expect($this->sut->toString())->toBe('<FakeTag>first</FakeTag>');
+        });
+
+        test('Should serialize many items preserving the collection order', function () use ($makeElement) {
+            $sut = new FakeDFeElementCollection('infNFe');
+            $sut->parse(new ElementList([
+                $makeElement('FakeTag', 'first'),
+                $makeElement('FakeTag', 'second'),
+            ]));
+
+            expect($sut->toString())->toBe('<FakeTag>first</FakeTag><FakeTag>second</FakeTag>');
+        });
+
+        test('Should return an empty string when nothing was parsed', function () {
+            $sut = new FakeDFeElementCollection('infNFe');
+
+            expect($sut->toString())->toBe('');
+        });
+
+        test('Should reflect a value changed on a parsed item', function () {
+            $this->sut->collection[0]->value = 'updated';
+
+            expect($this->sut->toString())->toBe('<FakeTag>updated</FakeTag>');
+        });
+
+        test('Should reflect an item appended to the collection', function () {
+            $appended = new FakeDFeElement('infNFe');
+            $appended->value = 'second';
+            $this->sut->collection[] = $appended;
+
+            expect($this->sut->toString())->toBe('<FakeTag>first</FakeTag><FakeTag>second</FakeTag>');
+        });
+
+        test('Should reflect an item removed from the collection', function () {
+            $this->sut->collection = [];
+
+            expect($this->sut->toString())->toBe('');
+        });
+
+        test('Should skip items that have no XML representation', function () {
+            $this->sut->collection[] = new FakeDFeElement('infNFe');
+
+            expect($this->sut->toString())->toBe('<FakeTag>first</FakeTag>');
+        });
+
+        test('Should be idempotent across consecutive calls', function () {
+            expect($this->sut->toString())->toBe($this->sut->toString());
+        });
+    });
+
     describe('::__toString()', function () {
         beforeEach(function () {
             /** @var TestCase $this */
@@ -210,35 +269,32 @@ describe('DFeElementCollection', function () {
             $this->sut->parse($element);
         });
 
-        test('Should throw while the serialization is not implemented', function () {
-            expect(fn () => (string) $this->sut)
-                ->toThrow(Exception::class, 'Method not implemented.');
+        test('Should delegate the serialization to ::toString()', function () {
+            expect((string) $this->sut)->toBe($this->sut->toString());
         });
 
-        describe('once implemented', function () {
-            test('Should serialize every item of the collection in order', function () {
-                expect((string) $this->sut)->toBe('<FakeTag>first</FakeTag>');
-            });
+        test('Should serialize every item of the collection in order', function () {
+            expect((string) $this->sut)->toBe('<FakeTag>first</FakeTag>');
+        });
 
-            test('Should reflect a value changed on a parsed item', function () {
-                $this->sut->collection[0]->value = 'updated';
+        test('Should reflect a value changed on a parsed item', function () {
+            $this->sut->collection[0]->value = 'updated';
 
-                expect((string) $this->sut)->toBe('<FakeTag>updated</FakeTag>');
-            });
+            expect((string) $this->sut)->toBe('<FakeTag>updated</FakeTag>');
+        });
 
-            test('Should reflect an item appended to the collection', function () {
-                $appended = new FakeDFeElement('infNFe');
-                $appended->value = 'second';
-                $this->sut->collection[] = $appended;
+        test('Should reflect an item appended to the collection', function () {
+            $appended = new FakeDFeElement('infNFe');
+            $appended->value = 'second';
+            $this->sut->collection[] = $appended;
 
-                expect((string) $this->sut)->toBe('<FakeTag>first</FakeTag><FakeTag>second</FakeTag>');
-            });
+            expect((string) $this->sut)->toBe('<FakeTag>first</FakeTag><FakeTag>second</FakeTag>');
+        });
 
-            test('Should reflect an item removed from the collection', function () {
-                $this->sut->collection = [];
+        test('Should reflect an item removed from the collection', function () {
+            $this->sut->collection = [];
 
-                expect((string) $this->sut)->toBe('');
-            });
-        })->skip('DFeElementCollection::__toString() ainda nao foi implementado.');
+            expect((string) $this->sut)->toBe('');
+        });
     });
 });
