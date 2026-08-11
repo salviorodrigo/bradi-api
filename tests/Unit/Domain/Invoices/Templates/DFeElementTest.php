@@ -73,7 +73,7 @@ describe('DFeElement', function () {
 
                 $this->sut->value = 'changed';
 
-                expect($this->sut->getSource()->value)->toBe('changed');
+                expect($this->sut->toXML()->value)->toBe('changed');
                 expect($element->value)->toBe('changed');
             });
         });
@@ -141,15 +141,15 @@ describe('DFeElement', function () {
             });
         });
 
-        describe('getSource()', function () {
+        describe('toXML()', function () {
             test('Should return null when there is no value and no child data', function () {
-                expect($this->sut->getSource())->toBeNull();
+                expect($this->sut->toXML())->toBeNull();
             });
 
             test('Should return an element named after FIELD_NAME once a value is assigned', function () {
                 $this->sut->value = 'hello';
 
-                $source = $this->sut->getSource();
+                $source = $this->sut->toXML();
 
                 expect($source)->toBeInstanceOf(Element::class);
                 expect($source->name)->toBe('FakeTag');
@@ -162,13 +162,13 @@ describe('DFeElement', function () {
 
                 $this->sut->parse($element);
 
-                expect($this->sut->getSource())->toBe($element);
+                expect($this->sut->toXML())->toBe($element);
             });
 
             test('Should return the same instance across calls', function () {
                 $this->sut->value = 'hello';
 
-                expect($this->sut->getSource())->toBe($this->sut->getSource());
+                expect($this->sut->toXML())->toBe($this->sut->toXML());
             });
         });
 
@@ -278,6 +278,24 @@ describe('DFeElement', function () {
                 $result = (string) $sut;
 
                 expect($result)->toStartWith('<FakeGroup fakeAttr="ABC123">');
+            });
+
+            test('Should return updated root xml string after changing value of child DFeAttribute', function () {
+                $element = new Element;
+                $element->parse('<FakeGroup fakeAttr="ABC123"><FakeTag>childValue</FakeTag></FakeGroup>');
+                $sut = new FakeDFeGroupWithAttribute;
+                $sut->parse($element);
+                $sut->fakeAttr->value = 'CHANGED';
+
+                expect((string) $sut)->toBe('<FakeGroup fakeAttr="CHANGED"><FakeTag>childValue</FakeTag></FakeGroup>');
+            });
+
+            test('Should skip a child that is initialized but has no data', function () {
+                $sut = new FakeDFeElement;
+                $sut->value = 'parentValue';
+                $sut->childElement = new FakeDFeElement;
+
+                expect((string) $sut)->toBe('<FakeTag>parentValue</FakeTag>');
             });
 
             test('Should skip optional child when not initialized', function () {

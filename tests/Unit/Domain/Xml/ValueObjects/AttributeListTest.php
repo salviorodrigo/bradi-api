@@ -38,8 +38,8 @@ describe('AttributeList', function () {
 
             test('Should keep a packed list of attributes', function () {
                 $sut = new AttributeList;
-                $sut->add(new Attribute('id', '10', 'item'));
-                $sut->add(new Attribute('status', 'ok', 'item'));
+                $sut->add(new Attribute('id', '10'));
+                $sut->add(new Attribute('status', 'ok'));
 
                 expect(array_keys($sut->records))->toBe([0, 1]);
                 expect($sut->records)->each->toBeInstanceOf(Attribute::class);
@@ -55,7 +55,7 @@ describe('AttributeList', function () {
             });
 
             test('Should store the attribute in records', function () {
-                $attribute = new Attribute('id', '10', 'item');
+                $attribute = new Attribute('id', '10');
 
                 $this->sut->add($attribute);
 
@@ -64,18 +64,18 @@ describe('AttributeList', function () {
             });
 
             test('Should append attributes in insertion order', function () {
-                $this->sut->add(new Attribute('id', '10', 'item'));
-                $this->sut->add(new Attribute('status', 'ok', 'item'));
-                $this->sut->add(new Attribute('type', 'A', 'item'));
+                $this->sut->add(new Attribute('id', '10'));
+                $this->sut->add(new Attribute('status', 'ok'));
+                $this->sut->add(new Attribute('type', 'A'));
 
                 expect(array_map(fn (Attribute $attribute) => $attribute->name, $this->sut->records))
                     ->toBe(['id', 'status', 'type']);
             });
 
             test('Should throw when the attribute name already exists', function () {
-                $this->sut->add(new Attribute('id', '10', 'item'));
+                $this->sut->add(new Attribute('id', '10'));
 
-                expect(fn () => $this->sut->add(new Attribute('id', '11', 'item')))
+                expect(fn () => $this->sut->add(new Attribute('id', '11')))
                     ->toThrow(InvalidArgumentException::class, "Attribute with name 'id' already exists.");
             });
         });
@@ -87,8 +87,8 @@ describe('AttributeList', function () {
             beforeEach(function () {
                 /** @var TestCase $this */
                 $this->sut = new AttributeList;
-                $this->sut->add(new Attribute('id', '10', 'item'));
-                $this->sut->add(new Attribute('status', 'ok', 'item'));
+                $this->sut->add(new Attribute('id', '10'));
+                $this->sut->add(new Attribute('status', 'ok'));
             });
 
             test('Should return the position of an attribute', function () {
@@ -96,13 +96,13 @@ describe('AttributeList', function () {
             });
 
             test('Should match by name and not by instance identity', function () {
-                $twin = new Attribute('id', '99', 'otherParent');
+                $twin = new Attribute('id', '99');
 
                 expect($this->sut->indexOf($twin))->toBe(0);
             });
 
             test('Should return null when no attribute has that name', function () {
-                expect($this->sut->indexOf(new Attribute('unknown', '1', 'item')))->toBeNull();
+                expect($this->sut->indexOf(new Attribute('unknown', '1')))->toBeNull();
             });
         });
 
@@ -110,7 +110,7 @@ describe('AttributeList', function () {
             beforeEach(function () {
                 /** @var TestCase $this */
                 $this->sut = new AttributeList;
-                $this->sut->add(new Attribute('id', '10', 'item'));
+                $this->sut->add(new Attribute('id', '10'));
             });
 
             test('Should return true when an attribute with the same name is present', function () {
@@ -118,11 +118,11 @@ describe('AttributeList', function () {
             });
 
             test('Should return true for a different instance with the same name', function () {
-                expect($this->sut->exists(new Attribute('id', '99', 'otherParent')))->toBeTrue();
+                expect($this->sut->exists(new Attribute('id', '99')))->toBeTrue();
             });
 
             test('Should return false when no attribute has that name', function () {
-                expect($this->sut->exists(new Attribute('status', 'ok', 'item')))->toBeFalse();
+                expect($this->sut->exists(new Attribute('status', 'ok')))->toBeFalse();
             });
         });
 
@@ -130,7 +130,7 @@ describe('AttributeList', function () {
             beforeEach(function () {
                 /** @var TestCase $this */
                 $this->sut = new AttributeList;
-                $this->sut->add(new Attribute('id', '10', 'item'));
+                $this->sut->add(new Attribute('id', '10'));
             });
 
             test('Should remove the attribute', function () {
@@ -141,14 +141,14 @@ describe('AttributeList', function () {
             });
 
             test('Should remove by name even when given another instance', function () {
-                $this->sut->remove(new Attribute('id', '99', 'otherParent'));
+                $this->sut->remove(new Attribute('id', '99'));
 
                 expect($this->sut->records)->toBe([]);
             });
 
             test('Should keep records as a packed list', function () {
-                $this->sut->add(new Attribute('status', 'ok', 'item'));
-                $this->sut->add(new Attribute('type', 'A', 'item'));
+                $this->sut->add(new Attribute('status', 'ok'));
+                $this->sut->add(new Attribute('type', 'A'));
 
                 $this->sut->remove($this->sut->records[1]);
 
@@ -158,7 +158,7 @@ describe('AttributeList', function () {
             });
 
             test('Should do nothing when the attribute is absent', function () {
-                $this->sut->remove(new Attribute('unknown', '1', 'item'));
+                $this->sut->remove(new Attribute('unknown', '1'));
 
                 expect($this->sut->records)->toHaveCount(1);
                 expect($this->sut->id?->value)->toBe('10');
@@ -169,8 +169,8 @@ describe('AttributeList', function () {
             beforeEach(function () {
                 /** @var TestCase $this */
                 $this->sut = new AttributeList;
-                $this->sut->add(new Attribute('id', '10', 'item'));
-                $this->sut->add(new Attribute('status', 'ok', 'item'));
+                $this->sut->add(new Attribute('id', '10'));
+                $this->sut->add(new Attribute('status', 'ok'));
             });
 
             test('Should return the attribute matching the name', function () {

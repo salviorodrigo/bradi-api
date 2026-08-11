@@ -21,28 +21,13 @@ abstract class DFeElement
 {
     public const ?string FIELD_NAME = null;
     public const array CHILD_ELEMENTS__ON_SEQUENCE = [];
-    public const array CHILD_ATTRIBUTES__ON_SEQUENCE = [];
+    public const array CHILD_ATTRIBUTES_ON_SEQUENCE = [];
 
     public readonly string $fieldURI;
 
-    public ?string $value {
-        set(?string $value) {
-            $this->value = $value;
-            if (isset($this->source)) {
-                $this->source->value = $value;
-            }
-        }
-    }
+    public ?string $value = null;
 
-    private ?Element $source {
-        get {
-            if (! isset($this->source)) {
-                $this->initSource();
-            }
-
-            return $this->source;
-        }
-    }
+    private ?Element $source;
 
     private ValidationService $validationService;
 
@@ -84,9 +69,18 @@ abstract class DFeElement
         return Result::makeSuccess($this);
     }
 
-    final public function getSource(): ?Element
+    final public function toXML(): ?Element
     {
-        return $this->source;
+        $this->sync();
+
+        return $this->source ?? null;
+    }
+
+    final public function toString(): string
+    {
+        $this->sync();
+
+        return (string) ($this->source ?? '');
     }
 
     /** @return array<Validator> */
@@ -142,16 +136,30 @@ abstract class DFeElement
         return $this->validationService->verify($element);
     }
 
+    private function initSource(): void
+    {
+        if (! $this->hasChildData() && ! isset($this->value)) {
+            $this->source = null;
+
+            return;
+        }
+
+        $this->source = new Element;
+        $this->source->name = static::FIELD_NAME;
+        if (isset($this->value)) {
+            $this->source->value = $this->value;
+        }
+
+        $this->sync();
+    }
+
     /** @return Result<null|ApiError> **/
     private function hydrate(Element $xmlElement): Result
     {
-        if (isset($xmlElement->value)) {
-            $this->value = $xmlElement->value;
-        }
-
         $propsMetadata = $this->listChildElements();
         $parserErrorBag = [];
         foreach ($propsMetadata as $dfeChild) {
+            unset($this->{$dfeChild->name});
             if ($xmlElement->isSet($dfeChild->class::FIELD_NAME)) {
                 $concreteElement = new $dfeChild->class($this->fieldURI);
                 $parsingResult = $concreteElement->parse($xmlElement->{$concreteElement::class::FIELD_NAME});
@@ -160,6 +168,7 @@ abstract class DFeElement
 
                     continue;
                 }
+
                 $this->{$dfeChild->name} = $parsingResult->getData();
             }
         }
@@ -174,6 +183,10 @@ abstract class DFeElement
         }
 
         $this->source = $xmlElement;
+        $this->value = null;
+        if (isset($xmlElement->value)) {
+            $this->value = $xmlElement->value;
+        }
 
         return Result::makeSuccess();
     }
@@ -190,7 +203,9 @@ abstract class DFeElement
 
         $propsMetadata = $this->listChildElements();
         foreach ($propsMetadata as $property) {
-            if (! $property->isSet) {
+            $childSource = $property->isSet ? $this->{$property->name}->toXML() : null;
+
+            if ($childSource === null) {
                 if ($this->source->isSet($property->class::FIELD_NAME)) {
                     $this->source->remove($this->source->{$property->class::FIELD_NAME});
                 }
@@ -199,21 +214,25 @@ abstract class DFeElement
             }
 
             if (! $this->source->isSet($property->class::FIELD_NAME)) {
-                $this->source->add($this->{$property->name}->getSource());
+                $this->source->add($childSource);
 
                 continue;
             }
 
-            if ($this->source->{$property->class::FIELD_NAME} !== $this->{$property->name}->getSource()) {
+            if ($this->source->{$property->class::FIELD_NAME} !== $childSource) {
                 $this->source->replace(
                     $this->source->{$property->class::FIELD_NAME},
-                    $this->{$property->name}->getSource()
+                    $childSource
                 );
             }
         }
 
         // $this->resolverChildElementsSequence();
         // $this->resolverChildAttributesSequence();
+
+        if ($this->source->value !== $this->value) {
+            $this->source->value = $this->value;
+        }
     }
 
     /** @return array<DFeElementPropertyMetadata> */
@@ -261,27 +280,8 @@ abstract class DFeElement
         return array_reduce($propsMetadata, fn (bool $carry, DFeElementPropertyMetadata $property) => $carry || $property->isSet, false);
     }
 
-    private function initSource(): void
-    {
-        if (! $this->hasChildData() && ! isset($this->value)) {
-            $this->source = null;
-
-            return;
-        }
-
-        $this->source = new Element;
-        $this->source->name = static::FIELD_NAME;
-        if (isset($this->value)) {
-            $this->source->value = $this->value;
-        }
-
-        $this->sync();
-    }
-
     final public function __toString(): string
     {
-        $this->sync();
-
-        return isset($this->source) ? (string) $this->source : '';
+        return $this->toString();
     }
 }

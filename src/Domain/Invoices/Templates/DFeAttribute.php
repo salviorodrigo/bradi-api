@@ -14,27 +14,24 @@ use RuntimeException;
 
 abstract class DFeAttribute
 {
-    public const string FIELD_NAME = '';
+    public const ?string FIELD_NAME = null;
 
-    public string $value;
+    public ?string $value = null;
 
-    public readonly string $parentTagName;
     public readonly string $fieldURI;
 
     private ValidationService $validationService;
-
-    private ?Attribute $source {
-        get {
-            if (! isset($this->source)) {
-                $this->initializeSourceAttribute();
-            }
-
-            return $this->source;
-        }
-    }
+    private ?Attribute $source;
 
     final public function __construct(string $parentFieldURI)
     {
+        if (empty(static::FIELD_NAME)) {
+            throw new RuntimeException(sprintf(
+                'The class "%s" must define a constant "FIELD_NAME" with the name of the XML attribute it represents.',
+                static::class
+            ));
+        }
+
         if ($parentFieldURI === '') {
             throw new RuntimeException(sprintf(
                 'Parent field URI must be provided for attribute "%s".',
@@ -42,22 +39,11 @@ abstract class DFeAttribute
             ));
         }
 
-        $parents = explode('.', $parentFieldURI);
-        $this->parentTagName = array_pop($parents);
         $this->fieldURI = $parentFieldURI . '.' . static::FIELD_NAME;
         $this->validationService = new ValidationService($this->fieldURI);
-
-        if (! defined(static::class . '::FIELD_NAME') || static::FIELD_NAME === '') {
-            throw new RuntimeException(sprintf(
-                'The class "%s" must define a constant "FIELD_NAME" with the name of the XML attribute it represents.',
-                static::class
-            ));
-        }
     }
 
-    /**
-     * @return Result<DFeAttribute|ApiError>
-     */
+    /** @return Result<DFeAttribute|ApiError> */
     final public function parse(Attribute $attribute): Result
     {
         $validationSteps = [
@@ -80,9 +66,18 @@ abstract class DFeAttribute
         return Result::makeSuccess($this);
     }
 
-    final public function getSource(): Attribute
+    final public function toXML(): ?Attribute
     {
+        $this->sync();
+
         return $this->source;
+    }
+
+    final public function toString(): string
+    {
+        $this->sync();
+
+        return (string) $this->source;
     }
 
     /** @return array<Validator> */
@@ -109,6 +104,11 @@ abstract class DFeAttribute
         return $this->validationService->verify($candidate);
     }
 
+    private function initSource(): void
+    {
+        $this->source = new Attribute(static::FIELD_NAME, $this->value);
+    }
+
     /** @return Result<null|ApiError> **/
     private function hydrate(Attribute $attribute): Result
     {
@@ -118,20 +118,27 @@ abstract class DFeAttribute
         return Result::makeSuccess();
     }
 
-    private function initializeSourceAttribute(): void
+    private function sync(): void
     {
-        if (! isset($this->value)) {
-            throw new RuntimeException(sprintf(
-                'Property "%s::$value" must be initialized before serialization.',
-                static::class
-            ));
+        if (! isset($this->value) || $this->value === '') {
+            $this->source = null;
+
+            return;
         }
 
-        $this->source = new Attribute(static::FIELD_NAME, $this->value, $this->parentTagName);
+        if (! isset($this->source)) {
+            $this->initSource();
+
+            return;
+        }
+
+        if ($this->source->value !== $this->value) {
+            $this->source->value = $this->value;
+        }
     }
 
     final public function __toString(): string
     {
-        return (string) $this->source;
+        return $this->toString();
     }
 }

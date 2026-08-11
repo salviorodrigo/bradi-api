@@ -20,14 +20,8 @@ abstract class DFeElementCollection
     /** @var DFeElement[] */
     public array $collection = [];
 
-    /**
-     * Source nodes of the repeated tag, one per item and in the same order.
-     * Repeated tags cannot be linked by name, so position is the link.
-     *
-     * @var Element[]
-     */
+    /** @var array<Element> */
     private array $sourceCollection = [];
-
     private DFeElement $baseClass;
     private ValidationService $validationService;
 
