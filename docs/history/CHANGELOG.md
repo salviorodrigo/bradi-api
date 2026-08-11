@@ -16,6 +16,18 @@ Guia de uso: consulte `docs/history/README.md`.
 
 ## 2026-08-11
 
+### Fixed
+
+- Escopo: Domain/Common, Tests
+- Descricao: `RequiredParamValidator::check()` e `NotNullValidator::check()` deixaram de despachar por `$this->{'isEmpty' . ucfirst(gettype($candidate))}()`. So existiam `isEmptyString()`, `isEmptyArray()` e `isEmptyObject()`, entao `gettype()` devolvendo `NULL`, `Integer`, `Double` ou `Boolean` montava nome de metodo inexistente e o `check()` lancava `Error` em vez de devolver `Result`. O despacho virou um `match (true)` explicito no novo metodo privado `isEmpty()`, com null tratado primeiro e escalar caindo no `default` como valor preenchido. Removidos tambem o `is_array()`/`is_object()` redundante dentro dos helpers ja tipados e o comentario final que listava os retornos de `gettype()` para sustentar o despacho dinamico.
+- Arquivos:
+  - `src/Domain/Common/Validators/RequiredParamValidator.php`
+  - `src/Domain/Common/Validators/NotNullValidator.php`
+  - `tests/Unit/Domain/Common/Validators/RequiredParamValidatorTest.php`
+  - `tests/Unit/Domain/Common/Validators/NotNullValidatorTest.php`
+- Impacto: `check()` volta a honrar o contrato de `Validator` (sempre devolve `Result`, nunca lanca). O caso mais grave era `(new RequiredParamValidator)->check(null)`, o uso principal do validador, que quebrava com `Error: Call to undefined method ...::isEmptyNULL()`; em `NotNullValidator` o null ja escapava pelo curto-circuito do `||`, mas os escalares nao. Escalar preenchido passa a ser sucesso, alinhado ao `'0'` que ja era aceito: `0`, `0.0` e `false` sao valores fornecidos, nao ausencia de valor. Nenhum comportamento previamente valido mudou - antes esses caminhos so produziam `Error`. Os ~40 ValueObjects de `Domain/Invoices/NFe/v4_00` que compoem `NotNullValidator` deixam de quebrar quando recebem int/float/bool. A duplicacao dos helpers entre as duas classes foi mantida como esta, por serem validadores independentes com mensagens proprias.
+- Evidencia: testes de regressao para null e para escalares (`integer`, `zero_as_integer`, `float`, `zero_as_float`, `true`, `false`) nas duas suites; com as duas classes revertidas ao despacho dinamico, 13 desses testes falham com `Call to undefined method` (incluindo `isEmptyNULL()`). Suite completa com 2295 aprovados e 312 pulados (3200 assercoes) em `composer test` e `composer test:ci`. `composer lint` nao foi executado nesta rodada.
+
 ### Added
 
 - Escopo: Domain/Xml, Domain/Invoices, Tests
@@ -36,6 +48,18 @@ Guia de uso: consulte `docs/history/README.md`.
 - Impacto: o layout do DFe declara cada grupo como `xs:sequence`, entao a ordem das tags e parte do contrato com a SEFAZ. Antes, uma tag atribuida apos o parse (ex.: um `xFant` opcional) era anexada no fim e gerava XML fora de sequencia. Breaking change no parse: XML com tags fora de ordem passa a devolver `Result` de falha em vez de ser aceito. A ordenacao e estavel (irmas homonimas como `det` preservam a ordem de leitura) e tags fora da sequencia nao sao perdidas nem recusadas, apenas vao para o fim - rejeita-las e papel de `AllowedTagsValidator`. Atributos sao ordenados na saida, mas nao validados, por a ordem nao ser significativa no XML. Constante vazia (padrao) nao altera nada, e nenhuma classe NFe declara sequencia ainda.
 - Evidencia: `composer test:ci` com 1786 aprovados (2246 assercoes) e `composer lint` sem apontamentos; com a ordenacao desativada, 4 dos 5 testes de `child sequence` falham (o quinto e a regressao de "sem sequencia declarada").
 
+### Added
+
+- Escopo: Tests/Domain
+- Descricao: Criadas as suites unitarias dos 46 validadores que nao tinham nenhuma cobertura, e ampliada a de `IsUuidV7Validator`, que so exercia o caminho de sucesso. Cobrem `check()` em caminho feliz, limites e entradas invalidas (tipo errado, vazio, `null`), com assercao da mensagem de erro, que e o contrato exposto pela API. Padrao dos arquivos existentes: `describe(<Classe>)` -> `Should succeed if is declared` -> `describe('methods')` -> `describe('check()')`, com datasets nomeados em `->with([...])`; os datasets compartilhados de CPF/CNPJ sao reaproveitados pelo helper `datasets()`.
+- Arquivos:
+  - `tests/Unit/Domain/Common/Validators/` (16 arquivos)
+  - `tests/Unit/Domain/Invoices/Validators/` (17 arquivos)
+  - `tests/Unit/Domain/Invoices/NFe/Validators/` (13 arquivos)
+  - `tests/Unit/Domain/Xml/Validators/MaxDFeCollectionSizeValidatorTest.php`
+- Impacto: cobertura de validadores sai de 2 de 48 para 48 de 48. Nenhuma mudanca em `src/`: os testes descrevem o comportamento atual. Tres defeitos encontrados no processo ficaram deliberadamente fora dos testes, para nao consagrar comportamento errado: `RequiredParamValidator::check(null)` lanca `Error` (`isEmptyNULL` inexistente) em vez de devolver falha, `NotNullValidator`/`RequiredParamValidator` lancam `Error` para escalares como `int` e `bool`, e `IsCodigoNotaFiscalValidator` recusa cNF com zeros a esquerda (`00045678`) porque `validateType()` usa `IsNumericValidator` sem `allowLeadingZeros`, contrariando o proprio `validateStructure()`.
+- Evidencia: `composer test:ci` com 2282 aprovados (3172 assercoes), sendo 496 novos, e `composer lint` sem apontamentos.
+
 ### Removed
 
 - Escopo: Tests
@@ -55,18 +79,6 @@ Guia de uso: consulte `docs/history/README.md`.
   - `docs/history/DECISIONS.md`
 - Impacto: nenhum em comportamento; a suite nunca chamou `Mockery::mock()`. Mockery nao seria utilizavel aqui mesmo se quisessemos: nao gera property hooks do PHP 8.4+, entao nao consegue implementar os protocolos do dominio (`XmlIterator` declara seis propriedades virtuais e o mock falha com fatal error de metodos abstratos), e nao sobrescreve constantes de classe nem propriedades tipadas, que sao o mecanismo pelo qual `DFeElement` descobre filhos via reflexao. Reintroduzir a biblioteca exige `composer require --dev mockery/mockery` e revisitar a ADR.
 - Evidencia: `composer why mockery/mockery` apontava apenas o proprio projeto; `grep -rn Mockery` sem ocorrencias fora de `vendor/`; `composer test` com 2270 aprovados (3146 assercoes) apos a remocao.
-
-### Added
-
-- Escopo: Tests/Domain
-- Descricao: Criadas as suites unitarias dos 46 validadores que nao tinham nenhuma cobertura, e ampliada a de `IsUuidV7Validator`, que so exercia o caminho de sucesso. Cobrem `check()` em caminho feliz, limites e entradas invalidas (tipo errado, vazio, `null`), com assercao da mensagem de erro, que e o contrato exposto pela API. Padrao dos arquivos existentes: `describe(<Classe>)` -> `Should succeed if is declared` -> `describe('methods')` -> `describe('check()')`, com datasets nomeados em `->with([...])`; os datasets compartilhados de CPF/CNPJ sao reaproveitados pelo helper `datasets()`.
-- Arquivos:
-  - `tests/Unit/Domain/Common/Validators/` (16 arquivos)
-  - `tests/Unit/Domain/Invoices/Validators/` (17 arquivos)
-  - `tests/Unit/Domain/Invoices/NFe/Validators/` (13 arquivos)
-  - `tests/Unit/Domain/Xml/Validators/MaxDFeCollectionSizeValidatorTest.php`
-- Impacto: cobertura de validadores sai de 2 de 48 para 48 de 48. Nenhuma mudanca em `src/`: os testes descrevem o comportamento atual. Tres defeitos encontrados no processo ficaram deliberadamente fora dos testes, para nao consagrar comportamento errado: `RequiredParamValidator::check(null)` lanca `Error` (`isEmptyNULL` inexistente) em vez de devolver falha, `NotNullValidator`/`RequiredParamValidator` lancam `Error` para escalares como `int` e `bool`, e `IsCodigoNotaFiscalValidator` recusa cNF com zeros a esquerda (`00045678`) porque `validateType()` usa `IsNumericValidator` sem `allowLeadingZeros`, contrariando o proprio `validateStructure()`.
-- Evidencia: `composer test:ci` com 2282 aprovados (3172 assercoes), sendo 496 novos, e `composer lint` sem apontamentos.
 
 ## 2026-08-07
 

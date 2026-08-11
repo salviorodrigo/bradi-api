@@ -26,9 +26,26 @@ describe('NotNullValidator', function () {
                 'filled_object' => [(object) ['name' => 'aValue']],
             ]);
 
+            // Regressao: o despacho por gettype() nao tinha metodo para escalar,
+            // entao check() lancava Error em vez de devolver Result.
+            test('Should succeed if a scalar value is provided', function (mixed $candidate) {
+                $sut = new NotNullValidator;
+                $sutResponse = $sut->check($candidate);
+                expect($sutResponse)->toBeInstanceOf(Result::class);
+                expect($sutResponse->isSuccess())->toBeTrue();
+            })->with([
+                'integer' => 5,
+                'zero_as_integer' => 0,
+                'float' => 1.5,
+                'zero_as_float' => 0.0,
+                'true' => true,
+                'false' => false,
+            ]);
+
             test('Should fail if null is provided', function () {
                 $sut = new NotNullValidator;
                 $sutResponse = $sut->check(null);
+                expect($sutResponse)->toBeInstanceOf(Result::class);
                 expect($sutResponse->isFailure())->toBeTrue();
                 expect($sutResponse->getError()->getMessage())->toBe('cannot be null.');
             });

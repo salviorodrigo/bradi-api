@@ -12,12 +12,29 @@ final class RequiredParamValidator implements Validator
 {
     public function check(mixed $candidate): Result
     {
-
-        if ($this->{'isEmpty' . ucfirst(gettype($candidate))}($candidate) || is_null($candidate)) {
+        if ($this->isEmpty($candidate)) {
             return Result::makeFailure(new InvalidArgumentException('required param.'));
         }
 
         return Result::makeSuccess();
+    }
+
+    /**
+     * O despacho era montado por `gettype()` (`isEmpty` . `NULL`/`Integer`/...),
+     * entao null e qualquer escalar batiam em metodo inexistente e lancavam
+     * `Error` em vez de devolver `Result` - inclusive `check(null)`, o caso de
+     * uso principal do validador. Escalar preenchido nao e vazio: `'0'` ja era
+     * aceito como valor valido, e `0`, `0.0` e `false` seguem a mesma regra.
+     */
+    private function isEmpty(mixed $candidate): bool
+    {
+        return match (true) {
+            is_null($candidate) => true,
+            is_string($candidate) => $this->isEmptyString($candidate),
+            is_array($candidate) => $this->isEmptyArray($candidate),
+            is_object($candidate) => $this->isEmptyObject($candidate),
+            default => false,
+        };
     }
 
     private function isEmptyString(string $candidate): bool
@@ -29,24 +46,11 @@ final class RequiredParamValidator implements Validator
 
     private function isEmptyArray(array $candidate): bool
     {
-        return is_array($candidate) && count($candidate) === 0;
+        return count($candidate) === 0;
     }
 
     private function isEmptyObject(object $candidate): bool
     {
-        return is_object($candidate) && count(get_object_vars($candidate)) === 0;
+        return count(get_object_vars($candidate)) === 0;
     }
 }
-
-/**
- * "boolean"
- * "integer"
- * "double" (for historical reasons "double" is returned in case of a float, and not simply "float")
- * "string"
- * "array"
- * "object"
- * "resource"
- * "resource (closed)" as of PHP 7.2.0
- * "NULL"
- * "unknown type"
-**/
