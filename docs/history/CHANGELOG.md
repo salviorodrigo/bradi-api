@@ -36,6 +36,15 @@ Guia de uso: consulte `docs/history/README.md`.
 - Impacto: o layout do DFe declara cada grupo como `xs:sequence`, entao a ordem das tags e parte do contrato com a SEFAZ. Antes, uma tag atribuida apos o parse (ex.: um `xFant` opcional) era anexada no fim e gerava XML fora de sequencia. Breaking change no parse: XML com tags fora de ordem passa a devolver `Result` de falha em vez de ser aceito. A ordenacao e estavel (irmas homonimas como `det` preservam a ordem de leitura) e tags fora da sequencia nao sao perdidas nem recusadas, apenas vao para o fim - rejeita-las e papel de `AllowedTagsValidator`. Atributos sao ordenados na saida, mas nao validados, por a ordem nao ser significativa no XML. Constante vazia (padrao) nao altera nada, e nenhuma classe NFe declara sequencia ainda.
 - Evidencia: `composer test:ci` com 1786 aprovados (2246 assercoes) e `composer lint` sem apontamentos; com a ordenacao desativada, 4 dos 5 testes de `child sequence` falham (o quinto e a regressao de "sem sequencia declarada").
 
+### Removed
+
+- Escopo: Tests
+- Descricao: Removido o double `FakeValidationService`, orfao desde `91558f1` (`refactor(ValidationService): remove interface implementation and adjust method signatures`) e sem nenhuma referencia no repositorio.
+- Arquivos:
+  - `tests/Doubles/Domain/Common/FakeValidationService.php`
+- Impacto: nenhum em comportamento. O double sobrescrevia `addValidator()`, `verify()` e `reset()` para sempre devolver sucesso; manter uma implementacao alternativa de `ValidationService` sem consumidor so criava risco de ela divergir do contrato real sem ninguem perceber.
+- Evidencia: `grep -rn FakeValidationService` sem ocorrencias fora do proprio arquivo; `composer test` com 2270 aprovados (3146 assercoes) apos a remocao.
+
 ## 2026-08-07
 
 ### Removed
