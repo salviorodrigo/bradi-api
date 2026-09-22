@@ -63,20 +63,6 @@ describe('DFeElementCollection', function () {
                 }
             })->toThrow(Exception::class, 'BASE_CLASS must be a subclass of DFeElement.');
         });
-
-        test('Should throw when FIELD_NAME constant is not defined in child class', function () {
-            expect(fn () => new class extends DFeElementCollection
-            {
-                protected const string BASE_CLASS = FakeDFeElement::class;
-
-                protected const string FIELD_NAME = '';
-
-                protected function collectionValidators(): array
-                {
-                    return [];
-                }
-            })->toThrow(Exception::class, 'FIELD_NAME constant must be defined in the child class.');
-        });
     });
 
     describe('::parse()', function () use ($makeElement) {

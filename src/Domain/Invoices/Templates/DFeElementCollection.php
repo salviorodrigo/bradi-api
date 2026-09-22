@@ -15,7 +15,6 @@ use ReflectionClass;
 abstract class DFeElementCollection
 {
     protected const string BASE_CLASS = '';
-    protected const string FIELD_NAME = '';
 
     /** @var array<DFeElement> */
     public array $collection = [];
@@ -37,8 +36,8 @@ abstract class DFeElementCollection
             throw new Exception('BASE_CLASS must be a subclass of DFeElement.');
         }
 
-        if (static::FIELD_NAME === '') {
-            throw new Exception('FIELD_NAME constant must be defined in the child class.');
+        if ((static::BASE_CLASS)::FIELD_NAME === '') {
+            throw new Exception('FIELD_NAME constant must be defined in the child base class.');
         }
     }
 
