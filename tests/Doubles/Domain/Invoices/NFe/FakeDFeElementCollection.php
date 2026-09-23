@@ -10,8 +10,6 @@ final class FakeDFeElementCollection extends DFeElementCollection
 {
     public const string BASE_CLASS = FakeDFeElement::class;
 
-    public const string FIELD_NAME = 'fakeTag';
-
     protected function collectionValidators(): array
     {
         return [];

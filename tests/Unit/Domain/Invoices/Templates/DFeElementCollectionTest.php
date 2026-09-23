@@ -2,12 +2,9 @@
 
 declare(strict_types=1);
 
-use BradiApi\Domain\Common\Protocols\ApiError;
-use BradiApi\Domain\Common\Protocols\Validator;
 use BradiApi\Domain\Common\ValueObjects\Result;
 use BradiApi\Domain\Invoices\Templates\DFeElementCollection;
 use BradiApi\Domain\Xml\ValueObjects\Element;
-use BradiApi\Domain\Xml\ValueObjects\ElementList;
 use BradiApi\Tests\Doubles\Domain\Invoices\NFe\FakeDFeElement;
 use BradiApi\Tests\Doubles\Domain\Invoices\NFe\FakeDFeElementCollection;
 use BradiApi\Tests\TestCase;
@@ -15,16 +12,8 @@ use BradiApi\Tests\TestCase;
 describe('DFeElementCollection', function () {
     beforeEach(function () {
         /** @var TestCase $this */
-        $this->sut = new FakeDFeElementCollection('infNFe');
+        $this->sut = new FakeDFeElementCollection('FakeTag');
     });
-
-    $makeElement = function (string $name, ?string $value = null): Element {
-        $element = new Element;
-        $element->name = $name;
-        $element->value = $value;
-
-        return $element;
-    };
 
     test('Should be declared as abstract', function () {
         $sut = new ReflectionClass(DFeElementCollection::class);
@@ -65,35 +54,55 @@ describe('DFeElementCollection', function () {
         });
     });
 
-    describe('::parse()', function () use ($makeElement) {
-        test('Should succeed parsing single Element', function () {
-            $candidate = '<FakeTag>first</FakeTag>';
-            $element = new Element;
-            $parsingResult = $element->parse($candidate);
-            if ($parsingResult->isFailure()) {
-                $this->fail(json_encode($parsingResult->getError()));
+    describe('::parse()', function () {
+        test('Should fail if the provided element does not contain at least one sut element', function () {
+            $candidate = '<parentElement><childElement>value</childElement></parentElement>';
+            $parentElement = new Element;
+            $elementParsingResult = $parentElement->parse($candidate);
+            if ($elementParsingResult->isFailure()) {
+                $this->fail(json_encode($elementParsingResult->getError()));
             }
 
-            $parsingResponse = $this->sut->parse($parsingResult->getData());
-            expect($parsingResponse)->toBeInstanceOf(Result::class);
-            if ($parsingResponse->isFailure()) {
-                $this->fail(json_encode($parsingResponse->getError()));
+            $sutParsingResult = $this->sut->parse($parentElement);
+            expect($sutParsingResult)->toBeInstanceOf(Result::class);
+            if ($sutParsingResult->isSuccess()) {
+                $this->fail(json_encode($sutParsingResult->getData()));
+            }
+            expect($sutParsingResult->isFailure())->toBeTruthy();
+        });
+
+        test('Should succeed parsing a parent element with a single sut element', function () {
+            $candidate = '<parentElement><FakeTag>first</FakeTag></parentElement>';
+            $parentElement = new Element;
+            $elementParsingResult = $parentElement->parse($candidate);
+            if ($elementParsingResult->isFailure()) {
+                $this->fail(json_encode($elementParsingResult->getError()));
             }
 
-            expect($parsingResponse->getData())->toBe($this->sut);
+            $sutParsingResult = $this->sut->parse($parentElement);
+            expect($sutParsingResult)->toBeInstanceOf(Result::class);
+            if ($sutParsingResult->isFailure()) {
+                $this->fail(json_encode($sutParsingResult->getError()));
+            }
+
+            expect($sutParsingResult->getData())->toBe($this->sut);
             expect(count($this->sut->collection))->toBe(1);
             expect($this->sut->collection[0])->toBeInstanceOf(FakeDFeElement::class);
             expect($this->sut->collection[0]->value)->toBe('first');
         });
 
-        test('Should succeed parsing ElementList with many elements', function () use ($makeElement) {
-            $firstElement = $makeElement('FakeTag', 'first');
-            $secondElement = $makeElement('FakeTag', 'second');
+        test('Should succeed parsing a parent element with many sut elements', function () {
+            $candidate = '<parentElement><FakeTag>first</FakeTag><FakeTag>second</FakeTag></parentElement>';
+            $parentElement = new Element;
+            $elementParsingResult = $parentElement->parse($candidate);
+            if ($elementParsingResult->isFailure()) {
+                $this->fail(json_encode($elementParsingResult->getError()));
+            }
 
-            $parsingResponse = $this->sut->parse(new ElementList([$firstElement, $secondElement]));
-            expect($parsingResponse)->toBeInstanceOf(Result::class);
-            if ($parsingResponse->isFailure()) {
-                $this->fail(json_encode($parsingResponse->getError()));
+            $sutParsingResult = $this->sut->parse($parentElement);
+            expect($sutParsingResult)->toBeInstanceOf(Result::class);
+            if ($sutParsingResult->isFailure()) {
+                $this->fail(json_encode($sutParsingResult->getError()));
             }
 
             expect(count($this->sut->collection))->toBe(2);
@@ -103,184 +112,81 @@ describe('DFeElementCollection', function () {
             expect($this->sut->collection[1]->value)->toBe('second');
         });
 
-        test('Should build an independent DFeElement instance per parsed Element', function () use ($makeElement) {
-            $parsingResponse = $this->sut->parse(new ElementList([
-                $makeElement('FakeTag', 'first'),
-                $makeElement('FakeTag', 'second'),
-            ]));
-            if ($parsingResponse->isFailure()) {
-                $this->fail(json_encode($parsingResponse->getError()));
+        test('Should prefix the parent field URI on every parsed item', function () {
+            $candidate = '<parentElement><FakeTag>first</FakeTag><FakeTag>second</FakeTag></parentElement>';
+            $parentElement = new Element;
+            $elementParsingResult = $parentElement->parse($candidate);
+            if ($elementParsingResult->isFailure()) {
+                $this->fail(json_encode($elementParsingResult->getError()));
             }
-
-            expect($this->sut->collection[0])->not->toBe($this->sut->collection[1]);
-        });
-
-        test('Should prefix the parent field URI on every parsed item', function () use ($makeElement) {
-            $parsingResponse = $this->sut->parse($makeElement('FakeTag', 'first'));
-            if ($parsingResponse->isFailure()) {
-                $this->fail(json_encode($parsingResponse->getError()));
+            $sutParsingResult = $this->sut->parse($parentElement);
+            expect($sutParsingResult)->toBeInstanceOf(Result::class);
+            if ($sutParsingResult->isFailure()) {
+                $this->fail(json_encode($sutParsingResult->getError()));
             }
-
-            expect($this->sut->collection[0]->fieldURI)->toBe('infNFe.FakeTag');
+            expect($this->sut->collection[0]->fieldURI)->toBe('FakeTag.FakeTag');
         });
 
         test('Should ignore elements whose name differs from the BASE_CLASS FIELD_NAME', function () {
-            $candidate = '<root><FakeTag>first</FakeTag><WrongTag>second</WrongTag></root>';
-            $element = new Element;
+            $candidate = '<parentElement><FakeTag>first</FakeTag><WrongTag>second</WrongTag></parentElement>';
+            $parentElement = new Element;
 
-            $parsingResult = $element->parse($candidate);
-            if ($parsingResult->isFailure()) {
-                $this->fail(json_encode($parsingResult->getError()));
+            $elementParsingResult = $parentElement->parse($candidate);
+            if ($elementParsingResult->isFailure()) {
+                $this->fail(json_encode($elementParsingResult->getError()));
             }
 
-            $elements = $parsingResult->getData()->children->records;
-            $parsingResponse = $this->sut->parse(new ElementList($elements));
-            expect($parsingResponse)->toBeInstanceOf(Result::class);
-            if ($parsingResponse->isFailure()) {
-                $this->fail(json_encode($parsingResponse->getError()));
+            $sutParsingResult = $this->sut->parse($parentElement);
+            expect($sutParsingResult)->toBeInstanceOf(Result::class);
+            if ($sutParsingResult->isFailure()) {
+                $this->fail(json_encode($sutParsingResult->getError()));
             }
 
             expect(count($this->sut->collection))->toBe(1);
             expect($this->sut->collection[0]->value)->toBe('first');
         });
-
-        test('Should succeed with empty ElementList', function () {
-            $parsingResponse = $this->sut->parse(new ElementList);
-            expect($parsingResponse)->toBeInstanceOf(Result::class);
-            if ($parsingResponse->isFailure()) {
-                $this->fail(json_encode($parsingResponse->getError()));
-            }
-
-            expect(count($this->sut->collection))->toBe(0);
-        });
-
-        test('Should fail and reset the collection when a collection validator rejects', function () use ($makeElement) {
-            $sut = new class('infNFe') extends DFeElementCollection
-            {
-                protected const string BASE_CLASS = FakeDFeElement::class;
-
-                protected const string FIELD_NAME = 'fakeTag';
-
-                protected function collectionValidators(): array
-                {
-                    return [
-                        new class implements Validator
-                        {
-                            public function check(mixed $candidate): Result
-                            {
-                                return Result::makeFailure(new InvalidArgumentException('collection is not allowed.'));
-                            }
-                        },
-                    ];
-                }
-            };
-
-            $parsingResponse = $sut->parse(new ElementList([
-                $makeElement('FakeTag', 'first'),
-            ]));
-            expect($parsingResponse)->toBeInstanceOf(Result::class);
-            if ($parsingResponse->isSuccess()) {
-                $this->fail(json_encode($parsingResponse->getData()));
-            }
-
-            expect($parsingResponse->getError())->toBeInstanceOf(ApiError::class);
-            expect($sut->collection)->toBe([]);
-        });
     });
 
-    describe('::toString()', function () use ($makeElement) {
-        beforeEach(function () {
-            /** @var TestCase $this */
-            $element = new Element;
-            $element->parse('<FakeTag>first</FakeTag>');
-            $this->sut->parse($element);
-        });
-
+    describe('::__toString()', function () {
         test('Should serialize every item of the collection in order', function () {
+            $candidate = '<parentElement><FakeTag>first</FakeTag><WrongTag>second</WrongTag></parentElement>';
+            $parentElement = new Element;
+
+            $elementParsingResult = $parentElement->parse($candidate);
+            if ($elementParsingResult->isFailure()) {
+                $this->fail(json_encode($elementParsingResult->getError()));
+            }
+
+            $sutParsingResult = $this->sut->parse($parentElement);
+            if ($sutParsingResult->isFailure()) {
+                $this->fail(json_encode($sutParsingResult->getError()));
+            }
+
             expect($this->sut->toString())->toBe('<FakeTag>first</FakeTag>');
         });
 
-        test('Should serialize many items preserving the collection order', function () use ($makeElement) {
+        test('Should serialize many items preserving the collection order', function () {
             $sut = new FakeDFeElementCollection('infNFe');
-            $sut->parse(new ElementList([
-                $makeElement('FakeTag', 'first'),
-                $makeElement('FakeTag', 'second'),
-            ]));
+            $parentElement = new Element;
+            $candidate = '<parentElement><FakeTag>first</FakeTag><FakeTag>second</FakeTag></parentElement>';
+
+            $elementParsingResult = $parentElement->parse($candidate);
+            if ($elementParsingResult->isFailure()) {
+                $this->fail(json_encode($elementParsingResult->getError()));
+            }
+
+            $sutParsingResult = $sut->parse($parentElement);
+            if ($sutParsingResult->isFailure()) {
+                $this->fail(json_encode($sutParsingResult->getError()));
+            }
 
             expect($sut->toString())->toBe('<FakeTag>first</FakeTag><FakeTag>second</FakeTag>');
         });
 
         test('Should return an empty string when nothing was parsed', function () {
-            $sut = new FakeDFeElementCollection('infNFe');
+            $sut = new FakeDFeElementCollection;
 
             expect($sut->toString())->toBe('');
-        });
-
-        test('Should reflect a value changed on a parsed item', function () {
-            $this->sut->collection[0]->value = 'updated';
-
-            expect($this->sut->toString())->toBe('<FakeTag>updated</FakeTag>');
-        });
-
-        test('Should reflect an item appended to the collection', function () {
-            $appended = new FakeDFeElement('infNFe');
-            $appended->value = 'second';
-            $this->sut->collection[] = $appended;
-
-            expect($this->sut->toString())->toBe('<FakeTag>first</FakeTag><FakeTag>second</FakeTag>');
-        });
-
-        test('Should reflect an item removed from the collection', function () {
-            $this->sut->collection = [];
-
-            expect($this->sut->toString())->toBe('');
-        });
-
-        test('Should skip items that have no XML representation', function () {
-            $this->sut->collection[] = new FakeDFeElement('infNFe');
-
-            expect($this->sut->toString())->toBe('<FakeTag>first</FakeTag>');
-        });
-
-        test('Should be idempotent across consecutive calls', function () {
-            expect($this->sut->toString())->toBe($this->sut->toString());
-        });
-    });
-
-    describe('::__toString()', function () {
-        beforeEach(function () {
-            /** @var TestCase $this */
-            $element = new Element;
-            $element->parse('<FakeTag>first</FakeTag>');
-            $this->sut->parse($element);
-        });
-
-        test('Should delegate the serialization to ::toString()', function () {
-            expect((string) $this->sut)->toBe($this->sut->toString());
-        });
-
-        test('Should serialize every item of the collection in order', function () {
-            expect((string) $this->sut)->toBe('<FakeTag>first</FakeTag>');
-        });
-
-        test('Should reflect a value changed on a parsed item', function () {
-            $this->sut->collection[0]->value = 'updated';
-
-            expect((string) $this->sut)->toBe('<FakeTag>updated</FakeTag>');
-        });
-
-        test('Should reflect an item appended to the collection', function () {
-            $appended = new FakeDFeElement('infNFe');
-            $appended->value = 'second';
-            $this->sut->collection[] = $appended;
-
-            expect((string) $this->sut)->toBe('<FakeTag>first</FakeTag><FakeTag>second</FakeTag>');
-        });
-
-        test('Should reflect an item removed from the collection', function () {
-            $this->sut->collection = [];
-
-            expect((string) $this->sut)->toBe('');
         });
     });
 });

@@ -7,21 +7,32 @@ namespace BradiApi\Domain\Invoices\Templates;
 use BradiApi\Domain\Common\Protocols\ApiError;
 use BradiApi\Domain\Common\Services\ValidationService;
 use BradiApi\Domain\Common\ValueObjects\Result;
+use BradiApi\Domain\Invoices\Validators\AtLeastOneTagValidator;
 use BradiApi\Domain\Xml\ValueObjects\Element;
 use BradiApi\Domain\Xml\ValueObjects\ElementList;
 use Exception;
-use ReflectionClass;
 
 abstract class DFeElementCollection
 {
     protected const string BASE_CLASS = '';
 
     /** @var array<DFeElement> */
-    public array $collection = [];
+    public private(set) array $collection = [];
 
+    private ?Element $source;
     /** @var array<Element> */
-    private array $sourceCollection = [];
-    private DFeElement $baseClass;
+    private array $sourceCollection {
+        get {
+            $elementOrElementList = $this->source->{(static::BASE_CLASS)::FIELD_NAME};
+
+            return match (get_class($elementOrElementList)) {
+                ElementList::class => $elementOrElementList->records,
+                Element::class => [$elementOrElementList],
+                default => throw new Exception('Unexpected element child type.'),
+            };
+        }
+    }
+
     private ValidationService $validationService;
 
     final public function __construct(private readonly string $parentFieldURI = '')
@@ -42,34 +53,38 @@ abstract class DFeElementCollection
     }
 
     /** @return Result<DFeElement|ApiError> */
-    final public function parse(Element|ElementList $elementOrElementList): Result
+    final public function parse(Element $parentElement): Result
     {
-        $elements = $this->normalizeElements($elementOrElementList);
-        $validationResult = $this->validateCollection($elements);
+        $validationResult = $this->validateRootTag($parentElement);
         if ($validationResult->isFailure()) {
-            $this->collection = [];
-            $this->sourceCollection = [];
-
             return $validationResult;
         }
 
-        foreach ($elements as $element) {
-            $this->resetBaseClass();
-            $dfeElement = $this->baseClass->parse($element);
-            if ($dfeElement->isFailure()) {
-                return $dfeElement;
+        $collection = $this->filterElements($parentElement);
+        $validationResult = $this->validateCollection($collection);
+        if ($validationResult->isFailure()) {
+            return $validationResult;
+        }
+
+        foreach ($collection as $element) {
+            $dfeElementParsingResult = (new (static::BASE_CLASS)($this->parentFieldURI))->parse($element);
+            if ($dfeElementParsingResult->isFailure()) {
+                return $dfeElementParsingResult;
             }
 
-            $this->collection[] = $dfeElement->getData();
-            $this->sourceCollection[] = $element;
+            $this->collection[] = $dfeElementParsingResult->getData();
         }
+
+        $this->source = $parentElement;
 
         return Result::makeSuccess($this);
     }
 
     final public function toString(): string
     {
-        $this->sync();
+        if (isset($this->source) === false) {
+            return '';
+        }
 
         return array_reduce(
             $this->sourceCollection,
@@ -79,6 +94,15 @@ abstract class DFeElementCollection
     }
 
     abstract protected function collectionValidators(): array;
+
+    /** @return Result<null|ApiError> */
+    final protected function validateRootTag(Element $parentElement): Result
+    {
+        $this->validationService->reset();
+        $this->validationService->addValidator(new AtLeastOneTagValidator([(static::BASE_CLASS)::FIELD_NAME]));
+
+        return $this->validationService->verify($parentElement);
+    }
 
     final protected function validateCollection(array $elements): Result
     {
@@ -90,48 +114,15 @@ abstract class DFeElementCollection
         return $this->validationService->verify($elements);
     }
 
-    private function sync(): void
+    private function filterElements(Element $parentElement): array
     {
-        $this->sourceCollection = [];
-        foreach ($this->collection as $element) {
-            $source = $element->toXML();
-            if ($source === null) {
-                continue;
-            }
+        $elementOrElementList = $parentElement->{(static::BASE_CLASS)::FIELD_NAME};
 
-            $this->sourceCollection[] = $source;
-        }
-    }
-
-    private function resetBaseClass(): void
-    {
-        if (class_exists(static::BASE_CLASS) === false) {
-            throw new Exception('BASE_CLASS constant must be defined in the child class.');
-        }
-
-        if (is_subclass_of(static::BASE_CLASS, DFeElement::class) === false) {
-            throw new Exception('BASE_CLASS must be a subclass of DFeElement.');
-        }
-
-        $this->baseClass = new (static::BASE_CLASS)($this->parentFieldURI);
-    }
-
-    private function normalizeElements(Element|ElementList $elementOrElementList): array
-    {
-        $elements = [];
-        if ($elementOrElementList instanceof Element) {
-            $elements[] = $elementOrElementList;
-        }
-
-        if ($elementOrElementList instanceof ElementList) {
-            $elements = array_merge($elements, $elementOrElementList->records);
-        }
-
-        return array_filter($elements, function ($element) {
-            $reflectedBaseClass = new ReflectionClass(static::BASE_CLASS);
-
-            return $element->name == $reflectedBaseClass->getConstant('FIELD_NAME');
-        });
+        return match (get_class($elementOrElementList)) {
+            ElementList::class => $elementOrElementList->records,
+            Element::class => [$elementOrElementList],
+            default => throw new Exception('Unexpected element child type.'),
+        };
     }
 
     final public function __toString(): string

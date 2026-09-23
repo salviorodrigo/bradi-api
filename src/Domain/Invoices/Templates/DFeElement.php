@@ -163,7 +163,11 @@ abstract class DFeElement
             unset($this->{$dfeChild->name});
             if ($xmlElement->isSet($dfeChild->class::FIELD_NAME)) {
                 $concreteElement = new $dfeChild->class($this->fieldURI);
-                $parsingResult = $concreteElement->parse($xmlElement->{$concreteElement::class::FIELD_NAME});
+                $parsingResult = match ($dfeChild->parentClass) {
+                    DFeElementCollection::class => $concreteElement->parse($xmlElement),
+                    default => $concreteElement->parse($xmlElement->{$concreteElement::class::FIELD_NAME}),
+                };
+
                 if ($parsingResult->isFailure()) {
                     $parserErrorBag[] = $parsingResult->getError();
 

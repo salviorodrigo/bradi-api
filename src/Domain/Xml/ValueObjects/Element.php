@@ -74,7 +74,7 @@ class Element
         $this->name = $this->iterator->name;
         $this->value = $this->iterator->value;
         foreach ($this->iterator->attributes as $attributeName => $attributeValue) {
-            $this->add(new Attribute($attributeName, $attributeValue, $this->name));
+            $this->add(new Attribute($attributeName, $attributeValue));
         }
 
         foreach ($this->iterator->children as $target) {
