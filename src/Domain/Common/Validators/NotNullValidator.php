@@ -19,13 +19,6 @@ final class NotNullValidator implements Validator
         return Result::makeSuccess();
     }
 
-    /**
-     * O despacho era montado por `gettype()` (`isEmpty` . `Integer`/`Boolean`/...),
-     * entao qualquer escalar batia em metodo inexistente e lancava `Error` em vez
-     * de devolver `Result`. Aqui null era barrado antes pelo curto-circuito do
-     * `||`, mas os escalares nao. Escalar preenchido nao e vazio: `'0'` ja era
-     * aceito como valor valido, e `0`, `0.0` e `false` seguem a mesma regra.
-     */
     private function isEmpty(mixed $candidate): bool
     {
         return match (true) {

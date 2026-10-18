@@ -19,13 +19,6 @@ final class RequiredParamValidator implements Validator
         return Result::makeSuccess();
     }
 
-    /**
-     * O despacho era montado por `gettype()` (`isEmpty` . `NULL`/`Integer`/...),
-     * entao null e qualquer escalar batiam em metodo inexistente e lancavam
-     * `Error` em vez de devolver `Result` - inclusive `check(null)`, o caso de
-     * uso principal do validador. Escalar preenchido nao e vazio: `'0'` ja era
-     * aceito como valor valido, e `0`, `0.0` e `false` seguem a mesma regra.
-     */
     private function isEmpty(mixed $candidate): bool
     {
         return match (true) {
